@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -1121,6 +1124,9 @@
   "icu:lightboxImageAlt": {
     "messageformat": "تصویر ارسال‌شده در گفتگو"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "در حال دانلود ‎{downloaded} ‏از ‎{total}"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "آیکون نشان می‌دهد که این تصویر دارای یک متن است"
   },
@@ -1136,11 +1142,56 @@
   "icu:downloadNItems": {
     "messageformat": "{count, plural, one {{count,number} مورد} other {{count,number} مورد}}"
   },
-  "icu:mediaNoLongerAvailable": {
-    "messageformat": "This media is no longer available."
+  "icu:mediaNotAvailable": {
+    "messageformat": "این رسانه در دسترس نیست"
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "رسانه در دسترس نیست"
   },
   "icu:attachmentNoLongerAvailable__learnMore": {
-    "messageformat": "Learn more"
+    "messageformat": "بیشتر بدانید"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "فایل موجود نیست"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "این پیام ناقص است"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "استیکر در دسترس نیست"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "پیام صوتی در دسترس نیست"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "فایل موجود نیست"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "پیام کامل در دسترس نیست"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "رسانه در دسترس نیست"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "استیکر در دسترس نیست"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "پیام صوتی در دسترس نیست"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "در زمان اتصال این دستگاه، این فایل از گوشی شما انتقال داده نشد. رسانه‌ها و فایل‌های قدیمی‌تر از ۴۵ روز در زمان اتصال دستگاه، قابل همگام‌سازی نیستند."
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "در زمان اتصال این دستگاه، متن کامل این پیام از تلفن شما منتقل نشد. پیامک‌های قدیمی‌تر از ۴۵ روز در زمان اتصال دستگاه، قابل همگام‌سازی نیستند."
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "در زمان اتصال این دستگاه، این رسانه از گوشی شما انتقال داده نشد. رسانه‌های قدیمی‌تر از ۴۵ روز در زمان اتصال دستگاه، قابل همگام‌سازی نیستند."
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "در زمان اتصال این دستگاه، این استیکر از گوشی شما انتقال داده نشد. رسانه‌ها و فایل‌های قدیمی‌تر از ۴۵ روز در زمان اتصال دستگاه، قابل همگام‌سازی نیستند."
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "در زمان اتصال این دستگاه، این پیام صوتی از گوشی شما انتقال داده نشد. رسانه‌ها و فایل‌های قدیمی‌تر از ۴۵ روز در زمان اتصال دستگاه، قابل همگام‌سازی نیستند."
   },
   "icu:save": {
     "messageformat": "ذخیره"
@@ -1185,7 +1236,7 @@
     "messageformat": "تلاش مجدد"
   },
   "icu:Install__qr-max-rotations__retry": {
-    "messageformat": "Refresh code"
+    "messageformat": "تازه‌سازی کد"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "دریافت کمک"
@@ -1204,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "نام دستگاه"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "برای تغییر نام این دستگاه، سیگنال را در گوشی خود باز کنید و به «تنظیمات > دستگاه‌های متصل‌شده» بروید"
   },
   "icu:chooseDeviceName": {
     "messageformat": "نام این دستگاه را انتخاب کنید"
@@ -1581,10 +1635,10 @@
     "messageformat": "پاک کردن همه اطلاعات؟"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "همۀ داده‌ها و پیام‌ها از این نسخه سیگنال دسکتاپ پاک شود؟ همیشه می‌توانید این دسکتاپ را دوباره پیوند دهید، اما پیام‌هایتان بازیابی نخواهد شد. داده‌ها و حساب سیگنال شما در تلفن‌تان و سایر دستگاههای متصل‌شده پاک نخواهد شد."
+    "messageformat": "همۀ داده‌ها و پیام‌ها از این نسخه سیگنال دسکتاپ پاک شود؟ داده‌ها و حساب سیگنال شما در تلفن‌تان و سایر دستگاههای متصل‌شده پاک نخواهد شد."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Disconnecting and deleting all data…"
+    "messageformat": "در حال قطع اتصال و حذف تمام داده‌ها…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "از نصب گذشته سیگنال دسکتاپ اطلاعات منسوخی برجا مانده است. اگر ادامه دهید این اطلاعات پاک خواهد شد و از نو آغاز خواهید کرد."
@@ -2697,7 +2751,7 @@
     "messageformat": "تماس صوتی ازدست‌رفته"
   },
   "icu:missedIncomingVideoCall": {
-    "messageformat": "تماس تصویری از دست رفته"
+    "messageformat": "تماس تصویری از‌دست‌رفته"
   },
   "icu:acceptedOutgoingAudioCall": {
     "messageformat": "تماس صوتی خروجی"
@@ -3576,7 +3630,7 @@
     "messageformat": "بعدی"
   },
   "icu:ClearingData__description": {
-    "messageformat": "This may take a few minutes depending on the size of your message history"
+    "messageformat": "ممکن است چند دقیقه زمان ببرد"
   },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "حمایت از سیگنال"
@@ -3605,11 +3659,14 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "در حال تکمیل انتقال پیام..."
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "در حال لغو..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "در حال آماده‌سازی برای دانلود..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "بسته به اندازه تاریخچه پیامتان، این عملیات ممکن است چند دقیقه طول بکشد"
+    "messageformat": "ممکن است چند دقیقه زمان ببرد"
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "لغو"
@@ -3618,16 +3675,16 @@
     "messageformat": "پیام‌ها و اطلاعات گفتگو با رمزگذاری سرتاسری، از‌جمله فرایند همگام‌سازی، محافظت می‌شوند. <learnMoreLink>اطلاعات بیشتر</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "انتقال لغو شود؟"
+    "messageformat": "اتصال دستگاه لغو شود؟"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "پیام‌ها و رسانه شما کامل بازیابی نشده است. اگر لغو را انتخاب کنید، دستگاه شما بدون تاریخچه پیامتان متصل خواهد شد."
+    "messageformat": "اگر لغو را انتخاب کنید، این دستگاه متصل نمی‌شود و هیچ پیام‌ یا رسانه‌‌ای انتقال داده نخواهد شد."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "ادامه انتقال"
+    "messageformat": "ادامه اتصال"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "لغو انتقال"
+    "messageformat": "لغو اتصال"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "خطا در انتقال پیام‌های شما"
@@ -3678,7 +3735,7 @@
     "messageformat": "گزینه‌های بیشتر"
   },
   "icu:BackupMediaDownloadProgress__title-complete": {
-    "messageformat": "بازگردانی کامل شد"
+    "messageformat": "بازیابی کامل شد"
   },
   "icu:BackupMediaDownloadProgress__progressbar-hint": {
     "messageformat": "{currentSize} از {totalSize}"
@@ -4242,7 +4299,7 @@
     "messageformat": "بازنشانی همهٔ رنگ‌های گفتگو"
   },
   "icu:ChatColorPicker__confirm-reset-default": {
-    "messageformat": "بازنشانی پیش‌فرض"
+    "messageformat": "بازنشانی رنگ‌های پیش‌فرض"
   },
   "icu:ChatColorPicker__confirm-reset": {
     "messageformat": "بازنشانی"
@@ -4291,6 +4348,9 @@
   },
   "icu:GradientDial__knob-end": {
     "messageformat": "پایان گرادیان"
+  },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "زمان سفارشی..."
@@ -4561,6 +4621,12 @@
   },
   "icu:AvatarColorPicker--choose": {
     "messageformat": "یک رنگ انتخاب کنید"
+  },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "امتحان مجدد دانلود"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "تلاش مجدد"
   },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "آواتار گروه"
@@ -5605,7 +5671,7 @@
     "messageformat": "فیلترشده بر اساس ازدست‌رفته"
   },
   "icu:CallsList__ToggleFilterByMissedLabel": {
-    "messageformat": "فیلتر کردن بر اساس «از دست رفته»"
+    "messageformat": "فیلتر کردن بر اساس «از‌دست‌رفته»"
   },
   "icu:CallsList__ToggleFilterByMissed__RoleDescription": {
     "messageformat": "تعویض"
@@ -5671,7 +5737,7 @@
     "messageformat": "{direction, select, Outgoing {تماس تصویری خروجی} other {تماس صوتی دریافتی}}"
   },
   "icu:CallHistory__DescriptionVideoCall--Missed": {
-    "messageformat": "تماس تصویری از دست رفته"
+    "messageformat": "تماس تصویری از‌دست‌رفته"
   },
   "icu:CallHistory__DescriptionVideoCall--Unanswered": {
     "messageformat": "تماس تصویری بی‌پاسخ"
@@ -5794,10 +5860,10 @@
     "messageformat": "تغییرات کوچک، رفع اشکالات و بهبود عملکرد. بابت استفاده از سیگنال سپاسگزاریم!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.38--0": {
-    "messageformat": "اشکال مربوط به @ اشاره‌ها را برطرف کردیم که گاهی به‌اشتباه حساب خودتان را هم در فهرست پیشنهادی تکمیل خودکار قرار می‌داد."
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "یک اشکال جزئی انیمیشن که حین تماس‌های گروهی رخ می‌داد را برطرف کردیم."
   },
-  "icu:WhatsNew__v7.39--0": {
-    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

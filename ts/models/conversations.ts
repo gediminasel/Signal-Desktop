@@ -26,7 +26,7 @@ import { getNotificationTextForMessage } from '../util/getNotificationTextForMes
 import { getNotificationDataForMessage } from '../util/getNotificationDataForMessage';
 import type { ProfileNameChangeType } from '../util/getStringForProfileChange';
 import type { AttachmentType, ThumbnailType } from '../types/Attachment';
-import { toDayMillis } from '../util/timestamp';
+import { MAX_SAFE_TIMEOUT_DELAY, toDayMillis } from '../util/timestamp';
 import { areWeAdmin } from '../util/areWeAdmin';
 import { isBlocked } from '../util/isBlocked';
 import { getAboutText } from '../util/getAboutText';
@@ -188,9 +188,9 @@ import { explodePromise } from '../util/explodePromise';
 import { getCallHistorySelector } from '../state/selectors/callHistory';
 import { migrateLegacyReadStatus } from '../messages/migrateLegacyReadStatus';
 import { migrateLegacySendAttributes } from '../messages/migrateLegacySendAttributes';
-import { getIsInitialSync } from '../services/contactSync';
+import { getIsInitialContactSync } from '../services/contactSync';
 import { queueAttachmentDownloadsForMessage } from '../util/queueAttachmentDownloads';
-import { cleanupMessages, postSaveUpdates } from '../util/cleanup';
+import { cleanupMessages } from '../util/cleanup';
 import { MessageModel } from './messages';
 
 /* eslint-disable more/no-then */
@@ -620,16 +620,7 @@ export class ConversationModel extends window.Backbone
     const idLog = this.idForLogging();
 
     // Hard-coded to our own ID, because you don't add other users for admin approval
-    const conversationId =
-      window.ConversationController.getOurConversationIdOrThrow();
-
-    const toRequest = window.ConversationController.get(conversationId);
-    if (!toRequest) {
-      throw new Error(
-        `addPendingApprovalRequest/${idLog}: No conversation found for conversation ${conversationId}`
-      );
-    }
-
+    const toRequest = window.ConversationController.getOurConversationOrThrow();
     const serviceId = toRequest.getCheckedServiceId(
       `addPendingApprovalRequest/${idLog}`
     );
@@ -2015,11 +2006,7 @@ export class ConversationModel extends window.Backbone
 
         if (updated) {
           upgraded += 1;
-          const ourAci = window.textsecure.storage.user.getCheckedAci();
-          await DataWriter.saveMessage(model.attributes, {
-            ourAci,
-            postSaveUpdates,
-          });
+          await window.MessageCache.saveMessage(model.attributes);
         }
 
         return model.attributes;
@@ -2270,7 +2257,6 @@ export class ConversationModel extends window.Backbone
     options: { isLocalAction?: boolean } = {}
   ): Promise<void> {
     const { isLocalAction } = options;
-    const ourAci = window.textsecure.storage.user.getCheckedAci();
 
     let messages: Array<MessageAttributesType> | undefined;
     do {
@@ -2324,10 +2310,7 @@ export class ConversationModel extends window.Backbone
           const shouldSave =
             await queueAttachmentDownloadsForMessage(registered);
           if (shouldSave) {
-            await DataWriter.saveMessage(registered.attributes, {
-              ourAci,
-              postSaveUpdates,
-            });
+            await window.MessageCache.saveMessage(registered.attributes);
           }
         })
       );
@@ -2365,7 +2348,7 @@ export class ConversationModel extends window.Backbone
     await window.MessageCache.saveMessage(message, {
       forceSave: true,
     });
-    if (!getIsInitialSync() && !this.get('active_at')) {
+    if (!getIsInitialContactSync() && !this.get('active_at')) {
       this.set({ active_at: Date.now() });
       await DataWriter.updateConversation(this.attributes);
     }
@@ -2666,8 +2649,6 @@ export class ConversationModel extends window.Backbone
 
     const ourAci = window.textsecure.storage.user.getCheckedAci();
     const ourPni = window.textsecure.storage.user.getPni();
-    const ourConversation =
-      window.ConversationController.getOurConversationOrThrow();
 
     if (this.isMemberPending(ourAci)) {
       await this.modifyGroupV2({
@@ -2678,7 +2659,7 @@ export class ConversationModel extends window.Backbone
     } else if (this.isMember(ourAci)) {
       await this.modifyGroupV2({
         name: 'delete',
-        usingCredentialsFrom: [ourConversation],
+        usingCredentialsFrom: [],
         createGroupChange: () => this.#removeMember(ourAci),
       });
       // Keep PNI in pending if ACI was a member.
@@ -2757,7 +2738,7 @@ export class ConversationModel extends window.Backbone
 
     await this.modifyGroupV2({
       name: 'toggleAdmin',
-      usingCredentialsFrom: [member],
+      usingCredentialsFrom: [],
       createGroupChange: () => this.#toggleAdminChange(serviceId),
     });
   }
@@ -2797,7 +2778,7 @@ export class ConversationModel extends window.Backbone
     } else if (this.isMember(serviceId)) {
       await this.modifyGroupV2({
         name: 'removeFromGroup',
-        usingCredentialsFrom: [pendingMember],
+        usingCredentialsFrom: [],
         createGroupChange: () => this.#removeMember(serviceId),
         extraConversationsForSend: [conversationId],
       });
@@ -4163,7 +4144,12 @@ export class ConversationModel extends window.Backbone
     await this.#beforeAddSingleMessage(model.attributes);
 
     if (sticker) {
-      await addStickerPackReference(model.id, sticker.packId);
+      await addStickerPackReference({
+        messageId: model.id,
+        packId: sticker.packId,
+        stickerId: sticker.stickerId,
+        isUnresolved: false,
+      });
     }
 
     this.beforeMessageSend({
@@ -5383,6 +5369,13 @@ export class ConversationModel extends window.Backbone
       const delay = muteExpiresAt - Date.now();
       if (delay <= 0) {
         this.setMuteExpiration(0, { viaStorageServiceSync });
+        return;
+      }
+
+      if (delay > MAX_SAFE_TIMEOUT_DELAY) {
+        log.warn(
+          'startMuteTimer: timeout is larger than maximum setTimeout delay'
+        );
         return;
       }
 

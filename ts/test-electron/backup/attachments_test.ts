@@ -166,8 +166,8 @@ describe('backup/attachments', () => {
         // path & iv will not be roundtripped
         [
           composeMessage(1, {
-            hasAttachments: 1,
-            hasVisualMediaAttachments: 1,
+            hasAttachments: true,
+            hasVisualMediaAttachments: true,
             attachments: [
               omit(longMessageAttachment, NON_ROUNDTRIPPED_FIELDS),
               omit(normalAttachment, NON_ROUNDTRIPPED_FIELDS),
@@ -284,8 +284,8 @@ describe('backup/attachments', () => {
         // path & iv will not be roundtripped
         [
           composeMessage(1, {
-            hasAttachments: 1,
-            hasVisualMediaAttachments: 1,
+            hasAttachments: true,
+            hasVisualMediaAttachments: true,
             attachments: [
               omit(attachment1, NON_ROUNDTRIPPED_FIELDS),
               omit(attachment2, NON_ROUNDTRIPPED_FIELDS),
@@ -307,8 +307,8 @@ describe('backup/attachments', () => {
         ],
         [
           composeMessage(1, {
-            hasAttachments: 1,
-            hasVisualMediaAttachments: 1,
+            hasAttachments: true,
+            hasVisualMediaAttachments: true,
 
             // path, iv, and uploadTimestamp will not be roundtripped,
             // but there will be a backupLocator
@@ -341,7 +341,7 @@ describe('backup/attachments', () => {
         ],
         [
           composeMessage(1, {
-            hasAttachments: 1,
+            hasAttachments: true,
             attachments: [
               {
                 ...omit(attachment, NON_ROUNDTRIPPED_BACKUP_LOCATOR_FIELDS),
@@ -364,17 +364,19 @@ describe('backup/attachments', () => {
       await asymmetricRoundtripHarness(
         [
           composeMessage(1, {
-            body: 'url',
-            preview: [{ url: 'url', date: 1, image: attachment }],
+            body: 'https://signal.org',
+            preview: [
+              { url: 'https://signal.org', date: 1, image: attachment },
+            ],
           }),
         ],
         // path & iv will not be roundtripped
         [
           composeMessage(1, {
-            body: 'url',
+            body: 'https://signal.org',
             preview: [
               {
-                url: 'url',
+                url: 'https://signal.org',
                 date: 1,
                 image: omit(attachment, NON_ROUNDTRIPPED_FIELDS),
               },
@@ -391,10 +393,10 @@ describe('backup/attachments', () => {
       await asymmetricRoundtripHarness(
         [
           composeMessage(1, {
-            body: 'url',
+            body: 'https://signal.org',
             preview: [
               {
-                url: 'url',
+                url: 'https://signal.org',
                 date: 1,
                 title: 'title',
                 description: 'description',
@@ -405,10 +407,10 @@ describe('backup/attachments', () => {
         ],
         [
           composeMessage(1, {
-            body: 'url',
+            body: 'https://signal.org',
             preview: [
               {
-                url: 'url',
+                url: 'https://signal.org',
                 date: 1,
                 title: 'title',
                 description: 'description',
@@ -602,8 +604,8 @@ describe('backup/attachments', () => {
         [
           {
             ...existingMessage,
-            hasAttachments: 1,
-            hasVisualMediaAttachments: 1,
+            hasAttachments: true,
+            hasVisualMediaAttachments: true,
             attachments: [
               {
                 ...omit(

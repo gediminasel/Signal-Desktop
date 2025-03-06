@@ -1,11 +1,10 @@
 // Copyright 2024 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { isNumber, partition } from 'lodash';
+import { isNumber } from 'lodash';
 
 import * as log from '../logging/log';
 import * as Errors from '../types/errors';
-import * as MIME from '../types/MIME';
 import * as LinkPreview from '../types/LinkPreview';
 
 import { getAuthor, isStory, messageHasPaymentEvent } from './helpers';
@@ -19,7 +18,7 @@ import {
   SendStatus,
 } from './MessageSendState';
 import { DataReader, DataWriter } from '../sql/Client';
-import { eraseMessageContents, postSaveUpdates } from '../util/cleanup';
+import { eraseMessageContents } from '../util/cleanup';
 import {
   isDirectConversation,
   isGroup,
@@ -42,7 +41,7 @@ import { findStoryMessages } from '../util/findStoryMessage';
 import { getRoomIdFromCallLink } from '../util/callLinksRingrtc';
 import { isNotNil } from '../util/isNotNil';
 import { normalizeServiceId } from '../types/ServiceId';
-import { BodyRange } from '../types/BodyRange';
+import { BodyRange, trimMessageWhitespace } from '../types/BodyRange';
 import { hydrateStoryContext } from '../util/hydrateStoryContext';
 import { isMessageEmpty } from '../util/isMessageEmpty';
 import { isValidTapToView } from '../util/isValidTapToView';
@@ -153,57 +152,50 @@ export async function handleDataMessage(
             ? data.unidentifiedStatus
             : [];
 
-        unidentifiedStatus.forEach(
-          ({ destinationServiceId, destination, unidentified }) => {
-            const identifier = destinationServiceId || destination;
-            if (!identifier) {
-              return;
-            }
-
-            const destinationConversation =
-              window.ConversationController.lookupOrCreate({
-                serviceId: destinationServiceId,
-                e164: destination || undefined,
-                reason: `handleDataMessage(${initialMessage.timestamp})`,
-              });
-            if (!destinationConversation) {
-              return;
-            }
-
-            const updatedAt: number =
-              data && isNormalNumber(data.timestamp)
-                ? data.timestamp
-                : Date.now();
-
-            const previousSendState = getOwn(
-              sendStateByConversationId,
-              destinationConversation.id
-            );
-            sendStateByConversationId[destinationConversation.id] =
-              previousSendState
-                ? sendStateReducer(previousSendState, {
-                    type: SendActionType.Sent,
-                    updatedAt,
-                  })
-                : {
-                    status: SendStatus.Sent,
-                    updatedAt,
-                  };
-
-            if (unidentified) {
-              unidentifiedDeliveriesSet.add(identifier);
-            }
+        unidentifiedStatus.forEach(({ destinationServiceId, unidentified }) => {
+          if (!destinationServiceId) {
+            return;
           }
-        );
+
+          const destinationConversation =
+            window.ConversationController.lookupOrCreate({
+              serviceId: destinationServiceId,
+              reason: `handleDataMessage(${initialMessage.timestamp})`,
+            });
+          if (!destinationConversation) {
+            return;
+          }
+
+          const updatedAt: number =
+            data && isNormalNumber(data.timestamp)
+              ? data.timestamp
+              : Date.now();
+
+          const previousSendState = getOwn(
+            sendStateByConversationId,
+            destinationConversation.id
+          );
+          sendStateByConversationId[destinationConversation.id] =
+            previousSendState
+              ? sendStateReducer(previousSendState, {
+                  type: SendActionType.Sent,
+                  updatedAt,
+                })
+              : {
+                  status: SendStatus.Sent,
+                  updatedAt,
+                };
+
+          if (unidentified) {
+            unidentifiedDeliveriesSet.add(destinationServiceId);
+          }
+        });
 
         toUpdate.set({
           sendStateByConversationId,
           unidentifiedDeliveries: [...unidentifiedDeliveriesSet],
         });
-        await DataWriter.saveMessage(toUpdate.attributes, {
-          ourAci: window.textsecure.storage.user.getCheckedAci(),
-          postSaveUpdates,
-        });
+        await window.MessageCache.saveMessage(toUpdate.attributes);
 
         confirm();
         return;
@@ -516,19 +508,12 @@ export async function handleDataMessage(
             };
           }
 
-          if (!item.image && !item.title) {
-            return null;
-          }
-          // Story link previews don't have to correspond to links in the
-          // message body.
-          if (isStory(message.attributes)) {
-            return item;
-          }
           if (
-            !urls.includes(item.url) ||
-            !LinkPreview.shouldPreviewHref(item.url)
+            !LinkPreview.isValidLinkPreview(urls, item, {
+              isStory: isStory(message.attributes),
+            })
           ) {
-            return undefined;
+            return null;
           }
 
           return item;
@@ -545,19 +530,24 @@ export async function handleDataMessage(
       const ourPni = window.textsecure.storage.user.getCheckedPni();
       const ourServiceIds: Set<ServiceIdString> = new Set([ourAci, ourPni]);
 
-      const [longMessageAttachments, normalAttachments] = partition(
-        dataMessage.attachments ?? [],
-        attachment => MIME.isLongMessage(attachment.contentType)
-      );
-
       // eslint-disable-next-line no-param-reassign
       message = window.MessageCache.register(message);
+
       message.set({
         id: messageId,
-        attachments: normalAttachments,
-        body: dataMessage.body,
-        bodyAttachment: longMessageAttachments[0],
-        bodyRanges: dataMessage.bodyRanges,
+        attachments: dataMessage.attachments,
+        bodyAttachment: dataMessage.bodyAttachment,
+        // We don't want to trim if we'll be downloading a body attachment; we might
+        // drop bodyRanges which apply to the longer text we'll get in that download.
+        ...(dataMessage.bodyAttachment
+          ? {
+              body: dataMessage.body,
+              bodyRanges: dataMessage.bodyRanges,
+            }
+          : trimMessageWhitespace({
+              body: dataMessage.body,
+              bodyRanges: dataMessage.bodyRanges,
+            })),
         contact: dataMessage.contact,
         conversationId: conversation.id,
         decrypted_at: now,

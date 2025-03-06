@@ -14,6 +14,6 @@ export class BackupDownloadFailedError extends Error {}
 
 export class BackupProcessingError extends Error {}
 
-export class RelinkRequestedError extends Error {}
+export class BackupImportCanceledError extends Error {}
 
-export class ContinueWithoutSyncingError extends Error {}
+export class RelinkRequestedError extends Error {}

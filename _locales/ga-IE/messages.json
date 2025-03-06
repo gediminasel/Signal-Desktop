@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -1121,6 +1124,9 @@
   "icu:lightboxImageAlt": {
     "messageformat": "Íomhá seolta sa chomhrá"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "Íoslódáil ar bun: {downloaded} as {total}"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "Íocón a léiríonn go bhfuil fotheideal leis an íomhá seo"
   },
@@ -1136,11 +1142,56 @@
   "icu:downloadNItems": {
     "messageformat": "{count, plural, one {1 cheann} two {{count,number} cheann} few {{count,number} cinn} many {{count,number} gcinn} other {{count,number} ceann}}"
   },
-  "icu:mediaNoLongerAvailable": {
-    "messageformat": "This media is no longer available."
+  "icu:mediaNotAvailable": {
+    "messageformat": "Níl an meán sin ar fáil"
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "Níl an meán ar fáil"
   },
   "icu:attachmentNoLongerAvailable__learnMore": {
-    "messageformat": "Learn more"
+    "messageformat": "Tuilleadh faisnéise"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "Níl an comhad ar fáil"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "Tá an teachtaireacht seo neamhiomlán"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "Níl an greamán ar fáil"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "Níl an glórphost ar fáil"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "Níl an comhad ar fáil"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "Níl an teachtaireacht iomlán ar fáil"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "Níl an meán ar fáil"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "Níl an greamán ar fáil"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "Níl an glórphost ar fáil"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "Níor aistríodh an comhad seo ó do ghuthán nuair a nascadh an gléas seo. Meáin agus comhaid a bhí níos sine ná 45 lá ag an uair a nascadh an gléas, ní féidir iad a shioncronú."
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "Níor aistríodh an téacs iomlán sa teachtaireacht seo ó do ghuthán nuair a nascadh do ghléas. Teachtaireachtaí téacs fada a bhí níos sine ná 45 lá ag an uair a nascadh an gléas, ní féidir iad a shioncronú."
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "Níor aistríodh an meán seo ó do ghuthán nuair a nascadh an gléas seo. Meáin a bhí níos sine ná 45 lá ag an uair a nascadh an gléas, ní féidir iad a shioncronú."
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "Níor aistríodh an greamán seo ó do ghuthán nuair a nascadh an gléas seo. Meáin agus comhaid a bhí níos sine ná 45 lá ag an uair a nascadh an gléas, ní féidir iad a shioncronú."
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "Níor aistríodh an glórphost seo ó do ghuthán nuair a nascadh an gléas seo. Meáin agus comhaid a bhí níos sine ná 45 lá ag an uair a nascadh an gléas, ní féidir iad a shioncronú."
   },
   "icu:save": {
     "messageformat": "Cuir i dtaisce é"
@@ -1185,7 +1236,7 @@
     "messageformat": "Bain triail eile as"
   },
   "icu:Install__qr-max-rotations__retry": {
-    "messageformat": "Refresh code"
+    "messageformat": "Athnuaigh an cód"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Faigh cabhair"
@@ -1204,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "Ainm an ghléis"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "Chun ainm an ghléis seo a athrú, oscail Signal ar do ghuthán agus téigh chuig Socruithe > Gléasanna nasctha"
   },
   "icu:chooseDeviceName": {
     "messageformat": "Roghnaigh ainm an ghléis seo"
@@ -1581,10 +1635,10 @@
     "messageformat": "Scrios na sonraí go léir?"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "Scrios na sonraí agus na teachtaireachtaí uile ón leagan seo de Dheasc Signal? Beidh tú in ann an deasc sin a athnascadh am ar bith, ach ní aisghabhfar do theachtaireachtaí. Ní scriosfar do chuntas Signal ná sonraí ar do ghuthán nó ar aon ghléas eile atá nasctha."
+    "messageformat": "Scrios na sonraí agus na teachtaireachtaí uile ón leagan seo de Dheasc Signal? Ní scriosfar do chuntas Signal ná sonraí ar do ghuthán nó ar aon ghléas eile atá nasctha."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Disconnecting and deleting all data…"
+    "messageformat": "Dínascadh agus na sonraí go léir á scriosadh…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Tá sonraí agat ó sheansuiteáil Dheasc Signal atá imithe i léig. Má roghnaíonn tú leanúint leis, scriosfar iad agus tosóidh tú ón tús."
@@ -3576,7 +3630,7 @@
     "messageformat": "Ar Aghaidh"
   },
   "icu:ClearingData__description": {
-    "messageformat": "This may take a few minutes depending on the size of your message history"
+    "messageformat": "Seans go dtógfaidh sé sin cúpla nóiméad"
   },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Bronn airgead ar Signal"
@@ -3605,11 +3659,14 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "Aistriú na dteachtaireachtaí á chur i gcrích..."
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "Á chur ar ceal..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Íoslódáil á hullmhú..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "Seans go dtógfaidh sé seo cúpla nóiméad ag brath ar mhéid do staire teachtaireachtaí"
+    "messageformat": "Seans go dtógfaidh sé sin cúpla nóiméad"
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Cuir ar ceal"
@@ -3618,16 +3675,16 @@
     "messageformat": "Déantar teachtaireachtaí agus faisnéis comhráite a chosaint le criptiú ó cheann ceann, an próiseas sioncronaithe san áireamh. <learnMoreLink>Tuilleadh faisnéise</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "Cuir an t-aistriú ar ceal?"
+    "messageformat": "Cuir nascadh an ghléis ar ceal?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Ní dhearnadh aischur do chuid teachtaireachtaí agus meán a chur i gcrích go hiomlán. Má roghnaíonn tú é a chur ar ceal, nascfar do ghléas gan stair do theachtaireachtaí."
+    "messageformat": "Má roghnaíonn tú é a chur ar ceal, ní nascfar an gléas seo agus ní aistreofar teachtaireachtaí ná meáin."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "Lean leis an aistriú"
+    "messageformat": "Lean le nascadh"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "Cuir an t-aistriú ar ceal"
+    "messageformat": "Cuir nascadh ar ceal"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "Tharla earráid agus do theachtaireachtaí á n-aistriú"
@@ -4242,7 +4299,7 @@
     "messageformat": "Athshocraigh dath gach comhrá"
   },
   "icu:ChatColorPicker__confirm-reset-default": {
-    "messageformat": "Athshocraigh réamhshocrú"
+    "messageformat": "Athshocraigh dathanna réamhshocraithe"
   },
   "icu:ChatColorPicker__confirm-reset": {
     "messageformat": "Athshocraigh"
@@ -4291,6 +4348,9 @@
   },
   "icu:GradientDial__knob-end": {
     "messageformat": "Grádán deiridh"
+  },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "Am saincheaptha…"
@@ -4561,6 +4621,12 @@
   },
   "icu:AvatarColorPicker--choose": {
     "messageformat": "Choose a Color"
+  },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "Atriail an íoslódáil"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "Atriail í"
   },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "Abhatár an ghrúpa"
@@ -5794,10 +5860,10 @@
     "messageformat": "Mionathruithe, paistí fabhtanna agus feabhsuithe ar fheidhmíocht. Go raibh maith agat as Signal a úsáid!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.38--0": {
-    "messageformat": "Réitíomar fabht le tráchtanna @, rud a chuir do chuntas féin sa liosta moltaí uathlíonta."
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "Réitíomar mionfhabht beochana a tharla le linn grúpghlaonna."
   },
-  "icu:WhatsNew__v7.39--0": {
-    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

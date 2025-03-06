@@ -983,10 +983,6 @@ function onEditorStateChange({
       return;
     }
 
-    if (messageText.length && conversation.throttledBumpTyping) {
-      conversation.throttledBumpTyping();
-    }
-
     debouncedSaveDraft(conversationId, messageText, bodyRanges);
 
     // If we have attachments, don't add link preview
@@ -1014,9 +1010,11 @@ function onEditorStateChange({
 function processAttachments({
   conversationId,
   files,
+  flags,
 }: {
   conversationId: string;
   files: ReadonlyArray<File>;
+  flags: number | null;
 }): ThunkAction<
   void,
   RootStateType,
@@ -1082,6 +1080,7 @@ function processAttachments({
         try {
           const attachment = await processAttachment(file, {
             generateScreenshot: true,
+            flags,
           });
           if (!attachment) {
             removeAttachment(conversationId, webUtils.getPathForFile(file))(
@@ -1346,6 +1345,10 @@ function saveDraft(
     if (!activeAt) {
       activeAt = now;
       timestamp = now;
+    }
+
+    if (messageText.length && conversation.throttledBumpTyping) {
+      conversation.throttledBumpTyping();
     }
 
     conversation.set({

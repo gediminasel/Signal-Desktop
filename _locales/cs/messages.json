@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -1121,6 +1124,9 @@
   "icu:lightboxImageAlt": {
     "messageformat": "Obrázek odeslaný v chatu"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "Staženo {downloaded} z {total}"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "Ikona znázorňující, že tento obrázek má popisek"
   },
@@ -1136,11 +1142,56 @@
   "icu:downloadNItems": {
     "messageformat": "{count, plural, one {{count,number} položka} few {{count,number} položky} many {{count,number} položek} other {{count,number} položek}}"
   },
-  "icu:mediaNoLongerAvailable": {
-    "messageformat": "This media is no longer available."
+  "icu:mediaNotAvailable": {
+    "messageformat": "Toto médium není dostupné"
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "Média nejsou k dispozici"
   },
   "icu:attachmentNoLongerAvailable__learnMore": {
-    "messageformat": "Learn more"
+    "messageformat": "Zjistit více"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "Soubor není k dispozici"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "Tato zpráva je neúplná"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "Nálepka není k dispozici"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "Hlasová zpráva není k dispozici"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "Soubor není k dispozici"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "Celá zpráva není k dispozici"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "Média nejsou k dispozici"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "Nálepka není k dispozici"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "Hlasová zpráva není k dispozici"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "Tento soubor nebyl při propojení tohoto zařízení z vašeho telefonu přenesen. Média a soubory, které jsou v době propojení zařízení starší než 45 dní, nelze synchronizovat."
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "Celý text této zprávy nebyl při propojení tohoto zařízení z vašeho telefonu přenesen. Dlouhé textové zprávy, které jsou v době propojení zařízení starší než 45 dní, nelze synchronizovat."
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "Toto médium nebylo při propojení tohoto zařízení z vašeho telefonu přeneseno. Média, která jsou v době propojení zařízení starší než 45 dní, nelze synchronizovat."
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "Tato nálepka nebyla při propojení tohoto zařízení z vašeho telefonu přenesena. Média a soubory, které jsou v době propojení zařízení starší než 45 dní, nelze synchronizovat."
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "Tato hlasová zpráva nebyla při propojení tohoto zařízení z vašeho telefonu přenesena. Média a soubory, které jsou v době propojení zařízení starší než 45 dní, nelze synchronizovat."
   },
   "icu:save": {
     "messageformat": "Uložit"
@@ -1185,7 +1236,7 @@
     "messageformat": "Zkusit znovu"
   },
   "icu:Install__qr-max-rotations__retry": {
-    "messageformat": "Refresh code"
+    "messageformat": "Obnovit kód"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Nápověda"
@@ -1204,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "Název zařízení"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "Pokud chcete změnit název tohoto zařízení, otevřete v telefonu aplikaci Signal a přejděte do nabídky Nastavení > Propojená zařízení"
   },
   "icu:chooseDeviceName": {
     "messageformat": "Zvolte název tohoto zařízení"
@@ -1581,10 +1635,10 @@
     "messageformat": "Smazat všechna data?"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "Odstranit všechna data a zprávy z této verze aplikace Signal Desktop? Tuto verzi aplikace Signal Desktop můžete kdykoli znovu propojit, ale zprávy se již neobnoví. Váš účet Signal a data v telefonu nebo jiných propojených zařízení se nesmažou."
+    "messageformat": "Odstranit všechna data a zprávy z této verze aplikace Signal Desktop? Váš účet Signal a data v telefonu nebo jiných propojených zařízení nebudou odstraněny."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Disconnecting and deleting all data…"
+    "messageformat": "Odpojuji a mažu všechna data…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Máte zastaralá data z předchozí instalace aplikace Signal Desktop. Pokud se rozhodnete pokračovat, budou odstraněna a budete muset začít od začátku."
@@ -3576,7 +3630,7 @@
     "messageformat": "další"
   },
   "icu:ClearingData__description": {
-    "messageformat": "This may take a few minutes depending on the size of your message history"
+    "messageformat": "To může trvat několik minut"
   },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Podpořte Signal finančně"
@@ -3605,11 +3659,14 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "Dokončuje se přenos zpráv…"
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "Rušení propojení…"
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Příprava ke stažení…"
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "To může trvat několik minut v závislosti na velikosti historie zpráv"
+    "messageformat": "To může trvat několik minut"
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Zrušit"
@@ -3618,16 +3675,16 @@
     "messageformat": "Zprávy a informace o chatech jsou chráněny koncovým šifrováním, včetně procesu synchronizace. <learnMoreLink>Zjistit více</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "Zrušit přenos?"
+    "messageformat": "Zrušit propojení zařízení?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Obnovení vašich zpráv a médií nebylo dokončeno. Pokud jste se jej rozhodli zrušit, bude vaše zařízení propojeno bez historie zpráv."
+    "messageformat": "Pokud se ho rozhodnete zrušit, nebude toto zařízení propojeno a nebudou se přenášet žádné zprávy ani média."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "Pokračovat v přenosu"
+    "messageformat": "Pokračovat v propojení"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "Zrušit přenos"
+    "messageformat": "Zrušit propojení"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "Chyba při přenosu zpráv"
@@ -4242,7 +4299,7 @@
     "messageformat": "Obnovit všechny barvy chatu"
   },
   "icu:ChatColorPicker__confirm-reset-default": {
-    "messageformat": "Obnovit výchozí nastavení"
+    "messageformat": "Resetovat výchozí barvy"
   },
   "icu:ChatColorPicker__confirm-reset": {
     "messageformat": "Obnovit"
@@ -4291,6 +4348,9 @@
   },
   "icu:GradientDial__knob-end": {
     "messageformat": "Konec gradientu"
+  },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "Vlastní čas…"
@@ -4561,6 +4621,12 @@
   },
   "icu:AvatarColorPicker--choose": {
     "messageformat": "Vyberte barvu"
+  },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "Znovu spustit stahování"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "Spustit znovu"
   },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "Avatar skupiny"
@@ -5794,10 +5860,10 @@
     "messageformat": "Drobná vylepšení, opravy chyb a zvýšení výkonu. Děkujeme, že používáte Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.38--0": {
-    "messageformat": "Opravili jsme chybu s @ zmínkami, která občas přidávala váš vlastní účet do seznamu automaticky dokončovaných návrhů."
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "Opravili jsme drobnou chybu v animaci během skupinových hovorů."
   },
-  "icu:WhatsNew__v7.39--0": {
-    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

@@ -32,8 +32,6 @@ import pTimeout from 'p-timeout';
 import { Response } from 'node-fetch';
 import net from 'net';
 import { z } from 'zod';
-import { clearInterval } from 'timers';
-import { random } from 'lodash';
 
 import type { LibSignalError, Net } from '@signalapp/libsignal-client';
 import { Buffer } from 'node:buffer';
@@ -55,17 +53,13 @@ import { SignalService as Proto } from '../protobuf';
 import * as log from '../logging/log';
 import * as Timers from '../Timers';
 import type { IResource } from './WebSocket';
-import { isProduction } from '../util/version';
 
-import { ToastType } from '../types/Toast';
 import { AbortableProcess } from '../util/AbortableProcess';
 import type { WebAPICredentials } from './Types';
 import { NORMAL_DISCONNECT_CODE } from './SocketManager';
 import { parseUnknown } from '../util/schemas';
 
 const THIRTY_SECONDS = 30 * durations.SECOND;
-
-const STATS_UPDATE_INTERVAL = durations.MINUTE;
 
 const MAX_MESSAGE_SIZE = 512 * 1024;
 
@@ -184,9 +178,7 @@ export class IncomingWebSocketRequestLibsignal
   ) {}
 
   respond(status: number, _message: string): void {
-    if (this.ack) {
-      drop(this.ack.send(status));
-    }
+    this.ack?.send(status);
   }
 }
 
@@ -272,17 +264,6 @@ export type SendRequestResult = Readonly<{
 export enum TransportOption {
   // Only original transport is used
   Original = 'original',
-  // All requests are going through the original transport,
-  // but for every request that completes sucessfully we're initiating
-  // a healthcheck request via libsignal transport,
-  // collecting comparison statistics, and if we see many inconsistencies,
-  // we're showing a toast asking user to submit a debug log
-  ShadowingHigh = 'shadowingHigh',
-  // Similar to `shadowingHigh`, however, only 10% of requests
-  // will trigger a healthcheck, and toast is never shown.
-  // Statistics data is still added to the debug logs,
-  // so it will be available to us with all the debug log uploads.
-  ShadowingLow = 'shadowingLow',
   // Only libsignal transport is used
   Libsignal = 'libsignal',
 }
@@ -473,13 +454,17 @@ export class LibsignalWebSocketResource
   extends EventTarget
   implements IWebSocketResource
 {
-  closed = false;
+  // The reason that the connection was closed, if it was closed.
+  //
+  // When setting this to anything other than `undefined`, the "close" event
+  // must be dispatched.
+  #closedReasonCode?: number;
 
-  // Unlike WebSocketResource, libsignal will automatically attempt to keep the
-  // socket alive using websocket pings, so we don't need a timer-based
-  // keepalive mechanism. But we still send one-off keepalive requests when
-  // things change (see forceKeepAlive()).
-  #keepalive: KeepAliveSender;
+  // libsignal will use websocket pings to keep the connection open, but
+  // - Server uses /v1/keepalive requests to do some consistency checks
+  // - external events (like waking from sleep) can prompt us to do a shorter keepalive
+  // So at least for now, we want to keep this mechanism around too.
+  #keepalive: KeepAlive;
 
   constructor(
     private readonly chatService: Net.ChatConnection,
@@ -490,7 +475,9 @@ export class LibsignalWebSocketResource
   ) {
     super();
 
-    this.#keepalive = new KeepAliveSender(this, this.logId, keepalive);
+    this.#keepalive = new KeepAlive(this, this.logId, keepalive);
+    this.#keepalive.reset();
+    this.addEventListener('close', () => this.#keepalive?.stop());
   }
 
   public localPort(): number {
@@ -511,19 +498,16 @@ export class LibsignalWebSocketResource
   }
 
   public close(code = NORMAL_DISCONNECT_CODE, reason?: string): void {
-    if (this.closed) {
+    if (this.#closedReasonCode !== undefined) {
       log.info(`${this.logId}.close: Already closed! ${code}/${reason}`);
       return;
     }
+
+    this.#closedReasonCode = code;
     drop(this.chatService.disconnect());
 
-    // On linux the socket can wait a long time to emit its close event if we've
-    //   lost the internet connection. On the order of minutes. This speeds that
-    //   process up.
-    Timers.setTimeout(
-      () => this.onConnectionInterrupted(null),
-      5 * durations.SECOND
-    );
+    // Since we set `closedReasonCode`, we must dispatch the close event.
+    this.dispatchEvent(new CloseEvent(code, reason || 'no reason provided'));
   }
 
   public shutdown(): void {
@@ -531,22 +515,24 @@ export class LibsignalWebSocketResource
   }
 
   onConnectionInterrupted(cause: LibSignalError | null): void {
-    if (this.closed) {
-      log.warn(
-        `${this.logId}.onConnectionInterrupted called after resource is closed`
-      );
+    if (this.#closedReasonCode !== undefined) {
+      if (cause != null) {
+        // This can happen normally if there's a race between a disconnect
+        // request and an error on the connection. It's likely benign but in
+        // case it's not, make sure we know about it.
+        log.info(
+          `${this.logId}: onConnectionInterrupted called after resource is closed: ${cause.message}`
+        );
+      }
       return;
     }
-    this.closed = true;
     log.warn(`${this.logId}: connection closed`);
 
-    let event;
-    if (cause) {
-      event = new CloseEvent(UNEXPECTED_DISCONNECT_CODE, cause.message);
-    } else {
-      // The cause was an intentional disconnect. Report normal closure.
-      event = new CloseEvent(NORMAL_DISCONNECT_CODE, 'normal');
-    }
+    const event = cause
+      ? new CloseEvent(UNEXPECTED_DISCONNECT_CODE, cause.message)
+      : // The cause was an intentional disconnect. Report normal closure.
+        new CloseEvent(NORMAL_DISCONNECT_CODE, 'normal');
+    this.#closedReasonCode = event.code;
     this.dispatchEvent(event);
   }
 
@@ -575,169 +561,6 @@ export class LibsignalWebSocketResource
       headers: [...response.headers],
     });
   }
-}
-
-export class WebSocketResourceWithShadowing implements IWebSocketResource {
-  #shadowing: LibsignalWebSocketResource | undefined;
-  #stats: AggregatedStats;
-  #statsTimer: NodeJS.Timeout;
-  #shadowingWithReporting: boolean;
-  #logId: string;
-
-  constructor(
-    private readonly main: WebSocketResource,
-    private readonly shadowingConnection: AbortableProcess<LibsignalWebSocketResource>,
-    options: WebSocketResourceOptions
-  ) {
-    this.#stats = AggregatedStats.createEmpty();
-    this.#logId = `WebSocketResourceWithShadowing(${options.name})`;
-    this.#statsTimer = setInterval(
-      () => this.#updateStats(options.name),
-      STATS_UPDATE_INTERVAL
-    );
-    this.#shadowingWithReporting =
-      options.transportOption === TransportOption.ShadowingHigh;
-
-    // the idea is that we want to keep the shadowing connection process
-    // "in the background", so that the main connection wouldn't need to wait on it.
-    // then when we're connected, `this.shadowing` socket resource is initialized
-    // or an error reported in case of connection failure
-    const initializeAfterConnected = async () => {
-      try {
-        this.#shadowing = await shadowingConnection.resultPromise;
-        // checking IP one time per connection
-        if (this.main.ipVersion() !== this.#shadowing.ipVersion()) {
-          this.#stats.ipVersionMismatches += 1;
-          const mainIpType = this.main.ipVersion();
-          const shadowIpType = this.#shadowing.ipVersion();
-          log.warn(
-            `${this.#logId}: libsignal websocket IP [${shadowIpType}], Desktop websocket IP [${mainIpType}]`
-          );
-        }
-      } catch (error) {
-        this.#stats.connectionFailures += 1;
-      }
-    };
-    drop(initializeAfterConnected());
-
-    this.addEventListener('close', (_ev): void => {
-      clearInterval(this.#statsTimer);
-      this.#updateStats(options.name);
-    });
-  }
-
-  #updateStats(name: string) {
-    const storedStats = AggregatedStats.loadOrCreateEmpty(name);
-    let updatedStats = AggregatedStats.add(storedStats, this.#stats);
-    if (
-      this.#shadowingWithReporting &&
-      AggregatedStats.shouldReportError(updatedStats) &&
-      !isProduction(window.getVersion())
-    ) {
-      window.reduxActions.toast.showToast({
-        toastType: ToastType.TransportError,
-      });
-      log.warn(
-        `${this.#logId}: experimental transport toast displayed, flushing transport statistics before resetting`,
-        updatedStats
-      );
-      updatedStats = AggregatedStats.createEmpty();
-      updatedStats.lastToastTimestamp = Date.now();
-    }
-    AggregatedStats.store(updatedStats, name);
-    this.#stats = AggregatedStats.createEmpty();
-  }
-
-  public localPort(): number | undefined {
-    return this.main.localPort();
-  }
-
-  public addEventListener(
-    name: 'close',
-    handler: (ev: CloseEvent) => void
-  ): void {
-    this.main.addEventListener(name, handler);
-  }
-
-  public close(code = NORMAL_DISCONNECT_CODE, reason?: string): void {
-    this.main.close(code, reason);
-    if (this.#shadowing) {
-      this.#shadowing.close(code, reason);
-      this.#shadowing = undefined;
-    } else {
-      this.shadowingConnection.abort();
-    }
-  }
-
-  public shutdown(): void {
-    this.main.shutdown();
-    if (this.#shadowing) {
-      this.#shadowing.shutdown();
-      this.#shadowing = undefined;
-    } else {
-      this.shadowingConnection.abort();
-    }
-  }
-
-  public forceKeepAlive(timeout?: number): void {
-    this.main.forceKeepAlive(timeout);
-  }
-
-  public async sendRequest(options: SendRequestOptions): Promise<Response> {
-    const responsePromise = this.main.sendRequest(options);
-    const response = await responsePromise;
-
-    // if we're received a response from the main channel and the status was successful,
-    // attempting to run a healthcheck on a libsignal transport.
-    if (
-      isSuccessfulStatusCode(response.status) &&
-      this.#shouldSendShadowRequest()
-    ) {
-      drop(this.#sendShadowRequest());
-    }
-
-    return response;
-  }
-
-  async #sendShadowRequest(): Promise<void> {
-    // In the shadowing mode, it could be that we're either
-    // still connecting libsignal websocket or have already closed it.
-    // In those cases we're not running shadowing check.
-    if (!this.#shadowing) {
-      log.info(
-        `${this.#logId}: skipping healthcheck - websocket not connected or already closed`
-      );
-      return;
-    }
-    try {
-      const healthCheckResult = await this.#shadowing.sendRequest({
-        verb: 'GET',
-        path: '/v1/keepalive',
-        timeout: KEEPALIVE_TIMEOUT_MS,
-      });
-      this.#stats.requestsCompared += 1;
-      if (!isSuccessfulStatusCode(healthCheckResult.status)) {
-        this.#stats.healthcheckBadStatus += 1;
-        log.warn(
-          `${this.#logId}: keepalive via libsignal responded with status [${healthCheckResult.status}]`
-        );
-      }
-    } catch (error) {
-      this.#stats.healthcheckFailures += 1;
-      log.warn(
-        `${this.#logId}: failed to send keepalive via libsignal`,
-        Errors.toLogFormat(error)
-      );
-    }
-  }
-
-  #shouldSendShadowRequest(): boolean {
-    return this.#shadowingWithReporting || random(0, 100) < 10;
-  }
-}
-
-function isSuccessfulStatusCode(status: number): boolean {
-  return status >= 200 && status < 300;
 }
 
 export default class WebSocketResource
@@ -1141,7 +964,7 @@ class KeepAliveSender {
     } catch (error) {
       this.wsr.close(
         UNEXPECTED_DISCONNECT_CODE,
-        'No response to keepalive request'
+        `No response to keepalive request after ${timeout}ms`
       );
       return false;
     }
@@ -1159,11 +982,10 @@ class KeepAliveSender {
 }
 
 /**
- * Manages a timer that checks if a particular {@link WebSocketResource} is
+ * Manages a timer that checks if a particular {@link IWebSocketResource} is
  * still alive.
  *
- * The resource must specifically be a {@link WebSocketResource}. Other kinds of
- * resource are expected to manage their own liveness checks. If you want to
+ * Some kinds of resource are expected to manage their own liveness checks. If you want to
  * manually send keepalive requests to such resources, use the base class
  * {@link KeepAliveSender}.
  */
@@ -1172,7 +994,7 @@ class KeepAlive extends KeepAliveSender {
   #lastAliveAt: number = Date.now();
 
   constructor(
-    websocketResource: WebSocketResource,
+    websocketResource: IWebSocketResource,
     name: string,
     opts: KeepAliveOptionsType = {}
   ) {

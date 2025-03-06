@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -1121,6 +1124,9 @@
   "icu:lightboxImageAlt": {
     "messageformat": "Η εικόνα στάλθηκε στη συνομιλία"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "Λήψη {downloaded} από {total}"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "Εικονίδιο που δείχνει ότι αυτή η εικόνα έχει λεζάντα"
   },
@@ -1136,11 +1142,56 @@
   "icu:downloadNItems": {
     "messageformat": "{count, plural, one {{count,number} αντικείμενο} other {{count,number} αντικείμενα}}"
   },
-  "icu:mediaNoLongerAvailable": {
-    "messageformat": "This media is no longer available."
+  "icu:mediaNotAvailable": {
+    "messageformat": "Αυτό το πολυμέσο δεν είναι διαθέσιμο"
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "Το πολυμέσο δεν είναι διαθέσιμο"
   },
   "icu:attachmentNoLongerAvailable__learnMore": {
-    "messageformat": "Learn more"
+    "messageformat": "Μάθε περισσότερα"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "Το αρχείο δεν είναι διαθέσιμο"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "Αυτό το μήνυμα είναι ελλιπές"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "Το αυτοκόλλητο δεν είναι διαθέσιμο"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "Το ηχητικό μήνυμα δεν είναι διαθέσιμο"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "Το αρχείο δεν είναι διαθέσιμο"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "Το πλήρες μήνυμα δεν είναι διαθέσιμο"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "Το πολυμέσο δεν είναι διαθέσιμο"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "Το αυτοκόλλητο δεν είναι διαθέσιμο"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "Το ηχητικό μήνυμα δεν είναι διαθέσιμο"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "Αυτό το αρχείο δεν μεταφέρθηκε από το τηλέφωνό σου όταν συνδέθηκε αυτή η συσκευή. Δεν είναι δυνατός ο συγχρονισμός πολυμέσων και αρχείων παλαιότερων των 45 ημερών κατά τη σύνδεση της συσκευής."
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "Το πλήρες κείμενο σε αυτό το μήνυμα δεν μεταφέρθηκε από το τηλέφωνό σου όταν συνδέθηκε αυτή η συσκευή. Δεν είναι δυνατός ο συγχρονισμός μεγάλων μηνυμάτων κειμένου παλαιότερων των 45 ημερών κατά τη σύνδεση της συσκευής."
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "Αυτό το πολυμέσο δεν μεταφέρθηκε από το τηλέφωνό σου όταν συνδέθηκε αυτή η συσκευή. Δεν είναι δυνατός ο συγχρονισμός πολυμέσων παλαιότερων των 45 ημερών κατά τη σύνδεση της συσκευής."
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "Αυτό το αυτοκόλλητο δεν μεταφέρθηκε από το τηλέφωνό σου όταν συνδέθηκε αυτή η συσκευή. Δεν είναι δυνατός ο συγχρονισμός πολυμέσων και αρχείων παλαιότερων των 45 ημερών κατά τη σύνδεση της συσκευής."
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "Αυτό το ηχητικό μήνυμα δεν μεταφέρθηκε από το τηλέφωνό σου όταν συνδέθηκε αυτή η συσκευή. Δεν είναι δυνατός ο συγχρονισμός πολυμέσων και αρχείων παλαιότερων των 45 ημερών κατά τη σύνδεση της συσκευής."
   },
   "icu:save": {
     "messageformat": "Αποθήκευση"
@@ -1185,7 +1236,7 @@
     "messageformat": "Επανάληψη"
   },
   "icu:Install__qr-max-rotations__retry": {
-    "messageformat": "Refresh code"
+    "messageformat": "Ανανέωση κωδικού"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Βοήθεια"
@@ -1204,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "Όνομα συσκεύης"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "Για να αλλάξεις το όνομα αυτής της συσκευής, άνοιξε το Signal στο τηλέφωνό σου και πήγαινε στις Ρυθμίσεις > Συνδεδεμένες συσκευές"
   },
   "icu:chooseDeviceName": {
     "messageformat": "Διάλεξε το όνομα αυτής της συσκευής"
@@ -1581,10 +1635,10 @@
     "messageformat": "Διαγραφή όλων των δεδομένων;"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "Να διαγραφούν όλα τα δεδομένα και τα μηνύματα από αυτή την έκδοση Signal για υπολογιστή; Μπορείς πάντα να επανασυνδέσεις τον υπολογιστή, αλλά δεν θα μπορείς να επαναφέρεις τα μηνύματά σου. Ο λογαριασμός σου στο Signal, τα δεδομένα στο τηλέφωνό σου ή σε άλλες συνδεδεμένες συσκευές δεν θα διαγραφούν."
+    "messageformat": "Να διαγραφούν όλα τα δεδομένα και τα μηνύματα από αυτή την έκδοση Signal για υπολογιστή; Ο λογαριασμός σου στο Signal, τα δεδομένα στο τηλέφωνό σου ή σε άλλες συνδεδεμένες συσκευές δεν θα διαγραφούν."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Disconnecting and deleting all data…"
+    "messageformat": "Αποσύνδεση και διαγραφή όλων των δεδομένων..."
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Υπάρχουν παρωχημένα δεδομένα από μια προηγούμενη εγκατάσταση του Signal Desktop. Αν επιλέξεις να συνεχίσεις, αυτά θα διαγραφούν και θα ξεκινήσεις από την αρχή."
@@ -3576,7 +3630,7 @@
     "messageformat": "επόμενο"
   },
   "icu:ClearingData__description": {
-    "messageformat": "This may take a few minutes depending on the size of your message history"
+    "messageformat": "Αυτό μπορεί να πάρει μερικά λεπτά"
   },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Κάνε μια δωρεά στο Signal"
@@ -3605,11 +3659,14 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "Ολοκλήρωση μεταφοράς μηνύματος..."
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "Ακύρωση..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Προετοιμασία για λήψη..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "Μπορεί να διαρκέσει μερικά λεπτά, ανάλογα με το μέγεθος του ιστορικού μηνυμάτων σου"
+    "messageformat": "Αυτό μπορεί να πάρει μερικά λεπτά"
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Ακύρωση"
@@ -3618,16 +3675,16 @@
     "messageformat": "Τα μηνύματα και οι πληροφορίες συνομιλίας προστατεύονται με κρυπτογράφηση από άκρο σε άκρο, συμπεριλαμβανομένης της διαδικασίας συγχρονισμού. <learnMoreLink>Μάθε περισσότερα</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "Ακύρωση μεταφοράς;"
+    "messageformat": "Ακύρωση σύνδεσης συσκευής;"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Η επαναφορά των μηνυμάτων και των πολυμέσων σου δεν έχει ολοκληρωθεί. Εάν επιλέξεις να την ακυρώσεις, η συσκευή σου θα συνδεθεί χωρίς το ιστορικό μηνυμάτων σου."
+    "messageformat": "Εάν επιλέξεις να την ακυρώσεις, αυτή η συσκευή δεν θα συνδεθεί και δεν θα γίνει η μεταφορά μηνυμάτων ή πολυμέσων."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "Συνέχεια μεταφοράς"
+    "messageformat": "Συνέχεια σύνδεσης"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "Ακύρωση μεταφοράς"
+    "messageformat": "Ακύρωση σύνδεσης"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "Σφάλμα κατά την μεταφορά μηνυμάτων"
@@ -4242,7 +4299,7 @@
     "messageformat": "Επαναφορά όλων των χρωμάτων συνομιλιών"
   },
   "icu:ChatColorPicker__confirm-reset-default": {
-    "messageformat": "Επαναφορά προκαθορισμένου"
+    "messageformat": "Επαναφορά προκαθορισμένων χρωμάτων"
   },
   "icu:ChatColorPicker__confirm-reset": {
     "messageformat": "Επαναφορά"
@@ -4291,6 +4348,9 @@
   },
   "icu:GradientDial__knob-end": {
     "messageformat": "Λήξη διαβάθμισης"
+  },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "Προσαρμοσμένος χρόνος…"
@@ -4561,6 +4621,12 @@
   },
   "icu:AvatarColorPicker--choose": {
     "messageformat": "Επιλογή χρώματος"
+  },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "Επανάληψη λήψης"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "Επανάληψη"
   },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "Εικονίδιο ομάδας"
@@ -5794,10 +5860,10 @@
     "messageformat": "Μικρές τροποποιήσεις, επιδιορθώσεις σφαλμάτων και βελτιώσεις απόδοσης. Ευχαριστούμε που χρησιμοποιείς το Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.38--0": {
-    "messageformat": "Διορθώσαμε ένα σφάλμα με τις αναφορές @ που μερικές φορές συμπεριλάμβανε τον δικό σου λογαριασμό στη λίστα προτάσεων αυτόματης συμπλήρωσης."
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "Διορθώσαμε ένα μικρό σφάλμα σε σχέση με τα γραφικά κατά τη διάρκεια ομαδικών κλήσεων."
   },
-  "icu:WhatsNew__v7.39--0": {
-    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

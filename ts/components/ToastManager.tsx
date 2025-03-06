@@ -16,8 +16,7 @@ import type { AnyToast } from '../types/Toast';
 import { ToastType } from '../types/Toast';
 import type { AnyActionableMegaphone } from '../types/Megaphone';
 import { MegaphoneType } from '../types/Megaphone';
-import { openLinkInWebBrowser } from '../util/openLinkInWebBrowser';
-import { LINKED_DEVICES_URL } from '../types/support';
+import { AttachmentNotAvailableModalType } from './AttachmentNotAvailableModal';
 
 export type PropsType = {
   hideToast: () => unknown;
@@ -29,6 +28,9 @@ export type PropsType = {
     conversationId: string,
     options?: { wasPinned?: boolean }
   ) => unknown;
+  showAttachmentNotAvailableModal: (
+    type: AttachmentNotAvailableModalType
+  ) => void;
   toast?: AnyToast;
   megaphone?: AnyActionableMegaphone;
   centerToast?: boolean;
@@ -45,6 +47,7 @@ export function renderToast({
   openFileInFolder,
   onShowDebugLog,
   onUndoArchive,
+  showAttachmentNotAvailableModal,
   OS,
   toast,
 }: PropsType): JSX.Element | null {
@@ -325,6 +328,20 @@ export function renderToast({
     );
   }
 
+  if (toastType === ToastType.InvalidStorageServiceHeaders) {
+    return (
+      <Toast
+        onClose={hideToast}
+        toastAction={{
+          label: i18n('icu:Toast__ActionLabel--SubmitLog'),
+          onClick: onShowDebugLog,
+        }}
+      >
+        {i18n('icu:Toast--InvalidStorageServiceHeaders')}
+      </Toast>
+    );
+  }
+
   if (toastType === ToastType.FileSaved) {
     return (
       <Toast
@@ -415,10 +432,13 @@ export function renderToast({
         onClose={hideToast}
         toastAction={{
           label: i18n('icu:attachmentNoLongerAvailable__learnMore'),
-          onClick: () => openLinkInWebBrowser(LINKED_DEVICES_URL),
+          onClick: () =>
+            showAttachmentNotAvailableModal(
+              AttachmentNotAvailableModalType.VisualMedia
+            ),
         }}
       >
-        {i18n('icu:mediaNoLongerAvailable')}
+        {i18n('icu:mediaNotAvailable')}
       </Toast>
     );
   }

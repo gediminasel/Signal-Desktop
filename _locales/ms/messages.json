@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -1121,6 +1124,9 @@
   "icu:lightboxImageAlt": {
     "messageformat": "Imej dihantar dalam sembang"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "Memuat turun {downloaded} daripada {total}"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "Ikon menunjukkan bahawa imej ini mempunyai kapsyen"
   },
@@ -1136,11 +1142,56 @@
   "icu:downloadNItems": {
     "messageformat": "{count, plural, other {{count,number} item}}"
   },
-  "icu:mediaNoLongerAvailable": {
-    "messageformat": "This media is no longer available."
+  "icu:mediaNotAvailable": {
+    "messageformat": "Media ini tidak tersedia"
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "Media tidak tersedia"
   },
   "icu:attachmentNoLongerAvailable__learnMore": {
-    "messageformat": "Learn more"
+    "messageformat": "Ketahui lebih lanjut"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "Fail tidak tersedia"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "Mesej ini tidak lengkap"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "Pelekat tidak tersedia"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "Mesej suara tidak tersedia"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "Fail tidak tersedia"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "Mesej Penuh Tidak Tersedia"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "Media tidak tersedia"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "Pelekat tidak tersedia"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "Mesej suara tidak tersedia"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "Fail ini tidak dipindahkan dari telefon anda semasa peranti ini dipautkan. Fail dan media yang lebih lama daripada 45 hari ketika peranti dipautkan, tidak boleh disegerakkan."
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "Teks penuh dalam mesej ini tidak dipindahkan dari telefon anda semasa peranti ini dipautkan. Mesej teks panjang yang lebih lama daripada 45 hari ketika peranti dipautkan, tidak boleh disegerakkan."
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "Fail ini tidak dipindahkan dari telefon anda semasa peranti ini dipautkan. Media yang lebih lama daripada 45 hari ketika peranti dipautkan, tidak boleh disegerakkan."
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "Pelekat ini tidak dipindahkan dari telefon anda semasa peranti ini dipautkan. Media dan fail lebih lama daripada 45 hari pada masa pemautan peranti tidak boleh disegerakkan."
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "Mesej suara ini tidak dipindahkan daripada telefon anda apabila peranti ini dipautkan. Media dan fail lebih lama daripada 45 hari pada masa pemautan peranti tidak boleh disegerakkan."
   },
   "icu:save": {
     "messageformat": "Simpan"
@@ -1185,7 +1236,7 @@
     "messageformat": "Cuba Semula"
   },
   "icu:Install__qr-max-rotations__retry": {
-    "messageformat": "Refresh code"
+    "messageformat": "Perbaharui kod"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Dapatkan bantuan"
@@ -1204,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "Nama peranti"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "Untuk menukar nama peranti ini, buka Signal pada telefon anda dan pergi ke Tetapan > Peranti dipautkan"
   },
   "icu:chooseDeviceName": {
     "messageformat": "Pilih nama peranti ini"
@@ -1581,10 +1635,10 @@
     "messageformat": "Padamkan semua data?"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "Padamkan semua data dan mesej daripada versi Signal Desktop ini? Anda sentiasa boleh memautkan semula desktop ini, tetapi mesej anda tidak akan dipulihkan. Akaun Signal anda dan data pada telefon anda atau peranti terpaut lain tidak akan dipadamkan."
+    "messageformat": "Padamkan semua data dan mesej daripada versi Signal Desktop ini? Akaun Signal dan data pada telefon anda atau peranti terpaut lain tidak akan dipadamkan."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Disconnecting and deleting all data…"
+    "messageformat": "Memutuskan dan memadam semua data…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Anda mempunyai data usang daripada pemasangan Signal Desktop terdahulu. Sekiranya anda memilih untuk meneruskan, data tersebut akan dipadamkan dan anda akan bermula dari awal."
@@ -3576,7 +3630,7 @@
     "messageformat": "seterusnya"
   },
   "icu:ClearingData__description": {
-    "messageformat": "This may take a few minutes depending on the size of your message history"
+    "messageformat": "Proses ini mungkin mengambil masa beberapa minit"
   },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Sumbang kepada Signal"
@@ -3605,11 +3659,14 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "Memuktamadkan pemindahan mesej..."
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "Membatalkan..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Bersedia untuk memuat turun..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "Ini mungkin mengambil masa beberapa minit bergantung pada saiz sejarah mesej anda"
+    "messageformat": "Proses ini mungkin mengambil masa beberapa minit"
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Batal"
@@ -3618,16 +3675,16 @@
     "messageformat": "Mesej dan maklumat sembang dilindungi oleh penyulitan hujung ke hujung termasuk proses penyegerakan. <learnMoreLink>Ketahui lebih lanjut</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "Batalkan pemindahan?"
+    "messageformat": "Batalkan pemautan peranti?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Mesej dan media anda belum selesai dipulihkan. Jika anda memilih untuk membatalkan, peranti anda akan dipautkan tanpa sejarah mesej anda."
+    "messageformat": "Jika anda memilih untuk membatalkan, peranti ini tidak akan dipautkan dan tiada mesej atau media akan dipindahkan."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "Teruskan pemindahan"
+    "messageformat": "Teruskan memaut"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "Batalkan pemindahan"
+    "messageformat": "Batalkan pemautan"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "Ralat semasa memindahkan mesej anda"
@@ -4242,7 +4299,7 @@
     "messageformat": "Tetapkan semula semua warna sembang"
   },
   "icu:ChatColorPicker__confirm-reset-default": {
-    "messageformat": "Tetapkan semula lalai"
+    "messageformat": "Tetapkan semula warna lalai"
   },
   "icu:ChatColorPicker__confirm-reset": {
     "messageformat": "Tetap semula"
@@ -4291,6 +4348,9 @@
   },
   "icu:GradientDial__knob-end": {
     "messageformat": "Kecerunan berakhir"
+  },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "Masa tersuai..."
@@ -4561,6 +4621,12 @@
   },
   "icu:AvatarColorPicker--choose": {
     "messageformat": "Pilih warna"
+  },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "Cuba muat turun semula"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "Cuba Semula"
   },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "Avatar Kumpulan"
@@ -5794,10 +5860,10 @@
     "messageformat": "Sedikit pengubahsuaian, pembaikan pepijat dan peningkatan prestasi. Terima kasih kerana menggunakan Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.38--0": {
-    "messageformat": "Kami membetulkan pepijat pada @ sebutan yang kadangkala memasukkan akaun anda sendiri dalam senarai cadangan autolengkap."
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "Kami membetulkan pepijat animasi kecil semasa panggilan kumpulan."
   },
-  "icu:WhatsNew__v7.39--0": {
-    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

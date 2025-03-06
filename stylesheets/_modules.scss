@@ -594,6 +594,7 @@ $message-padding-horizontal: 12px;
 }
 
 .module-message__attachment-too-big--content-above {
+  margin-block-start: 0;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
@@ -744,6 +745,51 @@ $message-padding-horizontal: 12px;
   }
 }
 
+.module-message__undownloadable-attachment {
+  @include mixins.font-body-1;
+
+  display: flex;
+
+  padding-block: 9px 8px;
+  padding-inline: 12px;
+
+  margin-inline: -$message-padding-horizontal;
+  margin-block-start: -$message-padding-vertical;
+  margin-block-end: -$message-padding-vertical;
+
+  &--with-content-below {
+    margin-block-end: 7px;
+    border-bottom: 0.5px solid variables.$color-white-alpha-10;
+
+    @include mixins.light-theme {
+      border-color: variables.$color-black-alpha-10;
+    }
+
+    @include mixins.dark-theme {
+      border-color: variables.$color-white-alpha-10;
+    }
+  }
+
+  &--with-content-above {
+    margin-block-start: 4px;
+  }
+}
+
+.module-message__container--outgoing
+  .module-message__undownloadable-attachment--with-content-below {
+  border-color: variables.$color-white-alpha-30;
+}
+
+.module-message__undownloadable-attachment--no-text
+  + .module-message__metadata {
+  margin-block-start: -25px;
+}
+
+.module-message__generic-attachment--undownloadable-no-text
+  + .module-message__metadata {
+  margin-block-start: -$message-padding-vertical - 2px;
+}
+
 .module-message__sticker-container {
   // To ensure that images are centered if they aren't full width of bubble
   text-align: center;
@@ -783,6 +829,10 @@ $message-padding-horizontal: 12px;
       box-shadow: 0px 0px 0px 2px variables.$color-ultramarine;
     }
   }
+}
+
+.module-message__generic-attachment--undownloadable {
+  min-width: 260px;
 }
 
 .module-message__generic-attachment--with-content-below {
@@ -856,18 +906,21 @@ $message-padding-horizontal: 12px;
   color: variables.$color-gray-90;
 }
 
+$message-attachment-padding-horizontal: 8px;
+
 .module-message__generic-attachment__text {
   flex-grow: 1;
-  margin-inline-start: 8px;
+  margin-inline-start: $message-attachment-padding-horizontal + 2px;
   // The width of the icon plus our 8px margin plus 1px leeway
   max-width: calc(100% - 36px);
 }
 
 .module-message__generic-attachment__file-name {
-  @include mixins.font-body-2-bold;
+  @include mixins.font-body-1;
 
   margin-top: 2px;
   user-select: none;
+  font-weight: 500;
 
   // Handling really long filenames - cut them off
   overflow-x: hidden;
@@ -893,6 +946,11 @@ $message-padding-horizontal: 12px;
   }
 }
 
+.module-message__container--incoming
+  .module-message__generic-attachment__file-name--undownloadable {
+  color: variables.$color-black-alpha-50;
+}
+
 .module-message__generic-attachment__file-size {
   @include mixins.font-body-2;
 
@@ -915,6 +973,120 @@ $message-padding-horizontal: 12px;
   }
   @include mixins.dark-theme {
     color: variables.$color-gray-25;
+  }
+}
+
+.module-message__undownloadable-attachment__icon-container {
+  margin-inline-end: $message-attachment-padding-horizontal;
+}
+
+.module-message__undownloadable-attachment__icon-container--file {
+  margin-block-start: 1px;
+  margin-inline-end: 3px;
+}
+
+.module-message__undownloadable-attachment__icon {
+  height: 20px;
+  width: 20px;
+
+  &--audio {
+    @include mixins.color-svg(
+      '../images/icons/v3/waveform/waveform-slash.svg',
+      currentColor
+    );
+  }
+
+  &--file {
+    @include mixins.color-svg(
+      '../images/icons/v3/error/error-circle.svg',
+      currentColor
+    );
+  }
+
+  &--sticker {
+    @include mixins.color-svg(
+      '../images/icons/v3/sticker/sticker-slash.svg',
+      currentColor
+    );
+  }
+
+  &--small {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.module-message__undownloadable-attachment-info--file {
+  @include mixins.font-body-2;
+}
+
+.module-message__container--incoming
+  .module-message__undownloadable-attachment-info--file {
+  color: variables.$color-black-alpha-90;
+}
+
+.module-message__undownloadable-attachment {
+  min-width: 200px;
+}
+
+.module-message__undownloadable-attachment-file {
+  @include mixins.font-body-2;
+  display: flex;
+}
+
+.module-message__undownloadable-attachment-text {
+  @include mixins.button-reset;
+  & {
+    @include mixins.font-body-1;
+    @include mixins.light-theme {
+      border-block-start-color: variables.$color-black-alpha-10;
+    }
+    @include mixins.dark-theme {
+      border-block-start-color: variables.$color-white-alpha-10;
+    }
+
+    width: calc(100% + 24px);
+    margin-block-start: 9px;
+    margin-inline: -12px;
+    padding-block-start: 9px;
+    padding-inline: 12px;
+    border-block-start: 0.5px solid;
+  }
+}
+
+.module-message__container--outgoing
+  .module-message__undownloadable-attachment-text {
+  border-block-start-color: variables.$color-white-alpha-30;
+}
+
+.module-message__undownloadable-attachment-text__icon-container {
+  margin-inline-end: 8px;
+  align-self: flex-start;
+}
+
+.module-message--outgoing {
+  .module-message__undownloadable-attachment + .module-message__metadata {
+    .module-message__metadata__date--with-sticker {
+      color: inherit;
+    }
+
+    .module-message__metadata__status-icon--with-sticker {
+      background-color: variables.$color-white-alpha-80;
+    }
+  }
+}
+
+.module-message__undownloadable-attachment-learn-more {
+  @include mixins.button-reset;
+  @include mixins.keyboard-mode {
+    &:focus {
+      box-shadow: 0px 0px 0px 2px variables.$color-ultramarine;
+    }
+  }
+
+  & {
+    @include mixins.font-body-1-bold;
+    font-weight: 500;
   }
 }
 
@@ -1001,6 +1173,9 @@ $message-padding-horizontal: 12px;
   display: -webkit-box;
   -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
 
   @include mixins.light-theme {
     color: variables.$color-gray-90;
@@ -4178,6 +4353,8 @@ button.module-image__border-overlay:focus {
     line-height: 0;
     overflow: hidden;
     border-radius: 10px;
+
+    // Should match GroupCallRemoteParticipant CONTAINER_TRANSITION_TIME
     transition:
       top 200ms linear,
       inset-inline-start 200ms linear,
@@ -4355,6 +4532,10 @@ button.module-image__border-overlay:focus {
         color: variables.$color-black;
         margin-inline-end: 12px;
       }
+    }
+
+    &--is-on-top {
+      z-index: variables.$z-index-above-above-base;
     }
 
     &:hover {
@@ -4834,6 +5015,10 @@ button.module-calling-participants-list__contact {
   &--width-narrow {
     padding-inline: 10px 1px;
     scrollbar-gutter: stable;
+  }
+
+  &--has-dialog-padding {
+    padding-block-start: 8px;
   }
 
   &__item {
@@ -5534,10 +5719,6 @@ button.module-calling-participants-list__contact {
   }
 }
 
-.module-left-pane__dialogs {
-  margin-bottom: 8px;
-}
-
 .module-left-pane__header {
   flex-grow: 0;
   flex-shrink: 0;
@@ -5862,6 +6043,10 @@ button.module-calling-participants-list__contact {
     &::after {
       overflow-anchor: auto;
     }
+  }
+  &--scroll-locked {
+    // Component also applies flex-basis to prevent shrinkage
+    flex-shrink: 0;
   }
 
   &--have-oldest {

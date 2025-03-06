@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -1121,6 +1124,9 @@
   "icu:lightboxImageAlt": {
     "messageformat": "Bild skickad i chatt"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "Laddar ned {downloaded} av {total}"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "Ikon visandes att den här bilden har en bildtext"
   },
@@ -1136,11 +1142,56 @@
   "icu:downloadNItems": {
     "messageformat": "{count, plural, one {{count,number} objekt} other {{count,number} objekt}}"
   },
-  "icu:mediaNoLongerAvailable": {
-    "messageformat": "This media is no longer available."
+  "icu:mediaNotAvailable": {
+    "messageformat": "Den här mediafilen är inte tillgänglig"
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "Media är inte tillgängligt"
   },
   "icu:attachmentNoLongerAvailable__learnMore": {
-    "messageformat": "Learn more"
+    "messageformat": "Läs mer"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "Filen är inte tillgänglig"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "Det här meddelandet är ofullständigt"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "Klistermärket är inte tillgängligt"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "Röstmeddelandet är inte tillgängligt"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "Filen är inte tillgänglig"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "Hela meddelandet är ej tillgängligt"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "Media är inte tillgängligt"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "Klistermärket är inte tillgängligt"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "Röstmeddelandet är inte tillgängligt"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "Den här filen överfördes inte från din telefon när den här enheten länkades. Media och filer som är äldre än 45 dagar vid tidpunkten för enhetslänkning kan inte synkroniseras."
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "Hela texten i det här meddelandet överfördes inte från din telefon när den här enheten länkades. Långa textmeddelanden som är äldre än 45 dagar vid tidpunkten för enhetslänkning kan inte synkroniseras."
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "Den här mediafilen överfördes inte från din telefon när den här enheten länkades. Media som är äldre än 45 dagar vid tidpunkten för enhetslänkning kan inte synkroniseras."
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "Det här klistermärket överfördes inte från din telefon när den här enheten länkades. Media och filer som är äldre än 45 dagar vid tidpunkten för enhetslänkning kan inte synkroniseras."
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "Det här röstmeddelandet överfördes inte från din telefon när den här enheten länkades. Media och filer som är äldre än 45 dagar vid tidpunkten för enhetslänkning kan inte synkroniseras."
   },
   "icu:save": {
     "messageformat": "Spara"
@@ -1185,7 +1236,7 @@
     "messageformat": "Försök igen"
   },
   "icu:Install__qr-max-rotations__retry": {
-    "messageformat": "Refresh code"
+    "messageformat": "Uppdatera kod"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Få hjälp"
@@ -1204,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "Enhetsnamn"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "För att ändra namnet på den här enheten öppnar du Signal på din telefon och navigerar till Inställningar > Länkade enheter"
   },
   "icu:chooseDeviceName": {
     "messageformat": "Välj enhetsnamn"
@@ -1581,10 +1635,10 @@
     "messageformat": "Ta bort alla data?"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "Ta bort alla data och meddelanden från den här versionen av Signal Desktop? Du kan alltid länka om skrivbordet, men dina meddelanden återställs inte. Ditt Signal-konto och dina data på din telefon eller andra länkade enheter raderas inte."
+    "messageformat": "Ta bort alla data och meddelanden från den här versionen av Signal Desktop? Ditt Signal-konto och dina data på din telefon eller andra länkade enheter raderas inte."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Disconnecting and deleting all data…"
+    "messageformat": "Kopplar bort och tar bort alla data …"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Du har föråldrade data från en tidigare installation av Signal Desktop. Om du väljer att fortsätta kommer det att tas bort och du kommer att börja från början."
@@ -3576,7 +3630,7 @@
     "messageformat": "nästa"
   },
   "icu:ClearingData__description": {
-    "messageformat": "This may take a few minutes depending on the size of your message history"
+    "messageformat": "Detta kan ta några minuter"
   },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Donera till Signal"
@@ -3605,11 +3659,14 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "Slutför meddelandeöverföring …"
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "Avbryter …"
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Förbereder nedladdning …"
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "Detta kan ta några minuter beroende på storleken på din meddelandehistorik"
+    "messageformat": "Detta kan ta några minuter"
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Avbryt"
@@ -3618,16 +3675,16 @@
     "messageformat": "Meddelanden och chattinformation skyddas av totalstreckskryptering, inklusive synkroniseringsprocessen. <learnMoreLink>Läs mer</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "Vill du avbryta överföringen?"
+    "messageformat": "Vill du avbryta länkning av enhet?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Återställningen av dina meddelanden och media har inte slutförts. Om du väljer att avbryta kommer din enhet att länkas utan din meddelandehistorik."
+    "messageformat": "Om du väljer att avbryta kommer den här enheten inte att länkas och inga meddelanden eller media kommer att överföras."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "Fortsätt överföringen"
+    "messageformat": "Fortsätt länkning"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "Avbryt överföringen"
+    "messageformat": "Avbryt länkning"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "Det gick inte att överföra dina meddelanden"
@@ -4242,7 +4299,7 @@
     "messageformat": "Återställ alla chattfärger"
   },
   "icu:ChatColorPicker__confirm-reset-default": {
-    "messageformat": "Återställ till standard"
+    "messageformat": "Återställ standardfärger"
   },
   "icu:ChatColorPicker__confirm-reset": {
     "messageformat": "Återställ"
@@ -4291,6 +4348,9 @@
   },
   "icu:GradientDial__knob-end": {
     "messageformat": "Toning slut"
+  },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "Anpassad tid …"
@@ -4561,6 +4621,12 @@
   },
   "icu:AvatarColorPicker--choose": {
     "messageformat": "Välj en färg"
+  },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "Försök att ladda ner igen"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "Försök igen"
   },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "Gruppavatar"
@@ -5794,10 +5860,10 @@
     "messageformat": "Små justeringer, buggfixar och prestandaförbättringar. Tack för att du använder Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.38--0": {
-    "messageformat": "Vi har åtgärdat en bugg med @-omnämnanden som ibland inkluderade ditt eget konto i den förslagslista som fylldes i automatiskt."
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "Vi har åtgärdat en mindre animationsbugg under gruppsamtal."
   },
-  "icu:WhatsNew__v7.39--0": {
-    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

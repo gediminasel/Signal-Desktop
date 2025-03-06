@@ -18,6 +18,7 @@ import { incrementMessageCounter } from '../util/incrementMessageCounter';
 import { SeenStatus } from '../MessageSeenStatus';
 import { saveNewMessageBatcher } from '../util/messageBatcher';
 import { generateMessageId } from '../util/generateMessageId';
+import type { RawBodyRange } from '../types/BodyRange';
 import { BodyRange } from '../types/BodyRange';
 import * as RemoteConfig from '../RemoteConfig';
 import { isBeta, isProduction } from '../util/version';
@@ -27,6 +28,8 @@ import type {
 } from '../textsecure/WebAPI';
 import type { WithRequiredProperties } from '../types/Util';
 import { MessageModel } from '../models/messages';
+import { stringToMIMEType } from '../types/MIME';
+import { isNotNil } from '../util/isNotNil';
 
 const FETCH_INTERVAL = 3 * durations.DAY;
 const ERROR_RETRY_DELAY = 3 * durations.HOUR;
@@ -48,6 +51,13 @@ export type ReleaseNoteType = ReleaseNoteResponseType &
 
 let initComplete = false;
 
+const STYLE_MAPPING: Record<string, BodyRange.Style> = {
+  bold: BodyRange.Style.BOLD,
+  italic: BodyRange.Style.ITALIC,
+  strikethrough: BodyRange.Style.STRIKETHROUGH,
+  spoiler: BodyRange.Style.SPOILER,
+  mono: BodyRange.Style.MONOSPACE,
+};
 export class ReleaseNotesFetcher {
   #timeout: NodeJS.Timeout | undefined;
   #isRunning = false;
@@ -103,7 +113,8 @@ export class ReleaseNotesFetcher {
     note: ManifestReleaseNoteType
   ): Promise<ReleaseNoteType | undefined> {
     if (!window.textsecure.server) {
-      return undefined;
+      log.info('ReleaseNotesFetcher: WebAPI unavailable');
+      throw new Error('WebAPI unavailable');
     }
 
     const { uuid, ctaId, link } = note;
@@ -157,58 +168,169 @@ export class ReleaseNotesFetcher {
   async #processReleaseNotes(
     notes: ReadonlyArray<ManifestReleaseNoteType>
   ): Promise<void> {
-    const sortedNotes = [...notes].sort(
-      (a: ManifestReleaseNoteType, b: ManifestReleaseNoteType) =>
-        semver.compare(a.desktopMinVersion, b.desktopMinVersion)
-    );
-    const hydratedNotes = [];
-    for (const note of sortedNotes) {
-      // eslint-disable-next-line no-await-in-loop
-      hydratedNotes.push(await this.#getReleaseNote(note));
-    }
-    if (!hydratedNotes.length) {
-      log.warn('ReleaseNotesFetcher: No hydrated notes available, stopping');
-      return;
+    if (!window.textsecure.server) {
+      log.info('ReleaseNotesFetcher: WebAPI unavailable');
+      throw new Error('WebAPI unavailable');
     }
 
     log.info('ReleaseNotesFetcher: Ensuring Signal conversation');
     const signalConversation =
       await window.ConversationController.getOrCreateSignalConversation();
 
+    const sortedNotes = [...notes].sort(
+      (a: ManifestReleaseNoteType, b: ManifestReleaseNoteType) =>
+        semver.compare(a.desktopMinVersion, b.desktopMinVersion)
+    );
+
+    const newestNote = last(sortedNotes);
+    strictAssert(newestNote, 'processReleaseNotes requires at least 1 note');
+
+    const versionWatermark = newestNote.desktopMinVersion;
+
+    if (signalConversation.isBlocked()) {
+      log.info(
+        `ReleaseNotesFetcher: Signal conversation is blocked, updating watermark to ${versionWatermark}`
+      );
+      drop(
+        window.textsecure.storage.put(
+          VERSION_WATERMARK_STORAGE_KEY,
+          versionWatermark
+        )
+      );
+      return;
+    }
+
+    const hydratedNotesWithRawAttachments = (
+      await Promise.all(
+        sortedNotes.map(async note => {
+          if (!window.textsecure.server) {
+            log.info('ReleaseNotesFetcher: WebAPI unavailable');
+            throw new Error('WebAPI unavailable');
+          }
+          if (!note) {
+            return null;
+          }
+
+          const hydratedNote = await this.#getReleaseNote(note);
+          if (!hydratedNote) {
+            return null;
+          }
+          if (hydratedNote.media) {
+            const { imageData: rawAttachmentData, contentType } =
+              await window.textsecure.server.getReleaseNoteImageAttachment(
+                hydratedNote.media
+              );
+
+            return {
+              hydratedNote,
+              rawAttachmentData,
+              contentType: hydratedNote.mediaContentType ?? contentType,
+            };
+          }
+
+          return { hydratedNote, rawAttachmentData: null, contentType: null };
+        })
+      )
+    ).filter(isNotNil);
+
+    const hydratedNotes = await Promise.all(
+      hydratedNotesWithRawAttachments.map(
+        async ({ hydratedNote, rawAttachmentData, contentType }) => {
+          if (rawAttachmentData && !contentType) {
+            throw new Error('Content type is missing from attachment');
+          }
+
+          if (!rawAttachmentData || !contentType) {
+            return { hydratedNote, processedAttachment: null };
+          }
+
+          const localAttachment =
+            await window.Signal.Migrations.writeNewAttachmentData(
+              rawAttachmentData
+            );
+
+          const processedAttachment =
+            await window.Signal.Migrations.processNewAttachment({
+              ...localAttachment,
+              contentType: stringToMIMEType(contentType),
+            });
+
+          return { hydratedNote, processedAttachment };
+        }
+      )
+    );
+
+    if (!hydratedNotes.length) {
+      log.warn('ReleaseNotesFetcher: No hydrated notes available, stopping');
+      return;
+    }
+
     const messages: Array<MessageAttributesType> = [];
-    hydratedNotes.forEach(async (note, index) => {
-      if (!note) {
-        return;
+    hydratedNotes.forEach(
+      ({ hydratedNote: note, processedAttachment }, index) => {
+        if (!note) {
+          return;
+        }
+
+        const { title, body, bodyRanges: noteBodyRanges } = note;
+        const titleBodySeparator = '\n\n';
+        const filteredNoteBodyRanges: Array<RawBodyRange> = (
+          noteBodyRanges ?? []
+        )
+          .map(range => {
+            if (
+              range.length == null ||
+              range.start == null ||
+              range.style == null ||
+              !STYLE_MAPPING[range.style] ||
+              range.start + range.length - 1 >= body.length
+            ) {
+              return null;
+            }
+
+            const relativeStart =
+              range.start + title.length + titleBodySeparator.length;
+
+            return {
+              start: relativeStart,
+              length: range.length,
+              style: STYLE_MAPPING[range.style],
+            };
+          })
+          .filter(isNotNil);
+
+        const messageBody = `${title}${titleBodySeparator}${body}`;
+        const bodyRanges: Array<RawBodyRange> = [
+          { start: 0, length: title.length, style: BodyRange.Style.BOLD },
+          ...filteredNoteBodyRanges,
+        ];
+        const timestamp = Date.now() + index;
+
+        const message = new MessageModel({
+          ...generateMessageId(incrementMessageCounter()),
+          ...(processedAttachment
+            ? { attachments: [processedAttachment] }
+            : {}),
+          body: messageBody,
+          bodyRanges,
+          conversationId: signalConversation.id,
+          readStatus: ReadStatus.Unread,
+          seenStatus: SeenStatus.Unseen,
+          received_at_ms: timestamp,
+          sent_at: timestamp,
+          serverTimestamp: timestamp,
+          sourceDevice: 1,
+          sourceServiceId: signalConversation.getServiceId(),
+          timestamp,
+          type: 'incoming',
+        });
+
+        window.MessageCache.register(message);
+        drop(signalConversation.onNewMessage(message));
+
+        messages.push(message.attributes);
       }
-
-      const { title, body } = note;
-      const messageBody = `${title}\n\n${body}`;
-      const bodyRanges = [
-        { start: 0, length: title.length, style: BodyRange.Style.BOLD },
-      ];
-      const timestamp = Date.now() + index;
-
-      const message = new MessageModel({
-        ...generateMessageId(incrementMessageCounter()),
-        body: messageBody,
-        bodyRanges,
-        conversationId: signalConversation.id,
-        readStatus: ReadStatus.Unread,
-        seenStatus: SeenStatus.Unseen,
-        received_at_ms: timestamp,
-        sent_at: timestamp,
-        serverTimestamp: timestamp,
-        sourceDevice: 1,
-        sourceServiceId: signalConversation.getServiceId(),
-        timestamp,
-        type: 'incoming',
-      });
-
-      window.MessageCache.register(message);
-      drop(signalConversation.onNewMessage(message));
-
-      messages.push(message.attributes);
-    });
+    );
 
     await Promise.all(
       messages.map(message => saveNewMessageBatcher.add(message))
@@ -217,10 +339,6 @@ export class ReleaseNotesFetcher {
     signalConversation.set({ active_at: Date.now(), isArchived: false });
     drop(signalConversation.updateUnread());
 
-    const newestNote = last(sortedNotes);
-    strictAssert(newestNote, 'processReleaseNotes requires at least 1 note');
-
-    const versionWatermark = newestNote.desktopMinVersion;
     log.info(
       `ReleaseNotesFetcher: Updating version watermark to ${versionWatermark}`
     );
@@ -276,7 +394,7 @@ export class ReleaseNotesFetcher {
           log.info(
             `ReleaseNotesFetcher: Processing ${validNotes.length} new release notes`
           );
-          drop(this.#processReleaseNotes(validNotes));
+          await this.#processReleaseNotes(validNotes);
         } else {
           log.info('ReleaseNotesFetcher: No new release notes');
         }
@@ -293,6 +411,7 @@ export class ReleaseNotesFetcher {
 
       await this.#scheduleForNextRun();
       this.setTimeoutForNextRun();
+      window.SignalCI?.handleEvent('release_notes_fetcher_complete', {});
     } catch (error) {
       const errorString =
         error instanceof HTTPError

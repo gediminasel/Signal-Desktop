@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -1121,6 +1124,9 @@
   "icu:lightboxImageAlt": {
     "messageformat": "Sohbette gönderilen resim"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "{downloaded} / {total} indiriliyor"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "Bu görüntünün başlığı olduğunu gösteren ikon"
   },
@@ -1136,11 +1142,56 @@
   "icu:downloadNItems": {
     "messageformat": "{count, plural, one {{count,number} Öğe} other {{count,number} öğe}}"
   },
-  "icu:mediaNoLongerAvailable": {
-    "messageformat": "This media is no longer available."
+  "icu:mediaNotAvailable": {
+    "messageformat": "Bu medya kullanılamıyor"
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "Medya kullanılamıyor"
   },
   "icu:attachmentNoLongerAvailable__learnMore": {
-    "messageformat": "Learn more"
+    "messageformat": "Daha fazla bilgi"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "Dosya bulunamıyor"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "Bu mesaj eksik"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "Çıkartma kullanılamıyor"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "Sesli mesaj kullanılamıyor"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "Dosya bulunamıyor"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "Tam mesaj bulunamıyor"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "Medya kullanılamıyor"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "Çıkartma kullanılamıyor"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "Sesli mesaj kullanılamıyor"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "Bu cihaz bağlandığında, bu dosya telefonundan aktarılmadı. Cihaz bağlandığında 45 günden eski olan medya ve dosyalar senkronize edilemez."
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "Bu mesajdaki metnin tamamı, bu cihaz bağlandığında telefonundan aktarılmadı. Cihaz bağlandığında 45 günden eski olan uzun metin mesajları senkronize edilemez."
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "Bu medya bağlandığında, bu dosya telefonundan aktarılmadı. Cihaz bağlandığında 45 günden eski olan medya senkronize edilemez."
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "Bu cihaz bağlandığında, bu çıkartma telefonundan aktarılmadı. Cihaz bağlandığında 45 günden eski olan medya ve dosyalar senkronize edilemez."
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "Bu cihaz bağlandığında, bu sesli mesaj telefonundan aktarılmadı. Cihaz bağlandığında 45 günden eski olan medya ve dosyalar senkronize edilemez."
   },
   "icu:save": {
     "messageformat": "Kaydet"
@@ -1185,7 +1236,7 @@
     "messageformat": "Tekrar dene"
   },
   "icu:Install__qr-max-rotations__retry": {
-    "messageformat": "Refresh code"
+    "messageformat": "Kodu yenile"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Yardım al"
@@ -1204,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "Cihaz adı"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "Bu cihazın adını değiştirmek için telefonunda Signal'i aç ve Ayarlar > Bağlı Cihazlar bölümüne git"
   },
   "icu:chooseDeviceName": {
     "messageformat": "Bu cihazı adlandırın"
@@ -1581,10 +1635,10 @@
     "messageformat": "Tüm veri silinsin mi?"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "Signal Desktop'ın bu sürümündeki tüm veriler ve mesajlar silinsin mi? Bu masaüstünü istediğin zaman yeniden bağlayabilirsin ancak mesajların geri yüklenmez. Signal hesabın ve telefonundaki veya diğer bağlı cihazlarındaki veriler silinmez."
+    "messageformat": "Signal Desktop'ın bu sürümündeki tüm veriler ve mesajlar silinsin mi? Signal hesabın ve telefonundaki veya diğer bağlı cihazlarındaki veriler silinmez."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Disconnecting and deleting all data…"
+    "messageformat": "Bağlantı kesiliyor ve tüm veriler siliniyor…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Daha önceki Signal Masaüstü kurulumundan kalma eski verilerin var. Eğer devam etmeyi seçersen bu veriler silinecek ve sıfırdan başlayacaksın."
@@ -3576,7 +3630,7 @@
     "messageformat": "sonraki"
   },
   "icu:ClearingData__description": {
-    "messageformat": "This may take a few minutes depending on the size of your message history"
+    "messageformat": "Bu işlem birkaç dakika sürebilir"
   },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Signal'e Bağış Yap"
@@ -3605,11 +3659,14 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "Mesaj aktarımı tamamlanıyor..."
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "İptal ediliyor..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "İndirmeye hazırlanıyor..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "Mesaj geçmişinin boyutuna bağlı olarak birkaç dakika sürebilir"
+    "messageformat": "Bu işlem birkaç dakika sürebilir"
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "İptal"
@@ -3618,16 +3675,16 @@
     "messageformat": "Mesajlar ve sohbet bilgileri, senkronizasyon süreci de dahil olmak üzere uçtan uca şifreleme ile korunmaktadır. <learnMoreLink>Dahasını öğren</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "Transfer iptal edilsin mi?"
+    "messageformat": "Cihaz bağlantısı iptal edilsin mi?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Mesajlarının ve medyanın geri yüklenmesi tamamlanmadı. İptal etmeyi seçersen cihazın mesaj geçmişin olmadan bağlanacaktır."
+    "messageformat": "İptal etmeyi seçersen bu cihaz bağlanmayacak ve hiçbir mesaj veya medya aktarılmayacaktır."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "Transfere devam et"
+    "messageformat": "Bağlantıya devam et"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "Transferi iptal et"
+    "messageformat": "Bağlantıyı iptal et"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "Mesajların aktarılırken hata oluştu"
@@ -4242,7 +4299,7 @@
     "messageformat": "Tüm sohbet renklerini sıfırla"
   },
   "icu:ChatColorPicker__confirm-reset-default": {
-    "messageformat": "Varsayılanı sıfırla"
+    "messageformat": "Varsayılan renkleri sıfırla"
   },
   "icu:ChatColorPicker__confirm-reset": {
     "messageformat": "Sıfırla"
@@ -4291,6 +4348,9 @@
   },
   "icu:GradientDial__knob-end": {
     "messageformat": "Geçiş sonu"
+  },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "Özel zaman…"
@@ -4561,6 +4621,12 @@
   },
   "icu:AvatarColorPicker--choose": {
     "messageformat": "Bir renk seçin"
+  },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "İndirmeyi yeniden dene"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "Tekrar dene"
   },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "Grup resmi"
@@ -5794,10 +5860,10 @@
     "messageformat": "Küçük ince ayarlar, hata düzeltmeleri ve performans geliştirmeleri yaptık. Signal'i kullandığın için teşekkürler!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.38--0": {
-    "messageformat": "Otomatik tamamlama öneri listesine bazen yanlışlıkla kendi hesabını dahil eden @ bahsetmeler ile ilgili bir hatayı düzelttik. Bu sayede grup sohbetlerinde kendini gereksiz yere görmene gerek kalmayacak."
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "Grup aramaları sırasında oluşan küçük bir animasyon hatasını giderdik. Artık animasyonları zevkle izleyebilirsin!"
   },
-  "icu:WhatsNew__v7.39--0": {
-    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

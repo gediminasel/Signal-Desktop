@@ -50,17 +50,22 @@ async function main(): Promise<void> {
       throw new Error(`Exit code: ${status}`);
     }
   } catch (error) {
-    const { ARTIFACTS_DIR } = process.env;
-    if (!ARTIFACTS_DIR) {
-      console.error(
-        'Not saving artifacts. Please set ARTIFACTS_DIR env variable'
-      );
-    } else {
-      console.error(`Saving logs to ${ARTIFACTS_DIR}`);
-      await mkdir(ARTIFACTS_DIR, { recursive: true });
+    try {
+      const { ARTIFACTS_DIR } = process.env;
+      if (!ARTIFACTS_DIR) {
+        console.error(
+          'Not saving artifacts. Please set ARTIFACTS_DIR env variable'
+        );
+      } else {
+        console.error(`Saving logs to ${ARTIFACTS_DIR}`);
+        await mkdir(ARTIFACTS_DIR, { recursive: true });
 
-      const logsDir = join(storagePath, 'logs');
-      await rename(logsDir, join(ARTIFACTS_DIR, 'logs'));
+        const logsDir = join(storagePath, 'logs');
+        await rename(logsDir, join(ARTIFACTS_DIR, 'logs'));
+      }
+    } catch (error2) {
+      console.error('Error while copying error logs');
+      console.error(error2);
     }
 
     throw error;

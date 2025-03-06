@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -1121,6 +1124,9 @@
   "icu:lightboxImageAlt": {
     "messageformat": "รูปภาพที่ส่งในแชท"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "กำลังดาวน์โหลด {downloaded} จาก {total}"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "ไอคอนแสดงว่ารูปภาพนี้มีคำอธิบายภาพ"
   },
@@ -1136,11 +1142,56 @@
   "icu:downloadNItems": {
     "messageformat": "{count, plural, other {{count,number} รายการ}}"
   },
-  "icu:mediaNoLongerAvailable": {
-    "messageformat": "This media is no longer available."
+  "icu:mediaNotAvailable": {
+    "messageformat": "ไม่พบไฟล์สื่อนี้"
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "ไม่พบไฟล์สื่อ"
   },
   "icu:attachmentNoLongerAvailable__learnMore": {
-    "messageformat": "Learn more"
+    "messageformat": "เรียนรู้เพิ่มเติม"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "ไม่พบไฟล์"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "ข้อความนี้ไม่ครบถ้วนสมบูรณ์"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "ไม่พบสติกเกอร์"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "ไม่พบข้อความเสียง"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "ไม่พบไฟล์"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "ไม่พบข้อความที่ครบถ้วน"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "ไม่พบไฟล์สื่อ"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "ไม่พบสติกเกอร์"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "ไม่พบข้อความเสียง"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "ไฟล์นี้ไม่ได้ถูกถ่ายโอนจากโทรศัพท์ของคุณในขั้นตอนการเชื่อมโยงอุปกรณ์ ระบบไม่สามารถซิงค์ไฟล์และสื่อที่เก่ากว่า 45 วันนับจากวันที่เชื่อมโยงอุปกรณ์ได้"
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "เนื้อหาที่ครบถ้วนทั้งหมดในข้อความนี้ไม่ได้ถูกถ่ายโอนจากโทรศัพท์ของคุณในขั้นตอนการเชื่อมโยงอุปกรณ์ ระบบไม่สามารถซิงค์ข้อความขนาดยาวที่เก่ากว่า 45 วันนับจากวันที่เชื่อมโยงอุปกรณ์ได้"
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "ไฟล์สื่อนี้ไม่ได้ถูกถ่ายโอนจากโทรศัพท์ของคุณในขั้นตอนการเชื่อมโยงอุปกรณ์ ระบบไม่สามารถซิงค์ไฟล์สื่อที่เก่ากว่า 45 วันนับจากวันที่เชื่อมโยงอุปกรณ์ได้"
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "สติกเกอร์นี้ไม่ได้ถูกถ่ายโอนจากโทรศัพท์ของคุณในขั้นตอนการเชื่อมโยงอุปกรณ์ ระบบไม่สามารถซิงค์ไฟล์และสื่อที่เก่ากว่า 45 วันนับจากวันที่เชื่อมโยงอุปกรณ์ได้"
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "ข้อความเสียงนี้ไม่ได้ถูกถ่ายโอนจากโทรศัพท์ของคุณในขั้นตอนการเชื่อมโยงอุปกรณ์ ระบบไม่สามารถซิงค์ไฟล์และสื่อที่เก่ากว่า 45 วันนับจากวันที่เชื่อมโยงอุปกรณ์ได้"
   },
   "icu:save": {
     "messageformat": "บันทึก"
@@ -1185,7 +1236,7 @@
     "messageformat": "ลองอีกครั้ง"
   },
   "icu:Install__qr-max-rotations__retry": {
-    "messageformat": "Refresh code"
+    "messageformat": "รีเฟรชคิวอาร์โค้ด"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "ขอความช่วยเหลือ"
@@ -1204,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "ชื่ออุปกรณ์"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "หากต้องการเปลี่ยนชื่ออุปกรณ์นี้ ให้เปิดแอป Signal บนโทรศัพท์ แล้วไปที่การตั้งค่า > อุปกรณ์ที่เชื่อมโยงอยู่"
   },
   "icu:chooseDeviceName": {
     "messageformat": "เลือกชื่อของอุปกรณ์นี้"
@@ -1581,10 +1635,10 @@
     "messageformat": "ลบข้อมูลทั้งหมดหรือไม่"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "คุณต้องการลบข้อมูลและข้อความทั้งหมดออกจาก Signal เดสก์ท็อปเวอร์ชันนี้ใช่หรือไม่ คุณสามารถเชื่อมโยงอุปกรณ์เดสก์ท็อปนี้ใหม่อีกครั้งได้ทุกเมื่อ แต่ข้อความของคุณจะไม่ได้รับการกู้คืนกลับมา อย่างไรก็ดี ระบบจะไม่ลบบัญชี Signal และข้อมูลของคุณที่อยู่บนมือถือหรืออุปกรณ์ที่เชื่อมโยงอยู่เครื่องอื่นๆ"
+    "messageformat": "คุณต้องการลบข้อมูลและข้อความทั้งหมดออกจาก Signal เดสก์ท็อปเวอร์ชันนี้ใช่หรือไม่ อย่างไรก็ดี ระบบจะไม่ลบบัญชี Signal และข้อมูลของคุณที่อยู่บนมือถือหรืออุปกรณ์ที่เชื่อมโยงอยู่เครื่องอื่นๆ"
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Disconnecting and deleting all data…"
+    "messageformat": "กำลังยกเลิกการเชื่อมต่อและลบข้อมูลทั้งหมด…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "คุณมีข้อมูลที่ล้าสมัยจากการติดตั้ง Signal เดสก์ท็อปครั้งก่อนหน้า หากเลือกที่จะดำเนินการต่อ ข้อมูลดังกล่าวจะถูกลบและทุกอย่างจะเริ่มต้นใหม่ทั้งหมด"
@@ -3576,7 +3630,7 @@
     "messageformat": "ถ้ดไป"
   },
   "icu:ClearingData__description": {
-    "messageformat": "This may take a few minutes depending on the size of your message history"
+    "messageformat": "ขั้นตอนนี้อาจใช้เวลาสักครู่"
   },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "บริจาคให้ Signal"
@@ -3605,11 +3659,14 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "กำลังดำเนินการถ่ายโอนข้อความให้เสร็จสิ้น..."
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "กำลังยกเลิก..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "กำลังเตรียมการดาวน์โหลด..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "ขั้นตอนนี้อาจใช้เวลาสักครู่ โดยขึ้นอยู่กับขนาดประวัติการส่งข้อความของคุณ"
+    "messageformat": "ขั้นตอนนี้อาจใช้เวลาสักครู่"
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "ยกเลิก"
@@ -3618,16 +3675,16 @@
     "messageformat": "ปกป้องข้อความและข้อมูลการแชทด้วยการเข้ารหัสตั้งแต่ต้นทางถึงปลายทาง รวมถึงในขั้นตอนการซิงค์ <learnMoreLink>เรียนรู้เพิ่มเติม</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "ยกเลิกการถ่ายโอนใช่หรือไม่"
+    "messageformat": "ยกเลิกการเชื่อมโยงอุปกรณ์ใช่หรือไม่"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "ยังกู้คืนข้อความและไฟล์สื่อของคุณไม่เสร็จสมบูรณ์ หากยกเลิก อุปกรณ์ของคุณจะได้รับการเชื่อมโยงโดยไม่มีการถ่ายโอนประวัติการส่งข้อความ"
+    "messageformat": "หากยกเลิก ระบบจะไม่เชื่อมโยงอุปกรณ์เครื่องนี้และจะไม่ถ่ายโอนข้อความหรือไฟล์สื่อใดๆ"
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "ถ่ายโอนต่อ"
+    "messageformat": "ดำเนินการเชื่อมโยงต่อ"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "ยกเลิกการถ่ายโอน"
+    "messageformat": "ยกเลิกการเชื่อมโยง"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "เกิดข้อผิดพลาดในการถ่ายโอนข้อความ"
@@ -4242,7 +4299,7 @@
     "messageformat": "รีเซ็ตสีแชททั้งหมด"
   },
   "icu:ChatColorPicker__confirm-reset-default": {
-    "messageformat": "รีเซ็ตเป็นค่าเริ่มต้น"
+    "messageformat": "รีเซ็ตสีเริ่มต้น"
   },
   "icu:ChatColorPicker__confirm-reset": {
     "messageformat": "รีเซ็ต"
@@ -4291,6 +4348,9 @@
   },
   "icu:GradientDial__knob-end": {
     "messageformat": "สิ้นสุดการไล่สี"
+  },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "กำหนดเวลา…"
@@ -4561,6 +4621,12 @@
   },
   "icu:AvatarColorPicker--choose": {
     "messageformat": "เลือกสี"
+  },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "ลองดาวน์โหลดอีกครั้ง"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "ลองอีกครั้ง"
   },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "อวตารกลุ่ม"
@@ -5794,10 +5860,10 @@
     "messageformat": "มีการปรับเปลี่ยนเล็กน้อย พร้อมแก้ไขบั๊ก และการพัฒนาประสิทธิภาพให้ดียิ่งขึ้น ขอขอบคุณที่เลือกใช้ Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.38--0": {
-    "messageformat": "เราแก้ไขบั๊กในฟีเจอร์ @การกล่าวถึง ที่เคยรวมบัญชีของคุณไว้ในรายชื่อที่แนะนำด้วย"
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "เราแก้ไขบั๊กเกี่ยวกับภาพเคลื่อนไหวที่อาจเคยสร้างความรำคาญใจในระหว่างสายโทรกลุ่ม"
   },
-  "icu:WhatsNew__v7.39--0": {
-    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

@@ -6,11 +6,11 @@ import { v4 as generateGuid } from 'uuid';
 
 import {
   dequeueOldestSyncTasks,
-  getMostRecentAddressableMessages,
   removeSyncTaskById,
   saveSyncTasks,
 } from '../../sql/Server';
-import type { WritableDB } from '../../sql/Interface';
+import type { WritableDB, ReadableDB, MessageType } from '../../sql/Interface';
+import { sql, jsonToObject } from '../../sql/util';
 import { insertData, updateToVersion, createDB } from './helpers';
 import { MAX_SYNC_TASK_ATTEMPTS } from '../../util/syncTasks.types';
 import { WEEK } from '../../util/durations';
@@ -19,6 +19,27 @@ import type { MessageAttributesType } from '../../model-types';
 import type { SyncTaskType } from '../../util/syncTasks';
 
 /* eslint-disable camelcase */
+
+// Snapshot before: 1270
+export function getMostRecentAddressableMessages(
+  db: ReadableDB,
+  conversationId: string,
+  limit = 5
+): Array<MessageType> {
+  const [query, parameters] = sql`
+    SELECT json FROM messages
+    INDEXED BY messages_by_date_addressable
+    WHERE
+      conversationId IS ${conversationId} AND
+      isAddressableMessage = 1
+    ORDER BY received_at DESC, sent_at DESC
+    LIMIT ${limit};
+  `;
+
+  const rows = db.prepare(query).all(parameters);
+
+  return rows.map(row => jsonToObject(row.json));
+}
 
 function generateMessage(json: MessageAttributesType) {
   const { conversationId, received_at, sent_at, type } = json;
@@ -217,12 +238,19 @@ describe('SQL/updateToSchemaVersion1060', () => {
 
       saveSyncTasks(db, expected);
 
-      const actual = dequeueOldestSyncTasks(db, null);
-      assert.deepEqual(expected, actual.tasks, 'before delete');
+      const actual = dequeueOldestSyncTasks(db, { previousRowId: null });
+      assert.deepEqual(
+        expected.map(t => ({ ...t, attempts: t.attempts + 1 })),
+        actual.tasks,
+        'before delete'
+      );
 
       removeSyncTaskById(db, expected[1].id);
 
-      const actualAfterDelete = dequeueOldestSyncTasks(db, null);
+      const actualAfterDelete = dequeueOldestSyncTasks(db, {
+        previousRowId: null,
+        incrementAttempts: false,
+      });
       assert.deepEqual(
         [
           { ...expected[0], attempts: 2 },
@@ -289,10 +317,17 @@ describe('SQL/updateToSchemaVersion1060', () => {
 
       saveSyncTasks(db, expected);
 
-      const actual = dequeueOldestSyncTasks(db, null);
+      const actual = dequeueOldestSyncTasks(db, { previousRowId: null });
 
       assert.lengthOf(actual.tasks, 3);
-      assert.deepEqual([expected[1], expected[2], expected[3]], actual.tasks);
+      assert.deepEqual(
+        [
+          { ...expected[1], attempts: 3 },
+          { ...expected[2], attempts: 11 },
+          { ...expected[3], attempts: 5 },
+        ],
+        actual.tasks
+      );
     });
   });
 });

@@ -115,8 +115,76 @@ export type StoredItemType<K extends ItemKeyType> = {
   value: BytesToStrings<StorageAccessType[K]>;
 };
 export type MessageType = MessageAttributesType;
+
+// See: ts/sql/Interface.ts
+//
+// When adding a new column:
+//
+// - Make sure the name matches the one in `MessageAttributeTypes`
+// - Update `hydrateMessage`
+//
+export const MESSAGE_COLUMNS = [
+  'json',
+
+  'id',
+  'body',
+  'conversationId',
+  'expirationStartTimestamp',
+  'expireTimer',
+  'hasAttachments',
+  'hasFileAttachments',
+  'hasVisualMediaAttachments',
+  'isChangeCreatedByUs',
+  'isErased',
+  'isViewOnce',
+  'mentionsMe',
+  'received_at',
+  'received_at_ms',
+  'schemaVersion',
+  'serverGuid',
+  'sent_at',
+  'source',
+  'sourceServiceId',
+  'sourceDevice',
+  'storyId',
+  'type',
+  'readStatus',
+  'seenStatus',
+  'serverTimestamp',
+  'timestamp',
+  'unidentifiedDeliveryReceived',
+] as const;
+
 export type MessageTypeUnhydrated = {
   json: string;
+
+  id: string;
+  body: string | null;
+  conversationId: string | null;
+  expirationStartTimestamp: number | null;
+  expireTimer: number | null;
+  hasAttachments: 0 | 1 | null;
+  hasFileAttachments: 0 | 1 | null;
+  hasVisualMediaAttachments: 0 | 1 | null;
+  isChangeCreatedByUs: 0 | 1 | null;
+  isErased: 0 | 1 | null;
+  isViewOnce: 0 | 1 | null;
+  mentionsMe: 0 | 1 | null;
+  received_at: number | null;
+  received_at_ms: number | null;
+  schemaVersion: number | null;
+  serverGuid: string | null;
+  sent_at: number | null;
+  source: string | null;
+  sourceServiceId: string | null;
+  sourceDevice: number | null;
+  serverTimestamp: number | null;
+  storyId: string | null;
+  type: string;
+  timestamp: number | null;
+  readStatus: number | null;
+  seenStatus: number | null;
+  unidentifiedDeliveryReceived: 0 | 1 | null;
 };
 
 export type PreKeyIdType = `${ServiceIdString}:${number}`;
@@ -147,9 +215,7 @@ export type StoredPreKeyType = PreKeyType & {
   privateKey: string;
   publicKey: string;
 };
-export type ServerSearchResultMessageType = {
-  json: string;
-
+export type ServerSearchResultMessageType = MessageTypeUnhydrated & {
   // If the FTS matches text in message.body, snippet will be populated
   ftsSnippet: string | null;
 
@@ -159,7 +225,6 @@ export type ServerSearchResultMessageType = {
   mentionLength: number | null;
 };
 export type ClientSearchResultMessageType = MessageType & {
-  json: string;
   bodyRanges: ReadonlyArray<RawBodyRange>;
   snippet: string;
 };
@@ -300,35 +365,39 @@ export type StickerPackType = InstalledStickerPackType &
     title: string;
   }>;
 
+export type StickerPackRefType = Readonly<{
+  packId: string;
+  messageId: string;
+  stickerId: number;
+  isUnresolved: boolean;
+}>;
+
 export type UnprocessedType = {
   id: string;
   timestamp: number;
-  receivedAtCounter: number | null;
-  version: number;
+  /*
+   * A client generated date used for removing old envelopes from the table
+   * on startup.
+   */
+  receivedAtDate: number;
+  receivedAtCounter: number;
   attempts: number;
-  envelope?: string;
+  type: number;
+  isEncrypted: boolean;
+  content: Uint8Array;
 
-  messageAgeSec?: number;
-  source?: string;
-  sourceServiceId?: ServiceIdString;
-  sourceDevice?: number;
-  destinationServiceId?: ServiceIdString;
-  updatedPni?: PniString;
-  serverGuid?: string;
-  serverTimestamp?: number;
-  decrypted?: string;
-  urgent?: boolean;
-  story?: boolean;
-  reportingToken?: string;
-};
-
-export type UnprocessedUpdateType = {
-  source?: string;
-  sourceServiceId?: ServiceIdString;
-  sourceDevice?: number;
-  serverGuid?: string;
-  serverTimestamp?: number;
-  decrypted?: string;
+  messageAgeSec: number;
+  source: string | undefined;
+  sourceServiceId: ServiceIdString | undefined;
+  sourceDevice: number | undefined;
+  destinationServiceId: ServiceIdString;
+  updatedPni: PniString | undefined;
+  serverGuid: string;
+  serverTimestamp: number;
+  urgent: boolean;
+  story: boolean;
+  reportingToken: Uint8Array | undefined;
+  groupId: string | undefined;
 };
 
 export type ConversationMessageStatsType = {
@@ -831,7 +900,13 @@ type WritableInterface = {
 
   removeSyncTaskById: (id: string) => void;
   saveSyncTasks: (tasks: Array<SyncTaskType>) => void;
-  dequeueOldestSyncTasks: (previousRowId: number | null) => {
+
+  incrementAllSyncTaskAttempts: () => void;
+  dequeueOldestSyncTasks: (options: {
+    previousRowId: number | null;
+    incrementAttempts?: boolean;
+    syncTaskTypes?: Array<SyncTaskType['type']>;
+  }) => {
     tasks: Array<SyncTaskType>;
     lastRowId: number | null;
   };
@@ -840,10 +915,6 @@ type WritableInterface = {
   getUnprocessedByIdsAndIncrementAttempts: (
     ids: ReadonlyArray<string>
   ) => Array<UnprocessedType>;
-  updateUnprocessedWithData: (id: string, data: UnprocessedUpdateType) => void;
-  updateUnprocessedsWithData: (
-    array: Array<{ id: string; data: UnprocessedUpdateType }>
-  ) => void;
   removeUnprocessed: (id: string | Array<string>) => void;
 
   /** only for testing */
@@ -878,11 +949,12 @@ type WritableInterface = {
 
   createOrUpdateStickerPack: (pack: StickerPackType) => void;
   createOrUpdateStickerPacks: (packs: ReadonlyArray<StickerPackType>) => void;
+  // Returns previous sticker pack status
   updateStickerPackStatus: (
     id: string,
     status: StickerPackStatusType,
     options?: { timestamp: number }
-  ) => void;
+  ) => StickerPackStatusType | null;
   updateStickerPackInfo: (info: StickerPackInfoType) => void;
   createOrUpdateSticker: (sticker: StickerType) => void;
   createOrUpdateStickers: (sticker: ReadonlyArray<StickerType>) => void;
@@ -891,19 +963,22 @@ type WritableInterface = {
     stickerId: number,
     lastUsed: number
   ) => void;
-  addStickerPackReference: (messageId: string, packId: string) => void;
+  addStickerPackReference: (ref: StickerPackRefType) => void;
   deleteStickerPackReference: (
-    messageId: string,
-    packId: string
+    ref: Pick<StickerPackRefType, 'messageId' | 'packId'>
   ) => ReadonlyArray<string> | undefined;
   deleteStickerPack: (packId: string) => Array<string>;
+  getUnresolvedStickerPackReferences: (
+    packId: string
+  ) => Array<StickerPackRefType>;
   addUninstalledStickerPack: (pack: UninstalledStickerPackType) => void;
   addUninstalledStickerPacks: (
     pack: ReadonlyArray<UninstalledStickerPackType>
   ) => void;
-  removeUninstalledStickerPack: (packId: string) => void;
-  installStickerPack: (packId: string, timestamp: number) => void;
-  uninstallStickerPack: (packId: string, timestamp: number) => void;
+  // Returns `true` if sticker pack was previously uninstalled
+  installStickerPack: (packId: string, timestamp: number) => boolean;
+  // Returns `true` if sticker pack was not previously uninstalled
+  uninstallStickerPack: (packId: string, timestamp: number) => boolean;
   clearAllErrorStickerPackAttempts: () => void;
 
   updateEmojiUsage: (shortName: string, timeUsed?: number) => void;
@@ -945,6 +1020,9 @@ type WritableInterface = {
   disableMessageInsertTriggers(): void;
   enableMessageInsertTriggersAndBackfill(): void;
   ensureMessageInsertTriggersAreEnabled(): void;
+
+  disableFSync(): void;
+  enableFSyncAndCheckpoint(): void;
 
   processGroupCallRingCancellation(ringId: bigint): void;
   cleanExpiredGroupCallRingCancellations(): void;
@@ -1073,7 +1151,7 @@ export type ServerWritableDirectInterface = WritableInterface & {
     allStickers: ReadonlyArray<string>
   ) => Array<string>;
 
-  runCorruptionChecks: () => void;
+  runCorruptionChecks: () => boolean;
 };
 
 export type ServerWritableInterface =

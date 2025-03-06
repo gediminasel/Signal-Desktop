@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -1121,6 +1124,9 @@
   "icu:lightboxImageAlt": {
     "messageformat": "Imazhi u dërgua në bisedë"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "Po shkarkohet {downloaded} nga {total}"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "Ikonë që tregon  se për këtë figurë ka një titull"
   },
@@ -1136,11 +1142,56 @@
   "icu:downloadNItems": {
     "messageformat": "{count, plural, one {{count,number} Objekt} other {{count,number} Objekte}}"
   },
-  "icu:mediaNoLongerAvailable": {
-    "messageformat": "This media is no longer available."
+  "icu:mediaNotAvailable": {
+    "messageformat": "Kjo media nuk është e disponueshme"
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "Media nuk disponohet"
   },
   "icu:attachmentNoLongerAvailable__learnMore": {
-    "messageformat": "Learn more"
+    "messageformat": "Mëso më shumë"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "Skedari nuk disponohet"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "Mesazhi është i paplotë"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "Ngjitësi nuk disponohet"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "Mesazhi zanor nuk disponohet"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "Skedari nuk disponohet"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "Mesazhi i plotë nuk disponohet"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "Media nuk disponohet"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "Ngjitësi nuk disponohet"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "Mesazhi zanor nuk disponohet"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "Skedari nuk u transferua nga telefoni kur pajisja u lidh. Media dhe skedarët më të vjetër se 45 ditë nga momenti i lidhjes së pajisjes nuk mund të sinkronizohen."
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "Teksti i plotë i mesazhit nuk u transferua nga telefoni kur u lidh pajisja. Mesazhet e gjata me tekst më të vjetra se 45 ditë nga momenti i lidhjes së pajisjes nuk mund të sinkronizohen."
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "Media nuk u transferua nga telefoni kur pajisja u lidh. Media më e vjetër se 45 ditë nga momenti i lidhjes së pajisjes nuk mund të sinkronizohet."
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "Ngjitësi nuk u transferua nga telefoni kur pajisja u lidh. Media dhe skedarët më të vjetër se 45 ditë nga momenti i lidhjes së pajisjes nuk mund të sinkronizohen."
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "Mesazhi zanor nuk u transferua nga telefoni kur pajisja u lidh. Media dhe skedarët më të vjetër se 45 ditë nga momenti i lidhjes së pajisjes nuk mund të sinkronizohen."
   },
   "icu:save": {
     "messageformat": "Ruaje"
@@ -1185,7 +1236,7 @@
     "messageformat": "Riprovo"
   },
   "icu:Install__qr-max-rotations__retry": {
-    "messageformat": "Refresh code"
+    "messageformat": "Rifresko kodin"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Merr ndihmë"
@@ -1204,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "Emër pajisjeje"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "Për të ndryshuar emrin e pajisjes, hap Signal në telefon dhe shko te Parametrat > Pajisjet e lidhura"
   },
   "icu:chooseDeviceName": {
     "messageformat": "Zgjidhni emër të kësaj pajisje"
@@ -1581,10 +1635,10 @@
     "messageformat": "Të fshihen krejt të dhënat?"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "Të fshihen të gjitha të dhënat dhe mesazhet nga versioni i Signal Desktop? Mund ta rilidhësh gjithmonë këtë desktop, por mesazhet e tua nuk do të rikthehen. Llogaria jote në Signal, si dhe të dhënat që gjenden në telefonin tënd apo në pajisje të tjera të lidhura nuk do të fshihen."
+    "messageformat": "Të fshihen të gjitha të dhënat dhe mesazhet nga versioni i Signal Desktop? Llogaria e Signal dhe të dhënat që gjenden në telefon apo në pajisje të tjera të lidhura nuk do të fshihen."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Disconnecting and deleting all data…"
+    "messageformat": "Të gjitha të dhënat po shkëputen dhe po fshihen…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Ke të dhëna të vjetra prej një instalimi të mëparshëm të Signal-it për Desktop. Nëse vendos të vazhdosh, do të fshihen dhe do t’ia filloni nga e para."
@@ -3576,7 +3630,7 @@
     "messageformat": "pasuesja"
   },
   "icu:ClearingData__description": {
-    "messageformat": "This may take a few minutes depending on the size of your message history"
+    "messageformat": "Kjo mund të zgjasë disa minuta"
   },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Dhuroni për Signal-in"
@@ -3605,11 +3659,14 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "Duke përfunduar transferimin e mesazhit..."
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "Po anulohet..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Po përgatitet për t'u shkarkuar..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "Kjo mund të zgjasë disa minuta në varësi të madhësisë së historikut të mesazheve"
+    "messageformat": "Kjo mund të zgjasë disa minuta"
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Anulo"
@@ -3618,16 +3675,16 @@
     "messageformat": "Mesazhet dhe informacionet e bisedës mbrohen nga kodimi skaji në skaj, duke përfshirë procesin e sinkronizimit. <learnMoreLink>Mëso më shumë</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "Të anulohet transferimi?"
+    "messageformat": "Të anulohet lidhja e pajisjes?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Rikthimi i mesazheve dhe i medias nuk ka përfunduar. Nëse zgjedh ta anulosh, pajisja do të lidhet pa historikun e mesazheve."
+    "messageformat": "Nëse zgjedh ta anulosh, pajisja nuk do të lidhet dhe nuk do të transferohen mesazhe apo media."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "Vazhdo transferimin"
+    "messageformat": "Vazhdo lidhjen"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "Anulo transferimin"
+    "messageformat": "Anulo lidhjen"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "Gabim në transferimin e mesazheve"
@@ -4242,7 +4299,7 @@
     "messageformat": "Rikthe te parazgjedhja të gjitha ngjyrat e sfondeve të bisedave"
   },
   "icu:ChatColorPicker__confirm-reset-default": {
-    "messageformat": "Rikthe parazgjedhjet"
+    "messageformat": "Riktheji ngjyrat parazgjedhje"
   },
   "icu:ChatColorPicker__confirm-reset": {
     "messageformat": "Riktheje"
@@ -4291,6 +4348,9 @@
   },
   "icu:GradientDial__knob-end": {
     "messageformat": "Fundi i nuancave"
+  },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "Kohë vetjake…"
@@ -4561,6 +4621,12 @@
   },
   "icu:AvatarColorPicker--choose": {
     "messageformat": "Zgjidhni një ngjyrë"
+  },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "Riprovo shkarkimin"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "Riprovo"
   },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "Avatar Grupi"
@@ -5794,10 +5860,10 @@
     "messageformat": "Rregullme të vogla, riparime të gabimeve dhe përmirësime të mbarëvajtjes.  Faleminderit që përdorni Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.38--0": {
-    "messageformat": "Ne rregulluam gabimin me përmendjet @ që ndonjëherë përfshinte gabimisht vetë llogarinë tënde në listën e sugjerimeve të plotësimit automatik. Nëse ndonjëherë të ndodh ta humbësh këtë problem, si zgjidhje narcisiste, mund ta përdorësh sërish rrëfimin në vetë të tretë për të folur për veten në bisedat në grup."
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "Rregulluam një defekt të vogël të animacionit gjatë thirrjeve në grup. Kërkojmë falje paraprakisht, nëse pjesa më emocionuese e ditës, ishte kalimi në pamjen rrjetë gjatë takimit dhe përpjekja për të kapur momentin kur kuadratet e videove të njerëzve që futen me vonesë pengojnë ndonjëherë pjesërisht prezantimin e shefit."
   },
-  "icu:WhatsNew__v7.39--0": {
-    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

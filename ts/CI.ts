@@ -10,22 +10,26 @@ import * as log from './logging/log';
 import { explodePromise } from './util/explodePromise';
 import { AccessType, ipcInvoke } from './sql/channels';
 import { backupsService } from './services/backups';
+import { notificationService } from './services/notifications';
 import { AttachmentBackupManager } from './jobs/AttachmentBackupManager';
 import { migrateAllMessages } from './messages/migrateMessageData';
 import { SECOND } from './util/durations';
 import { isSignalRoute } from './util/signalRoutes';
 import { strictAssert } from './util/assert';
 import { MessageModel } from './models/messages';
+import type { SocketStatuses } from './textsecure/SocketManager';
 
 type ResolveType = (data: unknown) => void;
 
 export type CIType = {
   deviceName: string;
   getConversationId: (address: string | null) => string | null;
+  createNotificationToken: (address: string) => string | undefined;
   getMessagesBySentAt(
     sentAt: number
   ): Promise<ReadonlyArray<MessageAttributesType>>;
   getPendingEventCount: (event: string) => number;
+  getSocketStatus: () => SocketStatuses;
   handleEvent: (event: string, data: unknown) => unknown;
   setProvisioningURL: (url: string) => unknown;
   solveChallenge: (response: ChallengeResponseType) => unknown;
@@ -41,13 +45,19 @@ export type CIType = {
   uploadBackup(): Promise<void>;
   unlink: () => void;
   print: (...args: ReadonlyArray<unknown>) => void;
+  resetReleaseNotesFetcher(): void;
+  forceUnprocessed: boolean;
 };
 
 export type GetCIOptionsType = Readonly<{
   deviceName: string;
+  forceUnprocessed: boolean;
 }>;
 
-export function getCI({ deviceName }: GetCIOptionsType): CIType {
+export function getCI({
+  deviceName,
+  forceUnprocessed,
+}: GetCIOptionsType): CIType {
   const eventListeners = new Map<string, Array<ResolveType>>();
   const completedEvents = new Map<string, Array<unknown>>();
 
@@ -151,6 +161,19 @@ export function getCI({ deviceName }: GetCIOptionsType): CIType {
     return window.ConversationController.getConversationId(address);
   }
 
+  function createNotificationToken(address: string): string | undefined {
+    const id = window.ConversationController.getConversationId(address);
+    if (!id) {
+      return undefined;
+    }
+
+    return notificationService._createToken({
+      conversationId: id,
+      messageId: undefined,
+      storyId: undefined,
+    });
+  }
+
   async function openSignalRoute(url: string) {
     strictAssert(
       isSignalRoute(url),
@@ -181,10 +204,27 @@ export function getCI({ deviceName }: GetCIOptionsType): CIType {
     handleEvent('print', format(...args));
   }
 
+  function getSocketStatus() {
+    return window.getSocketStatus();
+  }
+
+  async function resetReleaseNotesFetcher() {
+    await Promise.all([
+      window.textsecure.storage.put(
+        'releaseNotesVersionWatermark',
+        '7.0.0-alpha.1'
+      ),
+      window.textsecure.storage.put('releaseNotesPreviousManifestHash', ''),
+      window.textsecure.storage.put('releaseNotesNextFetchTime', Date.now()),
+    ]);
+  }
+
   return {
     deviceName,
     getConversationId,
+    createNotificationToken,
     getMessagesBySentAt,
+    getSocketStatus,
     handleEvent,
     setProvisioningURL,
     solveChallenge,
@@ -195,5 +235,7 @@ export function getCI({ deviceName }: GetCIOptionsType): CIType {
     unlink,
     getPendingEventCount,
     print,
+    resetReleaseNotesFetcher,
+    forceUnprocessed,
   };
 }

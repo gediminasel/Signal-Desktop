@@ -47,6 +47,7 @@ function HeaderInfoTitle({
   type,
   i18n,
   isMe,
+  isSignalConversation,
   headerRef,
 }: {
   name: string | null;
@@ -54,8 +55,18 @@ function HeaderInfoTitle({
   type: ConversationTypeType;
   i18n: LocalizerType;
   isMe: boolean;
+  isSignalConversation: boolean;
   headerRef: React.RefObject<HTMLDivElement>;
 }) {
+  if (isSignalConversation) {
+    return (
+      <div className="module-ConversationHeader__header__info__title">
+        <UserText text={title} />
+        <span className="ContactModal__official-badge" />
+      </div>
+    );
+  }
+
   if (isMe) {
     return (
       <div className="module-ConversationHeader__header__info__title">
@@ -296,6 +307,7 @@ export const ConversationHeader = memo(function ConversationHeader({
               theme={theme}
               onViewUserStories={onViewUserStories}
               onViewConversationDetails={onViewConversationDetails}
+              isSignalConversation={isSignalConversation ?? false}
             />
             {!isSmsOnlyOrUnregistered && !isSignalConversation && (
               <OutgoingCallButtons
@@ -418,6 +430,7 @@ function HeaderContent({
   i18n,
   sharedGroupNames,
   theme,
+  isSignalConversation,
   onViewUserStories,
   onViewConversationDetails,
 }: {
@@ -428,6 +441,7 @@ function HeaderContent({
   i18n: LocalizerType;
   sharedGroupNames: ReadonlyArray<string>;
   theme: ThemeType;
+  isSignalConversation: boolean;
   onViewUserStories: () => void;
   onViewConversationDetails: () => void;
 }) {
@@ -479,6 +493,7 @@ function HeaderContent({
         type={conversation.type}
         i18n={i18n}
         isMe={conversation.isMe}
+        isSignalConversation={isSignalConversation}
         headerRef={headerRef}
       />
       {(conversation.expireTimer != null || conversation.isVerified) && (

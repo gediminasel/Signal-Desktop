@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -1121,6 +1124,9 @@
   "icu:lightboxImageAlt": {
     "messageformat": "Зображення, надіслане в чат"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "Завантаження: {downloaded} з {total}"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "Значок на позначення того, що це зображення має підпис"
   },
@@ -1136,11 +1142,56 @@
   "icu:downloadNItems": {
     "messageformat": "{count, plural, one {{count,number} файл} few {{count,number} файли} many {{count,number} файлів} other {{count,number} файлу}}"
   },
-  "icu:mediaNoLongerAvailable": {
-    "messageformat": "This media is no longer available."
+  "icu:mediaNotAvailable": {
+    "messageformat": "Цей медіафайл недоступний"
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "Медіафайл недоступний"
   },
   "icu:attachmentNoLongerAvailable__learnMore": {
-    "messageformat": "Learn more"
+    "messageformat": "Докладніше"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "Файл недоступний"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "Це повідомлення неповне"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "Стікер недоступний"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "Голосове повідомлення недоступне"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "Файл недоступний"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "Повне повідомлення недоступне"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "Медіафайл недоступний"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "Стікер недоступний"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "Голосове повідомлення недоступне"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "Коли ви зв'язали цей пристрій, файл не було перенесено з вашого телефону. Файли й медіафайли, надіслані чи отримані понад 45 днів тому, не буде синхронізовано після зв'язування нового пристрою."
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "Коли ви зв'язали цей пристрій, повний текст повідомлення не було перенесено з вашого телефону. Довгі текстові повідомлення, надіслані чи отримані понад 45 днів тому, не буде синхронізовано після зв'язування нового пристрою."
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "Коли ви зв'язали цей пристрій, медіафайл не було перенесено з вашого телефону. Медіафайли, надіслані чи отримані понад 45 днів тому, не буде синхронізовано після зв'язування нового пристрою."
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "Коли ви зв'язали цей пристрій, стікер не було перенесено з вашого телефону. Файли й медіафайли, надіслані чи отримані понад 45 днів тому, не буде синхронізовано після зв'язування нового пристрою."
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "Коли ви зв'язали цей пристрій, голосове повідомлення не було перенесено з вашого телефону. Файли й медіафайли, надіслані чи отримані понад 45 днів тому, не буде синхронізовано після зв'язування нового пристрою."
   },
   "icu:save": {
     "messageformat": "Зберегти"
@@ -1185,7 +1236,7 @@
     "messageformat": "Сканувати знову"
   },
   "icu:Install__qr-max-rotations__retry": {
-    "messageformat": "Refresh code"
+    "messageformat": "Оновити код"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Допомога"
@@ -1204,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "Назва пристрою"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "Щоб змінити назву цього пристрою, відкрийте Signal на телефоні й перейдіть у налаштування > Зв’язані пристрої"
   },
   "icu:chooseDeviceName": {
     "messageformat": "Оберіть назву пристрою"
@@ -1581,10 +1635,10 @@
     "messageformat": "Видалити всі дані?"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "Видалити всі дані й повідомлення з цієї версії Signal Desktop? Ви завжди зможете повторно зв'язати цей ПК, але можливості відновити повідомлення не буде. Ваш акаунт Signal і дані на телефоні й інших зв'язаних пристроях не буде видалено."
+    "messageformat": "Видалити всі дані й повідомлення з цієї версії Signal Desktop? Ваш акаунт Signal і дані на телефоні й інших зв'язаних пристроях не буде видалено."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Disconnecting and deleting all data…"
+    "messageformat": "Триває від'єднання й видалення всіх даних…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "З попереднього встановлення Signal Desktop лишилися застарілі дані. Якщо ви продовжите, їх буде видалено, а ви почнете з самого початку."
@@ -3576,7 +3630,7 @@
     "messageformat": "вперед"
   },
   "icu:ClearingData__description": {
-    "messageformat": "This may take a few minutes depending on the size of your message history"
+    "messageformat": "Синхронізація може тривати кілька хвилин"
   },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Підтримати Signal"
@@ -3605,11 +3659,14 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "Перенесення повідомлень майже завершено…"
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "Скасування…"
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Підготовка до завантаження…"
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "Це може зайняти кілька хвилин — швидкість залежить від розміру історії повідомлень"
+    "messageformat": "Синхронізація може тривати кілька хвилин"
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Закрити"
@@ -3618,16 +3675,16 @@
     "messageformat": "Повідомлення й інформацію про чати, а також сам процес синхронізації захищено наскрізним шифруванням. <learnMoreLink>Докладніше</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "Скасувати передачу даних?"
+    "messageformat": "Скасувати зв'язування пристрою?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Відновлення повідомлень і медіафайлів не завершено. У разі скасування ваш пристрій буде зв'язано без перенесення історії повідомлень."
+    "messageformat": "У разі скасування пристрій не буде зв'язано, а повідомлення й медіафайли не буде перенесено."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "Продовжити передачу"
+    "messageformat": "Продовжити зв'язування"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "Скасувати передачу"
+    "messageformat": "Не зв'язувати"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "Помилка під час перенесення повідомлень"
@@ -4056,10 +4113,10 @@
     "messageformat": "Докладніше"
   },
   "icu:AddGroupMembersModal--title": {
-    "messageformat": "Додати учасників"
+    "messageformat": "Додавання учасників"
   },
   "icu:AddGroupMembersModal--continue-to-confirm": {
-    "messageformat": "Оновити"
+    "messageformat": "Додати"
   },
   "icu:AddGroupMembersModal--confirm-title--one": {
     "messageformat": "Додати користувача {person} до «{group}»?"
@@ -4068,10 +4125,10 @@
     "messageformat": "Додати {count,number} учасників до «{group}»?"
   },
   "icu:AddGroupMembersModal--confirm-button--one": {
-    "messageformat": "Додати учасника"
+    "messageformat": "Додати"
   },
   "icu:AddGroupMembersModal--confirm-button--many": {
-    "messageformat": "Додати учасників"
+    "messageformat": "Додати"
   },
   "icu:createNewGroupButton": {
     "messageformat": "Нова група"
@@ -4230,7 +4287,7 @@
     "messageformat": "{num, plural, one {Цей спеціальний колір використовується в {num,number} чаті. Бажаєте видалити його для всіх чатів?} few {Цей спеціальний колір використовується в {num,number} чатах. Бажаєте видалити його для всіх чатів?} many {Цей спеціальний колір використовується в {num,number} чатах. Бажаєте видалити його для всіх чатів?} other {Цей спеціальний колір використовується в {num,number} чату. Бажаєте видалити його для всіх чатів?}}"
   },
   "icu:ChatColorPicker__menu-title": {
-    "messageformat": "Колір чатів"
+    "messageformat": "Колір чату"
   },
   "icu:ChatColorPicker__reset": {
     "messageformat": "Скинути колір цього чату"
@@ -4291,6 +4348,9 @@
   },
   "icu:GradientDial__knob-end": {
     "messageformat": "Кінець градієнта"
+  },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "Свій час…"
@@ -4562,6 +4622,12 @@
   "icu:AvatarColorPicker--choose": {
     "messageformat": "Обрати колір"
   },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "Повторити завантаження"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "Повторити"
+  },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "Зображення групи"
   },
@@ -4572,7 +4638,7 @@
     "messageformat": "Надсилати й отримувати повідомлення зі звуковим сповіщенням, якщо чат відкрито."
   },
   "icu:Preferences__button--general": {
-    "messageformat": "Загальні відомості"
+    "messageformat": "Загальні"
   },
   "icu:Preferences__button--appearance": {
     "messageformat": "Вигляд"
@@ -5794,10 +5860,10 @@
     "messageformat": "Дрібні поліпшення, виправлення помилок і покращення роботи застосунку. Дякуємо, що ви з Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.38--0": {
-    "messageformat": "Ми виправили помилку зі @ згадками, через яку серед автоматичних пропозицій міг з'являтися ваш власний акаунт. Якщо вам подобалася така додаткова увага, то ніхто не забороняє вам, наприклад, говорити про себе в групових чатах у третій особі."
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "Ми виправили незначну помилку з анімацією під час групових викликів. Заздалегідь перепрошуємо в усіх, хто обожнював під час робочого дзвінка змінювати конфігурацію екрана на сітку, намагаючись зловити момент, коли відео запізнілих учасників частково закривало слайди презентації керівника."
   },
-  "icu:WhatsNew__v7.39--0": {
-    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -1121,6 +1124,9 @@
   "icu:lightboxImageAlt": {
     "messageformat": "대화에 첨부된 이미지"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "{downloaded}/{total} 다운로드 중"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "이 이미지가 자막이 있다는 아이콘"
   },
@@ -1136,11 +1142,56 @@
   "icu:downloadNItems": {
     "messageformat": "{count, plural, other {항목 {count,number}개}}"
   },
-  "icu:mediaNoLongerAvailable": {
-    "messageformat": "This media is no longer available."
+  "icu:mediaNotAvailable": {
+    "messageformat": "이 미디어는 사용할 수 없습니다"
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "미디어를 사용할 수 없음"
   },
   "icu:attachmentNoLongerAvailable__learnMore": {
-    "messageformat": "Learn more"
+    "messageformat": "더 알아보기"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "파일을 사용할 수 없음"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "메시지가 불완전함"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "스티커를 사용할 수 없음"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "음성 메시지를 사용할 수 없음"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "파일을 사용할 수 없음"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "전체 메시지를 사용할 수 없음"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "미디어를 사용할 수 없음"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "스티커를 사용할 수 없음"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "음성 메시지를 사용할 수 없음"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "이 기기 연결 시 이 파일을 휴대폰에서 전송할 수 없습니다. 기기 연결 시점에 45일보다 오래된 미디어와 파일은 동기화할 수 없습니다."
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "이 기기를 연결한 상태로 이 메시지의 전체 텍스트를 휴대폰에서 전송할 수 없습니다. 기기 연결 시점에 45일보다 오래된 긴 텍스트 메시지는 동기화할 수 없습니다."
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "이 기기 연결 시 이 미디어를 휴대폰에서 전송할 수 없습니다. 기기 연결 시점에 45일보다 오래된 미디어는 동기화할 수 없습니다."
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "이 기기 연결 시 이 스티커를 휴대폰에서 전송할 수 없습니다. 기기 연결 시점에 45일보다 오래된 미디어와 파일은 동기화할 수 없습니다."
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "이 기기 연결 시 이 음성 메시지를 휴대폰에서 전송할 수 없습니다. 기기 연결 시점에 45일보다 오래된 미디어와 파일은 동기화할 수 없습니다."
   },
   "icu:save": {
     "messageformat": "저장"
@@ -1185,7 +1236,7 @@
     "messageformat": "재시도"
   },
   "icu:Install__qr-max-rotations__retry": {
-    "messageformat": "Refresh code"
+    "messageformat": "코드 새로 고침"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "도움 받기"
@@ -1204,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "기기 이름"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "이 기기 이름을 변경하려면 휴대폰에서 Signal을 연 다음 설정 > 연결된 기기로 이동하세요"
   },
   "icu:chooseDeviceName": {
     "messageformat": "기기 이름을 선택하세요"
@@ -1581,10 +1635,10 @@
     "messageformat": "모든 데이터를 삭제하시겠습니까?"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "이 Signal 데스크톱 버전에서 모든 데이터와 메시지를 삭제하시겠습니까? 언제든지 이 데스크톱을 다시 연결할 수 있지만, 메시지는 복원되지 않습니다. 휴대폰 또는 기타 연결된 장치의 Signal 계정과 데이터는 삭제되지 않습니다."
+    "messageformat": "이 Signal 데스크톱 버전에서 모든 데이터와 메시지를 삭제하시겠습니까? 휴대폰 또는 기타 연결된 장치의 Signal 계정과 데이터는 삭제되지 않습니다."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Disconnecting and deleting all data…"
+    "messageformat": "연결 해제 및 모든 데이터 삭제 중…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Signal Desktop의 이전 설치 버전에서 사용하지 않는 데이터가 있습니다. 계속하면 해당 데이터가 삭제되고 앱을 처음부터 시작합니다."
@@ -3576,7 +3630,7 @@
     "messageformat": "다음"
   },
   "icu:ClearingData__description": {
-    "messageformat": "This may take a few minutes depending on the size of your message history"
+    "messageformat": "몇 분 정도 소요됩니다"
   },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Signal에 후원"
@@ -3605,11 +3659,14 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "메시지 전송을 마무리하는 중..."
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "취소하는 중..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "다운로드를 준비하는 중..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "메시지 기록 용량에 따라 몇 분이 소요될 수 있습니다"
+    "messageformat": "몇 분 정도 소요됩니다"
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "취소"
@@ -3618,16 +3675,16 @@
     "messageformat": "동기화 프로세스를 비롯하여 메시지와 대화 정보는 엔드투엔드 암호화로 보호됩니다. <learnMoreLink>자세히 알아보기</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "전송을 취소하시겠어요?"
+    "messageformat": "기기 연결을 취소하시겠어요?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "메시지와 미디어에서 복원을 완료하지 않았습니다. 취소를 선택할 경우 기기가 메시지 기록 없이 연결됩니다."
+    "messageformat": "취소를 선택할 경우 이 기기가 연결되지 않으며, 메시지 또는 미디어가 전송되지 않습니다."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "전송 계속"
+    "messageformat": "연결 계속"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "전송 취소"
+    "messageformat": "연결 취소"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "메시지 전송 오류"
@@ -4242,7 +4299,7 @@
     "messageformat": "모든 대화창 색상 재설정"
   },
   "icu:ChatColorPicker__confirm-reset-default": {
-    "messageformat": "기본값 재설정"
+    "messageformat": "기본 색상 재설정"
   },
   "icu:ChatColorPicker__confirm-reset": {
     "messageformat": "초기화"
@@ -4291,6 +4348,9 @@
   },
   "icu:GradientDial__knob-end": {
     "messageformat": "그라데이션 끝"
+  },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "사용자 지정 시간…"
@@ -4561,6 +4621,12 @@
   },
   "icu:AvatarColorPicker--choose": {
     "messageformat": "색 선택"
+  },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "다운로드 재시도"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "재시도"
   },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "그룹 아이콘"
@@ -5794,10 +5860,10 @@
     "messageformat": "사소한 변경 사항과 버그 수정 및 성능 개선. Signal을 이용해 주셔서 감사합니다!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.38--0": {
-    "messageformat": "자동 완성 목록에 사용자의 계정을 포함하는 @멘션 버그를 수정했습니다."
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "그룹 통화 중 발생하는 사소한 애니메이션 버그를 수정했습니다."
   },
-  "icu:WhatsNew__v7.39--0": {
-    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

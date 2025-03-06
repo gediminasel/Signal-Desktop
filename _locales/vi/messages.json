@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -1121,6 +1124,9 @@
   "icu:lightboxImageAlt": {
     "messageformat": "Hình ảnh đã được gửi vào cuộc trò chuyện"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "Đang tải {downloaded} trên tổng số {total}"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "Biểu tượng cho biết hình ảnh này có chú thích"
   },
@@ -1136,11 +1142,56 @@
   "icu:downloadNItems": {
     "messageformat": "{count, plural, other {{count,number} Mục}}"
   },
-  "icu:mediaNoLongerAvailable": {
-    "messageformat": "This media is no longer available."
+  "icu:mediaNotAvailable": {
+    "messageformat": "Tập tin đa phương tiện này không có sẵn"
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "Đa phương tiện không có sẵn"
   },
   "icu:attachmentNoLongerAvailable__learnMore": {
-    "messageformat": "Learn more"
+    "messageformat": "Tìm hiểu thêm"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "Tập tin không có sẵn"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "Tin nhắn không đầy đủ"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "Nhãn dán không có sẵn"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "Tin nhắn thoại không có sẵn"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "Tập tin không có sẵn"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "Tin nhắn hoàn chỉnh không có sẵn"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "Đa phương tiện không có sẵn"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "Nhãn dán không có sẵn"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "Tin nhắn thoại không có sẵn"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "Tập tin này không được chuyển từ điện thoại của bạn khi thiết bị này được liên kết. Đa phương tiện và tập tin cũ hơn 45 ngày tại thời điểm liên kết thiết bị thì không thể được đồng bộ."
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "Văn bản hoàn chỉnh của tin nhắn không được chuyển từ điện thoại của bạn khi thiết bị này được liên kết. Tin nhắn văn bản có nội dung dài cũ hơn 45 ngày tại thời điểm liên kết thiết bị thì không thể được đồng bộ."
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "Đa phương tiện này không được chuyển từ điện thoại của bạn khi thiết bị này được liên kết. Đa phương tiện cũ hơn 45 ngày tại thời điểm liên kết thiết bị thì không thể được đồng bộ."
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "Nhãn dán này không được chuyển từ điện thoại của bạn khi thiết bị này được liên kết. Đa phương tiện và tập tin cũ hơn 45 ngày tại thời điểm liên kết thiết bị thì không thể được đồng bộ."
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "Tin nhắn thoại này không được chuyển từ điện thoại của bạn khi thiết bị này được liên kết. Đa phương tiện và tập tin cũ hơn 45 ngày tại thời điểm liên kết thiết bị thì không thể được đồng bộ."
   },
   "icu:save": {
     "messageformat": "Lưu"
@@ -1185,7 +1236,7 @@
     "messageformat": "Thử lại"
   },
   "icu:Install__qr-max-rotations__retry": {
-    "messageformat": "Refresh code"
+    "messageformat": "Làm mới mã"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Hỗ trợ"
@@ -1204,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "Tên thiết bị"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "Để đổi tên thiết bị này, mở Signal trên điện thoại của bạn và đến mục Cài đặt > Các thiết bị đã liên kết"
   },
   "icu:chooseDeviceName": {
     "messageformat": "Chọn tên cho thiết bị này"
@@ -1581,10 +1635,10 @@
     "messageformat": "Xóa tất cả dữ liệu ?"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "Xóa tất cả ứng dụng và tin nhắn khỏi phiên bản Signal Desktop này? Bạn luôn có thể liên kết lại với máy tính này, nhưng tin nhắn của bạn sẽ không được khôi phục. Tài khoản Signal và dữ liệu của bạn trên điện thoại hoặc các thiết bị đã liên kết sẽ không bị xóa."
+    "messageformat": "Xóa tất cả ứng dụng và tin nhắn khỏi phiên bản Signal Desktop này? Tài khoản Signal và dữ liệu của bạn trên điện thoại hoặc các thiết bị đã liên kết sẽ không bị xóa."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Disconnecting and deleting all data…"
+    "messageformat": "Đang ngắt kết nối và xóa toàn bộ dữ liệu…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Bạn có dữ liệu cũ từ một lần cài đặt trước của Signal Desktop. Nếu bạn chọn để tiếp tục, dữ liệu sẽ bị xoá và bạn sẽ bắt đầu lại từ đầu."
@@ -3576,7 +3630,7 @@
     "messageformat": "tiếp theo"
   },
   "icu:ClearingData__description": {
-    "messageformat": "This may take a few minutes depending on the size of your message history"
+    "messageformat": "Quá trình này có thể mất ít phút"
   },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Ủng hộ Signal"
@@ -3605,11 +3659,14 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "Đang hoàn tất việc chuyển tin nhắn..."
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "Đang hủy…"
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Đang chuẩn bị tải xuống..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "Quá trình này có thể mất vài phút tùy vào dung lượng của lịch sử tin nhắn của bạn"
+    "messageformat": "Quá trình này có thể mất ít phút"
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Hủy"
@@ -3618,16 +3675,16 @@
     "messageformat": "Thông tin tin nhắn và cuộc trò chuyện được bảo vệ bằng hình thức mã hóa đầu cuối, bao gồm cả quá trình đồng bộ. <learnMoreLink>Tìm hiểu thêm</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "Hủy chuyển?"
+    "messageformat": "Hủy liên kết thiết bị?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Tin nhắn và tập tin đa phương tiện của bạn chưa được hoàn tất khôi phục. Nếu bạn chọn hủy, thiết bị của bạn sẽ được liên kết mà không có lịch sử tin nhắn."
+    "messageformat": "Nếu bạn chọn hủy, thiết bị này sẽ không được liên kết và không có tin nhắn hoặc đa phương tiện nào được chuyển."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "Tiếp tục chuyển"
+    "messageformat": "Tiếp tục liên kết"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "Hủy chuyển"
+    "messageformat": "Hủy liên kết"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "Có lỗi khi chuyển tin nhắn của bạn"
@@ -4242,7 +4299,7 @@
     "messageformat": "Đặt lại tất cả màu cuộc trò chuyện"
   },
   "icu:ChatColorPicker__confirm-reset-default": {
-    "messageformat": "Đặt lại mặc định"
+    "messageformat": "Đặt lại màu mặc định"
   },
   "icu:ChatColorPicker__confirm-reset": {
     "messageformat": "Đặt lại"
@@ -4291,6 +4348,9 @@
   },
   "icu:GradientDial__knob-end": {
     "messageformat": "Kết thúc chuyển sắc"
+  },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "Thời gian tuỳ chỉnh…"
@@ -4561,6 +4621,12 @@
   },
   "icu:AvatarColorPicker--choose": {
     "messageformat": "Chọn một màu sắc"
+  },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "Thử tải lại"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "Thử lại"
   },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "Hình đại diện nhóm"
@@ -5794,10 +5860,10 @@
     "messageformat": "Các tinh chỉnh, sửa lỗi, và cải thiện hiệu năng. Cảm ơn bạn đã sử dụng Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.38--0": {
-    "messageformat": "Chúng tôi đã sửa lỗi tính năng đề cập @ thỉnh thoảng bao gồm cả tài khoản của bạn trong danh sách đề xuất tự động hoàn thành."
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "Chúng tôi đã sửa một lỗi nhỏ liên quan đến hình động trong các cuộc gọi nhóm."
   },
-  "icu:WhatsNew__v7.39--0": {
-    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

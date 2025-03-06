@@ -10,6 +10,7 @@ import { strictAssert } from '../util/assert';
 import { toBoundedDate } from '../util/timestamp';
 import { getMessageIdForLogging } from '../util/idForLogging';
 import { eraseMessageContents } from '../util/cleanup';
+import { drop } from '../util/drop';
 import { MessageModel } from '../models/messages';
 
 async function eraseTapToViewMessages() {
@@ -53,15 +54,46 @@ async function eraseTapToViewMessages() {
 }
 
 class TapToViewMessagesDeletionService {
-  public update: () => Promise<void>;
-
   #timeout?: ReturnType<typeof setTimeout>;
+  #isPaused = false;
+  #debouncedUpdate = debounce(this.#checkTapToViewMessages);
 
-  constructor() {
-    this.update = debounce(this.#checkTapToViewMessages, 1000);
+  update() {
+    drop(this.#debouncedUpdate());
+  }
+
+  pause(): void {
+    if (this.#isPaused) {
+      window.SignalContext.log.warn('checkTapToViewMessages: already paused');
+      return;
+    }
+
+    window.SignalContext.log.info('checkTapToViewMessages: pause');
+
+    this.#isPaused = true;
+    clearTimeoutIfNecessary(this.#timeout);
+    this.#timeout = undefined;
+  }
+
+  resume(): void {
+    if (!this.#isPaused) {
+      window.SignalContext.log.warn('checkTapToViewMessages: not paused');
+      return;
+    }
+
+    window.SignalContext.log.info('checkTapToViewMessages: resuming');
+    this.#isPaused = false;
+
+    this.#debouncedUpdate.cancel();
+    this.update();
   }
 
   async #checkTapToViewMessages() {
+    if (!this.#shouldRun()) {
+      window.SignalContext.log.info('checkTapToViewMessages: not running');
+      return;
+    }
+
     const receivedAtMsForOldestTapToViewMessage =
       await DataReader.getNextTapToViewMessageTimestampToAgeOut();
     if (!receivedAtMsForOldestTapToViewMessage) {
@@ -89,9 +121,18 @@ class TapToViewMessagesDeletionService {
 
     clearTimeoutIfNecessary(this.#timeout);
     this.#timeout = setTimeout(async () => {
+      if (!this.#shouldRun()) {
+        window.SignalContext.log.info('checkTapToViewMessages: not running');
+        return;
+      }
+
       await eraseTapToViewMessages();
-      void this.update();
+      this.update();
     }, wait);
+  }
+
+  #shouldRun(): boolean {
+    return !this.#isPaused && !window.SignalContext.isTestOrMockEnvironment();
   }
 }
 

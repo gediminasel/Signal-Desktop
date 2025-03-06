@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -1121,6 +1124,9 @@
   "icu:lightboxImageAlt": {
     "messageformat": "پاراڭدا يوللانغان رەسىم"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "{total} نىڭ {downloaded} تى چۈشۈۋاتىدۇ"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "بۇ رەسىمنىڭ ئىزاھلانغانلىقىنى كۆرسىتىدىغان سىنبەلگە"
   },
@@ -1136,11 +1142,56 @@
   "icu:downloadNItems": {
     "messageformat": "{count, plural, other {{count,number} تۈر}}"
   },
-  "icu:mediaNoLongerAvailable": {
-    "messageformat": "This media is no longer available."
+  "icu:mediaNotAvailable": {
+    "messageformat": "بۇ مېدىيانى ئىشلەتكىلى بولمايدۇ"
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "مېدىيانى ئىشلەتكىلى بولمايدۇ"
   },
   "icu:attachmentNoLongerAvailable__learnMore": {
-    "messageformat": "Learn more"
+    "messageformat": "تەپسىلاتى"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "ھۆججەتنى ئىشلەتكىلى بولمايدۇ"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "بۇ ئۇچۇر تولۇق ئەمەس"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "چاپلاقنى ئىشلەتكىلى بولمايدۇ"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "ئاۋازلىق ئۇچۇرنى ئىشلەتكىلى بولمايدۇ"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "ھۆججەتنى ئىشلەتكىلى بولمايدۇ"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "تولۇق ئۇچۇرنى ئىشلەتكىلى بولمايدۇ"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "مېدىيانى ئىشلەتكىلى بولمايدۇ"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "چاپلاقنى ئىشلەتكىلى بولمايدۇ"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "ئاۋازلىق ئۇچۇرنى ئىشلەتكىلى بولمايدۇ"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "بۇ ھۆججەت بۇ ئۈسكۈنە ئۇلانغان ۋاقىتتا تېلېفونىڭىزدىن يۆتكەلمىگەن. ئۈسكۈنە ئۇلىنىۋاتقان ۋاقىتتا ، 45 كۈندىن ئاشقان ھۆججەتلەر ۋە مېدىيانى ماسقەدەملىگىلى بولمايدۇ."
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "بۇئۈسكۈنە ئۇلانغان ۋاقىتتا ، بۇ ئۇچۇردىكى تولۇق تېكىست تېلېفونىڭىزدىن يۆتكەلمىگەن. ئۈسكۈنە ئۇلانغان ۋاقىتتا ، 45 كۈندىن ئاشقان ئۇزۇن تېكىستلىك ئۇچۇرلارنى ماسقەدەملىگىلى بولمايدۇ."
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "بۇ مېدىيا بۇ ئۈسكۈنە ئۇلانغان ۋاقىتتا تېلېفونىڭىزدىن يۆتكەلمىگەن. 45 كۈندىن ئاشقان مېدىيانى بۇ ئۈسكۈنە ئۇلىنىۋاتقان ۋاقىتتا ماسقەدەملىگىلى بولمايدۇ."
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "بۇ چاپلاق بۇ ئۈسكۈنە ئۇلانغان ۋاقىتتا تېلېفونىڭىزدىن يۆتكەلمىگەن. ئۈسكۈنە ئۇلىنىۋاتقان ۋاقىتتا ، 45 كۈندىن ئاشقان ھۆججەتلەر ۋە مېدىيانى ماسقەدەملىگىلى بولمايدۇ."
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "بۇ ئۈسكۈنە ئۇلانغان ۋاقىتتا بۇ ئاۋازلىق ئۇچۇر تېلېفونىڭىزدىن يۆتكەلمىگەن. ئۈسكۈنە ئۇلىنىۋاتقان ۋاقىتتا ، 45 كۈندىن ئاشقان ھۆججەتلەر ۋە مېدىيانى ماسقەدەملىگىلى بولمايدۇ."
   },
   "icu:save": {
     "messageformat": "ساقلا"
@@ -1185,7 +1236,7 @@
     "messageformat": "قايتا سىنا"
   },
   "icu:Install__qr-max-rotations__retry": {
-    "messageformat": "Refresh code"
+    "messageformat": "كودنى يېڭىلاش"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "ياردەمگە ئېرىشىڭ"
@@ -1204,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "ئۈسكۈنە نامى"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "بۇ ئۈسكۈنىنىڭ نامىنى ئۆزگەرتىش ئۈچۈن تېلېفونىڭىزدا Signal نى ئېچىڭ ۋە «تەڭشەك»> «ئۇلانغان ئۈسكۈنىلەر» گە يۆتكىڭ"
   },
   "icu:chooseDeviceName": {
     "messageformat": "بۇ ئۈسكۈنىنىڭ نامىنى تاللاڭ"
@@ -1581,10 +1635,10 @@
     "messageformat": "بارلىق سانلىق مەلۇماتنى ئۆچۈرەمسىز؟"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "بۇ نۇسخىدىكى Signal ئۈستەليۈزى نەشرىدىكى بارلىق سانلىق مەلۇمات ۋە ئۇچۇرلارنى ئۆچۈرەمسىز؟ بۇ ئۈستەليۈزى نەشرىگە خالىغان ۋاقىتتا قايتا ئۇلىنالايسىز، لېكىن ئۇچۇرلىرىڭىزنى ئەسلىگە كەلتۈرگىلى بولمايدۇ. يانفون ۋە باشقا ئۇلانغان ئۈسكۈنىلەردىكى Signal ھېساباتىڭىز ۋە سانلىق مەلۇماتلىرىڭىز ئۆچۈرۈلمەيدۇ."
+    "messageformat": "Signal ئۈستەليۈزىنىڭ بۇ قېتىملىق نەشرىدىكى بارلىق سانلىق مەلۇمات ۋە ئۇچۇرلارنى ئۆچۈرەمسىز؟ سىگنال ھېساباتىڭىز ، تېلېفونىڭىز ياكى باشقا ئۇلانغان ئۈسكۈنىلەردىكى سانلىق مەلۇماتلىرىڭىز ئۆچۈرۈلمەيدۇ."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Disconnecting and deleting all data…"
+    "messageformat": "بارلىق سانلىق مەلۇماتلارنى ئۇلىنىشتىن ئاجرىتىۋاتىدۇ ۋە ئۆچۈرىۋاتىدۇ…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "بۇرۇن قاچىلىغان Signal ئۈستەليۈزى نەشرىدىكى ۋاقتى ئۆتكەن سانلىق مەلۇماتلار بار بولۇپ، ئەگەر داۋاملاشتۇرسىڭىز، ئۇلار ئۆچۈرۈلىدۇ ۋە ھەممىنى باشتىن باشلايسىز."
@@ -3576,7 +3630,7 @@
     "messageformat": "كېيىنكى"
   },
   "icu:ClearingData__description": {
-    "messageformat": "This may take a few minutes depending on the size of your message history"
+    "messageformat": "بۇنىڭغا بىر قانچە مىنۇت كېتىشى مۇمكىن"
   },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "‫Signal غا ئىئانە قىلىڭ"
@@ -3605,11 +3659,14 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "ئۇچۇر يۆتكەشنى ئاياغلاشتۇرۇش..."
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "بىكار قىلىنىۋاتىدۇ..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "چۈشۈرۈشكە تەييارلىق قىلىۋاتىدۇ..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "ئۇچۇر تارىخىڭىزنىڭ چوڭ-كىچىكلىكىگە ئاساسەن بىر قانچە مىنۇت ۋاقىت كېتىشى مۇمكىن"
+    "messageformat": "بۇنىڭغا بىر قانچە مىنۇت كېتىشى مۇمكىن"
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "بىكار قىلىش"
@@ -3618,16 +3675,16 @@
     "messageformat": "ئۇچۇر ۋە پاراڭ مەزمۇنلىرى ماس قەدەملىك جەرياننى ئۆز ئىچىگە ئالغان ئاخىرىغىچە شىفىرلىق مەخپىيلەشتۈرۈش ئارقىلىق قوغدىلىدۇ. <learnMoreLink>تەپسىلاتى</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "يۆتكەشنى ئەمەلدىن قالدۇرامسىز؟"
+    "messageformat": "ئۈسكۈنىنىڭ ئۇلىنىشىنى ئەمەلدىن قالدۇرامسىز؟"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "ئۇچۇرلىرىڭىز ۋە مېدىيالىرىڭىز ئەسلىگە كەلتۈرۈشنى تاماملىمىدى. بىكار قىلىشنى تاللىسىڭىز ، ئۈسكۈنىڭىز ئۇچۇرلىشىش تارىخىڭىزسىز ئۇلىنىدۇ."
+    "messageformat": "ئەگەر ئەمەلدىن قالدۇرۇشنى تاللىسىڭىز ، بۇ ئۈسكۈنە ئۇلانمايدۇ ھەمدە ھېچقانداق ئۇچۇر ياكى مېدىيا يوللانمايدۇ."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "يۆتكەشنى داۋاملاشتۇرۇڭ"
+    "messageformat": "ئۇلىنىشنى داۋاملاشتۇرۇڭ"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "يۆتكەشنى ئەمەلدىن قالدۇرۇڭ"
+    "messageformat": "ئۇلىنىشنى ئەمەلدىن قالدۇرۇڭ"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "ئۇچۇرلىرىڭىزنى يۆتكىگەندە خاتالىق كۆرۈلدى"
@@ -4242,7 +4299,7 @@
     "messageformat": "بارلىق پاراڭ رەڭگىنى ئەسلىگە قايتۇرۇش"
   },
   "icu:ChatColorPicker__confirm-reset-default": {
-    "messageformat": "سۈكۈتتىكىگە قايتۇرۇش"
+    "messageformat": "كۆڭۈلدىكى رەڭنى ئەسلىگە قايتۇر"
   },
   "icu:ChatColorPicker__confirm-reset": {
     "messageformat": "ئەسلىگە قايتۇر"
@@ -4291,6 +4348,9 @@
   },
   "icu:GradientDial__knob-end": {
     "messageformat": "يانتۇلۇق ئاخىرى"
+  },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "خاسلاشتۇرۇلغان ۋاقىت..."
@@ -4561,6 +4621,12 @@
   },
   "icu:AvatarColorPicker--choose": {
     "messageformat": "رەڭ تاللاڭ"
+  },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "چۈشۈرۈشنى قايتا سىناڭ"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "قايتا سىنا"
   },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "گۇرۇپپا باش سۈرىتى"
@@ -5794,10 +5860,10 @@
     "messageformat": "كىچىك ئۆزگەرتىشلەر كىرگۈزۈلدى، كاشىلا ھەل قىلىندى ۋە ئىقتىدار ئەلالاشتۇرۇلدى. Signal نى ئىشلەتكەنلىكىڭىزگە رەھمەت!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.38--0": {
-    "messageformat": "بىز بەزىدە ھېساباتىڭىزنى ئاپتوماتىك تاماملاش مەسلىھەت تىزىملىكىگە كىرگۈزۈپ قويىدىغان ، @ ئشلىتىلگەن بىر خاتالىقنى تۈزەتتۇق. بىز بەزىدە ھېساباتىڭىزنى ئاپتوماتىك تاماملاش مەسلىھەت تىزىملىكىگە كىرگۈزۈپ قويىدىغان ، @ ئشلىتىلگەن بىر خاتالىقنى تۈزەتتۇق."
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "گۇرۇپپا چاقىرىقلىرى جەريانىدا كارتونلاردا كۆرۈلىدىغان كىچىك خاتالىقىنى تۈزەتتۇق. گۇرۇپپا چاقىرىقلىرى جەريانىدا كارتونلاردا كۆرۈلىدىغان كىچىك خاتالىقىنى تۈزەتتۇق."
   },
-  "icu:WhatsNew__v7.39--0": {
-    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

@@ -5,7 +5,7 @@
 
 import { isBoolean, isNumber, isString, noop, omit } from 'lodash';
 import PQueue from 'p-queue';
-import { v4 as getGuid } from 'uuid';
+import { v7 as getGuid } from 'uuid';
 
 import type {
   SealedSenderDecryptionResult,
@@ -300,7 +300,6 @@ export default class MessageReceiver
   #serverTrustRoot: Uint8Array;
   #stoppingProcessing?: boolean;
   #pniIdentityKeyCheckRequired?: boolean;
-  #isAppReadyForProcessing: boolean = false;
 
   constructor({ storage, serverTrustRoot }: MessageReceiverOptions) {
     super();
@@ -348,15 +347,6 @@ export default class MessageReceiver
       maxSize: 30,
       processBatch: this.#cacheRemoveBatch.bind(this),
     });
-
-    window.Whisper.events.on('app-ready-for-processing', () => {
-      this.#isAppReadyForProcessing = true;
-      this.reset();
-    });
-
-    window.Whisper.events.on('online', () => {
-      this.reset();
-    });
   }
 
   public getAndResetProcessedCount(): number {
@@ -403,6 +393,9 @@ export default class MessageReceiver
 
         const ourAci = this.#storage.user.getCheckedAci();
 
+        const { content } = decoded;
+        strictAssert(content != null, 'Content is required for envelopes');
+
         const envelope: ProcessedEnvelope = {
           // Make non-private envelope IDs dashless so they don't get redacted
           //   from logs
@@ -417,6 +410,7 @@ export default class MessageReceiver
 
           // Proto.Envelope fields
           type: decoded.type ?? Proto.Envelope.Type.UNKNOWN,
+          source: undefined,
           sourceServiceId: decoded.sourceServiceId
             ? normalizeServiceId(
                 decoded.sourceServiceId,
@@ -438,21 +432,22 @@ export default class MessageReceiver
                 )
               : undefined,
           timestamp: decoded.timestamp?.toNumber() ?? 0,
-          content: dropNull(decoded.content),
+          content,
           serverGuid: decoded.serverGuid ?? getGuid(),
           serverTimestamp,
           urgent: isBoolean(decoded.urgent) ? decoded.urgent : true,
           story: decoded.story ?? false,
-          reportingToken: decoded.reportingToken?.length
-            ? decoded.reportingToken
+          reportingToken: Bytes.isNotEmpty(decoded.reportSpamToken)
+            ? decoded.reportSpamToken
             : undefined,
+          groupId: undefined,
         };
 
         // After this point, decoding errors are not the server's
         //   fault, and we should handle them gracefully and tell the
         //   user they received an invalid message
 
-        this.#decryptAndCache(envelope, plaintext, request);
+        this.#decryptAndCache(envelope, request);
         this.#processedCount += 1;
       } catch (e) {
         request.respond(500, 'Bad encrypted websocket message');
@@ -472,16 +467,11 @@ export default class MessageReceiver
     );
   }
 
-  public reset(): void {
-    log.info('MessageReceiver.reset');
+  public startProcessingQueue(): void {
+    log.info('MessageReceiver.startProcessingQueue');
     this.#count = 0;
     this.#isEmptied = false;
     this.#stoppingProcessing = false;
-
-    if (!this.#isAppReadyForProcessing) {
-      log.info('MessageReceiver.reset: not ready yet, returning early');
-      return;
-    }
 
     drop(this.#addCachedMessagesToQueue());
   }
@@ -502,7 +492,6 @@ export default class MessageReceiver
   public stopProcessing(): void {
     log.info('MessageReceiver.stopProcessing');
     this.#stoppingProcessing = true;
-    this.#isAppReadyForProcessing = false;
   }
 
   public hasEmptied(): boolean {
@@ -865,71 +854,43 @@ export default class MessageReceiver
   async #queueCached(item: UnprocessedType): Promise<void> {
     log.info('MessageReceiver.queueCached', item.id);
     try {
-      let envelopePlaintext: Uint8Array;
-
-      if (item.envelope && item.version === 2) {
-        envelopePlaintext = Bytes.fromBase64(item.envelope);
-      } else if (item.envelope && typeof item.envelope === 'string') {
-        envelopePlaintext = Bytes.fromBinary(item.envelope);
-      } else {
-        throw new Error(
-          'MessageReceiver.queueCached: item.envelope was malformed'
-        );
-      }
-
-      const decoded = Proto.Envelope.decode(envelopePlaintext);
-
       const ourAci = this.#storage.user.getCheckedAci();
 
       const envelope: ProcessedEnvelope = {
         id: item.id,
-        receivedAtCounter: item.receivedAtCounter ?? item.timestamp,
-        receivedAtDate:
-          item.receivedAtCounter == null ? Date.now() : item.timestamp,
-        messageAgeSec: item.messageAgeSec || 0,
+        receivedAtCounter: item.receivedAtCounter,
+        receivedAtDate: item.receivedAtDate,
+        messageAgeSec: item.messageAgeSec,
 
         // Proto.Envelope fields
-        type: decoded.type ?? Proto.Envelope.Type.UNKNOWN,
+        type: item.type,
         source: item.source,
         sourceServiceId: normalizeServiceId(
-          item.sourceServiceId || decoded.sourceServiceId,
+          item.sourceServiceId,
           'CachedEnvelope.sourceServiceId'
         ),
-        sourceDevice: decoded.sourceDevice || item.sourceDevice,
+        sourceDevice: item.sourceDevice,
         destinationServiceId: normalizeServiceId(
-          decoded.destinationServiceId || item.destinationServiceId || ourAci,
+          item.destinationServiceId || ourAci,
           'CachedEnvelope.destinationServiceId'
         ),
-        updatedPni: isUntaggedPniString(decoded.updatedPni)
+        updatedPni: isUntaggedPniString(item.updatedPni)
           ? normalizePni(
-              toTaggedPni(decoded.updatedPni),
+              toTaggedPni(item.updatedPni),
               'CachedEnvelope.updatedPni'
             )
           : undefined,
-        timestamp: decoded.timestamp?.toNumber() ?? 0,
-        content: dropNull(decoded.content),
-        serverGuid: decoded.serverGuid ?? getGuid(),
-        serverTimestamp:
-          item.serverTimestamp || decoded.serverTimestamp?.toNumber() || 0,
+        timestamp: item.timestamp,
+        content: item.content,
+        serverGuid: item.serverGuid,
+        serverTimestamp: item.serverTimestamp,
         urgent: isBoolean(item.urgent) ? item.urgent : true,
         story: Boolean(item.story),
-        reportingToken: item.reportingToken
-          ? Bytes.fromBase64(item.reportingToken)
-          : undefined,
+        reportingToken: item.reportingToken,
+        groupId: item.groupId,
       };
 
-      const { decrypted } = item;
-      if (decrypted) {
-        let payloadPlaintext: Uint8Array;
-
-        if (item.version === 2) {
-          payloadPlaintext = Bytes.fromBase64(decrypted);
-        } else if (typeof decrypted === 'string') {
-          payloadPlaintext = Bytes.fromBinary(decrypted);
-        } else {
-          throw new Error('Cached decrypted value was not a string!');
-        }
-
+      if (!item.isEncrypted) {
         strictAssert(
           envelope.sourceServiceId,
           'Decrypted envelope must have source uuid'
@@ -960,7 +921,7 @@ export default class MessageReceiver
             async () => {
               void this.#queueDecryptedEnvelope(
                 decryptedEnvelope,
-                payloadPlaintext
+                item.content
               );
             },
             `queueDecryptedEnvelope(${getEnvelopeId(decryptedEnvelope)})`,
@@ -1129,7 +1090,9 @@ export default class MessageReceiver
               updatedPni: envelope.updatedPni,
               serverGuid: envelope.serverGuid,
               serverTimestamp: envelope.serverTimestamp,
-              decrypted: Bytes.toBase64(plaintext),
+              timestamp: envelope.timestamp,
+              isEncrypted: false,
+              content: plaintext,
             };
           }
         );
@@ -1164,6 +1127,11 @@ export default class MessageReceiver
       return;
     }
 
+    // Force save of unprocessed envelopes for testing
+    if (window.SignalCI?.forceUnprocessed) {
+      return;
+    }
+
     // Now, queue and process decrypted envelopes. We drop the promise so that the next
     // decryptAndCacheBatch batch does not have to wait for the decrypted envelopes to be
     // processed, which can be an asynchronous blocking operation
@@ -1194,27 +1162,30 @@ export default class MessageReceiver
 
   #decryptAndCache(
     envelope: ProcessedEnvelope,
-    plaintext: Uint8Array,
     request: IncomingWebSocketRequest
   ): void {
     const { id } = envelope;
     const data: UnprocessedType = {
       id,
-      version: 2,
-
-      // This field is only used for aging items out of the cache. The original
-      //   envelope's timestamp will be used when retrying this item.
-      timestamp: envelope.receivedAtDate,
-
+      type: envelope.type,
+      source: envelope.source,
+      sourceServiceId: envelope.sourceServiceId,
+      sourceDevice: envelope.sourceDevice,
+      destinationServiceId: envelope.destinationServiceId,
+      timestamp: envelope.timestamp,
+      receivedAtDate: envelope.receivedAtDate,
       attempts: 0,
-      envelope: Bytes.toBase64(plaintext),
+      isEncrypted: true,
+      content: envelope.content,
       messageAgeSec: envelope.messageAgeSec,
       receivedAtCounter: envelope.receivedAtCounter,
+      serverGuid: envelope.serverGuid,
+      serverTimestamp: envelope.serverTimestamp,
       urgent: envelope.urgent,
       story: envelope.story,
-      reportingToken: envelope.reportingToken
-        ? Bytes.toBase64(envelope.reportingToken)
-        : undefined,
+      updatedPni: envelope.updatedPni,
+      reportingToken: envelope.reportingToken,
+      groupId: envelope.groupId,
     };
     this.#decryptAndCacheBatcher.add({
       request,
@@ -1460,7 +1431,7 @@ export default class MessageReceiver
       throw new Error('Unsealed envelope dropped due to stopping processing');
     }
 
-    if (envelope.type === Proto.Envelope.Type.RECEIPT) {
+    if (envelope.type === Proto.Envelope.Type.SERVER_DELIVERY_RECEIPT) {
       strictAssert(
         envelope.sourceServiceId,
         'Unsealed delivery receipt must have sourceServiceId'
@@ -2158,7 +2129,7 @@ export default class MessageReceiver
     logUnexpectedUrgentValue(envelope, 'sentSync');
 
     const {
-      destination,
+      destinationE164,
       destinationServiceId,
       timestamp,
       message: msg,
@@ -2191,7 +2162,7 @@ export default class MessageReceiver
     const ev = new SentEvent(
       {
         envelopeId: envelope.id,
-        destination: dropNull(destination),
+        destinationE164: dropNull(destinationE164),
         destinationServiceId,
         timestamp: timestamp?.toNumber(),
         serverTimestamp: envelope.serverTimestamp,
@@ -2686,8 +2657,8 @@ export default class MessageReceiver
       this.#handleNullMessage(envelope);
       return;
     }
-    if (content.callingMessage) {
-      await this.#handleCallingMessage(envelope, content.callingMessage);
+    if (content.callMessage) {
+      await this.#handleCallingMessage(envelope, content.callMessage);
       return;
     }
     if (content.receiptMessage) {
@@ -2845,7 +2816,7 @@ export default class MessageReceiver
 
   async #handleCallingMessage(
     envelope: UnsealedEnvelope,
-    callingMessage: Proto.ICallingMessage
+    callingMessage: Proto.ICallMessage
   ): Promise<void> {
     logUnexpectedUrgentValue(envelope, 'callingMessage');
 
@@ -3228,7 +3199,7 @@ export default class MessageReceiver
     }
 
     const {
-      destination,
+      destinationE164,
       destinationServiceId,
       expirationStartTimestamp,
       unidentifiedStatus,
@@ -3240,7 +3211,7 @@ export default class MessageReceiver
     const ev = new SentEvent(
       {
         envelopeId: envelope.id,
-        destination: dropNull(destination),
+        destinationE164: dropNull(destinationE164),
         destinationServiceId,
         timestamp: envelope.timestamp,
         serverTimestamp: envelope.serverTimestamp,
@@ -3287,7 +3258,6 @@ export default class MessageReceiver
 
     const ev = new ViewOnceOpenSyncEvent(
       {
-        source: dropNull(sync.sender),
         sourceAci: sync.senderAci
           ? normalizeAci(sync.senderAci, 'handleViewOnceOpen.senderUuid')
           : undefined,
@@ -3324,7 +3294,6 @@ export default class MessageReceiver
     const ev = new MessageRequestResponseEvent(
       {
         envelopeId: envelope.id,
-        threadE164: dropNull(sync.threadE164),
         threadAci: sync.threadAci
           ? normalizeAci(
               sync.threadAci,
@@ -3467,11 +3436,10 @@ export default class MessageReceiver
     logUnexpectedUrgentValue(envelope, 'readSync');
 
     const reads = read.map(
-      ({ timestamp, sender, senderAci }): ReadSyncEventData => ({
+      ({ timestamp, senderAci }): ReadSyncEventData => ({
         envelopeId: envelope.id,
         envelopeTimestamp: envelope.timestamp,
         timestamp: timestamp?.toNumber(),
-        sender: dropNull(sender),
         senderAci: senderAci
           ? normalizeAci(senderAci, 'handleRead.senderAci')
           : undefined,
@@ -3499,9 +3467,8 @@ export default class MessageReceiver
     logUnexpectedUrgentValue(envelope, 'viewSync');
 
     const views = viewed.map(
-      ({ timestamp, senderE164, senderAci }): ViewSyncEventData => ({
+      ({ timestamp, senderAci }): ViewSyncEventData => ({
         timestamp: timestamp?.toNumber(),
-        senderE164: dropNull(senderE164),
         senderAci: senderAci
           ? normalizeAci(senderAci, 'handleViewed.senderAci')
           : undefined,
@@ -4040,18 +4007,13 @@ function envelopeTypeToCiphertextType(type: number | undefined): number {
   if (type === Type.CIPHERTEXT) {
     return CiphertextMessageType.Whisper;
   }
-  if (type === Type.KEY_EXCHANGE) {
-    throw new Error(
-      'envelopeTypeToCiphertextType: Cannot process KEY_EXCHANGE messages'
-    );
-  }
   if (type === Type.PLAINTEXT_CONTENT) {
     return CiphertextMessageType.Plaintext;
   }
   if (type === Type.PREKEY_BUNDLE) {
     return CiphertextMessageType.PreKey;
   }
-  if (type === Type.RECEIPT) {
+  if (type === Type.SERVER_DELIVERY_RECEIPT) {
     return CiphertextMessageType.Plaintext;
   }
   if (type === Type.UNIDENTIFIED_SENDER) {

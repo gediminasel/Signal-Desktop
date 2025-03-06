@@ -1116,7 +1116,7 @@ export default class AccountManager extends EventTarget {
 
     const shouldDownloadBackup =
       isBackupEnabled() ||
-      (isLinkAndSyncEnabled(window.getVersion()) && options.ephemeralBackupKey);
+      (isLinkAndSyncEnabled() && options.ephemeralBackupKey);
 
     // Set backup download path before storing credentials to ensure that
     // storage service and message receiver are not operating
@@ -1188,7 +1188,14 @@ export default class AccountManager extends EventTarget {
 
     await storage.put('identityKeyMap', identityKeyMap);
     await storage.put('registrationIdMap', registrationIdMap);
+
     await ourProfileKeyService.set(profileKey);
+    const me = window.ConversationController.getOurConversationOrThrow();
+    await me.setProfileKey(Bytes.toBase64(profileKey), {
+      reason: 'registration',
+    });
+    await me.updateVerified();
+
     if (userAgent) {
       await storage.put('userAgent', userAgent);
     }
@@ -1351,7 +1358,7 @@ export default class AccountManager extends EventTarget {
 
   async #registrationDone(): Promise<void> {
     log.info('registration done');
-    this.dispatchEvent(new Event('registration'));
+    this.dispatchEvent(new Event('endRegistration'));
   }
 
   async setPni(

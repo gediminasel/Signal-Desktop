@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -1121,6 +1124,9 @@
   "icu:lightboxImageAlt": {
     "messageformat": "Imagem enviada no chat"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "Baixando {downloaded} de {total}"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "Ícone mostrando que esta imagem possui uma legenda"
   },
@@ -1136,11 +1142,56 @@
   "icu:downloadNItems": {
     "messageformat": "{count, plural, one {1 item} other {{count,number} itens}}"
   },
-  "icu:mediaNoLongerAvailable": {
-    "messageformat": "This media is no longer available."
+  "icu:mediaNotAvailable": {
+    "messageformat": "Este arquivo de mídia não está mais disponível"
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "Mídia indisponível"
   },
   "icu:attachmentNoLongerAvailable__learnMore": {
-    "messageformat": "Learn more"
+    "messageformat": "Saiba mais"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "Arquivo não disponível"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "Esta mensagem está incompleta"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "Figurinha indisponível"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "Mensagem de voz indisponível"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "Arquivo não disponível"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "Mensagem completa indisponível"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "Arquivo de mídia indisponível"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "Figurinha indisponível"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "Mensagem de voz indisponível"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "Esse arquivo não foi transferido do seu telefone quando este dispositivo foi vinculado. Arquivos e mídias com mais de 45 dias no momento da vinculação do dispositivo não podem ser sincronizados."
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "O texto completo desta mensagem não foi transferido do seu telefone quando este dispositivo foi vinculado. Mensagens de texto com mais de 45 dias no momento da vinculação do dispositivo não podem ser sincronizadas."
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "Essa mídia não foi transferida do seu telefone quando este dispositivo foi vinculado. Arquivos de mídia com mais de 45 dias no momento da vinculação do dispositivo não podem ser sincronizados."
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "Essa figurinha não foi transferida do seu telefone quando este dispositivo foi vinculado. Arquivos e mídias com mais de 45 dias no momento da vinculação do dispositivo não podem ser sincronizados."
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "Essa mensagem de voz não foi transferida do seu telefone quando este dispositivo foi vinculado. Arquivos e mídias com mais de 45 dias no momento da vinculação do dispositivo não podem ser sincronizados."
   },
   "icu:save": {
     "messageformat": "Salvar"
@@ -1185,7 +1236,7 @@
     "messageformat": "Tente novamente"
   },
   "icu:Install__qr-max-rotations__retry": {
-    "messageformat": "Refresh code"
+    "messageformat": "Atualizar código"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Obter ajuda"
@@ -1204,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "Nome do aparelho"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "Para alterar o nome deste dispositivo, abra o Signal em seu telefone e vá até Configurações > Dispositivos vinculados"
   },
   "icu:chooseDeviceName": {
     "messageformat": "Escolher o nome deste aparelho"
@@ -1581,10 +1635,10 @@
     "messageformat": "Excluir todos os dados?"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "Excluir todos os dados e mensagens desta versão do Signal Desktop? Você pode vincular novamente este desktop, mas suas mensagens não serão restauradas. Sua conta do Signal e dados do seu telefone ou outros dispositivos vinculados não serão excluídos."
+    "messageformat": "Excluir todos os dados e mensagens desta versão do Signal Desktop? Sua conta do Signal e dados do seu telefone ou outros dispositivos vinculados não serão excluídos."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Disconnecting and deleting all data…"
+    "messageformat": "Desconectando e apagando todos os dados…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Você tem dados antigos de uma instalação anterior do Signal Desktop. Se você optar por continuar, eles serão excluídos e você começará do zero."
@@ -3576,7 +3630,7 @@
     "messageformat": "próximo"
   },
   "icu:ClearingData__description": {
-    "messageformat": "This may take a few minutes depending on the size of your message history"
+    "messageformat": "Isso pode levar alguns minutos"
   },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Doar para o Signal"
@@ -3605,11 +3659,14 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "Finalizando a transferência de mensagens…"
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "Cancelando…"
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Preparando para download…"
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "Isso pode demorar alguns minutos, dependendo do tamanho do seu histórico de mensagens"
+    "messageformat": "Isso pode levar alguns minutos"
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Cancelar"
@@ -3618,16 +3675,16 @@
     "messageformat": "As mensagens e informações das conversas são protegidas por criptografia de ponta a ponta, incluindo o processo de sincronização. <learnMoreLink>Saiba mais</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "Cancelar transferência?"
+    "messageformat": "Cancelar a vinculação do dispositivo?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Suas mensagens e arquivos de mídia não foram totalmente restaurados. Se você cancelar, seu dispositivo será vinculado sem o histórico de mensagens."
+    "messageformat": "Se você cancelar, seu dispositivo não será vinculado e nenhuma mensagem ou mídia será transferida."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "Continuar transferência"
+    "messageformat": "Continuar vinculação"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "Cancelar transferência"
+    "messageformat": "Cancelar vinculação"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "Erro ao transferir suas mensagens"
@@ -4242,7 +4299,7 @@
     "messageformat": "Redefinir as cores de todos os chats"
   },
   "icu:ChatColorPicker__confirm-reset-default": {
-    "messageformat": "Redefinir padrão"
+    "messageformat": "Redefinir a cor padrão"
   },
   "icu:ChatColorPicker__confirm-reset": {
     "messageformat": "Redefinir"
@@ -4291,6 +4348,9 @@
   },
   "icu:GradientDial__knob-end": {
     "messageformat": "Encerrar gradiente"
+  },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "Tempo personalizado…"
@@ -4561,6 +4621,12 @@
   },
   "icu:AvatarColorPicker--choose": {
     "messageformat": "Escolher uma cor"
+  },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "Reiniciar download"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "Tente novamente"
   },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "Foto do grupo"
@@ -5794,10 +5860,10 @@
     "messageformat": "Pequenas alterações adicionais, correções de bugs e melhorias de desempenho. Agradecemos por usar o Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.38--0": {
-    "messageformat": "Corrigimos um erro nas @menções que, em alguns casos, incluíam indevidamente sua própria conta na lista de sugestões de preenchimento automático."
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "Corrigimos um pequeno erro de animação durante chamadas em grupo."
   },
-  "icu:WhatsNew__v7.39--0": {
-    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

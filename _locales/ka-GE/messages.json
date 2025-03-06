@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -1121,6 +1124,9 @@
   "icu:lightboxImageAlt": {
     "messageformat": "სურათი გაგზავნილია ჩატში"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "მიმდინარეობს {total}-დან {downloaded}-ის ჩამოტვირთვა"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "ხატულა, რომელიც აჩვენებს, რომ ამ სურათს აქვს წარწერა"
   },
@@ -1136,11 +1142,56 @@
   "icu:downloadNItems": {
     "messageformat": "{count, plural, one {{count,number} ელემენტი} other {{count,number} ელემენტი}}"
   },
-  "icu:mediaNoLongerAvailable": {
-    "messageformat": "This media is no longer available."
+  "icu:mediaNotAvailable": {
+    "messageformat": "ეს მედია ფაილი ხელმისაწვდომი არაა"
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "მედია ფაილი მიუწვდომელია"
   },
   "icu:attachmentNoLongerAvailable__learnMore": {
-    "messageformat": "Learn more"
+    "messageformat": "გაიგე მეტი"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "ფაილი მიუწვდომელია"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "ეს შეტყობინება არასრულია"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "სტიკერი მიუწვდომელია"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "ხმოვანი შეტყობინება მიუწვდომელია"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "ფაილი მიუწვდომელია"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "სრული შეტყობინება მიუწვდომელია"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "მედია ფაილი მიუწვდომელია"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "სტიკერი მიუწვდომელია"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "ხმოვანი შეტყობინება მიუწვდომელია"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "ეს ფაილი შენი მობილურიდან არ გადატანილა, როცა ეს მოწყობილობა მიბმული იყო. 45 დღეზე ძველი ფაილებისა და მედია ფაილების სინქრონიზაცია მოწყობილობის მიბმისას შეუძლებელია."
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "ამ შეტყობინების სრული ტექსტი შენი მობილურიდან არ გადმოვიდა, როცა ეს მოწყობილობა მიბმული იყო. 45 დღეზე ძველი ტექსტური შეტყობინების სინქრონიზაცია მოწყობილობის მიბმისას შეუძლებელია."
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "ეს მედია ფაილი შენი მობილურიდან არ გადატანილა, როცა ეს მოწყობილობა მიბმული იყო. 45 დღეზე ძველი მედია ფაილების სინქრონიზაცია მოწყობილობის მიბმისას შეუძლებელია."
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "ეს სტიკერი შენი მობილურიდან არ გადატანილა, როცა ეს მოწყობილობა მიბმული იყო. 45 დღეზე ძველი ფაილებისა და მედია ფაილების სინქრონიზაცია მოწყობილობის მიბმისას შეუძლებელია."
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "ეს ხმოვანი შეტყობინება შენი მობილურიდან არ გადატანილა, როცა ეს მოწყობილობა მიბმული იყო. 45 დღეზე ძველი ფაილებისა და მედია ფაილების სინქრონიზაცია მოწყობილობის მიბმისას შეუძლებელია."
   },
   "icu:save": {
     "messageformat": "შენახვა"
@@ -1185,7 +1236,7 @@
     "messageformat": "თავიდან ცდა"
   },
   "icu:Install__qr-max-rotations__retry": {
-    "messageformat": "Refresh code"
+    "messageformat": "კოდის განახლება"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "დახმარების მიღება"
@@ -1204,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "მოწყობილობის სახელი"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "ამ მოწყობილობის სახელის შესაცვლელად გახსენი Signal შენს მობილურში და აირჩიე პარამეტრები > დაკავშირებული მოწყობილობები"
   },
   "icu:chooseDeviceName": {
     "messageformat": "აირჩიე ამ მოწყობილობის სახელი"
@@ -1581,10 +1635,10 @@
     "messageformat": "წავშალოთ ყველა მონაცემი?"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "გსურს, Signal Desktop-ის ამ ვერსიიდან ყველა მონაცემი და მიმოწერა წაშალო? ამ კომპიუტერის თავიდან მიბმას ყოველთვის შეძლებ, მაგრამ შენი მიმოწერები არ აღდგება. შენი Signal-ის პროფილი და მონაცემები შენს ტელეფონზე ან სხვა დაკავშირებულ მოწყობილობებზე არ წაიშლება."
+    "messageformat": "გსურს, Signal Desktop-ის ამ ვერსიიდან ყველა მონაცემი და მიმოწერა წაშალო? შენი Signal-ის პროფილი და მონაცემები შენს ტელეფონზე ან სხვა დაკავშირებულ მოწყობილობებზე არ წაიშლება."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Disconnecting and deleting all data…"
+    "messageformat": "მიმდინარეობს გათიშვა და ყველა მონაცემის წაშლა…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "შენ გაქვს მოძველებული მონაცემები Signal Desktop-ის წინა ინსტალაციისდან. თუ გაგრძელებას აირჩევ, ის წაიშლება და ნულიდან დაიწყებ."
@@ -3576,7 +3630,7 @@
     "messageformat": "მომდევნო"
   },
   "icu:ClearingData__description": {
-    "messageformat": "This may take a few minutes depending on the size of your message history"
+    "messageformat": "შეიძლება, ამას რამდენიმე წუთი დასჭირდეს"
   },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Signal-ისთვის დონაციის გაკეთება"
@@ -3605,11 +3659,14 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "სრულდება წერილების გადატანა..."
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "მიმდინარეობს გაუქმება..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "მზადება ჩამოსატვირთად..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "შეიძლება, ამას შენი მიმოწერის ისტორიის ზომიდან გამომდინარე რამდენიმე წუთი დასჭირდეს"
+    "messageformat": "შეიძლება, ამას რამდენიმე წუთი დასჭირდეს"
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "გაუქმება"
@@ -3618,16 +3675,16 @@
     "messageformat": "შეტყობინებები და ჩატის ინფორმაცია, სინქრონიზაციის პროცესის ჩათვლით, ბოლომდეა დაშიფრული. <learnMoreLink>გაიგე მეტი</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "გსურს გადატანის გაუქმება?"
+    "messageformat": "გსურს მოწყობილობის მიბმა გააუქმო?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "შენი შეტყობინებების და მედია ფაილების აღდგენა არ დასრულებულა. თუ გაუქმებას აირჩევ, მოწყობილობა შენი მიმოწერის ისტორიის გარეშე მიებმება."
+    "messageformat": "თუ გაუქმებას აირჩევ, ეს მოწყობილობა არ მიებმება და შეტყობინებები და მედია ფაილები არ გადავა."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "გადატანის გაგრძელება"
+    "messageformat": "მიბმის გაგრძელება"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "გადატანის გაუქმება"
+    "messageformat": "მიბმის გაუქმება"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "შენი შეტყობინებების გადატანისას ხარვეზი დაფიქსირდა"
@@ -4242,7 +4299,7 @@
     "messageformat": "ყველა ჩატის ფერის განახლება"
   },
   "icu:ChatColorPicker__confirm-reset-default": {
-    "messageformat": "ნაგულისხმევის განახლება"
+    "messageformat": "ნაგულისხმევი ფერების გადაყენება"
   },
   "icu:ChatColorPicker__confirm-reset": {
     "messageformat": "ახლიდან დაყენება"
@@ -4291,6 +4348,9 @@
   },
   "icu:GradientDial__knob-end": {
     "messageformat": "გრადიენტის დასრულება"
+  },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "არასტანდარტული დრო…"
@@ -4561,6 +4621,12 @@
   },
   "icu:AvatarColorPicker--choose": {
     "messageformat": "აირჩიე ფერი"
+  },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "გადმოწერის თავიდან ცდა"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "თავიდან ცდა"
   },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "ჯგუფის ავატარი"
@@ -5794,10 +5860,10 @@
     "messageformat": "მცირე შესწორებები, ბაგების გამოსწორება და წარმადობის გაუმჯობესება. მადლობას გიხდით სიგნალის გამოყენებისთვის!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.38--0": {
-    "messageformat": "ჩვენ გამოვასწორეთ @ მონიშვნების შეცდომა, რომელიც ზოგჯერ შენს ანგარიშს ავტომატური შევსების შეთავაზებების სიაში არასწორად ათავსებდა. თუ ეს ბაგი მოგენატრება, მაინც შეძლებ, ჯგუფის ჩატებში შენს თავზე მესამე პირში ილაპარაკო."
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "ჯგუფური ზარების დროს დაფიქსირებული ანიმაციის პატარა ბაგი გამოვასწორეთ. ბოდიშს გიხდით წინასწარ, თუ შენი დღის ყველაზე საინტერესო ნაწილი გრიდ ვიუზე გადასვლა და იმ მომენტის დაჭერა იყო, როცა შეხვედრაზე გვიან შემოსული მონაწილეების ვიდეო ფანჯრები შენი უფროსის პრეზენტაციის სლაიდებს ფარავდა."
   },
-  "icu:WhatsNew__v7.39--0": {
-    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

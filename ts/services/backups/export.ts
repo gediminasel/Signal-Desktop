@@ -213,6 +213,17 @@ export class BackupExportStream extends Readable {
   readonly #serviceIdToRecipientId = new Map<string, number>();
   readonly #e164ToRecipientId = new Map<string, number>();
   readonly #roomIdToRecipientId = new Map<string, number>();
+  readonly #stats = {
+    adHocCalls: 0,
+    callLinks: 0,
+    conversations: 0,
+    chats: 0,
+    distributionLists: 0,
+    messages: 0,
+    skippedMessages: 0,
+    stickerPacks: 0,
+    fixedDirectMessages: 0,
+  };
   #ourConversation?: ConversationAttributesType;
   #attachmentBackupJobs: Array<CoreAttachmentBackupJobType> = [];
   #buffers = new Array<Uint8Array>();
@@ -277,17 +288,6 @@ export class BackupExportStream extends Readable {
     });
     await this.#flush();
 
-    const stats = {
-      adHocCalls: 0,
-      callLinks: 0,
-      conversations: 0,
-      chats: 0,
-      distributionLists: 0,
-      messages: 0,
-      skippedMessages: 0,
-      stickerPacks: 0,
-    };
-
     const identityKeys = await DataReader.getAllIdentityKeys();
     const identityKeysById = new Map(
       identityKeys.map(key => {
@@ -318,7 +318,7 @@ export class BackupExportStream extends Readable {
 
       // eslint-disable-next-line no-await-in-loop
       await this.#flush();
-      stats.conversations += 1;
+      this.#stats.conversations += 1;
     }
 
     this.#pushFrame({
@@ -375,7 +375,7 @@ export class BackupExportStream extends Readable {
 
       // eslint-disable-next-line no-await-in-loop
       await this.#flush();
-      stats.distributionLists += 1;
+      this.#stats.distributionLists += 1;
     }
 
     const callLinks = await DataReader.getAllCallLinks();
@@ -417,7 +417,7 @@ export class BackupExportStream extends Readable {
 
       // eslint-disable-next-line no-await-in-loop
       await this.#flush();
-      stats.callLinks += 1;
+      this.#stats.callLinks += 1;
     }
 
     const stickerPacks = await getStickerPacksForBackup();
@@ -432,7 +432,7 @@ export class BackupExportStream extends Readable {
 
       // eslint-disable-next-line no-await-in-loop
       await this.#flush();
-      stats.stickerPacks += 1;
+      this.#stats.stickerPacks += 1;
     }
 
     const pinnedConversationIds =
@@ -507,7 +507,7 @@ export class BackupExportStream extends Readable {
 
       // eslint-disable-next-line no-await-in-loop
       await this.#flush();
-      stats.chats += 1;
+      this.#stats.chats += 1;
     }
 
     const allCallHistoryItems = await DataReader.getAllCallHistory();
@@ -538,7 +538,7 @@ export class BackupExportStream extends Readable {
 
       // eslint-disable-next-line no-await-in-loop
       await this.#flush();
-      stats.adHocCalls += 1;
+      this.#stats.adHocCalls += 1;
     }
 
     let cursor: PageMessagesCursorType | undefined;
@@ -575,7 +575,7 @@ export class BackupExportStream extends Readable {
 
         for (const chatItem of items) {
           if (chatItem === undefined) {
-            stats.skippedMessages += 1;
+            this.#stats.skippedMessages += 1;
             // Can't be backed up.
             continue;
           }
@@ -586,7 +586,7 @@ export class BackupExportStream extends Readable {
 
           // eslint-disable-next-line no-await-in-loop
           await this.#flush();
-          stats.messages += 1;
+          this.#stats.messages += 1;
         }
 
         cursor = newCursor;
@@ -600,7 +600,7 @@ export class BackupExportStream extends Readable {
     await this.#flush();
 
     log.warn('backups: final stats', {
-      ...stats,
+      ...this.#stats,
       attachmentBackupJobs: this.#attachmentBackupJobs.length,
     });
 
@@ -842,7 +842,7 @@ export class BackupExportStream extends Readable {
         identityKey = identityKeysById.get(convo.serviceId);
       }
 
-      const { nicknameGivenName, nicknameFamilyName } = convo;
+      const { nicknameGivenName, nicknameFamilyName, note } = convo;
 
       res.contact = {
         aci:
@@ -875,6 +875,9 @@ export class BackupExportStream extends Readable {
         profileSharing: convo.profileSharing,
         profileGivenName: convo.profileName,
         profileFamilyName: convo.profileFamilyName,
+        systemFamilyName: convo.systemFamilyName,
+        systemGivenName: convo.systemGivenName,
+        systemNickname: convo.systemNickname,
         hideStory: convo.hideStory === true,
         identityKey: identityKey?.publicKey || null,
 
@@ -887,6 +890,7 @@ export class BackupExportStream extends Readable {
                 family: nicknameFamilyName,
               }
             : null,
+        note,
       };
     } else if (isGroupV2(convo) && convo.masterKey) {
       let storySendMode: Backups.Group.StorySendMode;
@@ -909,6 +913,9 @@ export class BackupExportStream extends Readable {
         whitelisted: convo.profileSharing,
         hideStory: convo.hideStory === true,
         storySendMode,
+        blocked: convo.groupId
+          ? window.storage.blocked.isGroupBlocked(convo.groupId)
+          : false,
         snapshot: {
           title: {
             title: convo.name?.trim() ?? '',
@@ -994,6 +1001,19 @@ export class BackupExportStream extends Readable {
       return undefined;
     }
 
+    if (message.type === 'story') {
+      return undefined;
+    }
+
+    if (
+      conversation &&
+      isGroupV2(conversation.attributes) &&
+      message.storyReplyContext
+    ) {
+      // We drop group story replies
+      return undefined;
+    }
+
     const expirationTimestamp = calculateExpirationTimestamp(message);
     if (expirationTimestamp != null && expirationTimestamp <= this.#now + DAY) {
       // Message expires too soon
@@ -1016,6 +1036,23 @@ export class BackupExportStream extends Readable {
         serviceId: message.sourceServiceId,
         e164: message.source,
       });
+
+      if (
+        isIncoming &&
+        conversation &&
+        isDirectConversation(conversation.attributes)
+      ) {
+        const convoAuthor = this.#getOrPushPrivateRecipient({
+          id: conversation.attributes.id,
+        });
+
+        // Fix conversation id for misattributed e164-only incoming 1:1
+        // messages.
+        if (authorId.neq(convoAuthor)) {
+          authorId = convoAuthor;
+          this.#stats.fixedDirectMessages += 1;
+        }
+      }
     } else {
       strictAssert(!isIncoming, 'Incoming message must have source');
 
@@ -1220,6 +1257,17 @@ export class BackupExportStream extends Readable {
           state,
         };
       }
+    } else if (message.storyReplyContext) {
+      result.directStoryReplyMessage = await this.#toDirectStoryReplyMessage({
+        message,
+        backupLevel,
+      });
+
+      result.revisions = await this.#toChatItemRevisions(
+        result,
+        message,
+        backupLevel
+      );
     } else {
       result.standardMessage = await this.#toStandardMessage({
         message,
@@ -2527,6 +2575,51 @@ export class BackupExportStream extends Readable {
     };
   }
 
+  async #toDirectStoryReplyMessage({
+    message,
+    backupLevel,
+  }: {
+    message: Pick<
+      MessageAttributesType,
+      | 'body'
+      | 'bodyAttachment'
+      | 'bodyRanges'
+      | 'storyReaction'
+      | 'storyReplyContext'
+      | 'received_at'
+      | 'reactions'
+    >;
+    backupLevel: BackupLevel;
+  }): Promise<Backups.IDirectStoryReplyMessage> {
+    const result = new Backups.DirectStoryReplyMessage({
+      reactions: this.#getMessageReactions(message),
+    });
+
+    if (message.storyReaction) {
+      result.emoji = message.storyReaction.emoji;
+    } else {
+      result.textReply = {
+        longText: message.bodyAttachment
+          ? await this.#processAttachment({
+              attachment: message.bodyAttachment,
+              backupLevel,
+              messageReceivedAt: message.received_at,
+            })
+          : undefined,
+        text:
+          message.body != null
+            ? {
+                body: message.body ? trimBody(message.body) : undefined,
+                bodyRanges: message.bodyRanges?.map(range =>
+                  this.#toBodyRange(range)
+                ),
+              }
+            : undefined,
+      };
+    }
+    return result;
+  }
+
   async #toViewOnceMessage({
     message,
     backupLevel,
@@ -2568,7 +2661,7 @@ export class BackupExportStream extends Readable {
         // The first history is the copy of the current message
         .slice(1)
         .map(async history => {
-          return {
+          const result: Backups.IChatItem = {
             // Required fields
             chatId: parent.chatId,
             authorId: parent.authorId,
@@ -2586,16 +2679,23 @@ export class BackupExportStream extends Readable {
             incoming: isOutgoing
               ? undefined
               : this.#getIncomingMessageDetails(history),
-
-            // Message itself
-            standardMessage: await this.#toStandardMessage({
-              message: history,
-              backupLevel,
-            }),
           };
 
-          // Backups use oldest to newest order
+          if (parent.directStoryReplyMessage) {
+            result.directStoryReplyMessage =
+              await this.#toDirectStoryReplyMessage({
+                message: history,
+                backupLevel,
+              });
+          } else {
+            result.standardMessage = await this.#toStandardMessage({
+              message: history,
+              backupLevel,
+            });
+          }
+          return result;
         })
+        // Backups use oldest to newest order
         .reverse()
     );
   }

@@ -41,6 +41,7 @@ export enum ToastType {
   GroupLinkCopied = 'GroupLinkCopied',
   InvalidConversation = 'InvalidConversation',
   TextMessagesForbidden = 'TextMessagesForbidden',
+  InvalidStorageServiceHeaders = 'InvalidStorageServiceHeaders',
   LeftGroup = 'LeftGroup',
   LinkCopied = 'LinkCopied',
   LoadingFullLogs = 'LoadingFullLogs',
@@ -134,6 +135,7 @@ export type AnyToast =
       };
     }
   | { toastType: ToastType.InvalidConversation }
+  | { toastType: ToastType.InvalidStorageServiceHeaders }
   | { toastType: ToastType.LeftGroup }
   | { toastType: ToastType.LinkCopied }
   | { toastType: ToastType.LoadingFullLogs }

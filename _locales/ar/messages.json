@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -669,7 +672,7 @@
     "messageformat": "تُستخدم هذه النافذة خلال تطوير لِعرض تشخيصات المكالمات الجارية."
   },
   "icu:speech": {
-    "messageformat": "الحديث"
+    "messageformat": "استمع لقراءة النص"
   },
   "icu:show": {
     "messageformat": "إظهار"
@@ -1121,6 +1124,9 @@
   "icu:lightboxImageAlt": {
     "messageformat": "تم إرسال الصورة في الدردشة"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "جارٍ تنزيل {downloaded} من أصل {total}"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "أيقونة تظهر أنّ هذه الصورة تحوي تسمية توضيحية"
   },
@@ -1136,11 +1142,56 @@
   "icu:downloadNItems": {
     "messageformat": "{count, plural, zero {{count,number} عناصر} one {{count,number} عنصر} two {{count,number} عنصرين} few {{count,number} عناصر} many {{count,number} عناصر} other {{count,number} عناصر}}"
   },
-  "icu:mediaNoLongerAvailable": {
-    "messageformat": "This media is no longer available."
+  "icu:mediaNotAvailable": {
+    "messageformat": "ملف الوسائط هذا غير متوفِّر."
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "الوسائط غير متوفرة"
   },
   "icu:attachmentNoLongerAvailable__learnMore": {
-    "messageformat": "Learn more"
+    "messageformat": "اعرف المزيد"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "الملف غير مُتوفِّر"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "هذه الرسالة غير مُكتمِلة"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "المُلصَق غير مُتوفِّر"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "الرسالة الصوتية غير مُتوفِّرة"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "الملف غير مُتوفِّر"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "الرسالة الكاملة غير مُتوفِّرة"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "الوسائط غير متوفرة"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "المُلصَق غير مُتوفِّر"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "الرسالة الصوتية غير مُتوفِّرة"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "لم يتم نقل هذا الملف من هاتفك عندما تمَّ ربط هذا الجهاز. لا يمكن مُزامنة الملفات والوسائط التي تعود إلى أكثر من 45 يوم منذ الوقت الذي تمَّ فيه ربط الجهاز."
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "لم يتم نقل النص الكامل في هذه الرسالة من هاتفك عند ربط هذا الجهاز. لا يُمكن مزامنة الرسائل النصية الطويلة التي مضى عليها أكثر من 45 يومًا من الوقت الذي تمَّ فيه ربط الجهاز."
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "لم يتم نقل ملف الوسائط هذا من هاتفك عندما تمَّ ربط هذا الجهاز. لا يمكن مُزامنة الوسائط التي تعود إلى أكثر من 45 يومًا منذ الوقت الذي تمَّ فيه ربط الجهاز."
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "هذا المُلصَق لم يتم تحويله من هاتفك عندما كان هذا الجهاز مُرتبِطًا. لا يمكن مُزامنة الملفات والوسائط التي تعود إلى أكثر من 45 يوم منذ الوقت الذي تمَّ فيه ربط الجهاز."
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "لم يتم تحويل هذه الرسالة الصوتية من هاتفك عندما تمَّ ربط هذا الجهاز. لا يمكن مُزامنة الملفات والوسائط التي تعود إلى أكثر من 45 يوم منذ الوقت الذي تمَّ فيه ربط الجهاز."
   },
   "icu:save": {
     "messageformat": "حفظ"
@@ -1185,7 +1236,7 @@
     "messageformat": "إعادة المُحاولة"
   },
   "icu:Install__qr-max-rotations__retry": {
-    "messageformat": "Refresh code"
+    "messageformat": "تحديث الكود"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "احصل على المساعدة"
@@ -1204,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "‫اسم الجهاز"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "لتغيير اسم هذا الجهاز، افتح سيجنال على هاتفك وانتقل إلى \"الإعدادات\" > \"الأجهزة المرتبطة\""
   },
   "icu:chooseDeviceName": {
     "messageformat": "اختر اسم هذا الجهاز"
@@ -1581,10 +1635,10 @@
     "messageformat": "حذف جميع البيانات ؟"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "حذف جميع البيانات والرسائل من هذا الإصدار من سيجنال للحاسوب؟ يُمكنك دائمًا إعادة ربط هذا الحاسوب، لكن لن تستعيد رسائلك. لن يُحذف حساب سيجنال الخاص بك وبياناتك على هاتفك أو أي أجهزة أخرى مرتبطة."
+    "messageformat": "هل ترغبُ بحذف جميع البيانات والرسائل من هذا الإصدار من سيجنال Desktop؟ لن يُحذَف حساب سيجنال الخاص بك وبياناتك على هاتفك أو أي أجهزة أخرى مُرتبِطة."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Disconnecting and deleting all data…"
+    "messageformat": "جارٍ فصل وحذف جميع البيانات…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "لديك بيانات قديمة لم تعد تنفع من تثبيت سابق لسيجنال Desktop. إذا اخترت الاستمرار، فستُحذَف ويجب البداية بعدها من الصفر."
@@ -2040,10 +2094,10 @@
     "messageformat": "تبرُّع"
   },
   "icu:message--donation--remaining--days": {
-    "messageformat": "{days, plural, zero {{days,number} أيام مُتبقيّة} one {{days,number} يوم مُتبقي} two {{days,number} أيام مُتبقيّة} few {{days,number} أيام مُتبقيّة} many {{days,number} أيام مُتبقيّة} other {{days,number} أيام مُتبقيّة}}"
+    "messageformat": "{days, plural, zero {{days,number} أيام مُتبقيّة} one {{days,number} يوم مُتبقي} two {{days,number} يومان مُتبقيّان} few {{days,number} أيامٍ مُتبقيّة} many {{days,number} يومًا مُتبقيًّا} other {{days,number} يومٍ مُتبقيٍّ}}"
   },
   "icu:message--donation--remaining--hours": {
-    "messageformat": "{hours, plural, zero {{hours,number} ساعات مُتبقيّة} one {{hours,number} ساعة مُتبقيّة} two {{hours,number} ساعات مُتبقيّة} few {{hours,number} ساعات مُتبقيّة} many {{hours,number} ساعات مُتبقيّة} other {{hours,number} ساعات مُتبقيّة}}"
+    "messageformat": "{hours, plural, zero {{hours,number} ساعات مُتبقيّة} one {{hours,number} ساعة مُتبقيّة} two {{hours,number} ساعتان مُتبقيّتان} few {{hours,number} ساعاتٍ مُتبقيّة} many {{hours,number} ساعةً مُتبقيّة} other {{hours,number} ساعةٍ مُتبقيّة}}"
   },
   "icu:message--donation--remaining--minutes": {
     "messageformat": "{minutes, plural, zero {{minutes,number} دقائق مُتبقيّة} one {1 دقيقة مُتبقيّة} two {{minutes,number} دقائق مُتبقيّة} few {{minutes,number} دقائق مُتبقيّة} many {{minutes,number} دقيقة مُتبقيّة} other {{minutes,number} دقيقة مُتبقيّة}}"
@@ -2175,28 +2229,28 @@
     "messageformat": "الأحدث"
   },
   "icu:EmojiPicker__button--emoji": {
-    "messageformat": "وجه مُعبِّر"
+    "messageformat": "الإيموجي"
   },
   "icu:EmojiPicker__button--animal": {
-    "messageformat": "حيوان"
+    "messageformat": "الحيوانات"
   },
   "icu:EmojiPicker__button--food": {
-    "messageformat": "أطعمة"
+    "messageformat": "الأطعمة"
   },
   "icu:EmojiPicker__button--activity": {
-    "messageformat": "نشاط"
+    "messageformat": "الأنشطة"
   },
   "icu:EmojiPicker__button--travel": {
-    "messageformat": "سفر"
+    "messageformat": "السفر"
   },
   "icu:EmojiPicker__button--object": {
-    "messageformat": "شيء"
+    "messageformat": "الأشياء"
   },
   "icu:EmojiPicker__button--symbol": {
-    "messageformat": "رمز"
+    "messageformat": "الرموز"
   },
   "icu:EmojiPicker__button--flag": {
-    "messageformat": "راية"
+    "messageformat": "الأعلام"
   },
   "icu:confirmation-dialog--Cancel": {
     "messageformat": "إلغاء"
@@ -2799,10 +2853,10 @@
     "messageformat": "خفض اليد"
   },
   "icu:CallControls__RingingToast--ringing-on": {
-    "messageformat": "تم تفعيل الرنين"
+    "messageformat": "تمَّ تفعيل الرنين"
   },
   "icu:CallControls__RingingToast--ringing-off": {
-    "messageformat": "تم إيقاف الرنين"
+    "messageformat": "تمَّ إيقاف الرنين"
   },
   "icu:CallControls__RaiseHandsToast--you": {
     "messageformat": "رفعتَ يدكَ."
@@ -3576,7 +3630,7 @@
     "messageformat": "التالي"
   },
   "icu:ClearingData__description": {
-    "messageformat": "This may take a few minutes depending on the size of your message history"
+    "messageformat": "قد يَستغرق هذا بعض دقائق."
   },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "تبرَّع لسيجنال"
@@ -3605,11 +3659,14 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "جارٍ وضع اللمسات الأخيرة على نقل الرسائل…"
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "جارٍ الإلغاء…"
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "جارٍ الإعداد للتنزيل..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "قد يستغرق الأمر بضع دقائق حسب حجم سِجل رسائلك"
+    "messageformat": "قد يَستغرق هذا بعض دقائق."
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "إلغاء"
@@ -3618,16 +3675,16 @@
     "messageformat": "معلومات الرسائل والدردشات محمية من خلال التشفير من طرف لِطرف، بما في ذلك عملية المزامنة. <learnMoreLink>اعرف المزيد</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "أترغبُ بإلغاء التحويل؟"
+    "messageformat": "هل ترغبُ بإلغاء ربط الجهاز؟"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "لم تكتمل استعادة رسائلك ووسائطك. إذا اخترت الإلغاء، سَيتمُّ ربط جهازك دون سِجل رسائلك."
+    "messageformat": "إذا اخترت الإلغاء، فلن يتم ربط هذا الجهاز، ولن يتم نقل أي رسائل أو وسائط."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "مواصلة التحويل"
+    "messageformat": "متابعة الربط"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "إلغاء التحويل"
+    "messageformat": "إلغاء الربط"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "حدث خطأ أثناء نقل رسائلك."
@@ -4292,6 +4349,9 @@
   "icu:GradientDial__knob-end": {
     "messageformat": "نهاية المتدرج"
   },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
+  },
   "icu:customDisappearingTimeOption": {
     "messageformat": "المهلة المخصصة…"
   },
@@ -4561,6 +4621,12 @@
   },
   "icu:AvatarColorPicker--choose": {
     "messageformat": "اختيار لون ما"
+  },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "محاولة التنزيل مُجدَّدًا"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "إعادة المُحاولة"
   },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "صورة المجموعة"
@@ -5794,10 +5860,10 @@
     "messageformat": "تعديلات صغيرة، تصليح الأعطال، وتحسينات للأداء. شكرًا على استخدامكم سيجنال!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.38--0": {
-    "messageformat": "أصلحنا خطأ يتعلق بالإشارات إلى الأفراد @ التي كانت في بعض الأحيان تُضيف حسابك الخاص في قائمة اقتراحات الإكمال التلقائي."
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "أصلحنا خطًأ بسيطًا يتعلَّق بالرسوم خلال المكالمات الجماعية."
   },
-  "icu:WhatsNew__v7.39--0": {
-    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

@@ -587,6 +587,9 @@
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
   },
+  "icu:Toast--InvalidStorageServiceHeaders": {
+    "messageformat": "Received invalid response from storage service. Please share your logs."
+  },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
@@ -1121,6 +1124,9 @@
   "icu:lightboxImageAlt": {
     "messageformat": "Billede sendt i chat"
   },
+  "icu:lightBoxDownloading": {
+    "messageformat": "Downloader {downloaded} af {total}"
+  },
   "icu:imageCaptionIconAlt": {
     "messageformat": "Ikon, der viser, at dette billede har en billedtekst"
   },
@@ -1136,11 +1142,56 @@
   "icu:downloadNItems": {
     "messageformat": "{count, plural, one {{count,number} Enheder} other {{count,number} emner}}"
   },
-  "icu:mediaNoLongerAvailable": {
-    "messageformat": "This media is no longer available."
+  "icu:mediaNotAvailable": {
+    "messageformat": "Dette medie er ikke tilgængeligt"
+  },
+  "icu:mediaNotAvailable--short": {
+    "messageformat": "Mediet er ikke tilgængeligt"
   },
   "icu:attachmentNoLongerAvailable__learnMore": {
-    "messageformat": "Learn more"
+    "messageformat": "Læs mere"
+  },
+  "icu:attachmentNotAvailable__file": {
+    "messageformat": "Fil ikke tilgængelig"
+  },
+  "icu:attachmentNotAvailable__longMessage": {
+    "messageformat": "Dette er ikke hele beskeden"
+  },
+  "icu:attachmentNotAvailable__sticker": {
+    "messageformat": "Klistermærket er ikke tilgængeligt"
+  },
+  "icu:attachmentNotAvailable__voice": {
+    "messageformat": "Stemmebeskeden er ikke tilgængelig"
+  },
+  "icu:AttachmentNotAvailableModal__title--file": {
+    "messageformat": "Fil ikke tilgængelig"
+  },
+  "icu:AttachmentNotAvailableModal__title--long-text": {
+    "messageformat": "Hele beskeden er ikke tilgængelig"
+  },
+  "icu:AttachmentNotAvailableModal__title--media": {
+    "messageformat": "Mediet er ikke tilgængeligt"
+  },
+  "icu:AttachmentNotAvailableModal__title--sticker": {
+    "messageformat": "Klistermærket er ikke tilgængeligt"
+  },
+  "icu:AttachmentNotAvailableModal__title--voice-message": {
+    "messageformat": "Stemmebeskeden er ikke tilgængelig"
+  },
+  "icu:AttachmentNotAvailableModal__body--file": {
+    "messageformat": "Denne fil blev ikke overført fra din telefon, da denne enhed blev tilknyttet. Medier og filer, der er ældre end 45 dage, når enheder tilknyttes, kan ikke synkroniseres."
+  },
+  "icu:AttachmentNotAvailableModal__body--long-text": {
+    "messageformat": "Hele teksten i denne besked blev ikke overført fra din telefon, da denne enhed blev tilknyttet. Lange beskeder, der er ældre end 45 dage gamle, når enheder tilknyttes, kan ikke synkroniseres."
+  },
+  "icu:AttachmentNotAvailableModal__body--media": {
+    "messageformat": "Dette medie blev ikke overført fra din telefon, da denne enhed blev tilknyttet. Medier, der er ældre end 45 dage, når enheder tilknyttes, kan ikke synkroniseres."
+  },
+  "icu:AttachmentNotAvailableModal__body--sticker": {
+    "messageformat": "Dette klistermærke blev ikke overført fra din telefon, da denne enhed blev tilknyttet. Medier og filer, der er ældre end 45 dage, når enheder tilknyttes, kan ikke synkroniseres."
+  },
+  "icu:AttachmentNotAvailableModal__body--voice-message": {
+    "messageformat": "Denne stemmebesked blev ikke overført fra din telefon, da denne enhed blev tilknyttet. Medier og filer, der er ældre end 45 dage, når enheder tilknyttes, kan ikke synkroniseres."
   },
   "icu:save": {
     "messageformat": "Gem"
@@ -1185,7 +1236,7 @@
     "messageformat": "Prøv igen"
   },
   "icu:Install__qr-max-rotations__retry": {
-    "messageformat": "Refresh code"
+    "messageformat": "Opdater kode"
   },
   "icu:Install__qr-failed-load__get-help": {
     "messageformat": "Få hjælp"
@@ -1204,6 +1255,9 @@
   },
   "icu:Preferences--device-name": {
     "messageformat": "Enhedsnavn"
+  },
+  "icu:Preferences--device-name__description": {
+    "messageformat": "For at ændre navnet på denne enhed skal du åbne Signal på din telefon og gå ind i Indstillinger > Forbundne enheder"
   },
   "icu:chooseDeviceName": {
     "messageformat": "Vælg denne enheds navn"
@@ -1581,10 +1635,10 @@
     "messageformat": "Slet alle data?"
   },
   "icu:deleteAllDataBody": {
-    "messageformat": "Slette alle data og beskeder fra denne version af Signal Desktop? Du kan altid genoprette forbindelsen til denne desktop, men dine beskeder vil ikke blive gendannet. Din Signal-konto og data på din telefon eller andre forbundne enheder vil ikke blive slettet."
+    "messageformat": "Slette alle data og beskeder fra denne version af Signal Desktop? Din Signal-konto og data på din telefon eller andre forbundne enheder vil ikke blive slettet."
   },
   "icu:deleteAllDataProgress": {
-    "messageformat": "Disconnecting and deleting all data…"
+    "messageformat": "Afbryder og sletter alle data…"
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Du har forældede data fra en forudgående installation af Signal Desktop. Hvis du vælger at fortsætte vil den blive slettet, og du vil starte fra forfra"
@@ -3576,7 +3630,7 @@
     "messageformat": "næste"
   },
   "icu:ClearingData__description": {
-    "messageformat": "This may take a few minutes depending on the size of your message history"
+    "messageformat": "Det kan tage et par minutter"
   },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Donér til Signal"
@@ -3605,11 +3659,14 @@
   "icu:BackupImportScreen__progressbar-hint--processing": {
     "messageformat": "Afslutter beskedoverførsel..."
   },
+  "icu:BackupImportScreen__progressbar-hint--canceling": {
+    "messageformat": "Annullerer..."
+  },
   "icu:BackupImportScreen__progressbar-hint--preparing": {
     "messageformat": "Forbereder download..."
   },
   "icu:BackupImportScreen__description": {
-    "messageformat": "Det kan tage et par minutter afhængigt af størrelsen på din beskedhistorik"
+    "messageformat": "Det kan tage et par minutter"
   },
   "icu:BackupImportScreen__cancel": {
     "messageformat": "Annullér"
@@ -3618,16 +3675,16 @@
     "messageformat": "Beskeder og chatoplysninger er beskyttet af end-to-end-kryptering, herunder også under synkroniseringen. <learnMoreLink>Få mere at vide</learnMoreLink>"
   },
   "icu:BackupImportScreen__cancel-confirmation__title": {
-    "messageformat": "Vil du annullere overførslen?"
+    "messageformat": "Vil du annullere enhedstilknytningen?"
   },
   "icu:BackupImportScreen__cancel-confirmation__body": {
-    "messageformat": "Dine beskeder og medier er ikke gendannet endnu. Hvis du vælger at annullere, bliver din enhed tilknyttet uden din beskedhistorik."
+    "messageformat": "Hvis du vælger at annullere, bliver din enhed tilknyttet uden din beskedhistorik."
   },
   "icu:BackupImportScreen__cancel-confirmation__cancel": {
-    "messageformat": "Fortsæt overførsel"
+    "messageformat": "Fortsæt tilknytning"
   },
   "icu:BackupImportScreen__cancel-confirmation__confirm": {
-    "messageformat": "Annuller overførsel"
+    "messageformat": "Annuller tilknytning"
   },
   "icu:BackupImportScreen__error__title": {
     "messageformat": "Fejl ved overførsel af beskeder"
@@ -4242,7 +4299,7 @@
     "messageformat": "Nulstil alle chatfarver"
   },
   "icu:ChatColorPicker__confirm-reset-default": {
-    "messageformat": "Nulstil standard"
+    "messageformat": "Nulstil standardfarver"
   },
   "icu:ChatColorPicker__confirm-reset": {
     "messageformat": "Nulstil"
@@ -4291,6 +4348,9 @@
   },
   "icu:GradientDial__knob-end": {
     "messageformat": "Afslut på farveovergang"
+  },
+  "icu:GIF--download": {
+    "messageformat": "Download GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "Tilpas udløbstid…"
@@ -4561,6 +4621,12 @@
   },
   "icu:AvatarColorPicker--choose": {
     "messageformat": "Vælg en farve"
+  },
+  "icu:AttachmentDetailPill__retryDownload": {
+    "messageformat": "Prøv download igen"
+  },
+  "icu:AttachmentDetailPill__retryDownloadShort": {
+    "messageformat": "Prøv igen"
   },
   "icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title": {
     "messageformat": "Gruppe-avatar"
@@ -5794,10 +5860,10 @@
     "messageformat": "Små tweaks, rettelser og forbedringer af appens præstation. Tak fordi du bruger Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.38--0": {
-    "messageformat": "Vi har rettet en fejl med @-omtaler, der nogle gange forkert inkluderede din egen konto på forslagslisten i autofyld. Som en narcissistisk løsning kan du stadig bruge tredjepersonsfortælling til at tale om dig selv i dine gruppechat, hvis du nogensinde savner denne fejl."
+  "icu:WhatsNew__v7.44--0": {
+    "messageformat": "Vi har rettet en mindre animationsfejl under gruppeopkald. Vi undskylder på forhånd, hvis den mest spændende del af din dag var at skifte til gittervisning under et møde og forsøge at fange det øjeblik, hvor videofirkanterne fra folk, der mødte ind sent, nogle gange delvist tilslørede det diasspil, din chef præsenterede."
   },
-  "icu:WhatsNew__v7.39--0": {
-    "messageformat": "Now you can adjust the size of the chat list sidebar on touchscreen devices. So when you try to drag it won't be such a drag, and the smudges on your screen are simply evidence of the power emanating from your fingertips."
+  "icu:WhatsNew__v7.45--0": {
+    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
   }
 }

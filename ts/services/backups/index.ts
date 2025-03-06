@@ -51,8 +51,8 @@ import { validateBackup } from './validator';
 import { BackupType } from './types';
 import {
   BackupDownloadFailedError,
+  BackupImportCanceledError,
   BackupProcessingError,
-  ContinueWithoutSyncingError,
   RelinkRequestedError,
   UnsupportedBackupVersion,
 } from './errors';
@@ -93,6 +93,7 @@ export type ImportOptionsType = Readonly<{
 export class BackupsService {
   #isStarted = false;
   #isRunning: 'import' | 'export' | false = false;
+  #importController: AbortController | undefined;
   #downloadController: AbortController | undefined;
 
   #downloadRetryPromise:
@@ -123,12 +124,13 @@ export class BackupsService {
       this.api.clearCache();
     });
   }
-
-  public async downloadAndImport(options: DownloadOptionsType): Promise<void> {
+  public async downloadAndImport(
+    options: DownloadOptionsType
+  ): Promise<{ wasBackupImported: boolean }> {
     const backupDownloadPath = window.storage.get('backupDownloadPath');
     if (!backupDownloadPath) {
       log.warn('backups.downloadAndImport: no backup download path, skipping');
-      return;
+      return { wasBackupImported: false };
     }
 
     log.info('backups.downloadAndImport: downloading...');
@@ -152,14 +154,14 @@ export class BackupsService {
         this.#downloadRetryPromise = explodePromise<RetryBackupImportValue>();
 
         let installerError: InstallScreenBackupError;
+        let shouldUnlinkAndDeleteData = false;
         if (error instanceof RelinkRequestedError) {
           installerError = InstallScreenBackupError.Fatal;
           log.error(
             'backups.downloadAndImport: primary requested relink; unlinking & deleting data',
             Errors.toLogFormat(error)
           );
-          // eslint-disable-next-line no-await-in-loop
-          await this.#unlinkAndDeleteAllData();
+          shouldUnlinkAndDeleteData = true;
         } else if (error instanceof UnsupportedBackupVersion) {
           installerError = InstallScreenBackupError.UnsupportedVersion;
           log.error(
@@ -178,8 +180,13 @@ export class BackupsService {
             'backups.downloadAndImport: fatal error during processing; unlinking & deleting data',
             Errors.toLogFormat(error)
           );
-          // eslint-disable-next-line no-await-in-loop
-          await this.#unlinkAndDeleteAllData();
+          shouldUnlinkAndDeleteData = true;
+        } else if (error instanceof BackupImportCanceledError) {
+          installerError = InstallScreenBackupError.Canceled;
+          log.info(
+            'backups.downloadAndImport: Processing canceled by user; unlinking & deleting data'
+          );
+          shouldUnlinkAndDeleteData = true;
         } else {
           log.error(
             'backups.downloadAndImport: unknown error, prompting user to retry'
@@ -191,10 +198,20 @@ export class BackupsService {
           error: installerError,
         });
 
+        // Deleting data takes some time
+        if (shouldUnlinkAndDeleteData) {
+          // eslint-disable-next-line no-await-in-loop
+          await this.#unlinkAndDeleteAllData();
+        }
+
+        // For download errors, wait for user confirmation to retry or unlink
         // eslint-disable-next-line no-await-in-loop
         const nextStep = await this.#downloadRetryPromise.promise;
         if (nextStep === 'retry') {
           continue;
+        } else if (nextStep === 'cancel') {
+          // eslint-disable-next-line no-await-in-loop
+          await this.#unlinkAndDeleteAllData();
         }
 
         try {
@@ -209,13 +226,16 @@ export class BackupsService {
 
     await window.storage.remove('backupDownloadPath');
     await window.storage.remove('backupEphemeralKey');
+    await window.storage.remove('backupTransitArchive');
     await window.storage.put('isRestoredFromBackup', hasBackup);
 
+    // If the primary cancels sync on their end, then we can link without sync
     if (!hasBackup) {
       window.reduxActions.installer.handleMissingBackup();
     }
 
     log.info(`backups.downloadAndImport: done, had backup=${hasBackup}`);
+    return { wasBackupImported: hasBackup };
   }
 
   public retryDownload(): void {
@@ -318,16 +338,27 @@ export class BackupsService {
     return this.importBackup(() => createReadStream(backupFile), options);
   }
 
-  public cancelDownload(): void {
+  public cancelDownloadAndImport(): void {
+    if (!this.#downloadController && !this.#importController) {
+      log.error(
+        'cancelDownloadAndImport: not canceling, download or import is not running'
+      );
+      return;
+    }
+
     if (this.#downloadController) {
-      log.warn('importBackup: canceling download');
+      log.warn('cancelDownloadAndImport: canceling download');
       this.#downloadController.abort();
       this.#downloadController = undefined;
       if (this.#downloadRetryPromise) {
         this.#downloadRetryPromise.resolve('cancel');
       }
-    } else {
-      log.error('importBackup: not canceling download, not running');
+    }
+
+    if (this.#importController) {
+      log.warn('cancelDownloadAndImport: canceling import processing');
+      this.#importController.abort();
+      this.#importController = undefined;
     }
   }
 
@@ -348,8 +379,16 @@ export class BackupsService {
     const importStart = Date.now();
 
     await DataWriter.disableMessageInsertTriggers();
+    await DataWriter.disableFSync();
 
     try {
+      const controller = new AbortController();
+
+      this.#importController?.abort();
+      this.#importController = controller;
+
+      window.ConversationController.setReadOnly(true);
+
       const importStream = await BackupImportStream.create(backupType);
       if (backupType === BackupType.Ciphertext) {
         const { aesKey, macKey } = getKeyMaterial(
@@ -375,6 +414,10 @@ export class BackupsService {
           }),
           sink
         );
+
+        if (controller.signal.aborted) {
+          throw new BackupImportCanceledError();
+        }
 
         onProgress?.(0, totalBytes);
 
@@ -403,7 +446,8 @@ export class BackupsService {
           getIvAndDecipher(aesKey),
           createGunzip(),
           new DelimitedStream(),
-          importStream
+          importStream,
+          { signal: controller.signal }
         );
 
         strictAssert(
@@ -430,7 +474,12 @@ export class BackupsService {
 
       log.info('importBackup: finished...');
     } catch (error) {
-      log.info(`importBackup: failed, error: ${Errors.toLogFormat(error)}`);
+      if (error.name === 'AbortError') {
+        log.info('importBackup: canceled by user');
+        throw new BackupImportCanceledError();
+      }
+
+      log.error(`importBackup: failed, error: ${Errors.toLogFormat(error)}`);
 
       if (isNightly(window.getVersion()) || isAdhoc(window.getVersion())) {
         window.reduxActions.toast.showToast({
@@ -440,8 +489,12 @@ export class BackupsService {
 
       throw error;
     } finally {
+      window.ConversationController.setReadOnly(false);
       this.#isRunning = false;
+      this.#importController = undefined;
+
       await DataWriter.enableMessageInsertTriggersAndBackfill();
+      await DataWriter.enableFSyncAndCheckpoint();
 
       window.IPC.stopTrackingQueryStats({ epochName: 'Backup Import' });
       if (window.SignalCI) {
@@ -524,62 +577,77 @@ export class BackupsService {
       onProgress?.(InstallScreenBackupStep.Download, currentBytes, totalBytes);
     };
 
+    await ensureFile(downloadPath);
+    if (controller.signal.aborted) {
+      throw new BackupImportCanceledError();
+    }
+
+    let stream: Readable;
+
     try {
-      await ensureFile(downloadPath);
+      if (ephemeralKey == null) {
+        stream = await this.api.download({
+          downloadOffset,
+          onProgress: onDownloadProgress,
+          abortSignal: controller.signal,
+        });
+      } else {
+        let archive = window.storage.get('backupTransitArchive');
+        if (archive == null) {
+          const response = await this.api.getTransferArchive(controller.signal);
 
+          if ('error' in response) {
+            switch (response.error) {
+              case 'RELINK_REQUESTED':
+                throw new RelinkRequestedError();
+
+              // Primary decided to abort syncing process; continue on with no backup
+              case 'CONTINUE_WITHOUT_UPLOAD':
+                log.error(
+                  'backups.doDownloadAndImport: primary requested to continue without syncing'
+                );
+                return false;
+              default:
+                throw missingCaseError(response.error);
+            }
+          }
+
+          archive = {
+            cdn: response.cdn,
+            key: response.key,
+          };
+          await window.storage.put('backupTransitArchive', archive);
+        }
+
+        stream = await this.api.downloadEphemeral({
+          archive,
+          downloadOffset,
+          onProgress: onDownloadProgress,
+          abortSignal: controller.signal,
+        });
+      }
+    } catch (error) {
       if (controller.signal.aborted) {
+        throw new BackupImportCanceledError();
+      }
+
+      // No backup on the server
+      if (error instanceof HTTPError && error.code === 404) {
         return false;
       }
 
-      let stream: Readable;
-      try {
-        if (ephemeralKey == null) {
-          stream = await this.api.download({
-            downloadOffset,
-            onProgress: onDownloadProgress,
-            abortSignal: controller.signal,
-          });
-        } else {
-          stream = await this.api.downloadEphemeral({
-            downloadOffset,
-            onProgress: onDownloadProgress,
-            abortSignal: controller.signal,
-          });
-        }
-      } catch (error) {
-        if (controller.signal.aborted) {
-          return false;
-        }
+      log.error(
+        'backups.doDownloadAndImport: error downloading backup file',
+        Errors.toLogFormat(error)
+      );
+      throw new BackupDownloadFailedError();
+    }
 
-        // No backup on the server
-        if (error instanceof HTTPError && error.code === 404) {
-          return false;
-        }
+    if (controller.signal.aborted) {
+      throw new BackupImportCanceledError();
+    }
 
-        // Primary decided to abort syncing process; continue on with no backup
-        if (error instanceof ContinueWithoutSyncingError) {
-          log.error(
-            'backups.doDownloadAndImport: primary requested to continue without syncing'
-          );
-          return false;
-        }
-
-        // Primary wants to try link & sync again
-        if (error instanceof RelinkRequestedError) {
-          throw error;
-        }
-
-        log.error(
-          'backups.doDownloadAndImport: error downloading backup file',
-          Errors.toLogFormat(error)
-        );
-        throw new BackupDownloadFailedError();
-      }
-
-      if (controller.signal.aborted) {
-        return false;
-      }
-
+    try {
       await pipeline(
         stream,
         createWriteStream(downloadPath, {
@@ -589,14 +657,14 @@ export class BackupsService {
       );
 
       if (controller.signal.aborted) {
-        return false;
+        throw new BackupImportCanceledError();
       }
 
       this.#downloadController = undefined;
 
       try {
-        // Too late to cancel now, make sure we are unlinked if the process
-        // is aborted due to error or restart.
+        // Import and start writing to the DB. Make sure we are unlinked
+        // if the import process is aborted due to error or restart.
         const password = window.storage.get('password');
         strictAssert(password != null, 'Must be registered to import backup');
 
@@ -616,15 +684,19 @@ export class BackupsService {
         // Restore password on success
         await window.storage.put('password', password);
       } catch (e) {
-        // Error during import; this is non-retriable
-        throw new BackupProcessingError();
+        // Error or manual cancel during import; this is non-retriable
+        if (e instanceof BackupImportCanceledError) {
+          throw e;
+        } else {
+          throw new BackupProcessingError();
+        }
       } finally {
         await unlink(downloadPath);
       }
     } catch (error) {
       // Download canceled
       if (error.name === 'AbortError') {
-        return false;
+        throw new BackupImportCanceledError();
       }
 
       // Other errors bubble up and can be retried
@@ -728,6 +800,10 @@ export class BackupsService {
         Errors.toLogFormat(e)
       );
     }
+
+    // The QR code should be regenerated only after all data is cleared to prevent
+    // a race where the QR code doesn't show the backup capability
+    window.reduxActions.installer.startInstaller();
   }
 
   public isImportRunning(): boolean {
