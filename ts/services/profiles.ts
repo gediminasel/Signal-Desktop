@@ -70,6 +70,7 @@ type JobType = {
 const OBSERVED_CAPABILITY_KEYS = Object.keys({
   deleteSync: true,
   ssre2: true,
+  attachmentBackfill: true,
 } satisfies CapabilitiesType) as ReadonlyArray<keyof CapabilitiesType>;
 
 export class ProfileService {
@@ -783,10 +784,10 @@ async function doGetProfile(
   try {
     if (requestDecryptionKey != null) {
       // Note: Fetches avatar
-      await c.setAndMaybeFetchProfileAvatar(
-        profile.avatar,
-        requestDecryptionKey
-      );
+      await c.setAndMaybeFetchProfileAvatar({
+        avatarUrl: profile.avatar,
+        decryptionKey: requestDecryptionKey,
+      });
     }
   } catch (error) {
     if (error instanceof HTTPError) {

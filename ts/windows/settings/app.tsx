@@ -25,15 +25,20 @@ setEnvironment(
 SettingsWindowProps.onRender(
   ({
     addCustomColor,
+    autoDownloadAttachment,
     availableCameras,
     availableLocales,
     availableMicrophones,
     availableSpeakers,
+    backupFeatureEnabled,
+    backupSubscriptionStatus,
     blockedCount,
     closeSettings,
+    cloudBackupStatus,
     customColors,
     defaultConversationColor,
     deviceName,
+    emojiSkinToneDefault,
     phoneNumber,
     doDeleteAllData,
     doneRendering,
@@ -75,11 +80,13 @@ SettingsWindowProps.onRender(
     notificationContent,
     onAudioNotificationsChange,
     onAutoConvertEmojiChange,
+    onAutoDownloadAttachmentChange,
     onAutoDownloadUpdateChange,
     onAutoLaunchChange,
     onCallNotificationsChange,
     onCallRingtoneNotificationChange,
     onCountMutedConversationsChange,
+    onEmojiSkinToneDefaultChange,
     onHasStoriesDisabledChanged,
     onHideMenuBarChange,
     onIncomingCallNotificationsChange,
@@ -106,6 +113,8 @@ SettingsWindowProps.onRender(
     onWhoCanSeeMeChange,
     onZoomFactorChange,
     preferredSystemLocales,
+    refreshCloudBackupStatus,
+    refreshBackupSubscriptionStatus,
     removeCustomColor,
     removeCustomColorOnConversations,
     resetAllChatColors,
@@ -126,15 +135,20 @@ SettingsWindowProps.onRender(
     ReactDOM.render(
       <Preferences
         addCustomColor={addCustomColor}
+        autoDownloadAttachment={autoDownloadAttachment}
         availableCameras={availableCameras}
         availableLocales={availableLocales}
         availableMicrophones={availableMicrophones}
         availableSpeakers={availableSpeakers}
+        backupFeatureEnabled={backupFeatureEnabled}
+        backupSubscriptionStatus={backupSubscriptionStatus}
         blockedCount={blockedCount}
         closeSettings={closeSettings}
+        cloudBackupStatus={cloudBackupStatus}
         customColors={customColors}
         defaultConversationColor={defaultConversationColor}
         deviceName={deviceName}
+        emojiSkinToneDefault={emojiSkinToneDefault}
         phoneNumber={phoneNumber}
         doDeleteAllData={doDeleteAllData}
         doneRendering={doneRendering}
@@ -180,11 +194,13 @@ SettingsWindowProps.onRender(
         notificationContent={notificationContent}
         onAudioNotificationsChange={onAudioNotificationsChange}
         onAutoConvertEmojiChange={onAutoConvertEmojiChange}
+        onAutoDownloadAttachmentChange={onAutoDownloadAttachmentChange}
         onAutoDownloadUpdateChange={onAutoDownloadUpdateChange}
         onAutoLaunchChange={onAutoLaunchChange}
         onCallNotificationsChange={onCallNotificationsChange}
         onCallRingtoneNotificationChange={onCallRingtoneNotificationChange}
         onCountMutedConversationsChange={onCountMutedConversationsChange}
+        onEmojiSkinToneDefaultChange={onEmojiSkinToneDefaultChange}
         onHasStoriesDisabledChanged={onHasStoriesDisabledChanged}
         onHideMenuBarChange={onHideMenuBarChange}
         onIncomingCallNotificationsChange={onIncomingCallNotificationsChange}
@@ -213,6 +229,8 @@ SettingsWindowProps.onRender(
         onWhoCanSeeMeChange={onWhoCanSeeMeChange}
         onZoomFactorChange={onZoomFactorChange}
         preferredSystemLocales={preferredSystemLocales}
+        refreshCloudBackupStatus={refreshCloudBackupStatus}
+        refreshBackupSubscriptionStatus={refreshBackupSubscriptionStatus}
         removeCustomColorOnConversations={removeCustomColorOnConversations}
         removeCustomColor={removeCustomColor}
         resetAllChatColors={resetAllChatColors}

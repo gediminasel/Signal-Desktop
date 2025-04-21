@@ -57,6 +57,7 @@ export type ActiveCallBaseType = {
   presentingSource?: PresentedSource;
   presentingSourcesAvailable?: ReadonlyArray<PresentableSource>;
   settingsDialogOpen: boolean;
+  selfViewExpanded: boolean;
   showNeedsScreenRecordingPermissionsWarning?: boolean;
   showParticipantsList: boolean;
   reactions?: ActiveCallReactionsType;
@@ -78,6 +79,9 @@ export type ActiveDirectCallType = ActiveCallBaseType & {
       serviceId?: ServiceIdString;
     },
   ];
+  hasRemoteVideo: boolean;
+  hasRemoteAudio: boolean;
+  remoteAudioLevel: number;
 };
 
 export type ActiveGroupCallType = ActiveCallBaseType & {
@@ -206,3 +210,15 @@ export enum ScreenShareStatus {
   Reconnecting = 'Reconnecting',
   Disconnected = 'Disconnected',
 }
+
+export type IceServerType = {
+  username?: string;
+  password?: string;
+  hostname?: string;
+  urls: Array<string>;
+};
+
+export type IceServerCacheType = {
+  iceServers: Array<IceServerType>;
+  expirationTimestamp: number;
+};

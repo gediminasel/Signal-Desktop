@@ -4,16 +4,15 @@ import { noop, omit, throttle } from 'lodash';
 
 import * as durations from '../util/durations';
 import * as log from '../logging/log';
+import type { AttachmentBackfillResponseSyncEvent } from '../textsecure/messageReceiverEvents';
 import {
   type AttachmentDownloadJobTypeType,
   type AttachmentDownloadJobType,
   type CoreAttachmentDownloadJobType,
+  AttachmentDownloadUrgency,
   coreAttachmentDownloadJobSchema,
 } from '../types/AttachmentDownload';
-import {
-  AttachmentPermanentlyUndownloadableError,
-  downloadAttachment as downloadAttachmentUtil,
-} from '../util/downloadAttachment';
+import { downloadAttachment as downloadAttachmentUtil } from '../util/downloadAttachment';
 import { DataWriter } from '../sql/Client';
 import { getValue } from '../RemoteConfig';
 
@@ -22,8 +21,10 @@ import {
   AttachmentSizeError,
   type AttachmentType,
   AttachmentVariant,
+  AttachmentPermanentlyUndownloadableError,
   mightBeOnBackupTier,
 } from '../types/Attachment';
+import { type ReadonlyMessageAttributesType } from '../model-types.d';
 import { getMessageById } from '../messages/getMessageById';
 import {
   KIBIBYTE,
@@ -53,19 +54,24 @@ import {
 import { safeParsePartial } from '../util/schemas';
 import { deleteDownloadsJobQueue } from './deleteDownloadsJobQueue';
 import { createBatcher } from '../util/batcher';
+import { showDownloadFailedToast } from '../util/showDownloadFailedToast';
+import { markAttachmentAsPermanentlyErrored } from '../util/attachments/markAttachmentAsPermanentlyErrored';
+import {
+  AttachmentBackfill,
+  isPermanentlyUndownloadable,
+  isPermanentlyUndownloadableWithoutBackfill,
+} from './helpers/attachmentBackfill';
 
-export enum AttachmentDownloadUrgency {
-  IMMEDIATE = 'immediate',
-  STANDARD = 'standard',
-}
+export { isPermanentlyUndownloadable };
 
 // Type for adding a new job
 export type NewAttachmentDownloadJobType = {
   attachment: AttachmentType;
+  attachmentType: AttachmentDownloadJobTypeType;
+  isManualDownload: boolean;
   messageId: string;
   receivedAt: number;
   sentAt: number;
-  attachmentType: AttachmentDownloadJobTypeType;
   source: AttachmentDownloadSource;
   urgency?: AttachmentDownloadUrgency;
 };
@@ -129,6 +135,8 @@ export class AttachmentDownloadManager extends JobManager<CoreAttachmentDownload
       drop(this.maybeStartJobs());
     },
   });
+
+  #attachmentBackfill = new AttachmentBackfill();
 
   private static _instance: AttachmentDownloadManager | undefined;
   override logPrefix = 'AttachmentDownloadManager';
@@ -204,8 +212,9 @@ export class AttachmentDownloadManager extends JobManager<CoreAttachmentDownload
   ): Promise<AttachmentType> {
     const {
       attachment,
-      messageId,
       attachmentType,
+      isManualDownload,
+      messageId,
       receivedAt,
       sentAt,
       source,
@@ -219,15 +228,16 @@ export class AttachmentDownloadManager extends JobManager<CoreAttachmentDownload
     }
 
     const parseResult = safeParsePartial(coreAttachmentDownloadJobSchema, {
+      attachment,
+      attachmentType,
+      ciphertextSize: getAttachmentCiphertextLength(attachment.size),
+      contentType: attachment.contentType,
+      digest: attachment.digest,
+      isManualDownload,
       messageId,
       receivedAt,
       sentAt,
-      attachmentType,
-      digest: attachment.digest,
-      contentType: attachment.contentType,
       size: attachment.size,
-      ciphertextSize: getAttachmentCiphertextLength(attachment.size),
-      attachment,
       // If the attachment does not have a backupLocator, we don't want to store it as a
       // "backup import" attachment, since it's really just a normal attachment that we'll
       // try to download from the transit tier (or it's an invalid attachment, etc.). We
@@ -304,6 +314,18 @@ export class AttachmentDownloadManager extends JobManager<CoreAttachmentDownload
       callback();
     }
   }
+
+  static async requestBackfill(
+    message: ReadonlyMessageAttributesType
+  ): Promise<void> {
+    return this.instance.#attachmentBackfill.request(message);
+  }
+
+  static async handleBackfillResponse(
+    event: AttachmentBackfillResponseSyncEvent
+  ): Promise<void> {
+    return this.instance.#attachmentBackfill.handleResponse(event);
+  }
 }
 
 type DependenciesType = {
@@ -377,6 +399,16 @@ async function runDownloadAttachmentJob({
         `${logId}: Cancelled attempt ${job.attempts}. Not scheduling a retry. Error:`,
         Errors.toLogFormat(error)
       );
+      // Remove `pending` flag from the attachment. User can retry later.
+      await addAttachmentToMessage(
+        message.id,
+        {
+          ...job.attachment,
+          pending: false,
+        },
+        logId,
+        { type: job.attachmentType }
+      );
       return { status: 'finished' };
     }
 
@@ -396,9 +428,23 @@ async function runDownloadAttachmentJob({
     }
 
     if (error instanceof AttachmentPermanentlyUndownloadableError) {
+      const canBackfill =
+        job.isManualDownload &&
+        AttachmentBackfill.isEnabledForJob(
+          job.attachmentType,
+          message.attributes
+        );
+
+      if (job.source !== AttachmentDownloadSource.BACKFILL && canBackfill) {
+        await AttachmentDownloadManager.requestBackfill(message.attributes);
+        return { status: 'finished' };
+      }
+
       await addAttachmentToMessage(
         message.id,
-        _markAttachmentAsPermanentlyErrored(job.attachment),
+        markAttachmentAsPermanentlyErrored(job.attachment, {
+          backfillError: false,
+        }),
         logId,
         { type: job.attachmentType }
       );
@@ -520,6 +566,16 @@ export async function runDownloadAttachmentJobInner({
     { type: attachmentType }
   );
 
+  if (
+    job.source !== AttachmentDownloadSource.BACKFILL &&
+    isPermanentlyUndownloadableWithoutBackfill(job.attachment)
+  ) {
+    // We should only get to here only if
+    throw new AttachmentPermanentlyUndownloadableError(
+      'Not downloadable without backfill'
+    );
+  }
+
   try {
     const { downloadPath } = attachment;
     let totalDownloaded = 0;
@@ -637,6 +693,30 @@ export async function runDownloadAttachmentJobInner({
         );
       }
     }
+
+    let showToast = false;
+
+    // Show toast if manual download failed
+    if (!abortSignal.aborted && job.isManualDownload) {
+      if (job.source === AttachmentDownloadSource.BACKFILL) {
+        // ...and it was already a backfill request
+        showToast = true;
+      } else {
+        // ...or we didn't backfill the download
+        const message = await getMessageById(job.messageId);
+        showToast =
+          message != null &&
+          !AttachmentBackfill.isEnabledForJob(
+            attachmentType,
+            message.attributes
+          );
+      }
+    }
+
+    if (showToast) {
+      showDownloadFailedToast(messageId);
+    }
+
     throw error;
   }
 }
@@ -669,15 +749,11 @@ async function downloadBackupThumbnail({
 
 function _markAttachmentAsTooBig(attachment: AttachmentType): AttachmentType {
   return {
-    ..._markAttachmentAsPermanentlyErrored(attachment),
+    ...markAttachmentAsPermanentlyErrored(attachment, {
+      backfillError: false,
+    }),
     wasTooBig: true,
   };
-}
-
-function _markAttachmentAsPermanentlyErrored(
-  attachment: AttachmentType
-): AttachmentType {
-  return { ...omit(attachment, ['key', 'id']), pending: false, error: true };
 }
 
 function _markAttachmentAsTransientlyErrored(

@@ -5,6 +5,7 @@ import {
   type AttachmentType,
   mightBeOnBackupTier,
   AttachmentVariant,
+  AttachmentPermanentlyUndownloadableError,
   getAttachmentIdForLogging,
 } from '../types/Attachment';
 import { downloadAttachment as doDownloadAttachment } from '../textsecure/downloadAttachment';
@@ -13,8 +14,6 @@ import * as log from '../logging/log';
 import { HTTPError } from '../textsecure/Errors';
 import { toLogFormat } from '../types/errors';
 import type { ReencryptedAttachmentV2 } from '../AttachmentCrypto';
-
-export class AttachmentPermanentlyUndownloadableError extends Error {}
 
 export async function downloadAttachment({
   attachment,
@@ -99,13 +98,10 @@ export async function downloadAttachment({
       // may just need to wait for this attachment to end up on the backup tier
       throw error;
     }
-    // Attachments on the transit tier expire after 30 days, then start returning 404 or
-    // 403
-    if (
-      error instanceof HTTPError &&
-      (error.code === 404 || error.code === 403)
-    ) {
-      throw new AttachmentPermanentlyUndownloadableError();
+    // Attachments on the transit tier expire after (message queue length + buffer) days,
+    // then start returning 404
+    if (error instanceof HTTPError && error.code === 404) {
+      throw new AttachmentPermanentlyUndownloadableError(`HTTP ${error.code}`);
     } else {
       throw error;
     }

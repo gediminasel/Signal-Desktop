@@ -15,6 +15,7 @@ import type { Locator, Page } from 'playwright';
 import { expect } from 'playwright/test';
 import type { SignalService } from '../protobuf';
 import { strictAssert } from '../util/assert';
+import type { App, Bootstrap } from './bootstrap';
 
 const debug = createDebug('mock:test:helpers');
 
@@ -145,13 +146,19 @@ export function sendTextMessage({
   to,
   text,
   attachments,
+  sticker,
+  preview,
+  quote,
   desktop,
   timestamp = Date.now(),
 }: {
   from: PrimaryDevice;
   to: PrimaryDevice | Device | GroupInfo;
-  text: string;
+  text: string | undefined;
   attachments?: Array<Proto.IAttachmentPointer>;
+  sticker?: Proto.DataMessage.ISticker;
+  preview?: Proto.IPreview;
+  quote?: Proto.DataMessage.IQuote;
   desktop: Device;
   timestamp?: number;
 }): Promise<void> {
@@ -166,6 +173,9 @@ export function sendTextMessage({
       dataMessage: {
         body: text,
         attachments,
+        sticker,
+        preview: preview == null ? null : [preview],
+        quote,
         timestamp: Long.fromNumber(timestamp),
         groupV2: groupInfo
           ? {
@@ -208,7 +218,7 @@ export function sendReaction({
         reaction: {
           emoji,
           targetAuthorAci: getDevice(targetAuthor).aci,
-          targetTimestamp: Long.fromNumber(targetMessageTimestamp),
+          targetSentTimestamp: Long.fromNumber(targetMessageTimestamp),
         },
       },
     }),
@@ -252,12 +262,15 @@ export async function createGroup(
   await phone.setStorageState(state);
   return group;
 }
+export function getLeftPane(page: Page): Locator {
+  return page.locator('#LeftPane');
+}
 
 export async function clickOnConversationWithAci(
   page: Page,
   aci: string
 ): Promise<void> {
-  const leftPane = page.locator('#LeftPane');
+  const leftPane = getLeftPane(page);
   await leftPane.getByTestId(aci).click();
 }
 
@@ -277,10 +290,22 @@ export async function pinContact(
   await phone.setStorageState(state);
 }
 
-export function acceptConversation(page: Page): Promise<void> {
-  return page
+export async function acceptConversation(page: Page): Promise<void> {
+  await page
     .locator('.module-message-request-actions button >> "Accept"')
     .click();
+
+  const confirmationButton = page
+    .locator('.MessageRequestActionsConfirmation')
+    .getByRole('button', { name: 'Accept' });
+
+  await confirmationButton.waitFor({
+    timeout: 500,
+  });
+
+  if (await confirmationButton.isVisible()) {
+    await confirmationButton.click();
+  }
 }
 
 export function getTimeline(page: Page): Locator {
@@ -430,4 +455,30 @@ export async function createCallLink(
   });
   const testId = await callLinkItem.getAttribute('data-testid');
   return testId || undefined;
+}
+
+export async function setupAppToUseLibsignalWebsockets(
+  bootstrap: Bootstrap
+): Promise<App> {
+  bootstrap.server.setRemoteConfig(
+    'desktop.experimentalTransportEnabled.alpha',
+    { enabled: true }
+  );
+
+  bootstrap.server.setRemoteConfig('desktop.experimentalTransport.enableAuth', {
+    enabled: true,
+  });
+
+  // Link & close so that app can get remote config first over non-libsignal websocket,
+  // and then on next app start it will connect via libsignal
+  await bootstrap.linkAndClose();
+  return bootstrap.startApp();
+}
+
+export async function assertAppWasUsingLibsignalWebsockets(
+  app: App
+): Promise<void> {
+  const { authenticated, unauthenticated } = await app.getSocketStatus();
+  assert.strictEqual(authenticated.lastConnectionTransport, 'libsignal');
+  assert.strictEqual(unauthenticated.lastConnectionTransport, 'libsignal');
 }

@@ -57,6 +57,8 @@ import { ContextMenu } from './ContextMenu';
 import { EditState as ProfileEditorEditState } from './ProfileEditor';
 import type { UnreadStats } from '../util/countUnreadStats';
 import { BackupMediaDownloadProgress } from './BackupMediaDownloadProgress';
+import type { ServerAlertsType } from '../util/handleServerAlerts';
+import { getServerAlertDialog } from './ServerAlerts';
 
 export type PropsType = {
   backupMediaDownloadProgress: {
@@ -146,6 +148,7 @@ export type PropsType = {
   setComposeGroupName: (_: string) => void;
   setComposeSearchTerm: (composeSearchTerm: string) => void;
   setComposeSelectedRegion: (newRegion: string) => void;
+  serverAlerts?: ServerAlertsType;
   showArchivedConversations: () => void;
   showChooseGroupMembers: () => void;
   showFindByUsername: () => void;
@@ -254,6 +257,7 @@ export function LeftPane({
   showConversation,
   showInbox,
   showUserNotFoundModal,
+  serverAlerts,
   startComposing,
   startSearch,
   startSettingGroupMetadata,
@@ -599,6 +603,10 @@ export function LeftPane({
     scrollBehavior = ScrollBehavior.Hard;
   }
 
+  const maybeServerAlert = getServerAlertDialog(
+    serverAlerts,
+    commonDialogProps
+  );
   // Yellow dialogs
   let maybeYellowDialog: JSX.Element | undefined;
 
@@ -611,6 +619,8 @@ export function LeftPane({
     maybeYellowDialog = renderNetworkStatus(commonDialogProps);
   } else if (hasRelinkDialog) {
     maybeYellowDialog = renderRelinkDialog(commonDialogProps);
+  } else if (maybeServerAlert) {
+    maybeYellowDialog = maybeServerAlert;
   }
 
   // Update dialog
@@ -791,6 +801,7 @@ export function LeftPane({
         {showBackupMediaDownloadProgress ? (
           <BackupMediaDownloadProgress
             i18n={i18n}
+            widthBreakpoint={widthBreakpoint}
             {...backupMediaDownloadProgress}
             handleClose={dismissBackupMediaDownloadBanner}
             handlePause={pauseBackupMediaDownload}

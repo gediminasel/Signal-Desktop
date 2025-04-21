@@ -19,6 +19,16 @@ installCallback('resetDefaultChatColor');
 installCallback('setGlobalDefaultConversationColor');
 installCallback('getDefaultConversationColor');
 
+installSetting('backupFeatureEnabled', {
+  setter: false,
+});
+installSetting('backupSubscriptionStatus', {
+  setter: false,
+});
+installSetting('cloudBackupStatus', {
+  setter: false,
+});
+
 // Getters only. These are set by the primary device
 installSetting('blockedCount', {
   setter: false,
@@ -33,15 +43,20 @@ installSetting('typingIndicatorSetting', {
   setter: false,
 });
 
+installCallback('refreshCloudBackupStatus');
+installCallback('refreshBackupSubscriptionStatus');
 installCallback('deleteAllMyStories');
 installCallback('isPrimary');
 installCallback('syncRequest');
+installCallback('getEmojiSkinToneDefault');
+installCallback('setEmojiSkinToneDefault');
 
 installSetting('alwaysRelayCalls');
 installSetting('audioMessage');
 installSetting('audioNotification');
 installSetting('autoConvertEmoji');
 installSetting('autoDownloadUpdate');
+installSetting('autoDownloadAttachment');
 installSetting('autoLaunch');
 installSetting('callRingtoneNotification');
 installSetting('callSystemNotification');

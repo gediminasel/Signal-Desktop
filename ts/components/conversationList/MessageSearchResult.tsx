@@ -48,7 +48,6 @@ export type PropsDataType = {
     | 'sharedGroupNames'
     | 'title'
     | 'type'
-    | 'unblurredAvatarUrl'
   >;
 
   to: Pick<
@@ -172,7 +171,7 @@ export const MessageSearchResult: FunctionComponent<PropsType> = React.memo(
         bodyRanges={displayBodyRanges}
         direction={undefined}
         disableLinks
-        emojiSizeClass={undefined}
+        jumboEmojiSize={null}
         i18n={i18n}
         isSpoilerExpanded={EMPTY_OBJECT}
         onMentionTrigger={noop}
@@ -183,7 +182,6 @@ export const MessageSearchResult: FunctionComponent<PropsType> = React.memo(
 
     return (
       <BaseConversationListItem
-        acceptedMessageRequest={from.acceptedMessageRequest}
         avatarUrl={from.avatarUrl}
         badge={getPreferredBadge(from.badges)}
         color={from.color}
@@ -192,8 +190,8 @@ export const MessageSearchResult: FunctionComponent<PropsType> = React.memo(
         headerName={headerName}
         i18n={i18n}
         id={id}
-        isNoteToSelf={isNoteToSelf}
         isMe={from.isMe}
+        isNoteToSelf={isNoteToSelf}
         isSelected={false}
         messageText={messageText}
         onClick={onClickItem}
@@ -202,7 +200,6 @@ export const MessageSearchResult: FunctionComponent<PropsType> = React.memo(
         sharedGroupNames={from.sharedGroupNames}
         theme={theme}
         title={from.title}
-        unblurredAvatarUrl={from.unblurredAvatarUrl}
       />
     );
   }

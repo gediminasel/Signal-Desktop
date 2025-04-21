@@ -26,7 +26,7 @@ import { getNotificationTextForMessage } from '../util/getNotificationTextForMes
 import { getNotificationDataForMessage } from '../util/getNotificationDataForMessage';
 import type { ProfileNameChangeType } from '../util/getStringForProfileChange';
 import type { AttachmentType, ThumbnailType } from '../types/Attachment';
-import { MAX_SAFE_TIMEOUT_DELAY, toDayMillis } from '../util/timestamp';
+import { toDayMillis } from '../util/timestamp';
 import { areWeAdmin } from '../util/areWeAdmin';
 import { isBlocked } from '../util/isBlocked';
 import { getAboutText } from '../util/getAboutText';
@@ -34,7 +34,6 @@ import {
   getAvatar,
   getRawAvatarPath,
   getLocalAvatarUrl,
-  getLocalProfileAvatarUrl,
 } from '../util/avatarUtils';
 import { getDraftPreview } from '../util/getDraftPreview';
 import { hasDraft } from '../util/hasDraft';
@@ -179,11 +178,11 @@ import { getMessageAuthorText } from '../util/getMessageAuthorText';
 import { downscaleOutgoingAttachment } from '../util/attachments';
 import { MessageRequestResponseEvent } from '../types/MessageRequestResponseEvent';
 import { hasExpiration } from '../types/Message2';
-import type { MessageToDelete } from '../textsecure/messageReceiverEvents';
+import type { AddressableMessage } from '../textsecure/messageReceiverEvents';
 import {
-  getConversationToDelete,
-  getMessageToDelete,
-} from '../util/deleteForMe';
+  getConversationIdentifier,
+  getAddressableMessage,
+} from '../util/syncIdentifiers';
 import { explodePromise } from '../util/explodePromise';
 import { getCallHistorySelector } from '../state/selectors/callHistory';
 import { migrateLegacyReadStatus } from '../messages/migrateLegacyReadStatus';
@@ -192,6 +191,8 @@ import { getIsInitialContactSync } from '../services/contactSync';
 import { queueAttachmentDownloadsForMessage } from '../util/queueAttachmentDownloads';
 import { cleanupMessages } from '../util/cleanup';
 import { MessageModel } from './messages';
+import { applyNewAvatar } from '../groups';
+import { safeSetTimeout } from '../util/timeout';
 
 /* eslint-disable more/no-then */
 window.Whisper = window.Whisper || {};
@@ -2307,8 +2308,10 @@ export class ConversationModel extends window.Backbone
       await Promise.all(
         readMessages.map(async m => {
           const registered = window.MessageCache.register(new MessageModel(m));
-          const shouldSave =
-            await queueAttachmentDownloadsForMessage(registered);
+          const shouldSave = await queueAttachmentDownloadsForMessage(
+            registered,
+            { isManualDownload: false }
+          );
           if (shouldSave) {
             await window.MessageCache.saveMessage(registered.attributes);
           }
@@ -2483,6 +2486,25 @@ export class ConversationModel extends window.Backbone
         //   time to go through old messages to download attachments.
         if (didResponseChange && !wasPreviouslyAccepted) {
           await this.handleReadAndDownloadAttachments({ isLocalAction });
+          if (this.attributes.remoteAvatarUrl) {
+            if (isDirectConversation(this.attributes)) {
+              drop(
+                this.setAndMaybeFetchProfileAvatar({
+                  avatarUrl: this.attributes.remoteAvatarUrl,
+                })
+              );
+            }
+
+            if (isGroup(this.attributes)) {
+              const updateAttrs = await applyNewAvatar({
+                newAvatarUrl: this.attributes.remoteAvatarUrl,
+                attributes: this.attributes,
+                logId: 'applyMessageRequestResponse',
+                forceDownload: true,
+              });
+              this.set(updateAttrs);
+            }
+          }
         }
 
         if (isLocalAction) {
@@ -3911,7 +3933,7 @@ export class ConversationModel extends window.Backbone
       if (!dontAddMessage) {
         this.#doAddSingleMessage(message, { isJustSent: true });
       }
-      const notificationData = getNotificationDataForMessage(message);
+
       const draftProperties = dontClearDraft
         ? {}
         : {
@@ -3920,19 +3942,13 @@ export class ConversationModel extends window.Backbone
             draftBodyRanges: [],
             draftTimestamp: null,
             quotedMessageId: undefined,
-            lastMessageAuthor: getMessageAuthorText(message),
-            lastMessageBodyRanges: message.bodyRanges,
-            lastMessage:
-              notificationData?.text ||
-              getNotificationTextForMessage(message) ||
-              '',
-            lastMessageStatus: 'sending' as const,
           };
-
+      const lastMessageProperties = this.getLastMessageData(message, message);
       const isEditMessage = Boolean(message.editHistory);
 
       this.set({
         ...draftProperties,
+        ...lastMessageProperties,
         ...(enabledProfileSharing ? { profileSharing: true } : {}),
         ...(dontAddMessage
           ? {}
@@ -4273,12 +4289,6 @@ export class ConversationModel extends window.Backbone
       return;
     }
 
-    const ourConversationId =
-      window.ConversationController.getOurConversationId();
-    if (!ourConversationId) {
-      throw new Error('updateLastMessage: Failed to fetch ourConversationId');
-    }
-
     const conversationId = this.id;
 
     const stats = await DataReader.getConversationMessageStats({
@@ -4331,50 +4341,69 @@ export class ConversationModel extends window.Backbone
       return;
     }
 
+    this.set(
+      this.getLastMessageData(preview?.attributes, activity?.attributes)
+    );
+
+    await DataWriter.updateConversation(this.attributes);
+  }
+
+  getLastMessageData(
+    preview?: MessageAttributesType,
+    activity?: MessageAttributesType
+  ): Pick<
+    ConversationAttributesType,
+    | 'lastMessage'
+    | 'lastMessageBodyRanges'
+    | 'lastMessagePrefix'
+    | 'lastMessageAuthor'
+    | 'lastMessageStatus'
+    | 'lastMessageReceivedAt'
+    | 'lastMessageReceivedAtMs'
+    | 'timestamp'
+    | 'lastMessageDeletedForEveryone'
+  > {
+    const ourConversationId =
+      window.ConversationController.getOurConversationId();
+    if (!ourConversationId) {
+      throw new Error('getLastMessageData: Failed to fetch ourConversationId');
+    }
+
     let timestamp = this.get('timestamp') || null;
     let lastMessageReceivedAt = this.get('lastMessageReceivedAt');
     let lastMessageReceivedAtMs = this.get('lastMessageReceivedAtMs');
     if (activity) {
-      const { callId } = activity.attributes;
+      const { callId } = activity;
       const callHistory = callId
         ? getCallHistorySelector(window.reduxStore.getState())(callId)
         : undefined;
 
-      timestamp =
-        callHistory?.timestamp || activity.get('sent_at') || timestamp;
-      lastMessageReceivedAt =
-        activity.get('received_at') || lastMessageReceivedAt;
+      timestamp = callHistory?.timestamp || activity.sent_at || timestamp;
+      lastMessageReceivedAt = activity.received_at || lastMessageReceivedAt;
       lastMessageReceivedAtMs =
-        activity.get('received_at_ms') || lastMessageReceivedAtMs;
+        activity.received_at_ms || lastMessageReceivedAtMs;
     }
 
     const notificationData = preview
-      ? getNotificationDataForMessage(preview.attributes)
+      ? getNotificationDataForMessage(preview)
       : undefined;
 
-    this.set({
+    return {
       lastMessage:
         notificationData?.text ||
-        (preview
-          ? getNotificationTextForMessage(preview.attributes)
-          : undefined) ||
+        (preview ? getNotificationTextForMessage(preview) : undefined) ||
         '',
       lastMessageBodyRanges: notificationData?.bodyRanges,
       lastMessagePrefix: notificationData?.emoji,
-      lastMessageAuthor: preview
-        ? getMessageAuthorText(preview.attributes)
-        : undefined,
+      lastMessageAuthor: preview ? getMessageAuthorText(preview) : undefined,
       lastMessageStatus: preview
-        ? getMessagePropStatus(preview.attributes, ourConversationId)
+        ? getMessagePropStatus(preview, ourConversationId)
         : undefined,
       lastMessageReceivedAt,
       lastMessageReceivedAtMs,
       timestamp,
-      lastMessageDeletedForEveryone:
-        preview?.get('deletedForEveryone') || false,
-    });
-
-    await DataWriter.updateConversation(this.attributes);
+      lastMessageDeletedForEveryone: preview?.deletedForEveryone || false,
+    };
   }
 
   setArchived(isArchived: boolean): void {
@@ -4920,10 +4949,12 @@ export class ConversationModel extends window.Backbone
     }
   }
 
-  async setAndMaybeFetchProfileAvatar(
-    avatarUrl: undefined | null | string,
-    decryptionKey: Uint8Array
-  ): Promise<void> {
+  async setAndMaybeFetchProfileAvatar(options: {
+    avatarUrl: undefined | null | string;
+    decryptionKey?: Uint8Array | null | undefined;
+    forceFetch?: boolean;
+  }): Promise<void> {
+    const { avatarUrl, decryptionKey, forceFetch } = options;
     if (isMe(this.attributes)) {
       if (avatarUrl) {
         await window.storage.put('avatarUrl', avatarUrl);
@@ -4941,10 +4972,29 @@ export class ConversationModel extends window.Backbone
     if (!messaging) {
       throw new Error('setProfileAvatar: Cannot fetch avatar when offline!');
     }
+
+    if (!this.getAccepted({ ignoreEmptyConvo: true }) && !forceFetch) {
+      this.set({ remoteAvatarUrl: avatarUrl });
+      return;
+    }
+
     const avatar = await messaging.getAvatar(avatarUrl);
 
+    // If decryptionKey isn't provided, use the one from the model
+    const modelProfileKey = this.get('profileKey');
+    const updatedDecryptionKey =
+      decryptionKey ||
+      (modelProfileKey ? Bytes.fromBase64(modelProfileKey) : null);
+
+    if (!updatedDecryptionKey) {
+      log.warn(
+        'setAndMaybeFetchProfileAvatar: No decryption key provided and none found on model'
+      );
+      return;
+    }
+
     // decrypt
-    const decrypted = decryptProfile(avatar, decryptionKey);
+    const decrypted = decryptProfile(avatar, updatedDecryptionKey);
 
     // update the conversation avatar only if hash differs
     if (decrypted) {
@@ -5192,8 +5242,8 @@ export class ConversationModel extends window.Backbone
       const addressableMessages = await getMostRecentAddressableMessages(
         this.id
       );
-      const mostRecentMessages: Array<MessageToDelete> = addressableMessages
-        .map(getMessageToDelete)
+      const mostRecentMessages: Array<AddressableMessage> = addressableMessages
+        .map(getAddressableMessage)
         .filter(isNotNil)
         .slice(0, 5);
       log.info(
@@ -5204,12 +5254,12 @@ export class ConversationModel extends window.Backbone
         item => item.expireTimer
       );
 
-      let mostRecentNonExpiringMessages: Array<MessageToDelete> | undefined;
+      let mostRecentNonExpiringMessages: Array<AddressableMessage> | undefined;
       if (areAnyDisappearing) {
         const nondisappearingAddressableMessages =
           await getMostRecentAddressableNondisappearingMessages(this.id);
         mostRecentNonExpiringMessages = nondisappearingAddressableMessages
-          .map(getMessageToDelete)
+          .map(getAddressableMessage)
           .filter(isNotNil)
           .slice(0, 5);
         log.info(
@@ -5222,7 +5272,7 @@ export class ConversationModel extends window.Backbone
           MessageSender.getDeleteForMeSyncMessage([
             {
               type: 'delete-conversation',
-              conversation: getConversationToDelete(this.attributes),
+              conversation: getConversationIdentifier(this.attributes),
               isFullDelete: true,
               mostRecentMessages,
               mostRecentNonExpiringMessages,
@@ -5235,7 +5285,7 @@ export class ConversationModel extends window.Backbone
           MessageSender.getDeleteForMeSyncMessage([
             {
               type: 'delete-local-conversation',
-              conversation: getConversationToDelete(this.attributes),
+              conversation: getConversationIdentifier(this.attributes),
               timestamp,
             },
           ])
@@ -5271,7 +5321,12 @@ export class ConversationModel extends window.Backbone
   }
 
   getColor(): AvatarColorType {
-    return migrateColor(this.getServiceId(), this.get('color'));
+    return migrateColor(this.get('color'), {
+      aci: this.getAci(),
+      e164: this.get('e164'),
+      pni: this.getPni(),
+      groupId: this.get('groupId'),
+    });
   }
 
   getConversationColor(): ConversationColorType | undefined {
@@ -5293,15 +5348,6 @@ export class ConversationModel extends window.Backbone
       customColor: this.get('customColor'),
       customColorId: this.get('customColorId'),
     };
-  }
-
-  unblurAvatar(): void {
-    const avatarUrl = getLocalProfileAvatarUrl(this.attributes);
-    if (avatarUrl) {
-      this.set('unblurredAvatarUrl', avatarUrl);
-    } else {
-      this.unset('unblurredAvatarUrl');
-    }
   }
 
   areWeAdmin(): boolean {
@@ -5372,14 +5418,8 @@ export class ConversationModel extends window.Backbone
         return;
       }
 
-      if (delay > MAX_SAFE_TIMEOUT_DELAY) {
-        log.warn(
-          'startMuteTimer: timeout is larger than maximum setTimeout delay'
-        );
-        return;
-      }
-
-      this.#muteTimer = setTimeout(() => this.setMuteExpiration(0), delay);
+      this.#muteTimer =
+        safeSetTimeout(() => this.setMuteExpiration(0), delay) ?? undefined;
     }
   }
 

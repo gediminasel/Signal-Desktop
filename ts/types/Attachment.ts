@@ -1,5 +1,6 @@
 // Copyright 2018 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
+/* eslint-disable max-classes-per-file */
 
 import moment from 'moment';
 import {
@@ -13,7 +14,7 @@ import {
 } from 'lodash';
 import { blobToArrayBuffer } from 'blob-util';
 
-import type { LinkPreviewType } from './message/LinkPreviews';
+import type { LinkPreviewForUIType } from './message/LinkPreviews';
 import type { LoggerType } from './Logging';
 import * as logging from '../logging/log';
 import * as MIME from './MIME';
@@ -45,6 +46,14 @@ const MIN_HEIGHT = 50;
 // Used for display
 
 export class AttachmentSizeError extends Error {}
+
+// Used for downlaods
+
+export class AttachmentPermanentlyUndownloadableError extends Error {
+  constructor(message: string) {
+    super(`AttachmentPermanentlyUndownloadableError: ${message}`);
+  }
+}
 
 type ScreenshotType = Omit<AttachmentType, 'size'> & {
   height: number;
@@ -88,6 +97,9 @@ export type AttachmentType = {
   data?: Uint8Array;
   textAttachment?: TextAttachmentType;
   wasTooBig?: boolean;
+
+  // If `true` backfill is unavailable
+  backfillError?: boolean;
 
   totalDownloaded?: number;
   incrementalMac?: string;
@@ -141,6 +153,7 @@ export type AddressableAttachmentType = Readonly<{
 }>;
 
 export type AttachmentForUIType = AttachmentType & {
+  isPermanentlyUndownloadable: boolean;
   thumbnailFromBackup?: {
     url?: string;
   };
@@ -177,7 +190,7 @@ export type TextAttachmentType = {
   textStyle?: number | null;
   textForegroundColor?: number | null;
   textBackgroundColor?: number | null;
-  preview?: LinkPreviewType;
+  preview?: LinkPreviewForUIType;
   gradient?: {
     startColor?: number | null;
     endColor?: number | null;
@@ -1282,12 +1295,6 @@ export function isDownloadable(attachment: AttachmentType): boolean {
     isDownloadableFromTransitTier(attachment) ||
     isDownloadableFromBackupTier(attachment)
   );
-}
-
-export function isPermanentlyUndownloadable(
-  attachment: AttachmentType
-): boolean {
-  return Boolean(!isDownloadable(attachment) && attachment.error);
 }
 
 export function isAttachmentLocallySaved(

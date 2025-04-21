@@ -5,28 +5,31 @@ import type { Meta, StoryFn } from '@storybook/react';
 import React, { useContext } from 'react';
 import casual from 'casual';
 import { action } from '@storybook/addon-actions';
-import enMessages from '../../../_locales/en/messages.json';
 import type { Props } from './ConversationHero';
 import { ConversationHero } from './ConversationHero';
 import { HasStories } from '../../types/Stories';
 import { StorybookThemeContext } from '../../../.storybook/StorybookThemeContext';
 import { getDefaultConversation } from '../../test-both/helpers/getDefaultConversation';
-import { setupI18n } from '../../util/setupI18n';
 import { ThemeType } from '../../types/Util';
 
-const i18n = setupI18n('en', enMessages);
+const { i18n } = window.SignalContext;
 
 export default {
   title: 'Components/Conversation/ConversationHero',
   component: ConversationHero,
   args: {
     conversationType: 'direct',
+    fromOrAddedByTrustedContact: true,
     i18n,
+    isDirectConvoAndHasNickname: false,
     theme: ThemeType.light,
-    unblurAvatar: action('unblurAvatar'),
     updateSharedGroups: action('updateSharedGroups'),
     viewUserStories: action('viewUserStories'),
     toggleAboutContactModal: action('toggleAboutContactModal'),
+    toggleProfileNameWarningModal: action('toggleProfileNameWarningModal'),
+    openConversationDetails: action('openConversationDetails'),
+    startAvatarDownload: action('startAvatarDownload'),
+    pendingAvatarDownload: false,
   },
 } satisfies Meta<Props>;
 
@@ -72,6 +75,12 @@ DirectNoGroupsName.args = {
 
 export const DirectNoGroupsJustProfile = Template.bind({});
 DirectNoGroupsJustProfile.args = {
+  phoneNumber: casual.phone,
+};
+
+export const SignalConversation = Template.bind({});
+SignalConversation.args = {
+  isSignalConversation: true,
   phoneNumber: casual.phone,
 };
 
@@ -148,6 +157,15 @@ GroupNoName.args = {
   title: '',
 };
 
+export const GroupNotAccepted = Template.bind({});
+GroupNotAccepted.args = {
+  conversationType: 'group',
+  groupDescription: casual.sentence,
+  membersCount: casual.integer(20, 100),
+  title: casual.title,
+  acceptedMessageRequest: false,
+};
+
 export const NoteToSelf = Template.bind({});
 NoteToSelf.args = {
   isMe: true,
@@ -161,4 +179,27 @@ UnreadStories.args = {
 export const ReadStories = Template.bind({});
 ReadStories.args = {
   hasStories: HasStories.Read,
+};
+
+export const DirectNotFromTrustedContact = Template.bind({});
+DirectNotFromTrustedContact.args = {
+  conversationType: 'direct',
+  title: casual.full_name,
+  fromOrAddedByTrustedContact: false,
+};
+
+export const DirectWithNickname = Template.bind({});
+DirectWithNickname.args = {
+  conversationType: 'direct',
+  title: casual.full_name,
+  fromOrAddedByTrustedContact: false,
+  isDirectConvoAndHasNickname: true,
+};
+
+export const GroupNotFromTrustedContact = Template.bind({});
+GroupNotFromTrustedContact.args = {
+  conversationType: 'group',
+  title: casual.title,
+  membersCount: casual.integer(5, 20),
+  fromOrAddedByTrustedContact: false,
 };

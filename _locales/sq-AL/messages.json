@@ -38,6 +38,9 @@
   "icu:Preferences__sent-media-quality": {
     "messageformat": "Cilësi medie të dërguar"
   },
+  "icu:Preferences__sent-media-quality__description": {
+    "messageformat": "Dërgimi i medias në cilësi të lartë do të përdorë më tepër të dhëna."
+  },
   "icu:sentMediaQualityStandard": {
     "messageformat": "Standard"
   },
@@ -68,6 +71,12 @@
   "icu:unknownGroup": {
     "messageformat": "Grup i panjohur"
   },
+  "icu:cantOpenSignalError": {
+    "messageformat": "Signal nuk mund të hapet"
+  },
+  "icu:cantOpenSignalError__detail": {
+    "messageformat": "Për të ndihmuar në rregullimin e problemit, ndiq udhëzuesin e rikthimit në faqen e ndihmës ose kontakto ndihmën nga Signal.\n\nNëse duhet që ta përdorësh Signal menjëherë, mund t'i fshish të dhënat dhe të rilidhësh desktopin.\n\n Do të kesh mundësinë e transferimit të historikut të mesazheve nga telefoni yt."
+  },
   "icu:databaseError": {
     "messageformat": "Gabim Baze të Dhënash"
   },
@@ -78,10 +87,10 @@
     "messageformat": "Fshiji të dhënat dhe rinise"
   },
   "icu:databaseError__deleteDataConfirmation": {
-    "messageformat": "Të fshihen përgjithmonë të gjitha të dhënat?"
+    "messageformat": "Fshij përgjithmonë të gjitha të dhënat"
   },
   "icu:databaseError__deleteDataConfirmation__detail": {
-    "messageformat": "I gjithë historiku dhe media jote e mesazheve do të fshihen përgjithmonë nga kjo pajisje. Do të mund të përdorësh Signal në këtë pajisje pasi ta rilidhësh atë. Kjo nuk do të fshijë ndonjë të dhënë nga telefoni yt."
+    "messageformat": "I gjithë historiku i mesazheve dhe media do të fshihen përgjithmonë nga kjo pajisje. Kjo nuk do t'i fshijë të dhënat nga telefoni yt.\n\nDo të mund ta përdorësh Signal në këtë pajisje pasi ta rilidhësh atë. Do të kesh mundësinë e transferimit të historikut të mesazheve nga telefoni yt."
   },
   "icu:databaseError__startOldVersion": {
     "messageformat": "Versioni i bazës së të dhënave nuk përputhet me këtë version të Signal. Sigurohu që po hap versionin më të ri të Signal në kompjuterin tënd."
@@ -214,9 +223,6 @@
   },
   "icu:optimizingApplication": {
     "messageformat": "Po optimizohet aplikacioni…"
-  },
-  "icu:migratingToSQLCipher": {
-    "messageformat": "Po optimizohen mesazhet…. {status} i plotësuar."
   },
   "icu:archivedConversations": {
     "messageformat": "Bisedat e arkivuara"
@@ -407,9 +413,6 @@
   "icu:unreadMessages": {
     "messageformat": "{count, plural, one {{count,number} mesazh i palexuar} other {{count,number} mesazhe të palexuara}}"
   },
-  "icu:messageHistoryUnsynced": {
-    "messageformat": "Për sigurinë tënde, historiku i bisedës nuk transferohet në pajisje të reja të lidhura."
-  },
   "icu:youMarkedAsVerified": {
     "messageformat": "I vutë shenjë si i verifikuar Numrit tuaj të Sigurisë për {name}"
   },
@@ -588,7 +591,7 @@
     "messageformat": "Failed to send message with endorsements"
   },
   "icu:Toast--InvalidStorageServiceHeaders": {
-    "messageformat": "Received invalid response from storage service. Please share your logs."
+    "messageformat": "Morëm përgjigje të pavlefshme nga shërbimi i hapësirës ruajtëse. Të lutem, ndaj regjistrat."
   },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
@@ -706,9 +709,6 @@
   },
   "icu:noSearchResultsOnlyUnreadFilter": {
     "messageformat": "Nuk ka biseda të palexuara"
-  },
-  "icu:noSearchResults--sms-only": {
-    "messageformat": "Kontaktet SMS/MMS s’janë të passhëm në Desktop."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "S’ka përfundime për \"{searchTerm}\" te {conversationName}"
@@ -1145,9 +1145,6 @@
   "icu:mediaNotAvailable": {
     "messageformat": "Kjo media nuk është e disponueshme"
   },
-  "icu:mediaNotAvailable--short": {
-    "messageformat": "Media nuk disponohet"
-  },
   "icu:attachmentNoLongerAvailable__learnMore": {
     "messageformat": "Mëso më shumë"
   },
@@ -1162,6 +1159,12 @@
   },
   "icu:attachmentNotAvailable__voice": {
     "messageformat": "Mesazhi zanor nuk disponohet"
+  },
+  "icu:attachmentNotAvailable__tapToView": {
+    "messageformat": "Media që shihet vetëm një herë nuk është e disponueshme"
+  },
+  "icu:attachmentNotAvailable__tapToViewCannotDownload": {
+    "messageformat": "Media që shihet vetëm një herë nuk mund të shkarkohet"
   },
   "icu:AttachmentNotAvailableModal__title--file": {
     "messageformat": "Skedari nuk disponohet"
@@ -1192,6 +1195,21 @@
   },
   "icu:AttachmentNotAvailableModal__body--voice-message": {
     "messageformat": "Mesazhi zanor nuk u transferua nga telefoni kur pajisja u lidh. Media dhe skedarët më të vjetër se 45 ditë nga momenti i lidhjes së pajisjes nuk mund të sinkronizohen."
+  },
+  "icu:TapToViewNotAvailableModal__body--expired": {
+    "messageformat": "Kjo media që shihet vetëm një herë nuk është më e disponueshme për shkarkim. Kërkoi {name} që ta dërgojë sërish."
+  },
+  "icu:TapToViewNotAvailableModal__body--error": {
+    "messageformat": "Media që shihet vetëm një herë nuk mund të shkarkohet. {name} do të duhet ta dërgojë sërish."
+  },
+  "icu:BackfillFailureModal__title": {
+    "messageformat": "Media nuk mund të shkarkohet"
+  },
+  "icu:BackfillFailureModal__body--timeout": {
+    "messageformat": "Kontrollo lidhjen e internetit të desktopit dhe telefonit. Hap Signal në telefon dhe provo ta shkarkosh përsëri."
+  },
+  "icu:BackfillFailureModal__body--not-found": {
+    "messageformat": "Media nuk disponohet më në telefon dhe nuk mund të shkarkohet."
   },
   "icu:save": {
     "messageformat": "Ruaje"
@@ -1244,12 +1262,6 @@
   "icu:Install__support-link": {
     "messageformat": "Ju duhet ndihmë?"
   },
-  "icu:Install__choose-device-name__description": {
-    "messageformat": "Këtë emër do ta shihni nën “Pajisje të Lidhura”, te telefoni juaj"
-  },
-  "icu:Install__choose-device-name__placeholder": {
-    "messageformat": "Kompjuteri Im"
-  },
   "icu:Preferences--phone-number": {
     "messageformat": "Numër telefoni"
   },
@@ -1259,11 +1271,8 @@
   "icu:Preferences--device-name__description": {
     "messageformat": "Për të ndryshuar emrin e pajisjes, hap Signal në telefon dhe shko te Parametrat > Pajisjet e lidhura"
   },
-  "icu:chooseDeviceName": {
-    "messageformat": "Zgjidhni emër të kësaj pajisje"
-  },
-  "icu:finishLinkingPhone": {
-    "messageformat": "Përfundoje lidhjen e telefonit"
+  "icu:Preferences__EmojiSkinToneDefaultSetting__Label": {
+    "messageformat": "Toni i lëkurës së emoxhit"
   },
   "icu:initialSync": {
     "messageformat": "Po njëkohësohen kontakte dhe grupe"
@@ -1814,6 +1823,18 @@
   "icu:ConversationDetails__HeaderButton--Message": {
     "messageformat": "Mesazh"
   },
+  "icu:ConversationDetails--help-section": {
+    "messageformat": "Ndihmë"
+  },
+  "icu:ConversationDetails--support-center": {
+    "messageformat": "Qendër Asistence"
+  },
+  "icu:ConversationDetails--contact-us": {
+    "messageformat": "Lidhuni me ne"
+  },
+  "icu:ConversationDetails--donate": {
+    "messageformat": "Dhuroni për Signal-in"
+  },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "Shih Numrin e Sigurisë"
   },
@@ -1873,6 +1894,9 @@
   },
   "icu:Toast--failed-to-fetch-phone-number": {
     "messageformat": "Gjetja e emrit të përdoruesit dështoi. Kontrollo lidhjen e internetit dhe provo sërish."
+  },
+  "icu:Toast--download-failed": {
+    "messageformat": "Shkarkimi dështoi"
   },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "Përpunimet mund të zbatohen vetëm brenda 24 orëve nga momenti që dërgove këtë mesazh."
@@ -2252,6 +2276,204 @@
   "icu:EmojiPicker__button--flag": {
     "messageformat": "Flamur"
   },
+  "icu:FunPicker__Tab--Emojis": {
+    "messageformat": "Emoji"
+  },
+  "icu:FunPicker__Tab--Stickers": {
+    "messageformat": "Ngjitës"
+  },
+  "icu:FunPicker__Tab--Gifs": {
+    "messageformat": "GIFe"
+  },
+  "icu:FunPanelEmojis__SearchLabel": {
+    "messageformat": "Kërkoni emoji"
+  },
+  "icu:FunPanelEmojis__SearchPlaceholder": {
+    "messageformat": "Kërkoni emoji"
+  },
+  "icu:FunPanelEmojis__SubNavLabel": {
+    "messageformat": "Kategoritë e emoxhive"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Recents": {
+    "messageformat": "Përdorur Së Fundi"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--SmileysAndPeople": {
+    "messageformat": "Fytyra & Njerëz"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--AnimalsAndNature": {
+    "messageformat": "Kafshë & Natyra"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--FoodAndDrink": {
+    "messageformat": "Ushqim & Pije"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Activities": {
+    "messageformat": "Aktivitete"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--TravelAndPlaces": {
+    "messageformat": "Udhëtim & Vende"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Objects": {
+    "messageformat": "Objekte"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Symbols": {
+    "messageformat": "Simbole"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Flags": {
+    "messageformat": "Flamuj"
+  },
+  "icu:FunPanelEmojis__SearchResults__EmptyHeading": {
+    "messageformat": "S’u gjetën emoji"
+  },
+  "icu:FunPanelEmojis__ChangeSkinToneButtonLabel": {
+    "messageformat": "Ndrysho preferencën e tonit të lëkurës"
+  },
+  "icu:FunPanelEmojis__SkinTonePicker__ChooseDefaultLabel": {
+    "messageformat": "Zgjidh ngjyrën tënde të paracaktuar të lëkurës"
+  },
+  "icu:FunPanelEmojis__SectionTitle--SearchResults": {
+    "messageformat": "Rezultatet e kërkimit"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Recents": {
+    "messageformat": "Përdorur Së Fundi"
+  },
+  "icu:FunPanelEmojis__SectionTitle--SmileysAndPeople": {
+    "messageformat": "Fytyra & Njerëz"
+  },
+  "icu:FunPanelEmojis__SectionTitle--AnimalsAndNature": {
+    "messageformat": "Kafshë & Natyra"
+  },
+  "icu:FunPanelEmojis__SectionTitle--FoodAndDrink": {
+    "messageformat": "Ushqim & Pije"
+  },
+  "icu:FunPanelEmojis__SectionTitle--TravelAndPlaces": {
+    "messageformat": "Udhëtim & Vende"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Activities": {
+    "messageformat": "Aktivitete"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Objects": {
+    "messageformat": "Objekte"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Symbols": {
+    "messageformat": "Simbole"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Flags": {
+    "messageformat": "Flamuj"
+  },
+  "icu:FunPanelEmojis__CustomizeReactionsButtonLabel": {
+    "messageformat": "Customize reactions"
+  },
+  "icu:FunPanelStickers__SearchLabel": {
+    "messageformat": "Kërkoni ngjitës"
+  },
+  "icu:FunPanelStickers__SearchPlaceholder": {
+    "messageformat": "Kërkoni ngjitës"
+  },
+  "icu:FunPanelSticker__SubNavLabel": {
+    "messageformat": "Paketa ngjitësesh"
+  },
+  "icu:FunPanelStickers__SubNavCategoryLabel--Recents": {
+    "messageformat": "Përdorur Së Fundi"
+  },
+  "icu:FunPanelStickers__SectionTitle--SearchResults": {
+    "messageformat": "Rezultatet e kërkimit"
+  },
+  "icu:FunPanelStickers__SectionTitle--Recents": {
+    "messageformat": "Përdorur Së Fundi"
+  },
+  "icu:FunPanelStickers__SectionTitle--Featured": {
+    "messageformat": "Featured"
+  },
+  "icu:FunPanelStickers__SearchResults__EmptyHeading": {
+    "messageformat": "S’u gjetën ngjitës"
+  },
+  "icu:FunPanelStickers__LightboxDialog__Label": {
+    "messageformat": "Shfaqje paraprake e ngjitësit"
+  },
+  "icu:FunPanelGifs__SearchLabel--Tenor": {
+    "messageformat": "Kërko GIF-et në Tenor"
+  },
+  "icu:FunPanelGifs__SearchPlaceholder--Tenor": {
+    "messageformat": "Kërko në Tenor"
+  },
+  "icu:FunPanelGifs__SubNavLabel": {
+    "messageformat": "Kategoritë e GIF-eve"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Recents": {
+    "messageformat": "Përdorur Së Fundi"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Trending": {
+    "messageformat": "Tendencë"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Celebrate": {
+    "messageformat": "Festo"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Love": {
+    "messageformat": "Dashuria"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--ThumbsUp": {
+    "messageformat": "Gishti i madh lart"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Surprised": {
+    "messageformat": "I habitur"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Excited": {
+    "messageformat": "I emocionuar"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Sad": {
+    "messageformat": "I trishtuar"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Angry": {
+    "messageformat": "I zemëruar"
+  },
+  "icu:FunPanelGifs__SearchResults__LoadingLabel": {
+    "messageformat": "GIF-et po ngarkohen"
+  },
+  "icu:FunPanelGifs__SearchResults__ErrorHeading": {
+    "messageformat": "GIF-et nuk mund të ngarkoheshin. Kontrollo lidhjen e internetit dhe provo sërish"
+  },
+  "icu:FunPanelGifs__SearchResults__ErrorRetryButton": {
+    "messageformat": "Riprovo"
+  },
+  "icu:FunPanelGifs__SearchResults__EmptyHeading": {
+    "messageformat": "Nuk u gjetën GIF-e"
+  },
+  "icu:FunPanelGifs__LightboxDialog__Label": {
+    "messageformat": "Shfaqje paraprake e GIF"
+  },
+  "icu:FunSearch__ClearButtonLabel": {
+    "messageformat": "Spastro Kërkimin"
+  },
+  "icu:FunSkinTones__List": {
+    "messageformat": "Toni i lëkurës"
+  },
+  "icu:FunSkinTones__ListItem--None": {
+    "messageformat": "Asnjë"
+  },
+  "icu:FunSkinTones__ListItem--Light": {
+    "messageformat": "Toni i çelur lëkure"
+  },
+  "icu:FunSkinTones__ListItem--MediumLight": {
+    "messageformat": "Toni lëkure mesatarisht i çelur"
+  },
+  "icu:FunSkinTones__ListItem--Medium": {
+    "messageformat": "Toni i mesëm lëkure"
+  },
+  "icu:FunSkinTones__ListItem--MediumDark": {
+    "messageformat": "Toni lëkure mesatarisht i errët"
+  },
+  "icu:FunSkinTones__ListItem--Dark": {
+    "messageformat": "Toni i errët lëkure"
+  },
+  "icu:FunButton__Label--FunPicker": {
+    "messageformat": "Shto emoxhi, ngjitëse ose GIF"
+  },
+  "icu:FunButton__Label--EmojiPicker": {
+    "messageformat": "Shto emoxhi"
+  },
+  "icu:FunButton__Label--StickerPicker": {
+    "messageformat": "Shtoni një ngjitës"
+  },
   "icu:confirmation-dialog--Cancel": {
     "messageformat": "Anulo"
   },
@@ -2288,11 +2510,11 @@
   "icu:Message--update-signal": {
     "messageformat": "Përditësoni Signal-in"
   },
-  "icu:Message--tap-to-view-expired": {
+  "icu:Message--tap-to-view--viewed": {
     "messageformat": "Parë"
   },
-  "icu:Message--tap-to-view--outgoing": {
-    "messageformat": "Media"
+  "icu:Message--tap-to-view--media": {
+    "messageformat": "Media që mund të shihet vetëm një herë"
   },
   "icu:Message--tap-to-view--incoming--expired-toast": {
     "messageformat": "E patë tashmë këtë mesazh"
@@ -2300,11 +2522,14 @@
   "icu:Message--tap-to-view--outgoing--expired-toast": {
     "messageformat": "Mesazhet me vetëm një shikim nuk ruhen në historikun e bisedës."
   },
-  "icu:Message--tap-to-view--incoming": {
-    "messageformat": "Shihni Foton"
+  "icu:Message--tap-to-view--video": {
+    "messageformat": "Video që mund të shihet vetë një herë"
   },
-  "icu:Message--tap-to-view--incoming-video": {
-    "messageformat": "Shiheni Videon"
+  "icu:Message--tap-to-view--photo": {
+    "messageformat": "Foto që mund të shihet vetëm një herë"
+  },
+  "icu:Message--tap-to-view--helper-text": {
+    "messageformat": "Kliko për të parë"
   },
   "icu:Conversation--getDraftPreview--attachment": {
     "messageformat": "(bashkëngjitje)"
@@ -2498,6 +2723,9 @@
   "icu:Keyboard--toggle-video": {
     "messageformat": "Hapni dhe mbyllni videon"
   },
+  "icu:Keyboard--toggle-preview": {
+    "messageformat": "Aktivizo dhe çaktivizo shfaqjen paraprake të zgjeruar"
+  },
   "icu:Keyboard--accept-video-call": {
     "messageformat": "Përgjigjju thirrjes me video (vetëm thirrjet me video)"
   },
@@ -2560,6 +2788,12 @@
   },
   "icu:SafetyTipsModal__Description": {
     "messageformat": "Ki kujdes kur pranon kërkesa për mesazhe nga persona që nuk i njeh. Kujdes nga:"
+  },
+  "icu:SafetyTipsModal__TipTitle--Fake": {
+    "messageformat": "Emra dhe llogari të rreme"
+  },
+  "icu:SafetyTipsModal__TipDescription--Fake": {
+    "messageformat": "Signal nuk do të kontaktojë kurrë për kodin e regjistrimit ose PIN. Ji i kujdesshëm ndaj kërkesave që personifikohen si dikush tjetër. Emrat e profilit zgjidhen nga mbajtësi i llogarisë dhe nuk verifikohen."
   },
   "icu:SafetyTipsModal__TipTitle--Crypto": {
     "messageformat": "Mashtrime me para apo kripto"
@@ -2693,6 +2927,12 @@
   "icu:MessageRequests--accept": {
     "messageformat": "Pranoje"
   },
+  "icu:MessageRequests--accept-confirm-title": {
+    "messageformat": "Të pranohet kërkesa?"
+  },
+  "icu:MessageRequests--accept-confirm-body": {
+    "messageformat": "Shqyrto me kujdes kërkesat. Emrat e profilit zgjidhen nga mbajtësi i llogarisë dhe nuk verifikohen."
+  },
   "icu:MessageRequests--continue": {
     "messageformat": "Vazhdo"
   },
@@ -2704,6 +2944,21 @@
   },
   "icu:ConversationHero--members": {
     "messageformat": "{count, plural, one {1 anëtar} other {{count,number} anëtarë}}"
+  },
+  "icu:ConversationHero--review-carefully": {
+    "messageformat": "Rishqyrto me kujdes"
+  },
+  "icu:ConversationHero--group-names": {
+    "messageformat": "<clickable>Emrat e grupeve</clickable> nuk verifikohen"
+  },
+  "icu:ConversationHero--profile-names": {
+    "messageformat": "<clickable>Emrat e profilit</clickable> nuk verifikohen"
+  },
+  "icu:ConversationHero--signal-official-chat": {
+    "messageformat": "Kjo është biseda zyrtare dhe e vetme nga Signal"
+  },
+  "icu:ConversationHero--release-notes": {
+    "messageformat": "Qëndro i përditësuar me lajmet dhe shënimet e publikimit."
   },
   "icu:member-of-1-group": {
     "messageformat": "Anëtar i {group}"
@@ -2840,6 +3095,12 @@
   "icu:CallControls__JoinLeaveButton--hangup-group": {
     "messageformat": "Largohu"
   },
+  "icu:CallControls__JoinLeaveButton--hangup-1-1-tooltip": {
+    "messageformat": "End call"
+  },
+  "icu:CallControls__JoinLeaveButton--hangup-group-tooltip": {
+    "messageformat": "Leave call"
+  },
   "icu:CallControls__MutedToast--muted": {
     "messageformat": "Mikrofoni i fikur"
   },
@@ -2917,6 +3178,12 @@
   },
   "icu:calling__pip--off": {
     "messageformat": "Thirrje sa krejt ekrani"
+  },
+  "icu:calling__preview--maximize": {
+    "messageformat": "Maksimizo shfaqjen paraprake"
+  },
+  "icu:calling__preview--minimize": {
+    "messageformat": "Minimizo shfaqjen paraprake"
   },
   "icu:calling__change-view": {
     "messageformat": "Ndrysho pamjen"
@@ -3698,18 +3965,6 @@
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "Riprovo"
   },
-  "icu:BackupImportScreen__skip": {
-    "messageformat": "Anashkaloje"
-  },
-  "icu:BackupImportScreen__skip-confirmation__title": {
-    "messageformat": "Të kapërcehet transferimi i mesazhit?"
-  },
-  "icu:BackupImportScreen__skip-confirmation__body": {
-    "messageformat": "Nuk do të kesh lejehyrje në asnjë nga mesazhet apo mediat e tua në këtë pajisje nëse zgjedh të kapërcesh. Mund të fillosh një transferim të ri pasi të kapërcesh te Parametrat > Bisedat > Transferimi."
-  },
-  "icu:BackupImportScreen__skip-confirmation__cancel": {
-    "messageformat": "Anulo"
-  },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "Duke rikthyer median"
   },
@@ -3752,6 +4007,12 @@
   "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
     "messageformat": "Anulo transferimin"
   },
+  "icu:CriticalIdlePrimaryDeviceModal__title": {
+    "messageformat": "Account action required"
+  },
+  "icu:CriticalIdlePrimaryDeviceModal__description": {
+    "messageformat": "You must open Signal on your phone to continue using this account. If you do not open Signal on your phone, your account will be deleted soon. <learnMoreLink>Learn more</learnMoreLink>"
+  },
   "icu:CompositionArea--expand": {
     "messageformat": "Zgjeroje"
   },
@@ -3772,6 +4033,18 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "Dërgo mesazhin e ndryshuar"
+  },
+  "icu:CompositionArea__FunButtonLabel": {
+    "messageformat": "Shto emoxhi, ngjitëse ose GIF"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__Title": {
+    "messageformat": "Të zëvendësohet bashkëngjitja?"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__Body": {
+    "messageformat": "Shtimi i GIF do të zëvendësojë artikullin në mesazhin draft aktual."
+  },
+  "icu:CompositionArea__ConfirmGifSelection__ReplaceButton": {
+    "messageformat": "Zëvendëso"
   },
   "icu:CompositionInput__editing-message": {
     "messageformat": "Përpuno mesazhin"
@@ -3989,6 +4262,9 @@
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "Kërko doemos që një përgjegjës të miratojë anëtarë të rinj që vijnë prej një lidhjeje grupi"
   },
+  "icu:GroupLinkManagement__CopyGroupLinkButtonLabel": {
+    "messageformat": "Copy signal.group link to clipboard"
+  },
   "icu:PendingInvites--tab-requests": {
     "messageformat": "Kërkesa ({count,number})"
   },
@@ -4193,9 +4469,6 @@
   "icu:ShareCallLinkViaSignal__DraftMessageText": {
     "messageformat": "Përdor këtë lidhje për t'iu bashkuar një telefonate në Signal: {url}"
   },
-  "icu:MessageRequestWarning__learn-more": {
-    "messageformat": "Mësoni më tepër"
-  },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "Këshilla sigurie"
   },
@@ -4350,7 +4623,7 @@
     "messageformat": "Fundi i nuancave"
   },
   "icu:GIF--download": {
-    "messageformat": "Download GIF attachment"
+    "messageformat": "Shkarko bashkëngjitjen GIF"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "Kohë vetjake…"
@@ -4655,6 +4928,30 @@
   "icu:Preferences__button--privacy": {
     "messageformat": "Privatësi"
   },
+  "icu:Preferences__button--data-usage": {
+    "messageformat": "Përdorimi i internetit"
+  },
+  "icu:Preferences__media-auto-download": {
+    "messageformat": "Vetëshkarkim mediash"
+  },
+  "icu:Preferences__media-auto-download__photos": {
+    "messageformat": "Foto"
+  },
+  "icu:Preferences__media-auto-download__videos": {
+    "messageformat": "Video"
+  },
+  "icu:Preferences__media-auto-download__audio": {
+    "messageformat": "Audio"
+  },
+  "icu:Preferences__media-auto-download__documents": {
+    "messageformat": "Dokumente"
+  },
+  "icu:Preferences__media-auto-download__description": {
+    "messageformat": "Mesazhet zanore dhe ngjitëset shkarkohen gjithmonë automatikisht."
+  },
+  "icu:Preferences__button--backups": {
+    "messageformat": "Backups"
+  },
   "icu:Preferences--lastSynced": {
     "messageformat": "Importimi i fundit më {date} {time}"
   },
@@ -4684,6 +4981,51 @@
   },
   "icu:Preferences--blocked": {
     "messageformat": "Bllokuar"
+  },
+  "icu:Preferences--backup-details__header": {
+    "messageformat": "Backup details"
+  },
+  "icu:Preferences--backup-media-plan__description": {
+    "messageformat": "Text + all media backup"
+  },
+  "icu:Preferences--backup-plan-not-found__description": {
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Backups."
+  },
+  "icu:Preferences--backup-messages-plan__description": {
+    "messageformat": "{mediaDayCount, plural, one {Text + {mediaDayCount,number} day media backup} other {Text + {mediaDayCount,number} days media backup}}"
+  },
+  "icu:Preferences--backup-messages-plan__cost-description": {
+    "messageformat": "Your backup plan is free"
+  },
+  "icu:Preferences--backup-plan__renewal-date": {
+    "messageformat": "Renews {date}"
+  },
+  "icu:Preferences--backup-plan__expiry-date": {
+    "messageformat": "Expires {date}"
+  },
+  "icu:Preferences--backup-plan__canceled": {
+    "messageformat": "Subscription canceled"
+  },
+  "icu:Preferences--backup-media-plan__note": {
+    "messageformat": "You can manage or cancel your Signal Backups subscription on your phone."
+  },
+  "icu:Preferences--backup-messages-plan__note": {
+    "messageformat": "You can manage or upgrade Signal Backups on your phone."
+  },
+  "icu:Preferences--backup-plan__not-found": {
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Backups."
+  },
+  "icu:Preferences--backup-plan__not-found__note": {
+    "messageformat": "You can manage or renew your Signal Backups subscription on your phone."
+  },
+  "icu:Preferences--backup-created-at__label": {
+    "messageformat": "Last backup"
+  },
+  "icu:Preferences--backup-created-by-phone": {
+    "messageformat": "Your phone"
+  },
+  "icu:Preferences--backup-size__label": {
+    "messageformat": "Backup size"
   },
   "icu:Preferences--blocked-count": {
     "messageformat": "{num, plural, one {{num,number} kontakt} other {{num,number} kontakte}}"
@@ -4810,6 +5152,18 @@
   },
   "icu:DialogUpdate__downloaded": {
     "messageformat": "Përditësimi u shkarkua"
+  },
+  "icu:CriticalIdlePrimaryDevice__title": {
+    "messageformat": "Hap Signal në telefonin tënd"
+  },
+  "icu:CriticalIdlePrimaryDevice__body": {
+    "messageformat": "Llogaria do të fshihet së shpejti nëse nuk hap e Signal në telefon. Ky mesazh do të fshihet nëse e ke kryer me sukses. <learnMoreLink>Mëso më shumë</learnMoreLink>"
+  },
+  "icu:IdlePrimaryDevice__body": {
+    "messageformat": "Hap Signal në telefon për ta mbajtur llogarinë aktive"
+  },
+  "icu:IdlePrimaryDevice__learnMore": {
+    "messageformat": "Mëso më shumë"
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signal-i po kalon vështirësi teknike. Po punojmë fort të rikthejmë shërbimin sa më shpejt që të mundet."
@@ -4951,6 +5305,30 @@
   },
   "icu:MediaEditor__crop-preset--9-16": {
     "messageformat": "9:16"
+  },
+  "icu:MediaPermissionsModal__title--microphone": {
+    "messageformat": "Lejo aksesin në mikrofon"
+  },
+  "icu:MediaPermissionsModal__title--camera": {
+    "messageformat": "Lejo përdorimin e kamerës"
+  },
+  "icu:MediaPermissionsModal__subtitle--call": {
+    "messageformat": "Për t'u bashkuar ose për të filluar një thirrje:"
+  },
+  "icu:MediaPermissionsModal__subtitle--call--camera": {
+    "messageformat": "Për të aktivizuar videon:"
+  },
+  "icu:MediaPermissionsModal__subtitle--voice-note": {
+    "messageformat": "Për të dërguar mesazhe zanore:"
+  },
+  "icu:MediaPermissionsModal__step-1": {
+    "messageformat": "Kliko \"{buttonName} \" më poshtë"
+  },
+  "icu:MediaPermissionsModal__step-2": {
+    "messageformat": "Aktivizo \"Signal\""
+  },
+  "icu:MediaPermissionsModal__open": {
+    "messageformat": "Shko te parametrat"
   },
   "icu:MyStories__title": {
     "messageformat": "Postimet e mia të përkohshme"
@@ -5610,6 +5988,15 @@
   "icu:MessageMetadata__edited": {
     "messageformat": "I redaktuar"
   },
+  "icu:DraftGifMessageSendModal__Title": {
+    "messageformat": "Shtoni një mesazh"
+  },
+  "icu:DraftGifMessageSendModal__SendButtonLabel": {
+    "messageformat": "Dërgo"
+  },
+  "icu:DraftGifMessageSendModal__CancelButtonLabel": {
+    "messageformat": "Anulo"
+  },
   "icu:EditHistoryMessagesModal__title": {
     "messageformat": "Historiku i përpunimeve"
   },
@@ -5829,6 +6216,30 @@
   "icu:WhoCanFindMeReadOnlyToast": {
     "messageformat": "Për ta ndryshuar këtë parametër, vendos \"Kush mund të shohë numrin tim\" në \"Askush\"."
   },
+  "icu:ProfileNameWarningModal__description--direct": {
+    "messageformat": "Emrat e profileve në Signal zgjidhen nga mbajtësi i llogarisë së tyre:"
+  },
+  "icu:ProfileNameWarningModal__list--item1--direct": {
+    "messageformat": "Emrat e profilit nuk verifikohen"
+  },
+  "icu:ProfileNameWarningModal__list--item2--direct": {
+    "messageformat": "Ji i kujdesshëm ndaj llogarive që personifikohen si dikush tjetër"
+  },
+  "icu:ProfileNameWarningModal__list--item3--direct": {
+    "messageformat": "Mos ndaj informacione personale me njerëz që nuk i njeh"
+  },
+  "icu:ProfileNameWarningModal__description--group": {
+    "messageformat": "Emrat e grupeve zgjidhen nga anëtarët e grupit."
+  },
+  "icu:ProfileNameWarningModal__list--item1--group": {
+    "messageformat": "Ji i kujdesshëm ndaj grupeve që personifikohen si organizata dhe biznese"
+  },
+  "icu:ProfileNameWarningModal__list--item2--group": {
+    "messageformat": "Emrat e profilit të anëtarëve në grupe nuk janë verifikuar"
+  },
+  "icu:ProfileNameWarningModal__list--item3--group": {
+    "messageformat": "Mos ndaj informacione personale me njerëz që nuk i njeh"
+  },
   "icu:WhatsNew__modal-title": {
     "messageformat": "Ç’ka të Re"
   },
@@ -5860,10 +6271,22 @@
     "messageformat": "Rregullme të vogla, riparime të gabimeve dhe përmirësime të mbarëvajtjes.  Faleminderit që përdorni Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.44--0": {
-    "messageformat": "Rregulluam një defekt të vogël të animacionit gjatë thirrjeve në grup. Kërkojmë falje paraprakisht, nëse pjesa më emocionuese e ditës, ishte kalimi në pamjen rrjetë gjatë takimit dhe përpjekja për të kapur momentin kur kuadratet e videove të njerëzve që futen me vonesë pengojnë ndonjëherë pjesërisht prezantimin e shefit."
+  "icu:WhatsNew__v7.47--0": {
+    "messageformat": "Tani mund të zgjerosh shfaqjen paraprake lokale të videos gjatë telefonatave për të pasur një pamje më të mirë të vetes ose për të reflektuar mbi atë që je."
   },
-  "icu:WhatsNew__v7.45--0": {
-    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
+  "icu:WhatsNew__v7.48--0": {
+    "messageformat": "Kemi shtuar një shkurtore të përshtatshme për të ulur shpejt dorën pasi të kesh filluar të flasësh gjatë një telefonate në grup në Signal. Është, pa dyshim, veçoria jonë e preferuar në këtë publikim."
+  },
+  "icu:WhatsNew__v7.49--0": {
+    "messageformat": "Nëse lidh Desktop të ri në Signal Android dhe zgjedh ta transferosh historikun e mesazheve, tani mund të transferosh gjithashtu në mënyrë selektive bashkëngjitjet e vjetra nga pajisja kryesore. Sill të kaluarën në të tashmen duke u kthyer prapa në kohë dhe duke klikuar në ikonën e shkarkimit. Si gjithmonë, procesi i transferimit është i koduar nga skaji në skaj dhe i sigurt."
+  },
+  "icu:WhatsNew__v7.50--0": {
+    "messageformat": "Nëse lidh Desktop të ri në Signal Android dhe zgjedh ta transferosh historikun e mesazheve, tani mund të transferosh gjithashtu në mënyrë selektive bashkëngjitjet e vjetra nga pajisja kryesore. Sill të kaluarën në të tashmen duke u kthyer prapa në kohë dhe duke klikuar në ikonën e shkarkimit. Si gjithmonë, procesi i transferimit është i koduar nga skaji në skaj dhe i sigurt."
+  },
+  "icu:WhatsNew__v7.51--0": {
+    "messageformat": "Fire, the wheel, and electricity were all great developments, but they were merely necessary steps along the path that created the conditions for animated GIF search to exist. Now you can experience the pinnacle of human technological advancement in Signal Desktop with a brand-new selection interface that makes it easy to quickly find an emoji, sticker, or animated GIF that's perfect for the moment."
+  },
+  "icu:WhatsNew__v7.51--1": {
+    "messageformat": "We also resized the picture-in-picture window and added convenient new shortcuts to mute/unmute your microphone or turn the camera on/off while a call is minimized."
   }
 }

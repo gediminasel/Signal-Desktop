@@ -3,20 +3,22 @@
 
 import { Buffer } from 'buffer';
 import Long from 'long';
-import { Aci, HKDF } from '@signalapp/libsignal-client';
+import { sample } from 'lodash';
+import { Aci, Pni, HKDF } from '@signalapp/libsignal-client';
 import { AccountEntropyPool } from '@signalapp/libsignal-client/dist/AccountKeys';
 
 import * as Bytes from './Bytes';
 import { Crypto } from './context/Crypto';
 import { calculateAgreement, generateKeyPair } from './Curve';
 import { HashType, CipherType } from './types/Crypto';
+import { AVATAR_COLOR_COUNT, AvatarColors } from './types/Colors';
 import { ProfileDecryptError } from './types/errors';
 import { getBytesSubarray } from './util/uuidToBytes';
 import { logPadSize } from './util/logPadding';
 import { Environment, getEnvironment } from './environment';
 import { toWebSafeBase64 } from './util/webSafeBase64';
 
-import type { AciString } from './types/ServiceId';
+import type { AciString, PniString } from './types/ServiceId';
 
 export { HashType, CipherType };
 
@@ -666,4 +668,52 @@ export function constantTimeEqual(
   right: Uint8Array
 ): boolean {
   return crypto.constantTimeEqual(left, right);
+}
+
+export function getIdentifierHash({
+  aci,
+  e164,
+  pni,
+  groupId,
+}: {
+  aci: AciString | undefined;
+  e164: string | undefined;
+  pni: PniString | undefined;
+  groupId: string | undefined;
+}): number | null {
+  let identifier: Uint8Array;
+  if (aci != null) {
+    identifier = Aci.parseFromServiceIdString(aci).getServiceIdBinary();
+  } else if (e164 != null) {
+    identifier = Bytes.fromString(e164);
+  } else if (pni != null) {
+    identifier = Pni.parseFromServiceIdString(pni).getServiceIdBinary();
+  } else if (groupId != null) {
+    identifier = Bytes.fromBase64(groupId);
+  } else {
+    return null;
+  }
+
+  const digest = hash(HashType.size256, identifier);
+  return digest[0];
+}
+
+export function generateAvatarColor({
+  aci,
+  e164,
+  pni,
+  groupId,
+}: {
+  aci: AciString | undefined;
+  e164: string | undefined;
+  pni: PniString | undefined;
+  groupId: string | undefined;
+}): string {
+  const hashValue = getIdentifierHash({ aci, e164, pni, groupId });
+
+  if (hashValue == null) {
+    return sample(AvatarColors) || AvatarColors[0];
+  }
+
+  return AvatarColors[hashValue % AVATAR_COLOR_COUNT];
 }

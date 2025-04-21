@@ -38,6 +38,9 @@
   "icu:Preferences__sent-media-quality": {
     "messageformat": "Sendt mediekvalitet"
   },
+  "icu:Preferences__sent-media-quality__description": {
+    "messageformat": "Å sende høykvalitetsmedia bruker mer data."
+  },
   "icu:sentMediaQualityStandard": {
     "messageformat": "Standard"
   },
@@ -68,6 +71,12 @@
   "icu:unknownGroup": {
     "messageformat": "Ukjent gruppe"
   },
+  "icu:cantOpenSignalError": {
+    "messageformat": "Kunne ikke åpne Signal"
+  },
+  "icu:cantOpenSignalError__detail": {
+    "messageformat": "Du kan følge veiledningen på hjelpesiden vår eller ta kontakt med Signals brukerstøtte for å få hjelp.\n\nHvis du trenger tilgang til Signal umiddelbart, kan du slette alle dataene og koble til skrivebordet på nytt. Du har muligheten til å overføre meldingsloggen fra telefonen din."
+  },
   "icu:databaseError": {
     "messageformat": "Databasefeil"
   },
@@ -78,10 +87,10 @@
     "messageformat": "Slett alle data og start på nytt"
   },
   "icu:databaseError__deleteDataConfirmation": {
-    "messageformat": "Vil du slette alle dataene permanent?"
+    "messageformat": "Slett alle dataene permanent"
   },
   "icu:databaseError__deleteDataConfirmation__detail": {
-    "messageformat": "Alle meldingene og mediefilene dine slettes fra denne enheten for godt. Du kan bruke Signal på denne enheten hvis du kobler den til brukeren din på nytt. Ingen data fra mobilen din slettes."
+    "messageformat": "Alle meldingene og mediefilene dine slettes fra denne enheten for godt. Ingen data fra mobilen din slettes.\n\nDu kan bruke Signal på denne enheten hvis du kobler den til på nytt. Du har muligheten til å overføre meldingsloggen fra telefonen din."
   },
   "icu:databaseError__startOldVersion": {
     "messageformat": "Versjonen av databasen passer ikke sammen med denne versjonen av Signal. Sørg for at du bruker den nyeste versjonen av Signal på datamaskinen din."
@@ -215,9 +224,6 @@
   "icu:optimizingApplication": {
     "messageformat": "Optimaliserer applikasjonen …"
   },
-  "icu:migratingToSQLCipher": {
-    "messageformat": "Optimaliserer meldinger … {status} fullført."
-  },
   "icu:archivedConversations": {
     "messageformat": "Arkiverte samtaler"
   },
@@ -285,7 +291,7 @@
     "messageformat": "Samtaler"
   },
   "icu:NavTabs__ItemLabel--Calls": {
-    "messageformat": "Samtaler"
+    "messageformat": "Anrop"
   },
   "icu:NavTabs__ItemLabel--Stories": {
     "messageformat": "Storyer"
@@ -406,9 +412,6 @@
   },
   "icu:unreadMessages": {
     "messageformat": "{count, plural, one {{count,number} ulest melding} other {{count,number} uleste meldinger}}"
-  },
-  "icu:messageHistoryUnsynced": {
-    "messageformat": "Av sikkerhetshensyn blir ikke samtaleloggene dine overført til nye tilkoblede enheter."
   },
   "icu:youMarkedAsVerified": {
     "messageformat": "Du merka sikkerhetsnummeret med {name} som bekreftet"
@@ -588,7 +591,7 @@
     "messageformat": "Failed to send message with endorsements"
   },
   "icu:Toast--InvalidStorageServiceHeaders": {
-    "messageformat": "Received invalid response from storage service. Please share your logs."
+    "messageformat": "Ugyldig svar fra lagringstjenesten. Del feilsøkingsloggen din."
   },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
@@ -669,7 +672,7 @@
     "messageformat": "Utviklerverktøy for anrop"
   },
   "icu:callingDeveloperToolsDescription": {
-    "messageformat": "Dette vinduet viser utviklere diagnostikk fra pågående samtaler."
+    "messageformat": "Dette vinduet viser utviklere diagnostikk fra pågående telefonsamtaler."
   },
   "icu:speech": {
     "messageformat": "Tale"
@@ -706,9 +709,6 @@
   },
   "icu:noSearchResultsOnlyUnreadFilter": {
     "messageformat": "Ingen uleste samtaler"
-  },
-  "icu:noSearchResults--sms-only": {
-    "messageformat": "SMS/MMS-kontakter er ikke tilgjengelig på Desktop versjonen av Signal."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "Ingen resultater for \"{searchTerm}\" i {conversationName}"
@@ -1145,9 +1145,6 @@
   "icu:mediaNotAvailable": {
     "messageformat": "Mediefilen er ikke tilgjengelig"
   },
-  "icu:mediaNotAvailable--short": {
-    "messageformat": "Mediefilen er ikke tilgjengelig"
-  },
   "icu:attachmentNoLongerAvailable__learnMore": {
     "messageformat": "Les mer"
   },
@@ -1162,6 +1159,12 @@
   },
   "icu:attachmentNotAvailable__voice": {
     "messageformat": "Talemeldingen er ikke tilgjengelig"
+  },
+  "icu:attachmentNotAvailable__tapToView": {
+    "messageformat": "Den flyktige mediefilen er ikke tilgjengelig"
+  },
+  "icu:attachmentNotAvailable__tapToViewCannotDownload": {
+    "messageformat": "Den flyktige mediefilen kunne ikke lastes ned"
   },
   "icu:AttachmentNotAvailableModal__title--file": {
     "messageformat": "Filen er ikke tilgjengelig"
@@ -1192,6 +1195,21 @@
   },
   "icu:AttachmentNotAvailableModal__body--voice-message": {
     "messageformat": "Denne talemeldingen ble ikke overført fra telefonen din da du koblet til denne enheten. Det er ikke mulig å synkronisere mediefiler og andre filer som er mer enn 45 dager gamle, når enheten kobles til."
+  },
+  "icu:TapToViewNotAvailableModal__body--expired": {
+    "messageformat": "Det er ikke lenger mulig å laste ned denne flyktige mediefilen. Be {name} om å sende den på nytt."
+  },
+  "icu:TapToViewNotAvailableModal__body--error": {
+    "messageformat": "Den flyktige mediefilen kunne ikke lastes ned. {name} må sende den på nytt."
+  },
+  "icu:BackfillFailureModal__title": {
+    "messageformat": "Mediefilen kunne ikke lastes ned"
+  },
+  "icu:BackfillFailureModal__body--timeout": {
+    "messageformat": "Sørg for at begge enhetene er koblet til internett. Åpne Signal på telefonen, og prøv å laste ned filen på nytt."
+  },
+  "icu:BackfillFailureModal__body--not-found": {
+    "messageformat": "Denne mediefilen er ikke lenger tilgjengelig på telefonen din og kan derfor ikke lastes ned."
   },
   "icu:save": {
     "messageformat": "Lagre"
@@ -1244,12 +1262,6 @@
   "icu:Install__support-link": {
     "messageformat": "Ønsker du hjelp?"
   },
-  "icu:Install__choose-device-name__description": {
-    "messageformat": "Du finner dette navnet under «Tilkoblede enheter» på telefonen din"
-  },
-  "icu:Install__choose-device-name__placeholder": {
-    "messageformat": "Min datamaskin"
-  },
   "icu:Preferences--phone-number": {
     "messageformat": "Telefonnummer"
   },
@@ -1259,11 +1271,8 @@
   "icu:Preferences--device-name__description": {
     "messageformat": "For å endre navnet på denne enheten må du åpne Signal på telefonen din og gå til Innstillinger > Tilkoblede enheter."
   },
-  "icu:chooseDeviceName": {
-    "messageformat": "Skriv inn et navn for enheten"
-  },
-  "icu:finishLinkingPhone": {
-    "messageformat": "Fullfør sammenkobling av telefon"
+  "icu:Preferences__EmojiSkinToneDefaultSetting__Label": {
+    "messageformat": "Emoji-hudtone"
   },
   "icu:initialSync": {
     "messageformat": "Synkroniserer kontakter og grupper"
@@ -1590,7 +1599,7 @@
     "messageformat": "Videresend alle anrop"
   },
   "icu:alwaysRelayCallsDetail": {
-    "messageformat": "Videresend alle samtaler gjennom Signal serveren for å unngå å avsløre IP-adressen din til kontakten din. Aktivering vill redusere samtalekvaliteten."
+    "messageformat": "Omdiriger alle anrop gjennom Signal-tjenesten for å unngå å avsløre IP-adressen din til kontakten din. Aktivering vil redusere samtalekvaliteten."
   },
   "icu:permissions": {
     "messageformat": "Tillatelser"
@@ -1785,10 +1794,10 @@
     "messageformat": "Spill ringelyder"
   },
   "icu:callSystemNotificationDescription": {
-    "messageformat": "Vis meldinger om samtaler"
+    "messageformat": "Vis varsler om anrop"
   },
   "icu:incomingCallNotificationDescription": {
-    "messageformat": "Tillat innkommende samtaler"
+    "messageformat": "Aktiver innkommende anrop"
   },
   "icu:contactChangedProfileName": {
     "messageformat": "{sender} endret sitt profilnavn fra {oldProfile} til {newProfile}."
@@ -1813,6 +1822,18 @@
   },
   "icu:ConversationDetails__HeaderButton--Message": {
     "messageformat": "Melding"
+  },
+  "icu:ConversationDetails--help-section": {
+    "messageformat": "Hjelp"
+  },
+  "icu:ConversationDetails--support-center": {
+    "messageformat": "Brukerstøttesenter"
+  },
+  "icu:ConversationDetails--contact-us": {
+    "messageformat": "Kontakt oss"
+  },
+  "icu:ConversationDetails--donate": {
+    "messageformat": "Gi penger til Signal"
   },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "Vis sikkerhetsnummer"
@@ -1873,6 +1894,9 @@
   },
   "icu:Toast--failed-to-fetch-phone-number": {
     "messageformat": "Kunne ikke hente telefonnummeret. Sjekk internettilkoblingen og prøv igjen."
+  },
+  "icu:Toast--download-failed": {
+    "messageformat": "Nedlasting mislyktes"
   },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "Meldinger kan kun redigeres de første 24 timene etter at de ble sendt."
@@ -2252,6 +2276,204 @@
   "icu:EmojiPicker__button--flag": {
     "messageformat": "Flagg"
   },
+  "icu:FunPicker__Tab--Emojis": {
+    "messageformat": "Emoji"
+  },
+  "icu:FunPicker__Tab--Stickers": {
+    "messageformat": "Klistremerker"
+  },
+  "icu:FunPicker__Tab--Gifs": {
+    "messageformat": "GIF-er"
+  },
+  "icu:FunPanelEmojis__SearchLabel": {
+    "messageformat": "Søk i emojiene"
+  },
+  "icu:FunPanelEmojis__SearchPlaceholder": {
+    "messageformat": "Søk i emojiene"
+  },
+  "icu:FunPanelEmojis__SubNavLabel": {
+    "messageformat": "Emoji-kategorier"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Recents": {
+    "messageformat": "Nylig brukt"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--SmileysAndPeople": {
+    "messageformat": "Smilefjes og mennesker"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--AnimalsAndNature": {
+    "messageformat": "Dyr og natur"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--FoodAndDrink": {
+    "messageformat": "Mat og drikke"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Activities": {
+    "messageformat": "Aktiviteter"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--TravelAndPlaces": {
+    "messageformat": "Reise og steder"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Objects": {
+    "messageformat": "Objekter"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Symbols": {
+    "messageformat": "Symboler"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Flags": {
+    "messageformat": "Flagg"
+  },
+  "icu:FunPanelEmojis__SearchResults__EmptyHeading": {
+    "messageformat": "Ingen emoji funnet"
+  },
+  "icu:FunPanelEmojis__ChangeSkinToneButtonLabel": {
+    "messageformat": "Bytt hudtone"
+  },
+  "icu:FunPanelEmojis__SkinTonePicker__ChooseDefaultLabel": {
+    "messageformat": "Velg standard hudtone"
+  },
+  "icu:FunPanelEmojis__SectionTitle--SearchResults": {
+    "messageformat": "Søketreff"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Recents": {
+    "messageformat": "Nylig brukt"
+  },
+  "icu:FunPanelEmojis__SectionTitle--SmileysAndPeople": {
+    "messageformat": "Smilefjes og mennesker"
+  },
+  "icu:FunPanelEmojis__SectionTitle--AnimalsAndNature": {
+    "messageformat": "Dyr og natur"
+  },
+  "icu:FunPanelEmojis__SectionTitle--FoodAndDrink": {
+    "messageformat": "Mat og drikke"
+  },
+  "icu:FunPanelEmojis__SectionTitle--TravelAndPlaces": {
+    "messageformat": "Reise og steder"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Activities": {
+    "messageformat": "Aktiviteter"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Objects": {
+    "messageformat": "Objekter"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Symbols": {
+    "messageformat": "Symboler"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Flags": {
+    "messageformat": "Flagg"
+  },
+  "icu:FunPanelEmojis__CustomizeReactionsButtonLabel": {
+    "messageformat": "Customize reactions"
+  },
+  "icu:FunPanelStickers__SearchLabel": {
+    "messageformat": "Søk i klistremerkene"
+  },
+  "icu:FunPanelStickers__SearchPlaceholder": {
+    "messageformat": "Søk i klistremerkene"
+  },
+  "icu:FunPanelSticker__SubNavLabel": {
+    "messageformat": "Klistremerkepakker"
+  },
+  "icu:FunPanelStickers__SubNavCategoryLabel--Recents": {
+    "messageformat": "Nylig brukt"
+  },
+  "icu:FunPanelStickers__SectionTitle--SearchResults": {
+    "messageformat": "Søketreff"
+  },
+  "icu:FunPanelStickers__SectionTitle--Recents": {
+    "messageformat": "Nylig brukt"
+  },
+  "icu:FunPanelStickers__SectionTitle--Featured": {
+    "messageformat": "Featured"
+  },
+  "icu:FunPanelStickers__SearchResults__EmptyHeading": {
+    "messageformat": "Ingen klistremerker funnet"
+  },
+  "icu:FunPanelStickers__LightboxDialog__Label": {
+    "messageformat": "Forhåndsvisning av klistremerke"
+  },
+  "icu:FunPanelGifs__SearchLabel--Tenor": {
+    "messageformat": "Søk blant GIF-er i Tenor"
+  },
+  "icu:FunPanelGifs__SearchPlaceholder--Tenor": {
+    "messageformat": "Søk i Tenor"
+  },
+  "icu:FunPanelGifs__SubNavLabel": {
+    "messageformat": "GIF-kategorier"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Recents": {
+    "messageformat": "Nylig brukt"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Trending": {
+    "messageformat": "Populært"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Celebrate": {
+    "messageformat": "Feiringer"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Love": {
+    "messageformat": "Kjærlighet"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--ThumbsUp": {
+    "messageformat": "Tommel opp"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Surprised": {
+    "messageformat": "Overrasket"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Excited": {
+    "messageformat": "Glede"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Sad": {
+    "messageformat": "Trist"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Angry": {
+    "messageformat": "Sinne"
+  },
+  "icu:FunPanelGifs__SearchResults__LoadingLabel": {
+    "messageformat": "Laster inn GIF-er"
+  },
+  "icu:FunPanelGifs__SearchResults__ErrorHeading": {
+    "messageformat": "GIF-ene kunne ikke lastes inn. Sjekk internettilkoblingen og prøv igjen."
+  },
+  "icu:FunPanelGifs__SearchResults__ErrorRetryButton": {
+    "messageformat": "Prøv på nytt"
+  },
+  "icu:FunPanelGifs__SearchResults__EmptyHeading": {
+    "messageformat": "Fant ingen GIF-er"
+  },
+  "icu:FunPanelGifs__LightboxDialog__Label": {
+    "messageformat": "Forhåndsvisning av GIF"
+  },
+  "icu:FunSearch__ClearButtonLabel": {
+    "messageformat": "Fjern søk"
+  },
+  "icu:FunSkinTones__List": {
+    "messageformat": "Hudtone"
+  },
+  "icu:FunSkinTones__ListItem--None": {
+    "messageformat": "Ingen"
+  },
+  "icu:FunSkinTones__ListItem--Light": {
+    "messageformat": "Lys hudtone"
+  },
+  "icu:FunSkinTones__ListItem--MediumLight": {
+    "messageformat": "Medium til lys hudtone"
+  },
+  "icu:FunSkinTones__ListItem--Medium": {
+    "messageformat": "Medium hudtone"
+  },
+  "icu:FunSkinTones__ListItem--MediumDark": {
+    "messageformat": "Medium til mørk hudtone"
+  },
+  "icu:FunSkinTones__ListItem--Dark": {
+    "messageformat": "Mørk hudtone"
+  },
+  "icu:FunButton__Label--FunPicker": {
+    "messageformat": "Legg til emoji, klistremerke eller GIF"
+  },
+  "icu:FunButton__Label--EmojiPicker": {
+    "messageformat": "Legg til en emoji"
+  },
+  "icu:FunButton__Label--StickerPicker": {
+    "messageformat": "Legg til et klistremerke"
+  },
   "icu:confirmation-dialog--Cancel": {
     "messageformat": "Avbryt"
   },
@@ -2288,11 +2510,11 @@
   "icu:Message--update-signal": {
     "messageformat": "Oppdater Signal"
   },
-  "icu:Message--tap-to-view-expired": {
+  "icu:Message--tap-to-view--viewed": {
     "messageformat": "Sett"
   },
-  "icu:Message--tap-to-view--outgoing": {
-    "messageformat": "Media"
+  "icu:Message--tap-to-view--media": {
+    "messageformat": "Flyktig mediefil"
   },
   "icu:Message--tap-to-view--incoming--expired-toast": {
     "messageformat": "Du har allerede sett denne meldingen."
@@ -2300,11 +2522,14 @@
   "icu:Message--tap-to-view--outgoing--expired-toast": {
     "messageformat": "Vis-én-gang-meldinger blir ikke lagret i meldingsloggen."
   },
-  "icu:Message--tap-to-view--incoming": {
-    "messageformat": "Se bilde"
+  "icu:Message--tap-to-view--video": {
+    "messageformat": "Flyktig video"
   },
-  "icu:Message--tap-to-view--incoming-video": {
-    "messageformat": "Se video"
+  "icu:Message--tap-to-view--photo": {
+    "messageformat": "Flyktig bilde"
+  },
+  "icu:Message--tap-to-view--helper-text": {
+    "messageformat": "Trykk for å se"
   },
   "icu:Conversation--getDraftPreview--attachment": {
     "messageformat": "(vedlegg)"
@@ -2498,6 +2723,9 @@
   "icu:Keyboard--toggle-video": {
     "messageformat": "Skru video av og på"
   },
+  "icu:Keyboard--toggle-preview": {
+    "messageformat": "Skru fullskjermsmodus av og på"
+  },
   "icu:Keyboard--accept-video-call": {
     "messageformat": "Besvar anropet med video (kun videosamtaler)"
   },
@@ -2560,6 +2788,12 @@
   },
   "icu:SafetyTipsModal__Description": {
     "messageformat": "Vær forsiktig når du godtar meldingsforespørsler fra personer du ikke kjenner. Vær forsiktig med:"
+  },
+  "icu:SafetyTipsModal__TipTitle--Fake": {
+    "messageformat": "Falske navn og kontoer"
+  },
+  "icu:SafetyTipsModal__TipDescription--Fake": {
+    "messageformat": "Signal kommer aldri til å be deg om å sende registreringskoden eller PIN-koden din. Vær på vakt mot forespørsler fra svindlere som utgir seg for å være andre. Profilnavn velges av kontoinnehaveren og kan ikke bekreftes."
   },
   "icu:SafetyTipsModal__TipTitle--Crypto": {
     "messageformat": "Krypto- og pengesvindel"
@@ -2693,6 +2927,12 @@
   "icu:MessageRequests--accept": {
     "messageformat": "Godta"
   },
+  "icu:MessageRequests--accept-confirm-title": {
+    "messageformat": "Vil du godta forespørselen?"
+  },
+  "icu:MessageRequests--accept-confirm-body": {
+    "messageformat": "Se nøye gjennom forespørsler. Profilnavn velges av kontoinnehavere og bekreftes ikke."
+  },
   "icu:MessageRequests--continue": {
     "messageformat": "Fortsett"
   },
@@ -2704,6 +2944,21 @@
   },
   "icu:ConversationHero--members": {
     "messageformat": "{count, plural, one {1 medlem} other {{count,number} medlemmer}}"
+  },
+  "icu:ConversationHero--review-carefully": {
+    "messageformat": "Se nøye gjennom"
+  },
+  "icu:ConversationHero--group-names": {
+    "messageformat": "<clickable>Gruppenavn</clickable> kan ikke bekreftes"
+  },
+  "icu:ConversationHero--profile-names": {
+    "messageformat": "<clickable>Profilnavn</clickable> kan ikke bekreftes"
+  },
+  "icu:ConversationHero--signal-official-chat": {
+    "messageformat": "Dette er den offisielle og eneste samtalen du har med Signal"
+  },
+  "icu:ConversationHero--release-notes": {
+    "messageformat": "Hold deg oppdatert på nyheter og utgavemerknader."
   },
   "icu:member-of-1-group": {
     "messageformat": "Medlem av {group}"
@@ -2840,6 +3095,12 @@
   "icu:CallControls__JoinLeaveButton--hangup-group": {
     "messageformat": "Legg på"
   },
+  "icu:CallControls__JoinLeaveButton--hangup-1-1-tooltip": {
+    "messageformat": "End call"
+  },
+  "icu:CallControls__JoinLeaveButton--hangup-group-tooltip": {
+    "messageformat": "Leave call"
+  },
   "icu:CallControls__MutedToast--muted": {
     "messageformat": "Mikrofon av"
   },
@@ -2917,6 +3178,12 @@
   },
   "icu:calling__pip--off": {
     "messageformat": "Fullskjerm samtale"
+  },
+  "icu:calling__preview--maximize": {
+    "messageformat": "Se forhåndsvisning i fullskjerm"
+  },
+  "icu:calling__preview--minimize": {
+    "messageformat": "Lukk forhåndsvisning"
   },
   "icu:calling__change-view": {
     "messageformat": "Bytt visning"
@@ -3698,18 +3965,6 @@
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "Prøv på nytt"
   },
-  "icu:BackupImportScreen__skip": {
-    "messageformat": "Hopp over"
-  },
-  "icu:BackupImportScreen__skip-confirmation__title": {
-    "messageformat": "Vil du hoppe over overføringen?"
-  },
-  "icu:BackupImportScreen__skip-confirmation__body": {
-    "messageformat": "Dette vil medføre at du ikke får tilgang til meldingene og mediefilene dine på denne enheten. Du kan overføre dem senere ved å gå til Innstillinger > Samtaler > Overfør."
-  },
-  "icu:BackupImportScreen__skip-confirmation__cancel": {
-    "messageformat": "Avbryt"
-  },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "Gjenoppretter mediefiler"
   },
@@ -3752,6 +4007,12 @@
   "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
     "messageformat": "Avbryt overføringen"
   },
+  "icu:CriticalIdlePrimaryDeviceModal__title": {
+    "messageformat": "Account action required"
+  },
+  "icu:CriticalIdlePrimaryDeviceModal__description": {
+    "messageformat": "You must open Signal on your phone to continue using this account. If you do not open Signal on your phone, your account will be deleted soon. <learnMoreLink>Learn more</learnMoreLink>"
+  },
   "icu:CompositionArea--expand": {
     "messageformat": "Ekspander"
   },
@@ -3772,6 +4033,18 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "Send den redigerte meldingen"
+  },
+  "icu:CompositionArea__FunButtonLabel": {
+    "messageformat": "Legg til emoji, klistremerke eller GIF"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__Title": {
+    "messageformat": "Vil du bytte vedlegg?"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__Body": {
+    "messageformat": "Hvis du legger til denne GIF-en, endres den i meldingsutkastet ditt."
+  },
+  "icu:CompositionArea__ConfirmGifSelection__ReplaceButton": {
+    "messageformat": "Bytt ut"
   },
   "icu:CompositionInput__editing-message": {
     "messageformat": "Rediger melding"
@@ -3989,6 +4262,9 @@
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "Krev administratorgodkjenning for nye medlemmer som blir med via gruppelenken."
   },
+  "icu:GroupLinkManagement__CopyGroupLinkButtonLabel": {
+    "messageformat": "Copy signal.group link to clipboard"
+  },
   "icu:PendingInvites--tab-requests": {
     "messageformat": "Forespørsler ({count,number})"
   },
@@ -4193,9 +4469,6 @@
   "icu:ShareCallLinkViaSignal__DraftMessageText": {
     "messageformat": "Bruk denne lenken for å bli med i en Signal-samtale: {url}"
   },
-  "icu:MessageRequestWarning__learn-more": {
-    "messageformat": "Lær mer"
-  },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "Sikkerhetstips"
   },
@@ -4350,7 +4623,7 @@
     "messageformat": "Slutt på gradering"
   },
   "icu:GIF--download": {
-    "messageformat": "Download GIF attachment"
+    "messageformat": "Last ned GIF-vedlegget"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "Selvvalgt tid…"
@@ -4647,13 +4920,37 @@
     "messageformat": "Samtaler"
   },
   "icu:Preferences__button--calls": {
-    "messageformat": "Samtaler"
+    "messageformat": "Anrop"
   },
   "icu:Preferences__button--notifications": {
     "messageformat": "Varslinger"
   },
   "icu:Preferences__button--privacy": {
     "messageformat": "Personvern"
+  },
+  "icu:Preferences__button--data-usage": {
+    "messageformat": "Dataforbruk"
+  },
+  "icu:Preferences__media-auto-download": {
+    "messageformat": "Automatisk nedlasting av media"
+  },
+  "icu:Preferences__media-auto-download__photos": {
+    "messageformat": "Bilder"
+  },
+  "icu:Preferences__media-auto-download__videos": {
+    "messageformat": "Videoer"
+  },
+  "icu:Preferences__media-auto-download__audio": {
+    "messageformat": "Lyd"
+  },
+  "icu:Preferences__media-auto-download__documents": {
+    "messageformat": "Dokumenter"
+  },
+  "icu:Preferences__media-auto-download__description": {
+    "messageformat": "Talemeldinger og klistremerker lastes ned automatisk."
+  },
+  "icu:Preferences__button--backups": {
+    "messageformat": "Backups"
   },
   "icu:Preferences--lastSynced": {
     "messageformat": "Siste import {date} {time}"
@@ -4684,6 +4981,51 @@
   },
   "icu:Preferences--blocked": {
     "messageformat": "Blokkert"
+  },
+  "icu:Preferences--backup-details__header": {
+    "messageformat": "Backup details"
+  },
+  "icu:Preferences--backup-media-plan__description": {
+    "messageformat": "Text + all media backup"
+  },
+  "icu:Preferences--backup-plan-not-found__description": {
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Backups."
+  },
+  "icu:Preferences--backup-messages-plan__description": {
+    "messageformat": "{mediaDayCount, plural, one {Text + {mediaDayCount,number} day media backup} other {Text + {mediaDayCount,number} days media backup}}"
+  },
+  "icu:Preferences--backup-messages-plan__cost-description": {
+    "messageformat": "Your backup plan is free"
+  },
+  "icu:Preferences--backup-plan__renewal-date": {
+    "messageformat": "Renews {date}"
+  },
+  "icu:Preferences--backup-plan__expiry-date": {
+    "messageformat": "Expires {date}"
+  },
+  "icu:Preferences--backup-plan__canceled": {
+    "messageformat": "Subscription canceled"
+  },
+  "icu:Preferences--backup-media-plan__note": {
+    "messageformat": "You can manage or cancel your Signal Backups subscription on your phone."
+  },
+  "icu:Preferences--backup-messages-plan__note": {
+    "messageformat": "You can manage or upgrade Signal Backups on your phone."
+  },
+  "icu:Preferences--backup-plan__not-found": {
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Backups."
+  },
+  "icu:Preferences--backup-plan__not-found__note": {
+    "messageformat": "You can manage or renew your Signal Backups subscription on your phone."
+  },
+  "icu:Preferences--backup-created-at__label": {
+    "messageformat": "Last backup"
+  },
+  "icu:Preferences--backup-created-by-phone": {
+    "messageformat": "Your phone"
+  },
+  "icu:Preferences--backup-size__label": {
+    "messageformat": "Backup size"
   },
   "icu:Preferences--blocked-count": {
     "messageformat": "{num, plural, one {{num,number} kontakt} other {{num,number} kontakter}}"
@@ -4810,6 +5152,18 @@
   },
   "icu:DialogUpdate__downloaded": {
     "messageformat": "Oppdateringen er lastet ned"
+  },
+  "icu:CriticalIdlePrimaryDevice__title": {
+    "messageformat": "Åpne Signal på telefonen"
+  },
+  "icu:CriticalIdlePrimaryDevice__body": {
+    "messageformat": "Kontoen din slettes hvis du ikke åpner Signal på telefonen din snart. Denne meldingen forsvinner når du har åpnet appen på mobilen. <learnMoreLink>Les mer</learnMoreLink>"
+  },
+  "icu:IdlePrimaryDevice__body": {
+    "messageformat": "Åpne Signal på telefonen for å holde kontoen din aktiv"
+  },
+  "icu:IdlePrimaryDevice__learnMore": {
+    "messageformat": "Les mer"
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signal opplever tekniske problemer. Vi jobber for å løse problemet."
@@ -4951,6 +5305,30 @@
   },
   "icu:MediaEditor__crop-preset--9-16": {
     "messageformat": "9:16"
+  },
+  "icu:MediaPermissionsModal__title--microphone": {
+    "messageformat": "Gi tilgang til mikrofonen"
+  },
+  "icu:MediaPermissionsModal__title--camera": {
+    "messageformat": "Gi tilgang til kameraet"
+  },
+  "icu:MediaPermissionsModal__subtitle--call": {
+    "messageformat": "Slik starter eller blir du med i en samtale:"
+  },
+  "icu:MediaPermissionsModal__subtitle--call--camera": {
+    "messageformat": "Slik slår du på video:"
+  },
+  "icu:MediaPermissionsModal__subtitle--voice-note": {
+    "messageformat": "Slik sender du talemeldinger:"
+  },
+  "icu:MediaPermissionsModal__step-1": {
+    "messageformat": "Trykk på {buttonName} nedenfor."
+  },
+  "icu:MediaPermissionsModal__step-2": {
+    "messageformat": "Aktiver Signal."
+  },
+  "icu:MediaPermissionsModal__open": {
+    "messageformat": "Gå til innstillinger"
   },
   "icu:MyStories__title": {
     "messageformat": "Mine storyer"
@@ -5610,6 +5988,15 @@
   "icu:MessageMetadata__edited": {
     "messageformat": "Redigert"
   },
+  "icu:DraftGifMessageSendModal__Title": {
+    "messageformat": "Legg til en melding"
+  },
+  "icu:DraftGifMessageSendModal__SendButtonLabel": {
+    "messageformat": "Send"
+  },
+  "icu:DraftGifMessageSendModal__CancelButtonLabel": {
+    "messageformat": "Avbryt"
+  },
   "icu:EditHistoryMessagesModal__title": {
     "messageformat": "Redigeringshistorikk"
   },
@@ -5623,7 +6010,7 @@
     "messageformat": "Flere funksjoner"
   },
   "icu:CallsTab__HeaderTitle--CallsList": {
-    "messageformat": "Samtaler"
+    "messageformat": "Anrop"
   },
   "icu:CallsTab__HeaderTitle--NewCall": {
     "messageformat": "Nytt anrop"
@@ -5680,7 +6067,7 @@
     "messageformat": "Ingen anrop"
   },
   "icu:CallsList__EmptyState--noQuery__subtitle": {
-    "messageformat": "Nylige samtaler dukker opp her."
+    "messageformat": "Nylige anrop vises her."
   },
   "icu:CallsList__EmptyState--hasQuery": {
     "messageformat": "«{query}» ga ingen resultater"
@@ -5829,6 +6216,30 @@
   "icu:WhoCanFindMeReadOnlyToast": {
     "messageformat": "For å endre dette velger du «Ingen» under «Hvem kan se telefonnummeret mitt?»."
   },
+  "icu:ProfileNameWarningModal__description--direct": {
+    "messageformat": "Profilnavn på Signal velges av kontoinnehaveren:"
+  },
+  "icu:ProfileNameWarningModal__list--item1--direct": {
+    "messageformat": "Profilnavn kan ikke bekreftes"
+  },
+  "icu:ProfileNameWarningModal__list--item2--direct": {
+    "messageformat": "Vær på vakt mot svindlere som utgir seg for å være andre"
+  },
+  "icu:ProfileNameWarningModal__list--item3--direct": {
+    "messageformat": "Ikke send personlige opplysninger til folk du ikke kjenner"
+  },
+  "icu:ProfileNameWarningModal__description--group": {
+    "messageformat": "Gruppenavn velges av gruppemedlemmene."
+  },
+  "icu:ProfileNameWarningModal__list--item1--group": {
+    "messageformat": "Vær på vakt mot grupper som utgir seg for å være organisasjoner og bedrifter"
+  },
+  "icu:ProfileNameWarningModal__list--item2--group": {
+    "messageformat": "Profilnavnene til gruppemedlemmer kan ikke bekreftes"
+  },
+  "icu:ProfileNameWarningModal__list--item3--group": {
+    "messageformat": "Ikke send personlige opplysninger til folk du ikke kjenner"
+  },
   "icu:WhatsNew__modal-title": {
     "messageformat": "Siste nytt"
   },
@@ -5860,10 +6271,22 @@
     "messageformat": "Noen små justeringer, feilrettinger og ytelsesforbedringer. Takk for at du bruker Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.44--0": {
-    "messageformat": "Vi har ordnet opp i en liten animasjonsfeil i gruppesamtaler."
+  "icu:WhatsNew__v7.47--0": {
+    "messageformat": "Nå kan du se forhåndsvisninger av videoer i fullskjerm."
   },
-  "icu:WhatsNew__v7.45--0": {
-    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
+  "icu:WhatsNew__v7.48--0": {
+    "messageformat": "Vi har lagt til en snarvei for å ta ned hånden raskt når du tar ordet i gruppesamtaler på Signal."
+  },
+  "icu:WhatsNew__v7.49--0": {
+    "messageformat": "Hvis du kobler til en ny Desktop-enhet på Signal for Android og ønsker å overføre meldingsloggen din, kan du velge om du også vil overføre gamle vedlegg. Overføringen er som alltid ende-til-ende-kryptert og sikker."
+  },
+  "icu:WhatsNew__v7.50--0": {
+    "messageformat": "Hvis du kobler til en ny Desktop-enhet på Signal for Android og ønsker å overføre meldingsloggen din, kan du velge om du også vil overføre gamle vedlegg. Overføringen er som alltid ende-til-ende-kryptert og sikker."
+  },
+  "icu:WhatsNew__v7.51--0": {
+    "messageformat": "Fire, the wheel, and electricity were all great developments, but they were merely necessary steps along the path that created the conditions for animated GIF search to exist. Now you can experience the pinnacle of human technological advancement in Signal Desktop with a brand-new selection interface that makes it easy to quickly find an emoji, sticker, or animated GIF that's perfect for the moment."
+  },
+  "icu:WhatsNew__v7.51--1": {
+    "messageformat": "We also resized the picture-in-picture window and added convenient new shortcuts to mute/unmute your microphone or turn the camera on/off while a call is minimized."
   }
 }

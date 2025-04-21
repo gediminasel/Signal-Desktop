@@ -139,6 +139,52 @@ function fromRecordVerified(
   }
 }
 
+function fromAvatarColor(
+  color: Proto.AvatarColor | null | undefined
+): string | undefined {
+  switch (color) {
+    case Proto.AvatarColor.A100:
+      return 'A100';
+    case Proto.AvatarColor.A110:
+      return 'A110';
+    case Proto.AvatarColor.A120:
+      return 'A120';
+    case Proto.AvatarColor.A130:
+      return 'A130';
+    case Proto.AvatarColor.A140:
+      return 'A140';
+    case Proto.AvatarColor.A150:
+      return 'A150';
+    case Proto.AvatarColor.A160:
+      return 'A160';
+    case Proto.AvatarColor.A170:
+      return 'A170';
+    case Proto.AvatarColor.A180:
+      return 'A180';
+    case Proto.AvatarColor.A190:
+      return 'A190';
+    case Proto.AvatarColor.A200:
+      return 'A200';
+    case Proto.AvatarColor.A210:
+      return 'A210';
+    case undefined:
+    case null:
+      return undefined;
+    default:
+      throw missingCaseError(color);
+  }
+}
+
+function applyAvatarColor(
+  conversation: ConversationModel,
+  protoColor: Proto.AvatarColor | null | undefined
+): void {
+  conversation.set({
+    colorFromPrimary: dropNull(protoColor),
+    color: fromAvatarColor(protoColor) ?? conversation.get('color'),
+  });
+}
+
 function addUnknownFields(
   record: RecordClass,
   conversation: ConversationModel,
@@ -184,7 +230,7 @@ export async function toContactRecord(
   }
   const e164 = conversation.get('e164');
   if (e164) {
-    contactRecord.serviceE164 = e164;
+    contactRecord.e164 = e164;
   }
   const username = conversation.get('username');
   const ourID = window.ConversationController.getOurConversationId();
@@ -260,6 +306,10 @@ export async function toContactRecord(
   contactRecord.unregisteredAtTimestamp = getSafeLongFromTimestamp(
     conversation.get('firstUnregisteredAt')
   );
+  const avatarColor = conversation.get('colorFromPrimary');
+  if (avatarColor != null) {
+    contactRecord.avatarColor = avatarColor;
+  }
 
   applyUnknownFields(contactRecord, conversation);
 
@@ -284,7 +334,7 @@ export function toAccountRecord(
   }
   const avatarUrl = window.storage.get('avatarUrl');
   if (avatarUrl !== undefined) {
-    accountRecord.avatarUrl = avatarUrl;
+    accountRecord.avatarUrlPath = avatarUrl;
   }
   const username = conversation.get('username');
   if (username !== undefined) {
@@ -344,10 +394,10 @@ export function toAccountRecord(
   );
   switch (phoneNumberDiscoverability) {
     case PhoneNumberDiscoverability.Discoverable:
-      accountRecord.notDiscoverableByPhoneNumber = false;
+      accountRecord.unlistedPhoneNumber = false;
       break;
     case PhoneNumberDiscoverability.NotDiscoverable:
-      accountRecord.notDiscoverableByPhoneNumber = true;
+      accountRecord.unlistedPhoneNumber = true;
       break;
     default:
       throw missingCaseError(phoneNumberDiscoverability);
@@ -404,11 +454,11 @@ export function toAccountRecord(
 
   const subscriberId = window.storage.get('subscriberId');
   if (Bytes.isNotEmpty(subscriberId)) {
-    accountRecord.subscriberId = subscriberId;
+    accountRecord.donorSubscriberId = subscriberId;
   }
   const subscriberCurrencyCode = window.storage.get('subscriberCurrencyCode');
   if (typeof subscriberCurrencyCode === 'string') {
-    accountRecord.subscriberCurrencyCode = subscriberCurrencyCode;
+    accountRecord.donorSubscriberCurrencyCode = subscriberCurrencyCode;
   }
   const donorSubscriptionManuallyCancelled = window.storage.get(
     'donorSubscriptionManuallyCancelled'
@@ -419,6 +469,10 @@ export function toAccountRecord(
   }
 
   accountRecord.backupSubscriberData = generateBackupsSubscriberData();
+  const backupTier = window.storage.get('backupTier');
+  if (backupTier) {
+    accountRecord.backupTier = Long.fromNumber(backupTier);
+  }
 
   const displayBadgesOnProfile = window.storage.get('displayBadgesOnProfile');
   if (displayBadgesOnProfile !== undefined) {
@@ -485,6 +539,11 @@ export function toAccountRecord(
     }
   }
 
+  const avatarColor = conversation.get('colorFromPrimary');
+  if (avatarColor != null) {
+    accountRecord.avatarColor = avatarColor;
+  }
+
   applyUnknownFields(accountRecord, conversation);
 
   return accountRecord;
@@ -496,14 +555,6 @@ export function toGroupV1Record(
   const groupV1Record = new Proto.GroupV1Record();
 
   groupV1Record.id = Bytes.fromBinary(String(conversation.get('groupId')));
-  groupV1Record.blocked = conversation.isBlocked();
-  groupV1Record.whitelisted = Boolean(conversation.get('profileSharing'));
-  groupV1Record.archived = Boolean(conversation.get('isArchived'));
-  groupV1Record.markedUnread = Boolean(conversation.get('markedUnread'));
-  groupV1Record.mutedUntilTimestamp = getSafeLongFromTimestamp(
-    conversation.get('muteExpiresAt'),
-    Long.MAX_VALUE
-  );
 
   applyUnknownFields(groupV1Record, conversation);
 
@@ -542,6 +593,11 @@ export function toGroupV2Record(
     } else {
       throw missingCaseError(storySendMode);
     }
+  }
+
+  const avatarColor = conversation.get('colorFromPrimary');
+  if (avatarColor != null) {
+    groupV2Record.avatarColor = avatarColor;
   }
 
   applyUnknownFields(groupV2Record, conversation);
@@ -656,7 +712,7 @@ export function toDefunctOrPendingCallLinkRecord(
   return callLinkRecord;
 }
 
-type MessageRequestCapableRecord = Proto.IContactRecord | Proto.IGroupV1Record;
+type MessageRequestCapableRecord = Proto.IContactRecord | Proto.IGroupV2Record;
 
 function applyMessageRequestState(
   record: MessageRequestCapableRecord,
@@ -876,23 +932,9 @@ export async function mergeGroupV1Record(
   }
 
   conversation.set({
-    isArchived: Boolean(groupV1Record.archived),
-    markedUnread: Boolean(groupV1Record.markedUnread),
     storageID,
     storageVersion,
   });
-
-  conversation.setMuteExpiration(
-    getTimestampFromLong(
-      groupV1Record.mutedUntilTimestamp,
-      Number.MAX_SAFE_INTEGER
-    ),
-    {
-      viaStorageServiceSync: true,
-    }
-  );
-
-  applyMessageRequestState(groupV1Record, conversation);
 
   let hasPendingChanges: boolean;
 
@@ -1034,6 +1076,8 @@ export async function mergeGroupV2Record(
 
   applyMessageRequestState(groupV2Record, conversation);
 
+  applyAvatarColor(conversation, groupV2Record.avatarColor);
+
   let details = new Array<string>();
 
   addUnknownFields(groupV2Record, conversation, details);
@@ -1105,7 +1149,7 @@ export async function mergeContactRecord(
         : undefined,
   };
 
-  const e164 = dropNull(contactRecord.serviceE164);
+  const e164 = dropNull(contactRecord.e164);
   const { aci } = contactRecord;
   const pni = dropNull(contactRecord.pni);
   const pniSignatureVerified = contactRecord.pniSignatureVerified || false;
@@ -1292,6 +1336,8 @@ export async function mergeContactRecord(
     });
   }
 
+  applyAvatarColor(conversation, contactRecord.avatarColor);
+
   const { hasConflict, details: extraDetails } = doesRecordHavePendingChanges(
     await toContactRecord(conversation),
     contactRecord,
@@ -1318,7 +1364,7 @@ export async function mergeAccountRecord(
   let details = new Array<string>();
   const {
     linkPreviews,
-    notDiscoverableByPhoneNumber,
+    unlistedPhoneNumber,
     noteToSelfArchived,
     noteToSelfMarkedUnread,
     phoneNumberSharingMode,
@@ -1330,10 +1376,11 @@ export async function mergeAccountRecord(
     preferContactAvatars,
     universalExpireTimer,
     preferredReactionEmoji: rawPreferredReactionEmoji,
-    subscriberId,
-    subscriberCurrencyCode,
+    donorSubscriberId,
+    donorSubscriberCurrencyCode,
     donorSubscriptionManuallyCancelled,
     backupSubscriberData,
+    backupTier,
     displayBadgesOnProfile,
     keepMutedChatsArchived,
     hasCompletedUsernameOnboarding,
@@ -1417,7 +1464,7 @@ export async function mergeAccountRecord(
     phoneNumberSharingModeToStore
   );
 
-  const discoverability = notDiscoverableByPhoneNumber
+  const discoverability = unlistedPhoneNumber
     ? PhoneNumberDiscoverability.NotDiscoverable
     : PhoneNumberDiscoverability.Discoverable;
   await window.storage.put('phoneNumberDiscoverability', discoverability);
@@ -1536,11 +1583,14 @@ export async function mergeAccountRecord(
     );
   }
 
-  if (Bytes.isNotEmpty(subscriberId)) {
-    await window.storage.put('subscriberId', subscriberId);
+  if (Bytes.isNotEmpty(donorSubscriberId)) {
+    await window.storage.put('subscriberId', donorSubscriberId);
   }
-  if (typeof subscriberCurrencyCode === 'string') {
-    await window.storage.put('subscriberCurrencyCode', subscriberCurrencyCode);
+  if (typeof donorSubscriberCurrencyCode === 'string') {
+    await window.storage.put(
+      'subscriberCurrencyCode',
+      donorSubscriberCurrencyCode
+    );
   }
   if (donorSubscriptionManuallyCancelled != null) {
     await window.storage.put(
@@ -1550,6 +1600,7 @@ export async function mergeAccountRecord(
   }
 
   await saveBackupsSubscriberData(backupSubscriberData);
+  await window.storage.put('backupTier', backupTier?.toNumber());
 
   await window.storage.put(
     'displayBadgesOnProfile',
@@ -1678,10 +1729,15 @@ export async function mergeAccountRecord(
       { viaStorageServiceSync: true, reason: 'mergeAccountRecord' }
     );
 
-    const avatarUrl = dropNull(accountRecord.avatarUrl);
-    await conversation.setAndMaybeFetchProfileAvatar(avatarUrl, profileKey);
+    const avatarUrl = dropNull(accountRecord.avatarUrlPath);
+    await conversation.setAndMaybeFetchProfileAvatar({
+      avatarUrl,
+      decryptionKey: profileKey,
+    });
     await window.storage.put('avatarUrl', avatarUrl);
   }
+
+  applyAvatarColor(conversation, accountRecord.avatarColor);
 
   const { hasConflict, details: extraDetails } = doesRecordHavePendingChanges(
     toAccountRecord(conversation),

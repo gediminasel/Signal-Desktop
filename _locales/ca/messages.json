@@ -38,6 +38,9 @@
   "icu:Preferences__sent-media-quality": {
     "messageformat": "Qualitat dels mitjans enviats"
   },
+  "icu:Preferences__sent-media-quality__description": {
+    "messageformat": "L’enviament de mitjans d’alta qualitat usarà més dades."
+  },
   "icu:sentMediaQualityStandard": {
     "messageformat": "Estàndard"
   },
@@ -68,6 +71,12 @@
   "icu:unknownGroup": {
     "messageformat": "Grup desconegut"
   },
+  "icu:cantOpenSignalError": {
+    "messageformat": "No es pot obrir Signal"
+  },
+  "icu:cantOpenSignalError__detail": {
+    "messageformat": "Per ajudar a solucionar el problema, segueix la guia de recuperació de la pàgina d'assistència o posa't en contacte amb el servei de suport de Signal.\n\nSi necessites utilitzar Signal immediatament, pots eliminar les teves dades i tornar a enllaçar aquest escriptori. Tindràs l'opció de transferir l'historial dels missatges des del teu telèfon"
+  },
   "icu:databaseError": {
     "messageformat": "Error de la base de dades"
   },
@@ -78,10 +87,10 @@
     "messageformat": "Eliminar les dades i reiniciar"
   },
   "icu:databaseError__deleteDataConfirmation": {
-    "messageformat": "Vols eliminar totes les dades permanentment?"
+    "messageformat": "Eliminar totes les dades permanentment"
   },
   "icu:databaseError__deleteDataConfirmation__detail": {
-    "messageformat": "Tot el teu historial de missatges i arxius multimèdia s'eliminaran permanentment d'aquest dispositiu. Podràs utilitzar Signal en aquest dispositiu després de tornar-lo a enllaçar. Això no eliminarà cap dada del teu telèfon."
+    "messageformat": "Tot el teu historial de missatges i arxius multimèdia s'eliminaran permanentment d'aquest dispositiu. Això no eliminarà cap dada del teu telèfon.\n\nPodràs utilitzar Signal en aquest dispositiu després de tornar-lo a enllaçar. Tindràs l'opció de transferir l'historial dels missatges des del teu telèfon"
   },
   "icu:databaseError__startOldVersion": {
     "messageformat": "La versió de la teva base de dades no coincideix amb aquesta versió de Signal. Assegura't d'estar obrint la versió més recent de Signal al teu ordinador."
@@ -214,9 +223,6 @@
   },
   "icu:optimizingApplication": {
     "messageformat": "Optimitzant l'aplicació…"
-  },
-  "icu:migratingToSQLCipher": {
-    "messageformat": "Optimitzant els missatges… {status} completat."
   },
   "icu:archivedConversations": {
     "messageformat": "Xats arxivats"
@@ -407,9 +413,6 @@
   "icu:unreadMessages": {
     "messageformat": "{count, plural, one {{count,number} missatge sense llegir} other {{count,number} missatges sense llegir}}"
   },
-  "icu:messageHistoryUnsynced": {
-    "messageformat": "Per seguretat, l'historial del xat no es transfereix als dispositius enllaçats nous."
-  },
   "icu:youMarkedAsVerified": {
     "messageformat": "Heu marcat el número de seguretat amb {name} com a verificat."
   },
@@ -588,7 +591,7 @@
     "messageformat": "Failed to send message with endorsements"
   },
   "icu:Toast--InvalidStorageServiceHeaders": {
-    "messageformat": "Received invalid response from storage service. Please share your logs."
+    "messageformat": "Resposta del servei d'emmagatzematge no vàlida. Si us plau, comparteix els teus registres."
   },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
@@ -706,9 +709,6 @@
   },
   "icu:noSearchResultsOnlyUnreadFilter": {
     "messageformat": "No hi ha xats sense llegir"
-  },
-  "icu:noSearchResults--sms-only": {
-    "messageformat": "Els contactes d'SMS / MMS no estan disponibles a la versió d'escriptori."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "No hi ha resultats per a \"{searchTerm}\" a {conversationName}"
@@ -1145,9 +1145,6 @@
   "icu:mediaNotAvailable": {
     "messageformat": "Aquest arxiu multimèdia no està disponible"
   },
-  "icu:mediaNotAvailable--short": {
-    "messageformat": "Arxiu no disponible"
-  },
   "icu:attachmentNoLongerAvailable__learnMore": {
     "messageformat": "Més informació"
   },
@@ -1162,6 +1159,12 @@
   },
   "icu:attachmentNotAvailable__voice": {
     "messageformat": "Missatge de veu no disponible"
+  },
+  "icu:attachmentNotAvailable__tapToView": {
+    "messageformat": "Aquest contingut d'una sola visualització no està disponible"
+  },
+  "icu:attachmentNotAvailable__tapToViewCannotDownload": {
+    "messageformat": "No es pot descarregar el contingut d'una sola visualització"
   },
   "icu:AttachmentNotAvailableModal__title--file": {
     "messageformat": "Arxiu no disponible"
@@ -1192,6 +1195,21 @@
   },
   "icu:AttachmentNotAvailableModal__body--voice-message": {
     "messageformat": "Aquest missatge de veu no es va transferir des del telèfon mentre aquest dispositiu estava enllaçat. Els arxius que en el moment de vincular el dispositiu tinguin més de 45 dies d'antiguitat no es podran sincronitzar."
+  },
+  "icu:TapToViewNotAvailableModal__body--expired": {
+    "messageformat": "Aquest contingut d'una sola visualització ja no està disponible. Demana-li a {name} que te'l torni a enviar."
+  },
+  "icu:TapToViewNotAvailableModal__body--error": {
+    "messageformat": "No es pot descarregar el contingut d'una sola visualització. {name} haurà de tornar-lo a enviar."
+  },
+  "icu:BackfillFailureModal__title": {
+    "messageformat": "No es pot descarregar l'arxiu"
+  },
+  "icu:BackfillFailureModal__body--timeout": {
+    "messageformat": "Comprova la connexió a Internet del teu ordinador i telèfon. Obre Signal al telèfon i intenta descarregar-ho de nou."
+  },
+  "icu:BackfillFailureModal__body--not-found": {
+    "messageformat": "Aquests arxius multimèdia ja no estan disponibles al telèfon i no es pot descarregar."
   },
   "icu:save": {
     "messageformat": "Desa"
@@ -1244,12 +1262,6 @@
   "icu:Install__support-link": {
     "messageformat": "Us cal ajuda?"
   },
-  "icu:Install__choose-device-name__description": {
-    "messageformat": "Veureu aquest nom sota \"Dispositius enllaçats\" al telèfon."
-  },
-  "icu:Install__choose-device-name__placeholder": {
-    "messageformat": "L'ordinador"
-  },
   "icu:Preferences--phone-number": {
     "messageformat": "Número de telèfon"
   },
@@ -1259,11 +1271,8 @@
   "icu:Preferences--device-name__description": {
     "messageformat": "Per canviar el nom d'aquest dispositiu, obre Signal al teu telèfon i ves a Ajustos > Dispositius enllaçats"
   },
-  "icu:chooseDeviceName": {
-    "messageformat": "Trieu el nom d'aquest dispositiu"
-  },
-  "icu:finishLinkingPhone": {
-    "messageformat": "Acaba l'enllaçament del telèfon"
+  "icu:Preferences__EmojiSkinToneDefaultSetting__Label": {
+    "messageformat": "To de pell de l'emoji"
   },
   "icu:initialSync": {
     "messageformat": "Sincronització de contactes i grups"
@@ -1814,6 +1823,18 @@
   "icu:ConversationDetails__HeaderButton--Message": {
     "messageformat": "Missatge"
   },
+  "icu:ConversationDetails--help-section": {
+    "messageformat": "Ajuda"
+  },
+  "icu:ConversationDetails--support-center": {
+    "messageformat": "Centre d'assistència"
+  },
+  "icu:ConversationDetails--contact-us": {
+    "messageformat": "Contacteu-nos"
+  },
+  "icu:ConversationDetails--donate": {
+    "messageformat": "Feu una donació a Signal"
+  },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "Mostra el número de seguretat"
   },
@@ -1873,6 +1894,9 @@
   },
   "icu:Toast--failed-to-fetch-phone-number": {
     "messageformat": "No s'ha pogut obtenir el número de telèfon. Comproveu la connexió i torneu-ho a provar."
+  },
+  "icu:Toast--download-failed": {
+    "messageformat": "Descàrrega fallida"
   },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "Els canvis només es poden realitzar fins 24 hores després d'enviar el missatge."
@@ -2252,6 +2276,204 @@
   "icu:EmojiPicker__button--flag": {
     "messageformat": "Banderes"
   },
+  "icu:FunPicker__Tab--Emojis": {
+    "messageformat": "Emoticones"
+  },
+  "icu:FunPicker__Tab--Stickers": {
+    "messageformat": "Adhesius"
+  },
+  "icu:FunPicker__Tab--Gifs": {
+    "messageformat": "GIFs"
+  },
+  "icu:FunPanelEmojis__SearchLabel": {
+    "messageformat": "Cerca d'emoticones"
+  },
+  "icu:FunPanelEmojis__SearchPlaceholder": {
+    "messageformat": "Cerca d'emoticones"
+  },
+  "icu:FunPanelEmojis__SubNavLabel": {
+    "messageformat": "Categories d'emoji"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Recents": {
+    "messageformat": "Usat recentment"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--SmileysAndPeople": {
+    "messageformat": "Emoticones somrients i gent"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--AnimalsAndNature": {
+    "messageformat": "Animals i natura"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--FoodAndDrink": {
+    "messageformat": "Menjar i beure"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Activities": {
+    "messageformat": "Activitats"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--TravelAndPlaces": {
+    "messageformat": "Viatges i llocs"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Objects": {
+    "messageformat": "Objectes"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Symbols": {
+    "messageformat": "Símbols"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Flags": {
+    "messageformat": "Banderes"
+  },
+  "icu:FunPanelEmojis__SearchResults__EmptyHeading": {
+    "messageformat": "No s'ha trobat cap emoticona."
+  },
+  "icu:FunPanelEmojis__ChangeSkinToneButtonLabel": {
+    "messageformat": "Canviar la preferència del to de pell"
+  },
+  "icu:FunPanelEmojis__SkinTonePicker__ChooseDefaultLabel": {
+    "messageformat": "Tria el teu to de pell predeterminat"
+  },
+  "icu:FunPanelEmojis__SectionTitle--SearchResults": {
+    "messageformat": "Resultats de la cerca"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Recents": {
+    "messageformat": "Usat recentment"
+  },
+  "icu:FunPanelEmojis__SectionTitle--SmileysAndPeople": {
+    "messageformat": "Emoticones somrients i gent"
+  },
+  "icu:FunPanelEmojis__SectionTitle--AnimalsAndNature": {
+    "messageformat": "Animals i natura"
+  },
+  "icu:FunPanelEmojis__SectionTitle--FoodAndDrink": {
+    "messageformat": "Menjar i beure"
+  },
+  "icu:FunPanelEmojis__SectionTitle--TravelAndPlaces": {
+    "messageformat": "Viatges i llocs"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Activities": {
+    "messageformat": "Activitats"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Objects": {
+    "messageformat": "Objectes"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Symbols": {
+    "messageformat": "Símbols"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Flags": {
+    "messageformat": "Banderes"
+  },
+  "icu:FunPanelEmojis__CustomizeReactionsButtonLabel": {
+    "messageformat": "Customize reactions"
+  },
+  "icu:FunPanelStickers__SearchLabel": {
+    "messageformat": "Cerca d'adhesius"
+  },
+  "icu:FunPanelStickers__SearchPlaceholder": {
+    "messageformat": "Cerca d'adhesius"
+  },
+  "icu:FunPanelSticker__SubNavLabel": {
+    "messageformat": "Paquet d'stickers"
+  },
+  "icu:FunPanelStickers__SubNavCategoryLabel--Recents": {
+    "messageformat": "Usat recentment"
+  },
+  "icu:FunPanelStickers__SectionTitle--SearchResults": {
+    "messageformat": "Resultats de la cerca"
+  },
+  "icu:FunPanelStickers__SectionTitle--Recents": {
+    "messageformat": "Usat recentment"
+  },
+  "icu:FunPanelStickers__SectionTitle--Featured": {
+    "messageformat": "Featured"
+  },
+  "icu:FunPanelStickers__SearchResults__EmptyHeading": {
+    "messageformat": "No s'ha trobat cap adhesiu."
+  },
+  "icu:FunPanelStickers__LightboxDialog__Label": {
+    "messageformat": "Vista prèvia del sticker"
+  },
+  "icu:FunPanelGifs__SearchLabel--Tenor": {
+    "messageformat": "Buscar GIFs a través de Tenor"
+  },
+  "icu:FunPanelGifs__SearchPlaceholder--Tenor": {
+    "messageformat": "Buscar a Tenor"
+  },
+  "icu:FunPanelGifs__SubNavLabel": {
+    "messageformat": "Categories de GIF"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Recents": {
+    "messageformat": "Usat recentment"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Trending": {
+    "messageformat": "Tendència"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Celebrate": {
+    "messageformat": "Celebració"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Love": {
+    "messageformat": "Amor"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--ThumbsUp": {
+    "messageformat": "Polzes cap amunt"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Surprised": {
+    "messageformat": "Sorpresa"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Excited": {
+    "messageformat": "Entusiasme"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Sad": {
+    "messageformat": "Tristesa"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Angry": {
+    "messageformat": "Enuig"
+  },
+  "icu:FunPanelGifs__SearchResults__LoadingLabel": {
+    "messageformat": "Carregant GIFs"
+  },
+  "icu:FunPanelGifs__SearchResults__ErrorHeading": {
+    "messageformat": "No s'han pogut carregar els GIFs. Comprova la teva connexió i torna-ho a intentar"
+  },
+  "icu:FunPanelGifs__SearchResults__ErrorRetryButton": {
+    "messageformat": "Torna a provar-ho"
+  },
+  "icu:FunPanelGifs__SearchResults__EmptyHeading": {
+    "messageformat": "No s'han trobat GIFs"
+  },
+  "icu:FunPanelGifs__LightboxDialog__Label": {
+    "messageformat": "Vista prèvia del GIF"
+  },
+  "icu:FunSearch__ClearButtonLabel": {
+    "messageformat": "Neteja la cerca"
+  },
+  "icu:FunSkinTones__List": {
+    "messageformat": "To de pell"
+  },
+  "icu:FunSkinTones__ListItem--None": {
+    "messageformat": "Cap"
+  },
+  "icu:FunSkinTones__ListItem--Light": {
+    "messageformat": "To de pell clar"
+  },
+  "icu:FunSkinTones__ListItem--MediumLight": {
+    "messageformat": "To de pell mig-clar"
+  },
+  "icu:FunSkinTones__ListItem--Medium": {
+    "messageformat": "To de pell mig"
+  },
+  "icu:FunSkinTones__ListItem--MediumDark": {
+    "messageformat": "To de pell mig-fosc"
+  },
+  "icu:FunSkinTones__ListItem--Dark": {
+    "messageformat": "To de pell fosc"
+  },
+  "icu:FunButton__Label--FunPicker": {
+    "messageformat": "Afegeix un emoji, un sticker o un GIF"
+  },
+  "icu:FunButton__Label--EmojiPicker": {
+    "messageformat": "Afegir un Emoji"
+  },
+  "icu:FunButton__Label--StickerPicker": {
+    "messageformat": "Afegiu-hi un adhesiu"
+  },
   "icu:confirmation-dialog--Cancel": {
     "messageformat": "Cancel·la"
   },
@@ -2288,11 +2510,11 @@
   "icu:Message--update-signal": {
     "messageformat": "Actualitza el Signal"
   },
-  "icu:Message--tap-to-view-expired": {
+  "icu:Message--tap-to-view--viewed": {
     "messageformat": "Vista"
   },
-  "icu:Message--tap-to-view--outgoing": {
-    "messageformat": "Elements multimèdia"
+  "icu:Message--tap-to-view--media": {
+    "messageformat": "Arxius multimèdia per veure una vegada"
   },
   "icu:Message--tap-to-view--incoming--expired-toast": {
     "messageformat": "Ja heu vist aquest missatge."
@@ -2300,11 +2522,14 @@
   "icu:Message--tap-to-view--outgoing--expired-toast": {
     "messageformat": "Els missatges d'una sola visualització no es desen a l'historial del xat"
   },
-  "icu:Message--tap-to-view--incoming": {
-    "messageformat": "Mostra la fotografia"
+  "icu:Message--tap-to-view--video": {
+    "messageformat": "Vídeo d'una sola visualització"
   },
-  "icu:Message--tap-to-view--incoming-video": {
-    "messageformat": "Mostra el vídeo"
+  "icu:Message--tap-to-view--photo": {
+    "messageformat": "Foto d'una sola visualització"
+  },
+  "icu:Message--tap-to-view--helper-text": {
+    "messageformat": "Fes clic per veure"
   },
   "icu:Conversation--getDraftPreview--attachment": {
     "messageformat": "(adjunt)"
@@ -2498,6 +2723,9 @@
   "icu:Keyboard--toggle-video": {
     "messageformat": "Activa / desactiva el vídeo"
   },
+  "icu:Keyboard--toggle-preview": {
+    "messageformat": "Activar o desactivar la vista prèvia ampliada"
+  },
   "icu:Keyboard--accept-video-call": {
     "messageformat": "Respon la trucada amb vídeo (només videotrucades)"
   },
@@ -2560,6 +2788,12 @@
   },
   "icu:SafetyTipsModal__Description": {
     "messageformat": "Ves amb compte quan acceptis sol·licituds de missatges de persones que no coneixes. Vigila amb:"
+  },
+  "icu:SafetyTipsModal__TipTitle--Fake": {
+    "messageformat": "Comptes i noms falsos"
+  },
+  "icu:SafetyTipsModal__TipDescription--Fake": {
+    "messageformat": "Signal mai es posarà en contacte amb tu per demanar-te el teu codi de registre o PIN. Ves amb compte quan rebis peticions de persones es fan passar per altres. Els noms de perfil els tria el titular del compte i no es verifiquen."
   },
   "icu:SafetyTipsModal__TipTitle--Crypto": {
     "messageformat": "Estafes de criptomoneda o diners"
@@ -2693,6 +2927,12 @@
   "icu:MessageRequests--accept": {
     "messageformat": "Ho accepto"
   },
+  "icu:MessageRequests--accept-confirm-title": {
+    "messageformat": "Acceptar la sol·licitud?"
+  },
+  "icu:MessageRequests--accept-confirm-body": {
+    "messageformat": "Revisa les sol·licituds amb atenció. Els noms de perfil els tria el titular del compte i no es verifiquen."
+  },
   "icu:MessageRequests--continue": {
     "messageformat": "Continua"
   },
@@ -2704,6 +2944,21 @@
   },
   "icu:ConversationHero--members": {
     "messageformat": "{count, plural, one {1 membre} other {{count,number} membres}}"
+  },
+  "icu:ConversationHero--review-carefully": {
+    "messageformat": "Revisa amb atenció"
+  },
+  "icu:ConversationHero--group-names": {
+    "messageformat": "<clickable>Els noms de grup</clickable> no es verifiquen"
+  },
+  "icu:ConversationHero--profile-names": {
+    "messageformat": "<clickable>Els noms de perfil</clickable> no es verifiquen"
+  },
+  "icu:ConversationHero--signal-official-chat": {
+    "messageformat": "Aquest és l'únic xat oficial de Signal"
+  },
+  "icu:ConversationHero--release-notes": {
+    "messageformat": "Estigues al dia de les notícies i les notes de versió."
   },
   "icu:member-of-1-group": {
     "messageformat": "Membre de {group}"
@@ -2840,6 +3095,12 @@
   "icu:CallControls__JoinLeaveButton--hangup-group": {
     "messageformat": "Surt"
   },
+  "icu:CallControls__JoinLeaveButton--hangup-1-1-tooltip": {
+    "messageformat": "End call"
+  },
+  "icu:CallControls__JoinLeaveButton--hangup-group-tooltip": {
+    "messageformat": "Leave call"
+  },
   "icu:CallControls__MutedToast--muted": {
     "messageformat": "Micròfon apagat"
   },
@@ -2917,6 +3178,12 @@
   },
   "icu:calling__pip--off": {
     "messageformat": "Trucada a pantalla completa"
+  },
+  "icu:calling__preview--maximize": {
+    "messageformat": "Maximitzar vista prèvia"
+  },
+  "icu:calling__preview--minimize": {
+    "messageformat": "Minimitzar vista prèvia"
   },
   "icu:calling__change-view": {
     "messageformat": "Canviar la vista"
@@ -3698,18 +3965,6 @@
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "Torna a provar-ho"
   },
-  "icu:BackupImportScreen__skip": {
-    "messageformat": "Omet"
-  },
-  "icu:BackupImportScreen__skip-confirmation__title": {
-    "messageformat": "Ometre la transferència de missatges?"
-  },
-  "icu:BackupImportScreen__skip-confirmation__body": {
-    "messageformat": "Si decideixes ometre aquest pas, no podràs accedir a cap dels teus missatges o arxius multimèdia des d'aquest dispositiu. Pots iniciar una nova transferència després d'haver-la omès des d'Ajustos > Xats > Transferència."
-  },
-  "icu:BackupImportScreen__skip-confirmation__cancel": {
-    "messageformat": "Cancel·la"
-  },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "Restaurant els arxius"
   },
@@ -3752,6 +4007,12 @@
   "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
     "messageformat": "Cancel·lar la transferència"
   },
+  "icu:CriticalIdlePrimaryDeviceModal__title": {
+    "messageformat": "Account action required"
+  },
+  "icu:CriticalIdlePrimaryDeviceModal__description": {
+    "messageformat": "You must open Signal on your phone to continue using this account. If you do not open Signal on your phone, your account will be deleted soon. <learnMoreLink>Learn more</learnMoreLink>"
+  },
   "icu:CompositionArea--expand": {
     "messageformat": "Expandeix"
   },
@@ -3772,6 +4033,18 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "Envia el missatge editat"
+  },
+  "icu:CompositionArea__FunButtonLabel": {
+    "messageformat": "Afegeix un emoji, un sticker o un GIF"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__Title": {
+    "messageformat": "Substituir l'arxiu?"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__Body": {
+    "messageformat": "Afegir aquest GIF substituirà l'element actual de l'esborrany del teu missatge."
+  },
+  "icu:CompositionArea__ConfirmGifSelection__ReplaceButton": {
+    "messageformat": "Substituir"
   },
   "icu:CompositionInput__editing-message": {
     "messageformat": "Editar missatge"
@@ -3989,6 +4262,9 @@
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "Requereix que un administrador aprovi els membres nous que s’afegeixin per l’enllaç del grup."
   },
+  "icu:GroupLinkManagement__CopyGroupLinkButtonLabel": {
+    "messageformat": "Copy signal.group link to clipboard"
+  },
   "icu:PendingInvites--tab-requests": {
     "messageformat": "Sol·licituds ({count,number})"
   },
@@ -4193,9 +4469,6 @@
   "icu:ShareCallLinkViaSignal__DraftMessageText": {
     "messageformat": "Utilitza aquest enllaç per unir-te a la trucada de Signal: {url}"
   },
-  "icu:MessageRequestWarning__learn-more": {
-    "messageformat": "Més informació"
-  },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "Consells de seguretat"
   },
@@ -4350,7 +4623,7 @@
     "messageformat": "Final gradient"
   },
   "icu:GIF--download": {
-    "messageformat": "Download GIF attachment"
+    "messageformat": "Baixa el GIF adjunt"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "Temps personalitzat…"
@@ -4655,6 +4928,30 @@
   "icu:Preferences__button--privacy": {
     "messageformat": "Privadesa"
   },
+  "icu:Preferences__button--data-usage": {
+    "messageformat": "Ús de dades"
+  },
+  "icu:Preferences__media-auto-download": {
+    "messageformat": "Baixada automàtica de contingut multimèdia"
+  },
+  "icu:Preferences__media-auto-download__photos": {
+    "messageformat": "Fotos"
+  },
+  "icu:Preferences__media-auto-download__videos": {
+    "messageformat": "Vídeos"
+  },
+  "icu:Preferences__media-auto-download__audio": {
+    "messageformat": "Àudio"
+  },
+  "icu:Preferences__media-auto-download__documents": {
+    "messageformat": "Documents"
+  },
+  "icu:Preferences__media-auto-download__description": {
+    "messageformat": "Els missatges de veu i els stickers sempre es baixen automàticament."
+  },
+  "icu:Preferences__button--backups": {
+    "messageformat": "Backups"
+  },
   "icu:Preferences--lastSynced": {
     "messageformat": "Darrera importació: {date} {time}"
   },
@@ -4684,6 +4981,51 @@
   },
   "icu:Preferences--blocked": {
     "messageformat": "Persones bloquejades"
+  },
+  "icu:Preferences--backup-details__header": {
+    "messageformat": "Backup details"
+  },
+  "icu:Preferences--backup-media-plan__description": {
+    "messageformat": "Text + all media backup"
+  },
+  "icu:Preferences--backup-plan-not-found__description": {
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Backups."
+  },
+  "icu:Preferences--backup-messages-plan__description": {
+    "messageformat": "{mediaDayCount, plural, one {Text + {mediaDayCount,number} day media backup} other {Text + {mediaDayCount,number} days media backup}}"
+  },
+  "icu:Preferences--backup-messages-plan__cost-description": {
+    "messageformat": "Your backup plan is free"
+  },
+  "icu:Preferences--backup-plan__renewal-date": {
+    "messageformat": "Renews {date}"
+  },
+  "icu:Preferences--backup-plan__expiry-date": {
+    "messageformat": "Expires {date}"
+  },
+  "icu:Preferences--backup-plan__canceled": {
+    "messageformat": "Subscription canceled"
+  },
+  "icu:Preferences--backup-media-plan__note": {
+    "messageformat": "You can manage or cancel your Signal Backups subscription on your phone."
+  },
+  "icu:Preferences--backup-messages-plan__note": {
+    "messageformat": "You can manage or upgrade Signal Backups on your phone."
+  },
+  "icu:Preferences--backup-plan__not-found": {
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Backups."
+  },
+  "icu:Preferences--backup-plan__not-found__note": {
+    "messageformat": "You can manage or renew your Signal Backups subscription on your phone."
+  },
+  "icu:Preferences--backup-created-at__label": {
+    "messageformat": "Last backup"
+  },
+  "icu:Preferences--backup-created-by-phone": {
+    "messageformat": "Your phone"
+  },
+  "icu:Preferences--backup-size__label": {
+    "messageformat": "Backup size"
   },
   "icu:Preferences--blocked-count": {
     "messageformat": "{num, plural, one {{num,number} contacte} other {{num,number} contactes}}"
@@ -4810,6 +5152,18 @@
   },
   "icu:DialogUpdate__downloaded": {
     "messageformat": "Actualització descarregada"
+  },
+  "icu:CriticalIdlePrimaryDevice__title": {
+    "messageformat": "Obriu el Signal al telèfon."
+  },
+  "icu:CriticalIdlePrimaryDevice__body": {
+    "messageformat": "El teu compte s'eliminarà aviat a menys que obris Signal al telèfon. Aquest missatge desapareixerà un cop ho hagis pogut fer. <learnMoreLink>Més informació</learnMoreLink>"
+  },
+  "icu:IdlePrimaryDevice__body": {
+    "messageformat": "Obre Signal al teu telèfon per mantenir actiu el teu compte"
+  },
+  "icu:IdlePrimaryDevice__learnMore": {
+    "messageformat": "Més informació"
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "El Signal té problemes tècnics. Estem treballant per recuperar el servei tan ràpidament com sigui possible."
@@ -4951,6 +5305,30 @@
   },
   "icu:MediaEditor__crop-preset--9-16": {
     "messageformat": "9:16"
+  },
+  "icu:MediaPermissionsModal__title--microphone": {
+    "messageformat": "Permet l'accés al micròfon"
+  },
+  "icu:MediaPermissionsModal__title--camera": {
+    "messageformat": "Permet l'accés a la teva càmera"
+  },
+  "icu:MediaPermissionsModal__subtitle--call": {
+    "messageformat": "Per unir-te o iniciar una trucada:"
+  },
+  "icu:MediaPermissionsModal__subtitle--call--camera": {
+    "messageformat": "Per activar el vídeo:"
+  },
+  "icu:MediaPermissionsModal__subtitle--voice-note": {
+    "messageformat": "Per enviar missatges de veu:"
+  },
+  "icu:MediaPermissionsModal__step-1": {
+    "messageformat": "Fes clic al botó “{buttonName}” d'aquí sota"
+  },
+  "icu:MediaPermissionsModal__step-2": {
+    "messageformat": "Activa “Signal”"
+  },
+  "icu:MediaPermissionsModal__open": {
+    "messageformat": "Anar a ajustos"
   },
   "icu:MyStories__title": {
     "messageformat": "Les meves històries"
@@ -5610,6 +5988,15 @@
   "icu:MessageMetadata__edited": {
     "messageformat": "Editat"
   },
+  "icu:DraftGifMessageSendModal__Title": {
+    "messageformat": "Afegiu-hi un missatge"
+  },
+  "icu:DraftGifMessageSendModal__SendButtonLabel": {
+    "messageformat": "Envia"
+  },
+  "icu:DraftGifMessageSendModal__CancelButtonLabel": {
+    "messageformat": "Cancel·la"
+  },
   "icu:EditHistoryMessagesModal__title": {
     "messageformat": "Historial de canvis"
   },
@@ -5829,6 +6216,30 @@
   "icu:WhoCanFindMeReadOnlyToast": {
     "messageformat": "Per canviar això, configura \"Qui pot veure el meu número\" seleccionant \"Ningú\"."
   },
+  "icu:ProfileNameWarningModal__description--direct": {
+    "messageformat": "Els noms de perfil els tria el titular del compte:"
+  },
+  "icu:ProfileNameWarningModal__list--item1--direct": {
+    "messageformat": "Els noms de perfil no es verifiquen"
+  },
+  "icu:ProfileNameWarningModal__list--item2--direct": {
+    "messageformat": "Ves amb compte amb els comptes que es fan passar per altres"
+  },
+  "icu:ProfileNameWarningModal__list--item3--direct": {
+    "messageformat": "No comparteixis informació personal amb persones que no coneguis"
+  },
+  "icu:ProfileNameWarningModal__description--group": {
+    "messageformat": "Els noms dels grups els trien els membres del grup."
+  },
+  "icu:ProfileNameWarningModal__list--item1--group": {
+    "messageformat": "Ves amb compte amb els grups que es fan passar per organitzacions i empreses"
+  },
+  "icu:ProfileNameWarningModal__list--item2--group": {
+    "messageformat": "Els noms de perfil dels membres dels grups no es verifiquen"
+  },
+  "icu:ProfileNameWarningModal__list--item3--group": {
+    "messageformat": "No comparteixis informació personal amb persones que no coneguis"
+  },
   "icu:WhatsNew__modal-title": {
     "messageformat": "Què hi ha de nou"
   },
@@ -5860,10 +6271,22 @@
     "messageformat": "Petits ajustos, correccions d'errors i tasques de millora de rendiment. Gràcies per utilitzar Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.44--0": {
-    "messageformat": "Hem corregit un petit error en l'animació durant les trucades de grup."
+  "icu:WhatsNew__v7.47--0": {
+    "messageformat": "Ara pots ampliar la vista prèvia del teu vídeo local durant una trucada per poder veure't millor."
   },
-  "icu:WhatsNew__v7.45--0": {
-    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
+  "icu:WhatsNew__v7.48--0": {
+    "messageformat": "Hem afegit una funció d'allò més pràctica perquè, durant una trucada grupal de Signal, puguis baixar ràpidament la mà un cop comencis a parlar."
+  },
+  "icu:WhatsNew__v7.49--0": {
+    "messageformat": "Ara, si enllaces un nou Escriptori a Signal Android i decideixes transferir-hi el teu historial de missatges, tindràs també l'opció de transferir selectivament arxius adjunts antics des del dispositiu principal. El procés de transferència és segur i xifrat d'extrem a extrem."
+  },
+  "icu:WhatsNew__v7.50--0": {
+    "messageformat": "Ara, si enllaces un nou Escriptori a Signal Android i decideixes transferir-hi el teu historial de missatges, tindràs també l'opció de transferir selectivament arxius adjunts antics des del dispositiu principal. El procés de transferència és segur i xifrat d'extrem a extrem."
+  },
+  "icu:WhatsNew__v7.51--0": {
+    "messageformat": "Fire, the wheel, and electricity were all great developments, but they were merely necessary steps along the path that created the conditions for animated GIF search to exist. Now you can experience the pinnacle of human technological advancement in Signal Desktop with a brand-new selection interface that makes it easy to quickly find an emoji, sticker, or animated GIF that's perfect for the moment."
+  },
+  "icu:WhatsNew__v7.51--1": {
+    "messageformat": "We also resized the picture-in-picture window and added convenient new shortcuts to mute/unmute your microphone or turn the camera on/off while a call is minimized."
   }
 }

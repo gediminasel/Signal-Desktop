@@ -4,9 +4,6 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import type { ReadonlyDeep } from 'type-fest';
-
-import { Button } from 'react-aria-components';
-import { VisuallyHidden } from 'react-aria';
 import type {
   DraftBodyRanges,
   HydratedBodyRangesType,
@@ -52,7 +49,7 @@ import type {
   ShowConversationType,
 } from '../state/ducks/conversations';
 import type { EmojiPickDataType } from './emoji/EmojiPicker';
-import type { LinkPreviewType } from '../types/message/LinkPreviews';
+import type { LinkPreviewForUIType } from '../types/message/LinkPreviews';
 import { isSameLinkPreview } from '../types/message/LinkPreviews';
 
 import { MandatoryProfileSharingActions } from './conversation/MandatoryProfileSharingActions';
@@ -80,14 +77,16 @@ import type { ForwardMessagesPayload } from '../state/ducks/globalModals';
 import { ForwardMessagesModalType } from './ForwardMessagesModal';
 import { SignalConversationMuteToggle } from './conversation/SignalConversationMuteToggle';
 import { FunPicker } from './fun/FunPicker';
-import * as RemoteConfig from '../RemoteConfig';
 import type { FunEmojiSelection } from './fun/panels/FunPanelEmojis';
 import type { FunStickerSelection } from './fun/panels/FunPanelStickers';
 import type { FunGifSelection } from './fun/panels/FunPanelGifs';
-import { tenorDownload } from './fun/data/tenor';
-import { SignalService as Proto } from '../protobuf';
-import { SKIN_TONE_TO_NUMBER } from './fun/data/emojis';
+import type { SmartDraftGifMessageSendModalProps } from '../state/smart/DraftGifMessageSendModal';
 import { strictAssert } from '../util/assert';
+import { ConfirmationDialog } from './ConfirmationDialog';
+import type { EmojiSkinTone } from './fun/data/emojis';
+import type { StickerPackType, StickerType } from '../state/ducks/stickers';
+import { FunPickerButton } from './fun/FunButton';
+import { isFunPickerEnabled } from './fun/isFunPickerEnabled';
 
 export type OwnProps = Readonly<{
   acceptedMessageRequest: boolean | null;
@@ -100,6 +99,7 @@ export type OwnProps = Readonly<{
   areWeAdmin: boolean | null;
   areWePending: boolean | null;
   areWePendingApproval: boolean | null;
+  sharedGroupNames?: ReadonlyArray<string>;
   cancelRecording: () => unknown;
   completeRecording: (
     conversationId: string,
@@ -134,7 +134,7 @@ export type OwnProps = Readonly<{
   isSmsOnlyOrUnregistered: boolean | null;
   left: boolean | null;
   linkPreviewLoading: boolean;
-  linkPreviewResult: LinkPreviewType | null;
+  linkPreviewResult: LinkPreviewForUIType | null;
   onClearAttachments(conversationId: string): unknown;
   onCloseLinkPreview(conversationId: string): unknown;
   platform: string;
@@ -204,6 +204,15 @@ export type OwnProps = Readonly<{
     payload: ForwardMessagesPayload,
     onForward: () => void
   ) => void;
+  toggleDraftGifMessageSendModal: (
+    props: SmartDraftGifMessageSendModalProps | null
+  ) => void;
+
+  onPickEmoji: (e: EmojiPickDataType) => void;
+  emojiSkinToneDefault: EmojiSkinTone | null;
+  // StickerButton
+  installedPacks: ReadonlyArray<StickerPackType>;
+  recentStickers: ReadonlyArray<StickerType>;
 }>;
 
 export type Props = Pick<
@@ -220,7 +229,10 @@ export type Props = Pick<
 > &
   Pick<
     EmojiButtonProps,
-    'onPickEmoji' | 'onSetSkinTone' | 'recentEmojis' | 'skinTone'
+    | 'onPickEmoji'
+    | 'onEmojiSkinToneDefaultChange'
+    | 'recentEmojis'
+    | 'emojiSkinToneDefault'
   > &
   Pick<
     StickerButtonProps,
@@ -303,9 +315,9 @@ export const CompositionArea = memo(function CompositionArea({
   sortedGroupMembers,
   // EmojiButton
   onPickEmoji,
-  onSetSkinTone,
+  onEmojiSkinToneDefaultChange,
   recentEmojis,
-  skinTone,
+  emojiSkinToneDefault,
   // StickerButton
   knownPacks,
   receivedPacks,
@@ -350,12 +362,15 @@ export const CompositionArea = memo(function CompositionArea({
   // SMS-only contacts
   isSmsOnlyOrUnregistered,
   isFetchingUUID,
+  sharedGroupNames,
   renderSmartCompositionRecording,
   renderSmartCompositionRecordingDraft,
   // Selected messages
   selectedMessageIds,
   toggleSelectMode,
   toggleForwardMessagesModal,
+  // DraftGifMessageSendModal
+  toggleDraftGifMessageSendModal,
 }: Props): JSX.Element | null {
   const [dirty, setDirty] = useState(false);
   const [large, setLarge] = useState(false);
@@ -588,11 +603,12 @@ export const CompositionArea = memo(function CompositionArea({
 
   const showMediaQualitySelector = draftAttachments.some(isImageAttachment);
 
-  const isFunPickerEnabled = RemoteConfig.isEnabled('desktop.funPicker');
+  const [funPickerOpen, setFunPickerOpen] = useState(false);
 
   const handleFunPickerOpenChange = useCallback(
-    (isOpen: boolean) => {
-      if (!isOpen) {
+    (open: boolean) => {
+      setFunPickerOpen(open);
+      if (!open) {
         setComposerFocus(conversationId);
       }
     },
@@ -601,14 +617,9 @@ export const CompositionArea = memo(function CompositionArea({
 
   const handleFunPickerSelectEmoji = useCallback(
     (emojiSelection: FunEmojiSelection) => {
-      const skinToneNumber = SKIN_TONE_TO_NUMBER.get(emojiSelection.skinTone);
-      strictAssert(
-        skinToneNumber,
-        `Unexpected skin tone: ${emojiSelection.skinTone}`
-      );
       insertEmoji({
         shortName: emojiSelection.englishShortName,
-        skinTone: skinToneNumber,
+        skinTone: emojiSelection.skinTone,
       });
     },
     [insertEmoji]
@@ -623,23 +634,52 @@ export const CompositionArea = memo(function CompositionArea({
     [sendStickerMessage, conversationId]
   );
 
+  const [confirmGifSelection, setConfirmGifSelection] =
+    useState<FunGifSelection | null>(null);
+
   const handleFunPickerSelectGif = useCallback(
     async (gifSelection: FunGifSelection) => {
-      const { url } = gifSelection.attachmentMedia;
-
-      const bytes = await tenorDownload(url);
-      const file = new File([bytes], 'gif.mp4', {
-        type: 'video/mp4',
-      });
-
-      processAttachments({
-        conversationId,
-        files: [file],
-        flags: Proto.AttachmentPointer.Flags.GIF,
-      });
+      if (draftAttachments.length > 0) {
+        setConfirmGifSelection(gifSelection);
+      } else {
+        toggleDraftGifMessageSendModal({
+          conversationId,
+          previousComposerDraftText: draftText ?? '',
+          previousComposerDraftBodyRanges: draftBodyRanges ?? [],
+          gifSelection,
+        });
+      }
     },
-    [processAttachments, conversationId]
+    [
+      conversationId,
+      toggleDraftGifMessageSendModal,
+      draftText,
+      draftBodyRanges,
+      draftAttachments,
+    ]
   );
+
+  const handleConfirmGifSelection = useCallback(() => {
+    strictAssert(confirmGifSelection != null, 'Need selected gif to confirm');
+    onClearAttachments(conversationId);
+    toggleDraftGifMessageSendModal({
+      conversationId,
+      previousComposerDraftText: draftText ?? '',
+      previousComposerDraftBodyRanges: draftBodyRanges ?? [],
+      gifSelection: confirmGifSelection,
+    });
+  }, [
+    confirmGifSelection,
+    conversationId,
+    toggleDraftGifMessageSendModal,
+    draftText,
+    draftBodyRanges,
+    onClearAttachments,
+  ]);
+
+  const handleCancelGifSelection = useCallback(() => {
+    setConfirmGifSelection(null);
+  }, []);
 
   const handleFunPickerAddStickerPack = useCallback(() => {
     pushPanelForConversation({
@@ -649,25 +689,43 @@ export const CompositionArea = memo(function CompositionArea({
 
   const leftHandSideButtonsFragment = (
     <>
-      {isFunPickerEnabled && (
+      {confirmGifSelection && (
+        <ConfirmationDialog
+          i18n={i18n}
+          dialogName="CompositionArea.ConfirmGifSelection"
+          hasXButton={false}
+          onClose={handleCancelGifSelection}
+          onCancel={handleCancelGifSelection}
+          title={i18n('icu:CompositionArea__ConfirmGifSelection__Title')}
+          actions={[
+            {
+              action: handleConfirmGifSelection,
+              style: 'affirmative',
+              text: i18n(
+                'icu:CompositionArea__ConfirmGifSelection__ReplaceButton'
+              ),
+            },
+          ]}
+        >
+          {i18n('icu:CompositionArea__ConfirmGifSelection__Body')}
+        </ConfirmationDialog>
+      )}
+      {isFunPickerEnabled() && (
         <div className="CompositionArea__button-cell">
           <FunPicker
             placement="top start"
+            open={funPickerOpen}
             onOpenChange={handleFunPickerOpenChange}
             onSelectEmoji={handleFunPickerSelectEmoji}
             onSelectSticker={handleFunPickerSelectSticker}
             onSelectGif={handleFunPickerSelectGif}
             onAddStickerPack={handleFunPickerAddStickerPack}
           >
-            <Button className="CompositionArea__FunButton">
-              <VisuallyHidden>
-                {i18n('icu:CompositionArea__FunButtonLabel')}
-              </VisuallyHidden>
-            </Button>
+            <FunPickerButton i18n={i18n} />
           </FunPicker>
         </div>
       )}
-      {!isFunPickerEnabled && (
+      {!isFunPickerEnabled() && (
         <div className="CompositionArea__button-cell">
           <EmojiButton
             emojiButtonApi={emojiButtonRef}
@@ -675,8 +733,9 @@ export const CompositionArea = memo(function CompositionArea({
             onPickEmoji={insertEmoji}
             onClose={() => setComposerFocus(conversationId)}
             recentEmojis={recentEmojis}
-            skinTone={skinTone}
-            onSetSkinTone={onSetSkinTone}
+            emojiSkinToneDefault={emojiSkinToneDefault}
+            onEmojiSkinToneDefaultChange={onEmojiSkinToneDefaultChange}
+            closeOnPick
           />
         </div>
       )}
@@ -755,7 +814,7 @@ export const CompositionArea = memo(function CompositionArea({
 
   const stickerButtonPlacement = large ? 'top-start' : 'top-end';
   const stickerButtonFragment =
-    !isFunPickerEnabled && !draftEditMessage && withStickers ? (
+    !isFunPickerEnabled() && !draftEditMessage && withStickers ? (
       <div className="CompositionArea__button-cell">
         <StickerButton
           i18n={i18n}
@@ -893,6 +952,7 @@ export const CompositionArea = memo(function CompositionArea({
         isBlocked={isBlocked}
         isHidden={isHidden}
         isReported={isReported}
+        sharedGroupNames={sharedGroupNames}
         acceptConversation={acceptConversation}
         reportSpam={reportSpam}
         blockAndReportSpam={blockAndReportSpam}
@@ -1054,7 +1114,7 @@ export const CompositionArea = memo(function CompositionArea({
             ourConversationId={ourConversationId}
             platform={platform}
             recentStickers={recentStickers}
-            skinTone={skinTone}
+            emojiSkinToneDefault={emojiSkinToneDefault}
             sortedGroupMembers={sortedGroupMembers}
           />
         )}
@@ -1152,7 +1212,7 @@ export const CompositionArea = memo(function CompositionArea({
             quotedMessageId={quotedMessageId}
             sendCounter={sendCounter}
             shouldHidePopovers={shouldHidePopovers}
-            skinTone={skinTone ?? null}
+            emojiSkinToneDefault={emojiSkinToneDefault ?? null}
             sortedGroupMembers={sortedGroupMembers}
             theme={theme}
           />

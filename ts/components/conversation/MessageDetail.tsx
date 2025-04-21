@@ -49,7 +49,6 @@ export type Contact = Pick<
   | 'profileName'
   | 'sharedGroupNames'
   | 'title'
-  | 'unblurredAvatarUrl'
 > & {
   status?: SendStatus;
   statusTimestamp?: number;
@@ -108,6 +107,7 @@ export type PropsReduxActions = Pick<
   | 'showLightboxForViewOnceMedia'
   | 'showMediaNoLongerAvailableToast'
   | 'showSpoiler'
+  | 'showTapToViewNotAvailableModal'
   | 'startConversation'
   | 'viewStory'
 > & {
@@ -157,6 +157,7 @@ export function MessageDetail({
   showLightboxForViewOnceMedia,
   showMediaNoLongerAvailableToast,
   showSpoiler,
+  showTapToViewNotAvailableModal,
   startConversation,
   theme,
   toggleSafetyNumberModal,
@@ -166,34 +167,28 @@ export function MessageDetail({
 
   function renderAvatar(contact: Contact): JSX.Element {
     const {
-      acceptedMessageRequest,
       avatarUrl,
       badges,
       color,
-      isMe,
       phoneNumber,
       profileName,
       sharedGroupNames,
       title,
-      unblurredAvatarUrl,
     } = contact;
 
     return (
       <Avatar
-        acceptedMessageRequest={acceptedMessageRequest}
         avatarUrl={avatarUrl}
         badge={getPreferredBadge(badges)}
         color={color}
         conversationType="direct"
         i18n={i18n}
-        isMe={isMe}
         phoneNumber={phoneNumber}
         profileName={profileName}
         theme={theme}
         title={title}
         sharedGroupNames={sharedGroupNames}
         size={AvatarSize.THIRTY_TWO}
-        unblurredAvatarUrl={unblurredAvatarUrl}
       />
     );
   }
@@ -373,6 +368,7 @@ export function MessageDetail({
               showAttachmentDownloadStillInProgressToast
             }
             showAttachmentNotAvailableModal={showAttachmentNotAvailableModal}
+            showTapToViewNotAvailableModal={showTapToViewNotAvailableModal}
             showExpiredIncomingTapToViewToast={
               showExpiredIncomingTapToViewToast
             }

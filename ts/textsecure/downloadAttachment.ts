@@ -17,6 +17,7 @@ import {
   mightBeOnBackupTier,
   type AttachmentType,
   AttachmentVariant,
+  AttachmentPermanentlyUndownloadableError,
 } from '../types/Attachment';
 import * as Bytes from '../Bytes';
 import {
@@ -115,9 +116,13 @@ export async function downloadAttachment(
 
   const { digest, incrementalMac, chunkSize, key, size } = attachment;
 
-  strictAssert(digest, `${logId}: missing digest`);
-  strictAssert(key, `${logId}: missing key`);
-  strictAssert(isNumber(size), `${logId}: missing size`);
+  try {
+    strictAssert(digest, `${logId}: missing digest`);
+    strictAssert(key, `${logId}: missing key`);
+    strictAssert(isNumber(size), `${logId}: missing size`);
+  } catch (error) {
+    throw new AttachmentPermanentlyUndownloadableError(error.message);
+  }
 
   const mediaTier =
     options?.mediaTier ??
@@ -127,7 +132,7 @@ export async function downloadAttachment(
 
   let { downloadPath } = attachment;
   const absoluteDownloadPath = downloadPath
-    ? window.Signal.Migrations.getAbsoluteAttachmentPath(downloadPath)
+    ? window.Signal.Migrations.getAbsoluteDownloadsPath(downloadPath)
     : undefined;
   let downloadOffset = 0;
 

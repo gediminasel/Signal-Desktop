@@ -74,6 +74,7 @@ export type ConversationWithStoriesType = ConversationType & {
 };
 
 let placeholderContact: ConversationType;
+export const PLACEHOLDER_CONTACT_ID = 'placeholder-contact';
 export const getPlaceholderContact = (): ConversationType => {
   if (placeholderContact) {
     return placeholderContact;
@@ -82,7 +83,7 @@ export const getPlaceholderContact = (): ConversationType => {
   placeholderContact = {
     acceptedMessageRequest: false,
     badges: [],
-    id: 'placeholder-contact',
+    id: PLACEHOLDER_CONTACT_ID,
     type: 'direct',
     title: window.i18n('icu:unknownContact'),
     isMe: false,
@@ -1337,4 +1338,15 @@ export const getLastEditableMessageId = createSelector(
 export const getPreloadedConversationId = createSelector(
   getConversations,
   ({ preloadData }): string | undefined => preloadData?.conversationId
+);
+
+export const getPendingAvatarDownloadSelector = createSelector(
+  getConversations,
+  (conversations: ConversationsStateType) => {
+    return (conversationId: string): boolean => {
+      return Boolean(
+        conversations.pendingRequestedAvatarDownload[conversationId]
+      );
+    };
+  }
 );

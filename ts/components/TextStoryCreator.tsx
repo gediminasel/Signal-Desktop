@@ -1,18 +1,15 @@
 // Copyright 2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
-
-import FocusTrap from 'focus-trap-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { noop } from 'lodash';
 import { usePopper } from 'react-popper';
-
+import { FocusScope } from 'react-aria';
 import type { EmojiPickDataType } from './emoji/EmojiPicker';
-import type { LinkPreviewType } from '../types/message/LinkPreviews';
-import type { LocalizerType } from '../types/Util';
+import type { LinkPreviewForUIType } from '../types/message/LinkPreviews';
+import { ThemeType, type LocalizerType } from '../types/Util';
 import type { Props as EmojiButtonPropsType } from './emoji/EmojiButton';
 import type { TextAttachmentType } from '../types/Attachment';
-
 import { Button, ButtonVariant } from './Button';
 import { ContextMenu } from './ContextMenu';
 import { EmojiButton } from './emoji/EmojiButton';
@@ -34,6 +31,11 @@ import { objectMap } from '../util/objectMap';
 import { handleOutsideClick } from '../util/handleOutsideClick';
 import { ConfirmDiscardDialog } from './ConfirmDiscardDialog';
 import { Spinner } from './Spinner';
+import { FunEmojiPicker } from './fun/FunEmojiPicker';
+import type { FunEmojiSelection } from './fun/panels/FunPanelEmojis';
+import { getEmojiVariantByKey } from './fun/data/emojis';
+import { FunEmojiPickerButton } from './fun/FunButton';
+import { isFunPickerEnabled } from './fun/isFunPickerEnabled';
 
 export type PropsType = {
   debouncedMaybeGrabLinkPreview: (
@@ -43,11 +45,14 @@ export type PropsType = {
   ) => unknown;
   i18n: LocalizerType;
   isSending: boolean;
-  linkPreview?: LinkPreviewType;
+  linkPreview?: LinkPreviewForUIType;
   onClose: () => unknown;
   onDone: (textAttachment: TextAttachmentType) => unknown;
   onUseEmoji: (_: EmojiPickDataType) => unknown;
-} & Pick<EmojiButtonPropsType, 'onSetSkinTone' | 'recentEmojis' | 'skinTone'>;
+} & Pick<
+  EmojiButtonPropsType,
+  'onEmojiSkinToneDefaultChange' | 'recentEmojis' | 'emojiSkinToneDefault'
+>;
 
 enum LinkPreviewApplied {
   None = 'None',
@@ -138,10 +143,10 @@ export function TextStoryCreator({
   linkPreview,
   onClose,
   onDone,
-  onSetSkinTone,
+  onEmojiSkinToneDefaultChange,
   onUseEmoji,
   recentEmojis,
-  skinTone,
+  emojiSkinToneDefault,
 }: PropsType): JSX.Element {
   const [showConfirmDiscardModal, setShowConfirmDiscardModal] = useState(false);
 
@@ -334,9 +339,30 @@ export function TextStoryCreator({
 
   const textEditorRef = useRef<HTMLTextAreaElement | null>(null);
 
+  const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
+
+  const handleEmojiPickerOpenChange = useCallback((open: boolean) => {
+    setEmojiPickerOpen(open);
+  }, []);
+
+  const handleSelectEmoji = useCallback((emojiSelection: FunEmojiSelection) => {
+    const emojiVariant = getEmojiVariantByKey(emojiSelection.variantKey);
+    const emojiValue = emojiVariant.value;
+
+    setText(originalText => {
+      const insertAt =
+        textEditorRef.current?.selectionEnd ?? originalText.length;
+
+      const before = originalText.substr(0, insertAt);
+      const after = originalText.substr(insertAt, originalText.length);
+
+      return `${before}${emojiValue}${after}`;
+    });
+  }, []);
+
   return (
-    <FocusTrap focusTrapOptions={{ allowOutsideClick: true }}>
-      <div className="StoryCreator">
+    <FocusScope contain restoreFocus>
+      <div className="StoryCreator dark-theme">
         <div className="StoryCreator__container">
           <TextAttachment
             disableLinkPreviewPopup
@@ -435,26 +461,42 @@ export function TextStoryCreator({
                 }}
                 type="button"
               />
-              <EmojiButton
-                className="StoryCreator__emoji-button"
-                i18n={i18n}
-                onPickEmoji={data => {
-                  onUseEmoji(data);
-                  const emoji = convertShortName(data.shortName, data.skinTone);
-                  const insertAt =
-                    textEditorRef.current?.selectionEnd ?? text.length;
-                  setText(
-                    originalText =>
-                      `${originalText.substr(
-                        0,
-                        insertAt
-                      )}${emoji}${originalText.substr(insertAt, text.length)}`
-                  );
-                }}
-                recentEmojis={recentEmojis}
-                skinTone={skinTone}
-                onSetSkinTone={onSetSkinTone}
-              />
+              {!isFunPickerEnabled() && (
+                <EmojiButton
+                  className="StoryCreator__emoji-button"
+                  i18n={i18n}
+                  onPickEmoji={data => {
+                    onUseEmoji(data);
+                    const emoji = convertShortName(
+                      data.shortName,
+                      data.skinTone
+                    );
+                    const insertAt =
+                      textEditorRef.current?.selectionEnd ?? text.length;
+                    setText(
+                      originalText =>
+                        `${originalText.substr(
+                          0,
+                          insertAt
+                        )}${emoji}${originalText.substr(insertAt, text.length)}`
+                    );
+                  }}
+                  recentEmojis={recentEmojis}
+                  emojiSkinToneDefault={emojiSkinToneDefault}
+                  onEmojiSkinToneDefaultChange={onEmojiSkinToneDefaultChange}
+                />
+              )}
+              {isFunPickerEnabled() && (
+                <FunEmojiPicker
+                  open={emojiPickerOpen}
+                  onOpenChange={handleEmojiPickerOpenChange}
+                  placement="top"
+                  onSelectEmoji={handleSelectEmoji}
+                  theme={ThemeType.dark}
+                >
+                  <FunEmojiPickerButton i18n={i18n} />
+                </FunEmojiPicker>
+              )}
             </div>
           ) : (
             <div className="StoryCreator__toolbar--space" />
@@ -621,6 +663,6 @@ export function TextStoryCreator({
           />
         )}
       </div>
-    </FocusTrap>
+    </FocusScope>
   );
 }

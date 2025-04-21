@@ -7,7 +7,6 @@ import classNames from 'classnames';
 import { ContactName } from './ContactName';
 import type { Props as AvatarProps } from '../Avatar';
 import { Avatar } from '../Avatar';
-import { Emoji } from '../emoji/Emoji';
 import { useRestoreFocus } from '../../hooks/useRestoreFocus';
 import type { ConversationType } from '../../state/ducks/conversations';
 import type { PreferredBadgeSelectorType } from '../../state/selectors/badges';
@@ -15,6 +14,14 @@ import type { EmojiData } from '../emoji/lib';
 import { emojiToData } from '../emoji/lib';
 import { useEscapeHandling } from '../../hooks/useEscapeHandling';
 import type { ThemeType } from '../../types/Util';
+import {
+  getEmojiVariantByKey,
+  getEmojiVariantKeyByValue,
+  isEmojiVariantValue,
+} from '../fun/data/emojis';
+import { strictAssert } from '../../util/assert';
+import { FunStaticEmoji } from '../fun/FunEmoji';
+import { useFunEmojiLocalizer } from '../fun/useFunEmojiLocalizer';
 
 export type Reaction = {
   emoji: string;
@@ -64,6 +71,27 @@ type ReactionCategory = {
 };
 
 type ReactionWithEmojiData = Reaction & EmojiData;
+
+function ReactionViewerEmoji(props: {
+  emojiVariantValue: string | undefined;
+}): JSX.Element {
+  const emojiLocalizer = useFunEmojiLocalizer();
+  strictAssert(props.emojiVariantValue != null, 'Expected an emoji');
+  strictAssert(
+    isEmojiVariantValue(props.emojiVariantValue),
+    'Must be valid emoji variant value'
+  );
+  const emojiVariantKey = getEmojiVariantKeyByValue(props.emojiVariantValue);
+  const emojiVariant = getEmojiVariantByKey(emojiVariantKey);
+  return (
+    <FunStaticEmoji
+      role="img"
+      aria-label={emojiLocalizer(emojiVariantKey)}
+      size={18}
+      emoji={emojiVariant}
+    />
+  );
+}
 
 export const ReactionViewer = React.forwardRef<HTMLDivElement, Props>(
   function ReactionViewerInner(
@@ -207,7 +235,7 @@ export const ReactionViewer = React.forwardRef<HTMLDivElement, Props>(
                   </span>
                 ) : (
                   <>
-                    <Emoji size={18} emoji={emoji} />
+                    <ReactionViewerEmoji emojiVariantValue={emoji} />
                     <span className="module-reaction-viewer__header__button__count">
                       {count}
                     </span>
@@ -225,13 +253,11 @@ export const ReactionViewer = React.forwardRef<HTMLDivElement, Props>(
             >
               <div className="module-reaction-viewer__body__row__avatar">
                 <Avatar
-                  acceptedMessageRequest={from.acceptedMessageRequest}
                   avatarUrl={from.avatarUrl}
                   badge={getPreferredBadge(from.badges)}
                   conversationType="direct"
                   sharedGroupNames={from.sharedGroupNames}
                   size={32}
-                  isMe={from.isMe}
                   color={from.color}
                   profileName={from.profileName}
                   phoneNumber={from.phoneNumber}
@@ -251,7 +277,7 @@ export const ReactionViewer = React.forwardRef<HTMLDivElement, Props>(
                 )}
               </div>
               <div className="module-reaction-viewer__body__row__emoji">
-                <Emoji size={18} emoji={emoji} />
+                <ReactionViewerEmoji emojiVariantValue={emoji} />
               </div>
             </div>
           ))}

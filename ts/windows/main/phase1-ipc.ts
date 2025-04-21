@@ -88,11 +88,23 @@ const IPC: IPCType = {
   getAutoLaunch: () => ipc.invoke('get-auto-launch'),
   getMediaAccessStatus: mediaType =>
     ipc.invoke('get-media-access-status', mediaType),
+  openSystemMediaPermissions: mediaType =>
+    ipc.invoke('open-system-media-permissions', mediaType),
   getMediaPermissions: () => ipc.invoke('settings:get:mediaPermissions'),
   getMediaCameraPermissions: () =>
     ipc.invoke('settings:get:mediaCameraPermissions'),
   logAppLoadedEvent: ({ processedCount }) =>
     ipc.send('signal-app-loaded', {
+      // Sequence of events:
+      // 1. Preload compile start
+      // 2. Preload start
+      // 3. Preload end
+      //
+      // Compile time is thus: start - compileStart
+      preloadCompileTime:
+        window.preloadStartTime - window.preloadCompileStartTime,
+
+      // Preload time is: end - start
       preloadTime: window.preloadEndTime - window.preloadStartTime,
       connectTime: preloadConnectTime - window.preloadEndTime,
       processedCount,

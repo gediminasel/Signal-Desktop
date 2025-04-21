@@ -38,6 +38,9 @@
   "icu:Preferences__sent-media-quality": {
     "messageformat": "Chất lượng tập tin đa phương tiện đã gửi"
   },
+  "icu:Preferences__sent-media-quality__description": {
+    "messageformat": "Việc gửi tập tin đa phương tiện chất lượng cao sẽ tốn nhiều lưu lượng hơn."
+  },
   "icu:sentMediaQualityStandard": {
     "messageformat": "Tiêu chuẩn"
   },
@@ -68,6 +71,12 @@
   "icu:unknownGroup": {
     "messageformat": "Nhóm chưa biết"
   },
+  "icu:cantOpenSignalError": {
+    "messageformat": "Không thể mở Signal"
+  },
+  "icu:cantOpenSignalError__detail": {
+    "messageformat": "Để khắc phục vấn đề, hãy làm theo hướng dẫn khôi phục trên trang hỗ trợ hoặc liên hệ với bộ phận hỗ trợ của Signal để được trợ giúp khắc phục vấn đề.\n\nNếu bạn cần sử dụng Signal ngay, bạn có thể xóa dữ liệu của mình và liên kết lại với máy tính này. Bạn sẽ có tùy chọn chuyển lịch sử tin nhắn từ điện thoại của mình."
+  },
   "icu:databaseError": {
     "messageformat": "Lỗi Cơ sở dữ liệu"
   },
@@ -78,10 +87,10 @@
     "messageformat": "Xóa dữ liệu và khởi động lại"
   },
   "icu:databaseError__deleteDataConfirmation": {
-    "messageformat": "Xóa vĩnh viễn tất cả dữ liệu?"
+    "messageformat": "Xóa vĩnh viễn tất cả dữ liệu"
   },
   "icu:databaseError__deleteDataConfirmation__detail": {
-    "messageformat": "Tất cả lịch sử tin nhắn và tệp đa phương tiện của bạn sẽ bị xóa vĩnh viễn khỏi thiết bị này. Bạn sẽ có thể sử dụng Signal trên thiết bị này sau khi liên kết lại. Thao tác này sẽ không xóa bất kỳ dữ liệu nào trên điện thoại của bạn."
+    "messageformat": "Tất cả lịch sử tin nhắn và tệp đa phương tiện của bạn sẽ bị xóa vĩnh viễn khỏi thiết bị này. Thao tác này sẽ không xóa bất kỳ dữ liệu nào trên điện thoại của bạn.\n\nBạn sẽ có thể sử dụng Signal trên thiết bị này sau khi liên kết lại. Bạn sẽ có tùy chọn chuyển lịch sử tin nhắn từ điện thoại của mình."
   },
   "icu:databaseError__startOldVersion": {
     "messageformat": "Phiên bản cơ sở dữ liệu của bạn không khớp với phiên bản Signal này. Đảm bảo bạn đang sử dụng phiên bản Signal mới nhất trên máy tính của mình."
@@ -214,9 +223,6 @@
   },
   "icu:optimizingApplication": {
     "messageformat": "Đang tối ưu hóa ứng dụng…"
-  },
-  "icu:migratingToSQLCipher": {
-    "messageformat": "Đang tối ưu hóa tin nhắn… hoàn thành {status}."
   },
   "icu:archivedConversations": {
     "messageformat": "Cuộc trò chuyện đã lưu trữ"
@@ -407,9 +413,6 @@
   "icu:unreadMessages": {
     "messageformat": "{count, plural, other {{count,number} tin nhắn chưa đọc}}"
   },
-  "icu:messageHistoryUnsynced": {
-    "messageformat": "Vì lý do bảo mật, lịch sử trò chuyện không được chuyển sang các thiết bị được liên kết mới."
-  },
   "icu:youMarkedAsVerified": {
     "messageformat": "Bạn đã đánh dấu Số An toàn của bạn với {name} là đã được xác minh"
   },
@@ -588,7 +591,7 @@
     "messageformat": "Failed to send message with endorsements"
   },
   "icu:Toast--InvalidStorageServiceHeaders": {
-    "messageformat": "Received invalid response from storage service. Please share your logs."
+    "messageformat": "Nhận được phản hồi không hợp lệ từ dịch vụ lưu trữ. Vui lòng chia sẻ nhật ký gỡ lỗi."
   },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
@@ -706,9 +709,6 @@
   },
   "icu:noSearchResultsOnlyUnreadFilter": {
     "messageformat": "Không có cuộc trò chuyện chưa đọc"
-  },
-  "icu:noSearchResults--sms-only": {
-    "messageformat": "Liên hệ SMS/MMS không có sẵn trên Desktop."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "Không có kết quả cho \"{searchTerm}\" trong {conversationName}"
@@ -1145,9 +1145,6 @@
   "icu:mediaNotAvailable": {
     "messageformat": "Tập tin đa phương tiện này không có sẵn"
   },
-  "icu:mediaNotAvailable--short": {
-    "messageformat": "Đa phương tiện không có sẵn"
-  },
   "icu:attachmentNoLongerAvailable__learnMore": {
     "messageformat": "Tìm hiểu thêm"
   },
@@ -1162,6 +1159,12 @@
   },
   "icu:attachmentNotAvailable__voice": {
     "messageformat": "Tin nhắn thoại không có sẵn"
+  },
+  "icu:attachmentNotAvailable__tapToView": {
+    "messageformat": "Đa phương tiện xem một lần này không còn sẵn có"
+  },
+  "icu:attachmentNotAvailable__tapToViewCannotDownload": {
+    "messageformat": "Không thể tải xuống đa phương tiện xem một lần"
   },
   "icu:AttachmentNotAvailableModal__title--file": {
     "messageformat": "Tập tin không có sẵn"
@@ -1192,6 +1195,21 @@
   },
   "icu:AttachmentNotAvailableModal__body--voice-message": {
     "messageformat": "Tin nhắn thoại này không được chuyển từ điện thoại của bạn khi thiết bị này được liên kết. Đa phương tiện và tập tin cũ hơn 45 ngày tại thời điểm liên kết thiết bị thì không thể được đồng bộ."
+  },
+  "icu:TapToViewNotAvailableModal__body--expired": {
+    "messageformat": "Đa phương tiện xem một lần này không còn sẵn có để tải xuống. Hãy nhờ {name} gửi lại."
+  },
+  "icu:TapToViewNotAvailableModal__body--error": {
+    "messageformat": "Không thể tải xuống đa phương tiện xem một lần. {name} cần gửi lại."
+  },
+  "icu:BackfillFailureModal__title": {
+    "messageformat": "Không tải tập tin đa phương tiện"
+  },
+  "icu:BackfillFailureModal__body--timeout": {
+    "messageformat": "Kiểm tra kết nối internet của máy tính và điện thoại. Mở Signal trên điện thoại của bạn, sau đó thử tải xuống lại."
+  },
+  "icu:BackfillFailureModal__body--not-found": {
+    "messageformat": "Tập tin đa phương tiện này không còn trên điện thoại của bạn và không thể tải xuống."
   },
   "icu:save": {
     "messageformat": "Lưu"
@@ -1244,12 +1262,6 @@
   "icu:Install__support-link": {
     "messageformat": "Cần hỗ trợ?"
   },
-  "icu:Install__choose-device-name__description": {
-    "messageformat": "Bạn sẽ thấy tên này dưới \"Thiết Bị Được Liên Kết\" trên điện thoại của bạn"
-  },
-  "icu:Install__choose-device-name__placeholder": {
-    "messageformat": "Máy tính của tôi"
-  },
   "icu:Preferences--phone-number": {
     "messageformat": "Số điện thoại"
   },
@@ -1259,11 +1271,8 @@
   "icu:Preferences--device-name__description": {
     "messageformat": "Để đổi tên thiết bị này, mở Signal trên điện thoại của bạn và đến mục Cài đặt > Các thiết bị đã liên kết"
   },
-  "icu:chooseDeviceName": {
-    "messageformat": "Chọn tên cho thiết bị này"
-  },
-  "icu:finishLinkingPhone": {
-    "messageformat": "Hoàn tất liên kết điện thoại"
+  "icu:Preferences__EmojiSkinToneDefaultSetting__Label": {
+    "messageformat": "Màu da của emoji"
   },
   "icu:initialSync": {
     "messageformat": "Đồng bộ các liên lạc và nhóm"
@@ -1814,6 +1823,18 @@
   "icu:ConversationDetails__HeaderButton--Message": {
     "messageformat": "Tin nhắn"
   },
+  "icu:ConversationDetails--help-section": {
+    "messageformat": "Hỗ trợ"
+  },
+  "icu:ConversationDetails--support-center": {
+    "messageformat": "Trung tâm Hỗ trợ"
+  },
+  "icu:ConversationDetails--contact-us": {
+    "messageformat": "Liên hệ với chúng tôi"
+  },
+  "icu:ConversationDetails--donate": {
+    "messageformat": "Ủng hộ Signal"
+  },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "Xem Số An toàn"
   },
@@ -1873,6 +1894,9 @@
   },
   "icu:Toast--failed-to-fetch-phone-number": {
     "messageformat": "Tìm số điện thoại không thành công. Kiểm tra kết nối của bạn và thử lại."
+  },
+  "icu:Toast--download-failed": {
+    "messageformat": "Tải xuống không thành công"
   },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "Các chỉnh sửa chỉ có thể được thực hiện trong vòng 24 giờ kể từ lúc bạn gửi tin nhắn này."
@@ -2252,6 +2276,204 @@
   "icu:EmojiPicker__button--flag": {
     "messageformat": "Cờ"
   },
+  "icu:FunPicker__Tab--Emojis": {
+    "messageformat": "Emoji"
+  },
+  "icu:FunPicker__Tab--Stickers": {
+    "messageformat": "Nhãn dán"
+  },
+  "icu:FunPicker__Tab--Gifs": {
+    "messageformat": "Ảnh GIF"
+  },
+  "icu:FunPanelEmojis__SearchLabel": {
+    "messageformat": "Tìm kiếm emoji"
+  },
+  "icu:FunPanelEmojis__SearchPlaceholder": {
+    "messageformat": "Tìm kiếm emoji"
+  },
+  "icu:FunPanelEmojis__SubNavLabel": {
+    "messageformat": "Danh mục Emoji"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Recents": {
+    "messageformat": "Sử dụng gần đây"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--SmileysAndPeople": {
+    "messageformat": "Mặt cười và Con người"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--AnimalsAndNature": {
+    "messageformat": "Thú vật & Thiên nhiên"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--FoodAndDrink": {
+    "messageformat": "Đồ ăn & Thức uống"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Activities": {
+    "messageformat": "Hoạt động"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--TravelAndPlaces": {
+    "messageformat": "Du lịch & Nơi chốn"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Objects": {
+    "messageformat": "Đồ vật"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Symbols": {
+    "messageformat": "Kí hiệu"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Flags": {
+    "messageformat": "Cờ"
+  },
+  "icu:FunPanelEmojis__SearchResults__EmptyHeading": {
+    "messageformat": "Không tìm thấy biểu tượng cảm xúc"
+  },
+  "icu:FunPanelEmojis__ChangeSkinToneButtonLabel": {
+    "messageformat": "Đổi lựa chọn màu da ưu tiên"
+  },
+  "icu:FunPanelEmojis__SkinTonePicker__ChooseDefaultLabel": {
+    "messageformat": "Chọn màu da mặc định của bạn"
+  },
+  "icu:FunPanelEmojis__SectionTitle--SearchResults": {
+    "messageformat": "Kết quả tìm kiếm"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Recents": {
+    "messageformat": "Sử dụng gần đây"
+  },
+  "icu:FunPanelEmojis__SectionTitle--SmileysAndPeople": {
+    "messageformat": "Mặt cười và Con người"
+  },
+  "icu:FunPanelEmojis__SectionTitle--AnimalsAndNature": {
+    "messageformat": "Thú vật & Thiên nhiên"
+  },
+  "icu:FunPanelEmojis__SectionTitle--FoodAndDrink": {
+    "messageformat": "Đồ ăn & Thức uống"
+  },
+  "icu:FunPanelEmojis__SectionTitle--TravelAndPlaces": {
+    "messageformat": "Du lịch & Nơi chốn"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Activities": {
+    "messageformat": "Hoạt động"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Objects": {
+    "messageformat": "Đồ vật"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Symbols": {
+    "messageformat": "Kí hiệu"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Flags": {
+    "messageformat": "Cờ"
+  },
+  "icu:FunPanelEmojis__CustomizeReactionsButtonLabel": {
+    "messageformat": "Customize reactions"
+  },
+  "icu:FunPanelStickers__SearchLabel": {
+    "messageformat": "Tìm kiếm nhãn dán"
+  },
+  "icu:FunPanelStickers__SearchPlaceholder": {
+    "messageformat": "Tìm kiếm nhãn dán"
+  },
+  "icu:FunPanelSticker__SubNavLabel": {
+    "messageformat": "Gói Nhãn dán"
+  },
+  "icu:FunPanelStickers__SubNavCategoryLabel--Recents": {
+    "messageformat": "Sử dụng gần đây"
+  },
+  "icu:FunPanelStickers__SectionTitle--SearchResults": {
+    "messageformat": "Kết quả tìm kiếm"
+  },
+  "icu:FunPanelStickers__SectionTitle--Recents": {
+    "messageformat": "Sử dụng gần đây"
+  },
+  "icu:FunPanelStickers__SectionTitle--Featured": {
+    "messageformat": "Featured"
+  },
+  "icu:FunPanelStickers__SearchResults__EmptyHeading": {
+    "messageformat": "Không tìm thấy nhãn dán"
+  },
+  "icu:FunPanelStickers__LightboxDialog__Label": {
+    "messageformat": "Xem trước nhãn dán"
+  },
+  "icu:FunPanelGifs__SearchLabel--Tenor": {
+    "messageformat": "Tìm GIF qua Tenor"
+  },
+  "icu:FunPanelGifs__SearchPlaceholder--Tenor": {
+    "messageformat": "Tìm qua Tenor"
+  },
+  "icu:FunPanelGifs__SubNavLabel": {
+    "messageformat": "Danh mục GIF"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Recents": {
+    "messageformat": "Sử dụng gần đây"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Trending": {
+    "messageformat": "Đang thịnh hành"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Celebrate": {
+    "messageformat": "Chúc mừng"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Love": {
+    "messageformat": "Yêu thích"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--ThumbsUp": {
+    "messageformat": "Ra hiệu đồng ý"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Surprised": {
+    "messageformat": "Ngạc nhiên"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Excited": {
+    "messageformat": "Hào hứng"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Sad": {
+    "messageformat": "Buồn"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Angry": {
+    "messageformat": "Tức giận"
+  },
+  "icu:FunPanelGifs__SearchResults__LoadingLabel": {
+    "messageformat": "Đang tải GIF"
+  },
+  "icu:FunPanelGifs__SearchResults__ErrorHeading": {
+    "messageformat": "Không thể tải GIF. Kiểm tra kết nối của bạn và thử lại"
+  },
+  "icu:FunPanelGifs__SearchResults__ErrorRetryButton": {
+    "messageformat": "Thử lại"
+  },
+  "icu:FunPanelGifs__SearchResults__EmptyHeading": {
+    "messageformat": "Không tìm thấy GIF"
+  },
+  "icu:FunPanelGifs__LightboxDialog__Label": {
+    "messageformat": "Xem trước GIF"
+  },
+  "icu:FunSearch__ClearButtonLabel": {
+    "messageformat": "Xoá Tìm kiếm"
+  },
+  "icu:FunSkinTones__List": {
+    "messageformat": "Màu da"
+  },
+  "icu:FunSkinTones__ListItem--None": {
+    "messageformat": "Không"
+  },
+  "icu:FunSkinTones__ListItem--Light": {
+    "messageformat": "Màu da sáng"
+  },
+  "icu:FunSkinTones__ListItem--MediumLight": {
+    "messageformat": "Màu da trung bình sáng"
+  },
+  "icu:FunSkinTones__ListItem--Medium": {
+    "messageformat": "Màu da trung bình"
+  },
+  "icu:FunSkinTones__ListItem--MediumDark": {
+    "messageformat": "Màu da trung bình tối"
+  },
+  "icu:FunSkinTones__ListItem--Dark": {
+    "messageformat": "Màu da tối"
+  },
+  "icu:FunButton__Label--FunPicker": {
+    "messageformat": "Thêm Emoji, Nhãn dán hoặc GIF"
+  },
+  "icu:FunButton__Label--EmojiPicker": {
+    "messageformat": "Thêm một Emoji"
+  },
+  "icu:FunButton__Label--StickerPicker": {
+    "messageformat": "Thêm một Sticker"
+  },
   "icu:confirmation-dialog--Cancel": {
     "messageformat": "Hủy"
   },
@@ -2288,11 +2510,11 @@
   "icu:Message--update-signal": {
     "messageformat": "Cập nhật Signal"
   },
-  "icu:Message--tap-to-view-expired": {
+  "icu:Message--tap-to-view--viewed": {
     "messageformat": "Đã xem"
   },
-  "icu:Message--tap-to-view--outgoing": {
-    "messageformat": "Đa phương tiện"
+  "icu:Message--tap-to-view--media": {
+    "messageformat": "Đa phương tiện Xem Một Lần"
   },
   "icu:Message--tap-to-view--incoming--expired-toast": {
     "messageformat": "Bạn đã sẵn sàng xem ảnh này"
@@ -2300,11 +2522,14 @@
   "icu:Message--tap-to-view--outgoing--expired-toast": {
     "messageformat": "Tin nhắn xem một lần không được lưu trong lịch sử trò chuyện."
   },
-  "icu:Message--tap-to-view--incoming": {
-    "messageformat": "Xem ảnh"
+  "icu:Message--tap-to-view--video": {
+    "messageformat": "Video xem một lần"
   },
-  "icu:Message--tap-to-view--incoming-video": {
-    "messageformat": "Xem video"
+  "icu:Message--tap-to-view--photo": {
+    "messageformat": "Ảnh xem một lần"
+  },
+  "icu:Message--tap-to-view--helper-text": {
+    "messageformat": "Bấm để xem"
   },
   "icu:Conversation--getDraftPreview--attachment": {
     "messageformat": "(tập tin đính kèm)"
@@ -2498,6 +2723,9 @@
   "icu:Keyboard--toggle-video": {
     "messageformat": "Chuyển đổi bật tắt video"
   },
+  "icu:Keyboard--toggle-preview": {
+    "messageformat": "Bật hoặc tắt khung xem trước mở rộng"
+  },
   "icu:Keyboard--accept-video-call": {
     "messageformat": "Trả lời cuộc gọi với video (chỉ cuộc gọi video)"
   },
@@ -2560,6 +2788,12 @@
   },
   "icu:SafetyTipsModal__Description": {
     "messageformat": "Hãy cẩn trọng khi chấp nhận yêu cầu gửi tin nhắn từ những người bạn không biết. Chú ý:"
+  },
+  "icu:SafetyTipsModal__TipTitle--Fake": {
+    "messageformat": "Tên và tài khoản giả"
+  },
+  "icu:SafetyTipsModal__TipDescription--Fake": {
+    "messageformat": "Signal sẽ không bao giờ liên hệ bạn để lấy mã đăng ký hoặc mã PIN. Hãy cẩn trọng với các yêu cầu mạo danh. Tên hồ sơ được chọn bởi chủ tài khoản và không được xác minh."
   },
   "icu:SafetyTipsModal__TipTitle--Crypto": {
     "messageformat": "Lừa đảo tiền điện tử hoặc tiền"
@@ -2693,6 +2927,12 @@
   "icu:MessageRequests--accept": {
     "messageformat": "Chấp nhận"
   },
+  "icu:MessageRequests--accept-confirm-title": {
+    "messageformat": "Chấp nhận yêu cầu?"
+  },
+  "icu:MessageRequests--accept-confirm-body": {
+    "messageformat": "Kiểm tra các yêu cầu một cách kĩ lưỡng. Tên hồ sơ được chọn bởi chủ tài khoản và không được xác minh."
+  },
   "icu:MessageRequests--continue": {
     "messageformat": "Tiếp tục"
   },
@@ -2704,6 +2944,21 @@
   },
   "icu:ConversationHero--members": {
     "messageformat": "{count, plural, other {{count,number} thành viên}}"
+  },
+  "icu:ConversationHero--review-carefully": {
+    "messageformat": "Kiểm tra kỹ"
+  },
+  "icu:ConversationHero--group-names": {
+    "messageformat": "<clickable>Tên nhóm</clickable> chưa được xác minh"
+  },
+  "icu:ConversationHero--profile-names": {
+    "messageformat": "<clickable>Tên hồ sơ</clickable> chưa được xác minh"
+  },
+  "icu:ConversationHero--signal-official-chat": {
+    "messageformat": "Đây là cuộc trò chuyện chính thức và duy nhất từ Signal"
+  },
+  "icu:ConversationHero--release-notes": {
+    "messageformat": "Cập nhật tin tức và thông tin về bản cập nhật."
   },
   "icu:member-of-1-group": {
     "messageformat": "Thành viên của {group}"
@@ -2840,6 +3095,12 @@
   "icu:CallControls__JoinLeaveButton--hangup-group": {
     "messageformat": "Rời"
   },
+  "icu:CallControls__JoinLeaveButton--hangup-1-1-tooltip": {
+    "messageformat": "End call"
+  },
+  "icu:CallControls__JoinLeaveButton--hangup-group-tooltip": {
+    "messageformat": "Leave call"
+  },
   "icu:CallControls__MutedToast--muted": {
     "messageformat": "Tắt micro"
   },
@@ -2917,6 +3178,12 @@
   },
   "icu:calling__pip--off": {
     "messageformat": "Phóng toàn màn hình cuộc gọi"
+  },
+  "icu:calling__preview--maximize": {
+    "messageformat": "Phóng to khung xem trước"
+  },
+  "icu:calling__preview--minimize": {
+    "messageformat": "Thu nhỏ khung xem trước"
   },
   "icu:calling__change-view": {
     "messageformat": "Đổi chế độ hiển thị"
@@ -3698,18 +3965,6 @@
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "Thử lại"
   },
-  "icu:BackupImportScreen__skip": {
-    "messageformat": "Bỏ qua"
-  },
-  "icu:BackupImportScreen__skip-confirmation__title": {
-    "messageformat": "Bỏ qua việc chuyển tin nhắn?"
-  },
-  "icu:BackupImportScreen__skip-confirmation__body": {
-    "messageformat": "Nếu bạn chọn bỏ qua, bạn sẽ không có quyền truy cập bất kỳ tin nhắn hoặc tập tin đa phương tiện nào trên thiết bị này. Bạn có thể bắt đầu một quá trình chuyển mới sau khi bỏ qua từ mục Cài đặt > Trò chuyện > Chuyển."
-  },
-  "icu:BackupImportScreen__skip-confirmation__cancel": {
-    "messageformat": "Hủy"
-  },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "Đang khôi phục tập tin đa phương tiện"
   },
@@ -3752,6 +4007,12 @@
   "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
     "messageformat": "Hủy chuyển"
   },
+  "icu:CriticalIdlePrimaryDeviceModal__title": {
+    "messageformat": "Account action required"
+  },
+  "icu:CriticalIdlePrimaryDeviceModal__description": {
+    "messageformat": "You must open Signal on your phone to continue using this account. If you do not open Signal on your phone, your account will be deleted soon. <learnMoreLink>Learn more</learnMoreLink>"
+  },
   "icu:CompositionArea--expand": {
     "messageformat": "Mở rộng"
   },
@@ -3772,6 +4033,18 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "Gửi tin nhắn đã chỉnh sửa"
+  },
+  "icu:CompositionArea__FunButtonLabel": {
+    "messageformat": "Thêm Emoji, Nhãn dán hoặc GIF"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__Title": {
+    "messageformat": "Thay tập tin đính kèm?"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__Body": {
+    "messageformat": "Thao tác thêm ảnh GIF Này sẽ thay thế tập tin đính kèm trong tin nhắn nháp hiện tại của bạn."
+  },
+  "icu:CompositionArea__ConfirmGifSelection__ReplaceButton": {
+    "messageformat": "Thay thế"
   },
   "icu:CompositionInput__editing-message": {
     "messageformat": "Chỉnh sửa tin nhắn"
@@ -3989,6 +4262,9 @@
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "Yêu cầu người quản lý chấp duyệt thành viên mới tham gia qua đường dẫn nhóm"
   },
+  "icu:GroupLinkManagement__CopyGroupLinkButtonLabel": {
+    "messageformat": "Copy signal.group link to clipboard"
+  },
   "icu:PendingInvites--tab-requests": {
     "messageformat": "Yêu cầu ({count,number})"
   },
@@ -4193,9 +4469,6 @@
   "icu:ShareCallLinkViaSignal__DraftMessageText": {
     "messageformat": "Sử dụng đường dẫn này để tham gia cuộc gọi Signal: {url}"
   },
-  "icu:MessageRequestWarning__learn-more": {
-    "messageformat": "Tìm hiểu thêm"
-  },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "Lời khuyên để giữ an toàn"
   },
@@ -4350,7 +4623,7 @@
     "messageformat": "Kết thúc chuyển sắc"
   },
   "icu:GIF--download": {
-    "messageformat": "Download GIF attachment"
+    "messageformat": "Tải GIF đính kèm"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "Thời gian tuỳ chỉnh…"
@@ -4655,6 +4928,30 @@
   "icu:Preferences__button--privacy": {
     "messageformat": "Riêng tư"
   },
+  "icu:Preferences__button--data-usage": {
+    "messageformat": "Sử dụng dữ liệu"
+  },
+  "icu:Preferences__media-auto-download": {
+    "messageformat": "Tự động tải đa phương tiện"
+  },
+  "icu:Preferences__media-auto-download__photos": {
+    "messageformat": "Ảnh"
+  },
+  "icu:Preferences__media-auto-download__videos": {
+    "messageformat": "Video"
+  },
+  "icu:Preferences__media-auto-download__audio": {
+    "messageformat": "Âm thanh"
+  },
+  "icu:Preferences__media-auto-download__documents": {
+    "messageformat": "Tài liệu"
+  },
+  "icu:Preferences__media-auto-download__description": {
+    "messageformat": "Tin nhắn thoại và nhãn dán luôn được tự động tải xuống."
+  },
+  "icu:Preferences__button--backups": {
+    "messageformat": "Backups"
+  },
   "icu:Preferences--lastSynced": {
     "messageformat": "Lần nhập cuối cùng vào lúc {date} {time}"
   },
@@ -4684,6 +4981,51 @@
   },
   "icu:Preferences--blocked": {
     "messageformat": "Đã chặn"
+  },
+  "icu:Preferences--backup-details__header": {
+    "messageformat": "Backup details"
+  },
+  "icu:Preferences--backup-media-plan__description": {
+    "messageformat": "Text + all media backup"
+  },
+  "icu:Preferences--backup-plan-not-found__description": {
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Backups."
+  },
+  "icu:Preferences--backup-messages-plan__description": {
+    "messageformat": "{mediaDayCount, plural, one {Text + {mediaDayCount,number} day media backup} other {Text + {mediaDayCount,number} days media backup}}"
+  },
+  "icu:Preferences--backup-messages-plan__cost-description": {
+    "messageformat": "Your backup plan is free"
+  },
+  "icu:Preferences--backup-plan__renewal-date": {
+    "messageformat": "Renews {date}"
+  },
+  "icu:Preferences--backup-plan__expiry-date": {
+    "messageformat": "Expires {date}"
+  },
+  "icu:Preferences--backup-plan__canceled": {
+    "messageformat": "Subscription canceled"
+  },
+  "icu:Preferences--backup-media-plan__note": {
+    "messageformat": "You can manage or cancel your Signal Backups subscription on your phone."
+  },
+  "icu:Preferences--backup-messages-plan__note": {
+    "messageformat": "You can manage or upgrade Signal Backups on your phone."
+  },
+  "icu:Preferences--backup-plan__not-found": {
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Backups."
+  },
+  "icu:Preferences--backup-plan__not-found__note": {
+    "messageformat": "You can manage or renew your Signal Backups subscription on your phone."
+  },
+  "icu:Preferences--backup-created-at__label": {
+    "messageformat": "Last backup"
+  },
+  "icu:Preferences--backup-created-by-phone": {
+    "messageformat": "Your phone"
+  },
+  "icu:Preferences--backup-size__label": {
+    "messageformat": "Backup size"
   },
   "icu:Preferences--blocked-count": {
     "messageformat": "{num, plural, other {{num,number} liên hệ}}"
@@ -4810,6 +5152,18 @@
   },
   "icu:DialogUpdate__downloaded": {
     "messageformat": "Đã tải Bản Cập Nhật"
+  },
+  "icu:CriticalIdlePrimaryDevice__title": {
+    "messageformat": "Mở Signal trên điện thoại của bạn"
+  },
+  "icu:CriticalIdlePrimaryDevice__body": {
+    "messageformat": "Tài khoản của bạn sẽ sớm bị xóa trừ khi bạn mở Signal trên điện thoại của mình. Thông điệp này sẽ không còn nếu bạn hoàn thành việc đó. <learnMoreLink>Tìm hiểu thêm</learnMoreLink>"
+  },
+  "icu:IdlePrimaryDevice__body": {
+    "messageformat": "Mở Signal trên điện thoại để giữ cho tài khoản của bạn hoạt động"
+  },
+  "icu:IdlePrimaryDevice__learnMore": {
+    "messageformat": "Tìm hiểu thêm"
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signal đang gặp trục trặc kĩ thuật. Chúng thôi đang cố hết sức để khôi phục dịch vụ càng sớm càng tốt."
@@ -4951,6 +5305,30 @@
   },
   "icu:MediaEditor__crop-preset--9-16": {
     "messageformat": "9:16"
+  },
+  "icu:MediaPermissionsModal__title--microphone": {
+    "messageformat": "Cho phép truy cập microphone của bạn"
+  },
+  "icu:MediaPermissionsModal__title--camera": {
+    "messageformat": "Cho phép truy cập camera của bạn"
+  },
+  "icu:MediaPermissionsModal__subtitle--call": {
+    "messageformat": "Để tham gia hoặc bắt đầu một cuộc gọi:"
+  },
+  "icu:MediaPermissionsModal__subtitle--call--camera": {
+    "messageformat": "Để bật video của bạn:"
+  },
+  "icu:MediaPermissionsModal__subtitle--voice-note": {
+    "messageformat": "Để gửi tin nhắn thoại:"
+  },
+  "icu:MediaPermissionsModal__step-1": {
+    "messageformat": "Bấm vào nút \"{buttonName}\" dưới đây"
+  },
+  "icu:MediaPermissionsModal__step-2": {
+    "messageformat": "Bật \"Signal\""
+  },
+  "icu:MediaPermissionsModal__open": {
+    "messageformat": "Đến mục cài đặt"
   },
   "icu:MyStories__title": {
     "messageformat": "Các Story của tôi"
@@ -5610,6 +5988,15 @@
   "icu:MessageMetadata__edited": {
     "messageformat": "Đã chỉnh sửa"
   },
+  "icu:DraftGifMessageSendModal__Title": {
+    "messageformat": "Thêm vào một tin nhắn"
+  },
+  "icu:DraftGifMessageSendModal__SendButtonLabel": {
+    "messageformat": "Gửi"
+  },
+  "icu:DraftGifMessageSendModal__CancelButtonLabel": {
+    "messageformat": "Hủy"
+  },
   "icu:EditHistoryMessagesModal__title": {
     "messageformat": "Lịch sử chỉnh sửa"
   },
@@ -5829,6 +6216,30 @@
   "icu:WhoCanFindMeReadOnlyToast": {
     "messageformat": "Để đổi cài đặt này, đặt mục “Ai có thể thấy số của tôi” thành “Không ai cả”."
   },
+  "icu:ProfileNameWarningModal__description--direct": {
+    "messageformat": "Tên hồ sơ trên Signal được chọn bởi chủ tài khoản:"
+  },
+  "icu:ProfileNameWarningModal__list--item1--direct": {
+    "messageformat": "Tên hồ sơ chưa được xác minh"
+  },
+  "icu:ProfileNameWarningModal__list--item2--direct": {
+    "messageformat": "Hãy cẩn trọng với các tài khoản mạo danh"
+  },
+  "icu:ProfileNameWarningModal__list--item3--direct": {
+    "messageformat": "Không chia sẻ thông tin cá nhân với người bạn không quen biết"
+  },
+  "icu:ProfileNameWarningModal__description--group": {
+    "messageformat": "Tên nhóm được chọn bởi thành viên của nhóm."
+  },
+  "icu:ProfileNameWarningModal__list--item1--group": {
+    "messageformat": "Hãy cẩn trọng với các nhóm mạo danh tổ chức và doanh nghiệp"
+  },
+  "icu:ProfileNameWarningModal__list--item2--group": {
+    "messageformat": "Tên hồ sơ của các thành viên trong nhóm chưa được xác minh"
+  },
+  "icu:ProfileNameWarningModal__list--item3--group": {
+    "messageformat": "Không chia sẻ thông tin cá nhân với người bạn không quen biết"
+  },
   "icu:WhatsNew__modal-title": {
     "messageformat": "Có gì mới"
   },
@@ -5860,10 +6271,22 @@
     "messageformat": "Các tinh chỉnh, sửa lỗi, và cải thiện hiệu năng. Cảm ơn bạn đã sử dụng Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.44--0": {
-    "messageformat": "Chúng tôi đã sửa một lỗi nhỏ liên quan đến hình động trong các cuộc gọi nhóm."
+  "icu:WhatsNew__v7.47--0": {
+    "messageformat": "Giờ đây bạn có thể mở rộng khung xem trước video trên thiết bị khi đang trong cuộc gọi để thấy được rõ hơn hình ảnh của mình."
   },
-  "icu:WhatsNew__v7.45--0": {
-    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
+  "icu:WhatsNew__v7.48--0": {
+    "messageformat": "Chúng tôi đã thêm phím tắt tiện lợi để bạn nhanh chóng hạ tay xuống sau khi bạn bắt đầu nói trong một cuộc gọi nhóm Signal."
+  },
+  "icu:WhatsNew__v7.49--0": {
+    "messageformat": "Nếu bạn liên kết một Máy tính mới trên Signal Android và chọn chuyển lịch sử tin nhắn, giờ đây bạn cũng có thể chuyển các tập tin đính kèm cũ một cách có chọn lọc từ thiết bị chính của mình. Như thường lệ, quá trình chuyển dữ liệu được mã hóa đầu cuối và bảo mật."
+  },
+  "icu:WhatsNew__v7.50--0": {
+    "messageformat": "Nếu bạn liên kết một Máy tính mới trên Signal Android và chọn chuyển lịch sử tin nhắn, giờ đây bạn cũng có thể chuyển các tập tin đính kèm cũ một cách có chọn lọc từ thiết bị chính của mình. Như thường lệ, quá trình chuyển dữ liệu được mã hóa đầu cuối và bảo mật."
+  },
+  "icu:WhatsNew__v7.51--0": {
+    "messageformat": "Fire, the wheel, and electricity were all great developments, but they were merely necessary steps along the path that created the conditions for animated GIF search to exist. Now you can experience the pinnacle of human technological advancement in Signal Desktop with a brand-new selection interface that makes it easy to quickly find an emoji, sticker, or animated GIF that's perfect for the moment."
+  },
+  "icu:WhatsNew__v7.51--1": {
+    "messageformat": "We also resized the picture-in-picture window and added convenient new shortcuts to mute/unmute your microphone or turn the camera on/off while a call is minimized."
   }
 }

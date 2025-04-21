@@ -62,7 +62,7 @@ import {
   getTimestampOrUndefinedFromLong,
 } from '../../util/timestampLongUtils';
 import { MAX_SAFE_DATE } from '../../util/timestamp';
-import { DurationInSeconds, SECOND } from '../../util/durations';
+import { DAY, DurationInSeconds, SECOND } from '../../util/durations';
 import { calculateExpirationTimestamp } from '../../util/expirationTimer';
 import { dropNull } from '../../util/dropNull';
 import {
@@ -465,8 +465,7 @@ export class BackupImportStream extends Writable {
           // Not yet supported
           return;
         } else if (recipient.self) {
-          strictAssert(this.#ourConversation != null, 'Missing account data');
-          convo = this.#ourConversation;
+          convo = this.#fromSelf(recipient.self);
         } else if (recipient.group) {
           convo = await this.#fromGroup(recipient.group);
         } else if (recipient.distributionList) {
@@ -658,6 +657,7 @@ export class BackupImportStream extends Writable {
           attachmentDownloadJobPromises.push(
             queueAttachmentDownloads(model, {
               source: AttachmentDownloadSource.BACKUP_IMPORT,
+              isManualDownload: false,
             })
           );
         }
@@ -683,6 +683,7 @@ export class BackupImportStream extends Writable {
     backupsSubscriberData,
     donationSubscriberData,
     accountSettings,
+    svrPin,
   }: Backups.IAccountData): Promise<void> {
     strictAssert(this.#ourConversation === undefined, 'Duplicate AccountData');
     const me =
@@ -804,6 +805,9 @@ export class BackupImportStream extends Writable {
       'preferredReactionEmoji',
       accountSettings?.preferredReactionEmoji || []
     );
+    if (svrPin) {
+      await storage.put('svrPin', svrPin);
+    }
 
     const { PhoneNumberSharingMode: BackupMode } = Backups.AccountData;
     switch (accountSettings?.phoneNumberSharingMode) {
@@ -878,6 +882,18 @@ export class BackupImportStream extends Writable {
     await this.#updateConversation(me);
   }
 
+  #fromSelf(self: Backups.ISelf): ConversationAttributesType {
+    strictAssert(this.#ourConversation != null, 'Missing account data');
+    const convo = this.#ourConversation;
+
+    if (self.avatarColor != null) {
+      convo.color = fromAvatarColor(self.avatarColor);
+      convo.colorFromPrimary = dropNull(self.avatarColor);
+    }
+
+    return convo;
+  }
+
   async #fromContact(
     contact: Backups.IContact
   ): Promise<ConversationAttributesType> {
@@ -933,6 +949,8 @@ export class BackupImportStream extends Writable {
       nicknameGivenName: dropNull(contact.nickname?.given),
       nicknameFamilyName: dropNull(contact.nickname?.family),
       note: dropNull(contact.note),
+      color: fromAvatarColor(contact.avatarColor),
+      colorFromPrimary: dropNull(contact.avatarColor),
     };
 
     if (serviceId != null && Bytes.isNotEmpty(contact.identityKey)) {
@@ -1034,6 +1052,8 @@ export class BackupImportStream extends Writable {
             url: avatarUrl,
           }
         : undefined,
+      color: fromAvatarColor(group.avatarColor),
+      colorFromPrimary: dropNull(group.avatarColor),
 
       // Snapshot
       name: dropNull(title?.title)?.trim(),
@@ -1422,6 +1442,13 @@ export class BackupImportStream extends Writable {
     if (expirationTimestamp != null && expirationTimestamp < this.#now) {
       // Drop expired messages
       return;
+    }
+
+    if (expireTimer) {
+      if (DurationInSeconds.toMillis(expireTimer) <= DAY) {
+        // Message has an expire timer that's too short for import
+        return;
+      }
     }
 
     let attributes: MessageAttributesType = {
@@ -3742,4 +3769,40 @@ function fromCallLinkRestrictionsProto(
   }
 
   return CallLinkRestrictions.Unknown;
+}
+
+function fromAvatarColor(
+  color: Backups.AvatarColor | null | undefined
+): string | undefined {
+  switch (color) {
+    case Backups.AvatarColor.A100:
+      return 'A100';
+    case Backups.AvatarColor.A110:
+      return 'A110';
+    case Backups.AvatarColor.A120:
+      return 'A120';
+    case Backups.AvatarColor.A130:
+      return 'A130';
+    case Backups.AvatarColor.A140:
+      return 'A140';
+    case Backups.AvatarColor.A150:
+      return 'A150';
+    case Backups.AvatarColor.A160:
+      return 'A160';
+    case Backups.AvatarColor.A170:
+      return 'A170';
+    case Backups.AvatarColor.A180:
+      return 'A180';
+    case Backups.AvatarColor.A190:
+      return 'A190';
+    case Backups.AvatarColor.A200:
+      return 'A200';
+    case Backups.AvatarColor.A210:
+      return 'A210';
+    case null:
+    case undefined:
+      return undefined;
+    default:
+      throw missingCaseError(color);
+  }
 }

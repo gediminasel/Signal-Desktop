@@ -3,8 +3,8 @@
 
 /* eslint-disable camelcase */
 
-import type { Database, Statement } from '@signalapp/better-sqlite3';
-import SQL from '@signalapp/better-sqlite3';
+// TODO(indutny): format queries
+import SQL from '@signalapp/sqlcipher';
 import { randomBytes } from 'crypto';
 import { mkdirSync, rmSync } from 'node:fs';
 import { join } from 'path';
@@ -30,7 +30,10 @@ import {
 } from 'lodash';
 
 import { parseBadgeCategory } from '../badges/BadgeCategory';
-import { parseBadgeImageTheme } from '../badges/BadgeImageTheme';
+import {
+  parseBadgeImageTheme,
+  type BadgeImageTheme,
+} from '../badges/BadgeImageTheme';
 import type { BadgeImageType, BadgeType } from '../badges/types';
 import type { StoredJob } from '../jobs/types';
 import { formatCountForLogging } from '../logging/formatCountForLogging';
@@ -55,7 +58,7 @@ import { isNormalNumber } from '../util/isNormalNumber';
 import { isNotNil } from '../util/isNotNil';
 import { parseIntOrThrow } from '../util/parseIntOrThrow';
 import { updateSchema } from './migrations';
-import type { ArrayQuery, EmptyQuery, JSONRows, Query } from './util';
+import type { JSONRows } from './util';
 import {
   batchMultiVarQuery,
   bulkAdd,
@@ -78,7 +81,6 @@ import {
 } from './util';
 import { hydrateMessage } from './hydration';
 
-import { getAttachmentCiphertextLength } from '../AttachmentCrypto';
 import { SeenStatus } from '../MessageSeenStatus';
 import {
   attachmentBackupJobSchema,
@@ -132,7 +134,6 @@ import type {
   GetRecentStoryRepliesOptionsType,
   GetUnreadByConversationAndMarkReadResultType,
   IdentityKeyIdType,
-  InstalledStickerPackType,
   ItemKeyType,
   MessageAttachmentsCursorType,
   MessageCursorType,
@@ -148,6 +149,7 @@ import type {
   SenderKeyType,
   SentMessageDBType,
   SentMessagesType,
+  SentProtoDBType,
   SentProtoType,
   SentProtoWithMessageIdsType,
   SentRecipientsDBType,
@@ -228,6 +230,55 @@ type StickerRow = Readonly<{
   version: 1 | 2;
   localKey: string | null;
   size: number | null;
+}>;
+type StorageServiceRowFields = Readonly<{
+  storageID?: string;
+  storageVersion?: number;
+  storageUnknownFields?: Uint8Array | null;
+  storageNeedsSync: number;
+}>;
+type InstalledStickerPackRow = Readonly<{
+  id: string;
+  key: string;
+
+  position?: number | null;
+}> &
+  StorageServiceRowFields;
+type UninstalledStickerPackRow = Readonly<{
+  id: string;
+
+  uninstalledAt: number;
+}> &
+  StorageServiceRowFields;
+type StickerPackRow = InstalledStickerPackRow &
+  Readonly<{
+    attemptedStatus?: 'downloaded' | 'installed' | 'ephemeral';
+    author: string;
+    coverStickerId: number;
+    createdAt: number;
+    downloadAttempts: number;
+    installedAt?: number;
+    lastUsed?: number;
+    status: StickerPackStatusType;
+    stickerCount: number;
+    stickers: string;
+    title: string;
+  }>;
+type AttachmentDownloadJobRow = Readonly<{
+  messageId: string;
+  attachmentType: string;
+  digest: string;
+  receivedAt: number;
+  sentAt: number;
+  contentType: string;
+  size: number;
+  active: number;
+  attempts: number;
+  retryAfter: number;
+  lastAttemptTimestamp: number;
+  attachmentJson: string;
+  ciphertextSize: number;
+  source: string;
 }>;
 
 // Because we can't force this module to conform to an interface, we narrow our exports
@@ -325,8 +376,7 @@ export const DataReader: ServerReadableInterface = {
   getMostRecentAddressableMessages,
   getMostRecentAddressableNondisappearingMessages,
   getUnprocessedCount,
-  getUnprocessedById,
-  getAttachmentDownloadJob,
+  _getAttachmentDownloadJob,
 
   getStickerCount,
   getAllStickerPacks,
@@ -470,6 +520,7 @@ export const DataWriter: ServerWritableInterface = {
   incrementMessagesMigrationAttempts,
 
   removeSyncTaskById,
+  removeSyncTasks,
   saveSyncTasks,
   incrementAllSyncTaskAttempts,
   dequeueOldestSyncTasks,
@@ -553,34 +604,6 @@ export const DataWriter: ServerWritableInterface = {
   runCorruptionChecks,
 };
 
-type DatabaseQueryCache = Map<string, Statement<Array<unknown>>>;
-
-const statementCache = new WeakMap<Database, DatabaseQueryCache>();
-
-export function prepare<T extends Array<unknown> | Record<string, unknown>>(
-  db: ReadableDB,
-  query: string,
-  { pluck = false }: { pluck?: boolean } = {}
-): Statement<T> {
-  let dbCache = statementCache.get(db);
-  if (!dbCache) {
-    dbCache = new Map();
-    statementCache.set(db, dbCache);
-  }
-
-  const cacheKey = `${pluck}:${query}`;
-  let result = dbCache.get(cacheKey) as Statement<T>;
-  if (!result) {
-    result = db.prepare<T>(query);
-    if (pluck === true) {
-      result.pluck();
-    }
-    dbCache.set(cacheKey, result);
-  }
-
-  return result;
-}
-
 const MESSAGE_COLUMNS_FRAGMENTS = MESSAGE_COLUMNS.map(
   column => new QueryFragment(column, [])
 );
@@ -645,17 +668,13 @@ function migrateSchemaVersion(db: WritableDB): void {
   setUserVersion(db, newUserVersion);
 }
 
-function openAndMigrateDatabase(
-  filePath: string,
-  key: string,
-  readonly: boolean
-): WritableDB {
+function openAndMigrateDatabase(filePath: string, key: string): WritableDB {
   let db: WritableDB | undefined;
 
   // First, we try to open the database without any cipher changes
   try {
     db = new SQL(filePath, {
-      readonly,
+      cacheStatements: true,
     }) as WritableDB;
     keyDatabase(db, key);
     switchToWAL(db);
@@ -700,16 +719,13 @@ function openAndMigrateDatabase(
 }
 
 const INVALID_KEY = /[^0-9A-Fa-f]/;
-function openAndSetUpSQLCipher(
-  filePath: string,
-  { key, readonly }: { key: string; readonly: boolean }
-) {
+function openAndSetUpSQLCipher(filePath: string, { key }: { key: string }) {
   const match = INVALID_KEY.exec(key);
   if (match) {
     throw new Error(`setupSQLCipher: key '${key}' is not valid`);
   }
 
-  const db = openAndMigrateDatabase(filePath, key, readonly);
+  const db = openAndMigrateDatabase(filePath, key);
 
   try {
     // Because foreign key support is not enabled by default!
@@ -736,16 +752,14 @@ function openAndSetUpSQLCipher(
     );
   }
 
+  db.initTokenizer();
+
   return db;
 }
 
 let logger = consoleLogger;
 let databaseFilePath: string | undefined;
 let indexedDBPath: string | undefined;
-
-SQL.setLogHandler((code, value) => {
-  logger.warn(`Database log code=${code}: ${value}`);
-});
 
 export function initialize({
   configDir,
@@ -780,7 +794,6 @@ export function initialize({
   try {
     db = openAndSetUpSQLCipher(databaseFilePath, {
       key,
-      readonly: false,
     });
 
     // For profiling use:
@@ -920,9 +933,7 @@ function removeKyberPreKeysByServiceId(
   db: WritableDB,
   serviceId: ServiceIdString
 ): void {
-  db.prepare<Query>(
-    'DELETE FROM kyberPreKeys WHERE ourServiceId IS $serviceId;'
-  ).run({
+  db.prepare('DELETE FROM kyberPreKeys WHERE ourServiceId IS $serviceId;').run({
     serviceId,
   });
 }
@@ -956,9 +967,7 @@ function removePreKeysByServiceId(
   db: WritableDB,
   serviceId: ServiceIdString
 ): void {
-  db.prepare<Query>(
-    'DELETE FROM preKeys WHERE ourServiceId IS $serviceId;'
-  ).run({
+  db.prepare('DELETE FROM preKeys WHERE ourServiceId IS $serviceId;').run({
     serviceId,
   });
 }
@@ -998,18 +1007,18 @@ function removeSignedPreKeysByServiceId(
   db: WritableDB,
   serviceId: ServiceIdString
 ): void {
-  db.prepare<Query>(
-    'DELETE FROM signedPreKeys WHERE ourServiceId IS $serviceId;'
-  ).run({
-    serviceId,
-  });
+  db.prepare('DELETE FROM signedPreKeys WHERE ourServiceId IS $serviceId;').run(
+    {
+      serviceId,
+    }
+  );
 }
 function removeAllSignedPreKeys(db: WritableDB): number {
   return removeAllFromTable(db, SIGNED_PRE_KEYS_TABLE);
 }
 function getAllSignedPreKeys(db: ReadableDB): Array<StoredSignedPreKeyType> {
   const rows: JSONRows = db
-    .prepare<EmptyQuery>(
+    .prepare(
       `
       SELECT json
       FROM signedPreKeys
@@ -1036,7 +1045,7 @@ function getItemById<K extends ItemKeyType>(
 }
 function getAllItems(db: ReadableDB): StoredAllItemsType {
   const rows: JSONRows = db
-    .prepare<EmptyQuery>('SELECT json FROM items ORDER BY id ASC;')
+    .prepare('SELECT json FROM items ORDER BY id ASC;')
     .all();
 
   type RawItemType = { id: ItemKeyType; value: unknown };
@@ -1062,8 +1071,7 @@ function removeAllItems(db: WritableDB): number {
 }
 
 function createOrUpdateSenderKey(db: WritableDB, key: SenderKeyType): void {
-  prepare(
-    db,
+  db.prepare(
     `
     INSERT OR REPLACE INTO senderKeys (
       id,
@@ -1085,22 +1093,20 @@ function getSenderKeyById(
   db: ReadableDB,
   id: SenderKeyIdType
 ): SenderKeyType | undefined {
-  const row = prepare(db, 'SELECT * FROM senderKeys WHERE id = $id').get({
-    id,
-  });
-
-  return row;
+  return db
+    .prepare('SELECT * FROM senderKeys WHERE id = $id')
+    .get<SenderKeyType>({
+      id,
+    });
 }
 function removeAllSenderKeys(db: WritableDB): void {
-  prepare<EmptyQuery>(db, 'DELETE FROM senderKeys').run();
+  db.prepare('DELETE FROM senderKeys').run();
 }
 function getAllSenderKeys(db: ReadableDB): Array<SenderKeyType> {
-  const rows = prepare<EmptyQuery>(db, 'SELECT * FROM senderKeys').all();
-
-  return rows;
+  return db.prepare('SELECT * FROM senderKeys').all<SenderKeyType>();
 }
 function removeSenderKeyById(db: WritableDB, id: SenderKeyIdType): void {
-  prepare(db, 'DELETE FROM senderKeys WHERE id = $id').run({ id });
+  db.prepare('DELETE FROM senderKeys WHERE id = $id').run({ id });
 }
 
 function insertSentProto(
@@ -1117,9 +1123,9 @@ function insertSentProto(
 
   return db.transaction(() => {
     // 1. Insert the payload, fetching its primary key id
-    const info = prepare(
-      db,
-      `
+    const info = db
+      .prepare(
+        `
       INSERT INTO sendLogPayloads (
         contentHint,
         proto,
@@ -1134,19 +1140,19 @@ function insertSentProto(
         $hasPniSignatureMessage
       );
       `
-    ).run({
-      ...proto,
-      urgent: proto.urgent ? 1 : 0,
-      hasPniSignatureMessage: proto.hasPniSignatureMessage ? 1 : 0,
-    });
+      )
+      .run({
+        ...proto,
+        urgent: proto.urgent ? 1 : 0,
+        hasPniSignatureMessage: proto.hasPniSignatureMessage ? 1 : 0,
+      });
     const id = parseIntOrThrow(
       info.lastInsertRowid,
       'insertSentProto/lastInsertRowid'
     );
 
     // 2. Insert a record for each recipient device.
-    const recipientStatement = prepare(
-      db,
+    const recipientStatement = db.prepare(
       `
       INSERT INTO sendLogRecipients (
         payloadId,
@@ -1178,8 +1184,7 @@ function insertSentProto(
     }
 
     // 2. Insert a record for each message referenced by this payload.
-    const messageStatement = prepare(
-      db,
+    const messageStatement = db.prepare(
       `
       INSERT INTO sendLogMessageIds (
         payloadId,
@@ -1203,8 +1208,7 @@ function insertSentProto(
 }
 
 function deleteSentProtosOlderThan(db: WritableDB, timestamp: number): void {
-  prepare(
-    db,
+  db.prepare(
     `
     DELETE FROM sendLogPayloads
     WHERE
@@ -1217,8 +1221,7 @@ function deleteSentProtosOlderThan(db: WritableDB, timestamp: number): void {
 }
 
 function deleteSentProtoByMessageId(db: WritableDB, messageId: string): void {
-  prepare(
-    db,
+  db.prepare(
     `
     DELETE FROM sendLogPayloads WHERE id IN (
       SELECT payloadId FROM sendLogMessageIds
@@ -1243,8 +1246,7 @@ function insertProtoRecipients(
   }
 ): void {
   db.transaction(() => {
-    const statement = prepare(
-      db,
+    const statement = db.prepare(
       `
       INSERT INTO sendLogRecipients (
         payloadId,
@@ -1286,9 +1288,9 @@ function deleteSentProtoRecipient(
       const { timestamp, recipientServiceId, deviceId } = item;
 
       // 1. Figure out what payload we're talking about.
-      const rows = prepare(
-        db,
-        `
+      const rows = db
+        .prepare(
+          `
         SELECT sendLogPayloads.id, sendLogPayloads.hasPniSignatureMessage
         FROM sendLogPayloads
         INNER JOIN sendLogRecipients
@@ -1298,7 +1300,8 @@ function deleteSentProtoRecipient(
           sendLogRecipients.recipientServiceId = $recipientServiceId AND
           sendLogRecipients.deviceId = $deviceId;
        `
-      ).all({ timestamp, recipientServiceId, deviceId });
+        )
+        .all({ timestamp, recipientServiceId, deviceId });
       if (!rows.length) {
         continue;
       }
@@ -1312,8 +1315,7 @@ function deleteSentProtoRecipient(
       const { id, hasPniSignatureMessage } = rows[0];
 
       // 2. Delete the recipient/device combination in question.
-      prepare(
-        db,
+      db.prepare(
         `
         DELETE FROM sendLogRecipients
         WHERE
@@ -1324,14 +1326,16 @@ function deleteSentProtoRecipient(
       ).run({ id, recipientServiceId, deviceId });
 
       // 3. See how many more recipient devices there were for this payload.
-      const remainingDevices = prepare(
-        db,
-        `
+      const remainingDevices =
+        db
+          .prepare(
+            `
         SELECT count(1) FROM sendLogRecipients
         WHERE payloadId = $id AND recipientServiceId = $recipientServiceId;
         `,
-        { pluck: true }
-      ).get({ id, recipientServiceId });
+            { pluck: true }
+          )
+          .get<number>({ id, recipientServiceId }) ?? 0;
 
       // 4. If there are no remaining devices for this recipient and we included
       //    the pni signature in the proto - return the recipient to the caller.
@@ -1350,11 +1354,12 @@ function deleteSentProtoRecipient(
       );
 
       // 5. See how many more recipients there were for this payload.
-      const remainingTotal = prepare(
-        db,
-        'SELECT count(1) FROM sendLogRecipients WHERE payloadId = $id;',
-        { pluck: true }
-      ).get({ id });
+      const remainingTotal = db
+        .prepare(
+          'SELECT count(1) FROM sendLogRecipients WHERE payloadId = $id;',
+          { pluck: true }
+        )
+        .get({ id });
 
       strictAssert(
         isNumber(remainingTotal),
@@ -1371,7 +1376,7 @@ function deleteSentProtoRecipient(
           `Deleting proto payload for timestamp ${timestamp}`
       );
 
-      prepare(db, 'DELETE FROM sendLogPayloads WHERE id = $id;').run({
+      db.prepare('DELETE FROM sendLogPayloads WHERE id = $id;').run({
         id,
       });
     }
@@ -1397,9 +1402,9 @@ function getSentProtoByRecipient(
 
   deleteSentProtosOlderThan(db, oneDayAgo);
 
-  const row = prepare(
-    db,
-    `
+  const row = db
+    .prepare(
+      `
     SELECT
       sendLogPayloads.*,
       GROUP_CONCAT(DISTINCT sendLogMessageIds.messageId) AS messageIds
@@ -1411,10 +1416,15 @@ function getSentProtoByRecipient(
       sendLogRecipients.recipientServiceId = $recipientServiceId
     GROUP BY sendLogPayloads.id;
     `
-  ).get({
-    timestamp,
-    recipientServiceId,
-  });
+    )
+    .get<
+      SentProtoDBType & {
+        messageIds: string;
+      }
+    >({
+      timestamp,
+      recipientServiceId,
+    });
 
   if (!row) {
     return undefined;
@@ -1431,10 +1441,12 @@ function getSentProtoByRecipient(
   };
 }
 function removeAllSentProtos(db: WritableDB): void {
-  prepare<EmptyQuery>(db, 'DELETE FROM sendLogPayloads;').run();
+  db.prepare('DELETE FROM sendLogPayloads;').run();
 }
 function getAllSentProtos(db: ReadableDB): Array<SentProtoType> {
-  const rows = prepare<EmptyQuery>(db, 'SELECT * FROM sendLogPayloads;').all();
+  const rows = db
+    .prepare('SELECT * FROM sendLogPayloads;')
+    .all<SentProtoDBType>();
 
   return rows.map(row => ({
     ...row,
@@ -1447,20 +1459,14 @@ function getAllSentProtos(db: ReadableDB): Array<SentProtoType> {
 function _getAllSentProtoRecipients(
   db: ReadableDB
 ): Array<SentRecipientsDBType> {
-  const rows = prepare<EmptyQuery>(
-    db,
-    'SELECT * FROM sendLogRecipients;'
-  ).all();
-
-  return rows;
+  return db
+    .prepare('SELECT * FROM sendLogRecipients;')
+    .all<SentRecipientsDBType>();
 }
 function _getAllSentProtoMessageIds(db: ReadableDB): Array<SentMessageDBType> {
-  const rows = prepare<EmptyQuery>(
-    db,
-    'SELECT * FROM sendLogMessageIds;'
-  ).all();
-
-  return rows;
+  return db
+    .prepare('SELECT * FROM sendLogMessageIds;')
+    .all<SentMessageDBType>();
 }
 
 const SESSIONS_TABLE = 'sessions';
@@ -1478,8 +1484,7 @@ function createOrUpdateSession(db: WritableDB, data: SessionType): void {
     );
   }
 
-  prepare(
-    db,
+  db.prepare(
     `
     INSERT OR REPLACE INTO sessions (
       id,
@@ -1552,7 +1557,7 @@ function removeSessionsByConversation(
   db: WritableDB,
   conversationId: string
 ): void {
-  db.prepare<Query>(
+  db.prepare(
     `
     DELETE FROM sessions
     WHERE conversationId = $conversationId;
@@ -1565,7 +1570,7 @@ function removeSessionsByServiceId(
   db: WritableDB,
   serviceId: ServiceIdString
 ): void {
-  db.prepare<Query>(
+  db.prepare(
     `
     DELETE FROM sessions
     WHERE serviceId = $serviceId;
@@ -1613,8 +1618,7 @@ function saveConversation(db: WritableDB, data: ConversationType): void {
 
   const membersList = getConversationMembersList(data);
 
-  prepare(
-    db,
+  db.prepare(
     `
     INSERT INTO conversations (
       id,
@@ -1654,9 +1658,7 @@ function saveConversation(db: WritableDB, data: ConversationType): void {
     `
   ).run({
     id,
-    json: objectToJSON(
-      omit(data, ['profileLastFetchedAt', 'unblurredAvatarUrl'])
-    ),
+    json: objectToJSON(omit(data, ['profileLastFetchedAt'])),
 
     e164: e164 || null,
     serviceId: serviceId || null,
@@ -1701,8 +1703,7 @@ function updateConversation(db: WritableDB, data: ConversationType): void {
 
   const membersList = getConversationMembersList(data);
 
-  prepare(
-    db,
+  db.prepare(
     `
     UPDATE conversations SET
       json = $json,
@@ -1723,9 +1724,7 @@ function updateConversation(db: WritableDB, data: ConversationType): void {
     `
   ).run({
     id,
-    json: objectToJSON(
-      omit(data, ['profileLastFetchedAt', 'unblurredAvatarUrl'])
-    ),
+    json: objectToJSON(omit(data, ['profileLastFetchedAt'])),
 
     e164: e164 || null,
     serviceId: serviceId || null,
@@ -1753,19 +1752,24 @@ function updateConversations(
   })();
 }
 
-function removeConversations(db: WritableDB, ids: ReadonlyArray<string>): void {
+function removeConversations(
+  db: WritableDB,
+  ids: ReadonlyArray<string>,
+  persistent: boolean
+): void {
   // Our node interface doesn't seem to allow you to replace one single ? with an array
-  db.prepare<ArrayQuery>(
+  db.prepare(
     `
     DELETE FROM conversations
     WHERE id IN ( ${ids.map(() => '?').join(', ')} );
-    `
+    `,
+    { persistent }
   ).run(ids);
 }
 
 function removeConversation(db: WritableDB, id: Array<string> | string): void {
   if (!Array.isArray(id)) {
-    db.prepare<Query>('DELETE FROM conversations WHERE id = $id;').run({
+    db.prepare('DELETE FROM conversations WHERE id = $id;').run({
       id,
     });
 
@@ -1776,20 +1780,22 @@ function removeConversation(db: WritableDB, id: Array<string> | string): void {
     throw new Error('removeConversation: No ids to delete!');
   }
 
-  batchMultiVarQuery(db, id, ids => removeConversations(db, ids));
+  batchMultiVarQuery(db, id, (ids, persistent) =>
+    removeConversations(db, ids, persistent)
+  );
 }
 
 function _removeAllConversations(db: WritableDB): void {
-  db.prepare<EmptyQuery>('DELETE from conversations;').run();
+  db.prepare('DELETE from conversations;').run();
 }
 
 function getConversationById(
   db: ReadableDB,
   id: string
 ): ConversationType | undefined {
-  const row: { json: string } = db
-    .prepare<Query>('SELECT json FROM conversations WHERE id = $id;')
-    .get({ id });
+  const row = db
+    .prepare('SELECT json FROM conversations WHERE id = $id;')
+    .get<{ json: string }>({ id });
 
   if (!row) {
     return undefined;
@@ -1800,7 +1806,7 @@ function getConversationById(
 
 function getAllConversations(db: ReadableDB): Array<ConversationType> {
   const rows: ConversationRows = db
-    .prepare<EmptyQuery>(
+    .prepare(
       `
       SELECT json, profileLastFetchedAt, expireTimerVersion
       FROM conversations
@@ -1814,7 +1820,7 @@ function getAllConversations(db: ReadableDB): Array<ConversationType> {
 
 function getAllConversationIds(db: ReadableDB): Array<string> {
   const rows: Array<{ id: string }> = db
-    .prepare<EmptyQuery>(
+    .prepare(
       `
       SELECT id FROM conversations ORDER BY id ASC;
       `
@@ -1829,7 +1835,7 @@ function getAllGroupsInvolvingServiceId(
   serviceId: ServiceIdString
 ): Array<ConversationType> {
   const rows: ConversationRows = db
-    .prepare<Query>(
+    .prepare(
       `
       SELECT json, profileLastFetchedAt, expireTimerVersion
       FROM conversations WHERE
@@ -1893,7 +1899,7 @@ function searchMessages(
     );
 
     writable
-      .prepare<Query>(
+      .prepare(
         `
         INSERT INTO tmp_results (rowid)
         SELECT
@@ -1908,7 +1914,7 @@ function searchMessages(
 
     if (conversationId === undefined) {
       writable
-        .prepare<Query>(
+        .prepare(
           `
           INSERT INTO tmp_filtered_results (rowid)
           SELECT
@@ -1924,7 +1930,7 @@ function searchMessages(
         .run({ limit });
     } else {
       writable
-        .prepare<Query>(
+        .prepare(
           `
           INSERT INTO tmp_filtered_results (rowid)
           SELECT
@@ -2031,16 +2037,20 @@ function searchMessages(
 }
 
 function getStoryCount(db: ReadableDB, conversationId: string): number {
-  return db
-    .prepare<Query>(
-      `
-        SELECT count(1)
-        FROM messages
-        WHERE conversationId = $conversationId AND isStory = 1;
+  return (
+    db
+      .prepare(
         `
-    )
-    .pluck()
-    .get({ conversationId });
+    SELECT count(1)
+    FROM messages
+    WHERE conversationId = $conversationId AND isStory = 1;
+    `,
+        {
+          pluck: true,
+        }
+      )
+      .get<number>({ conversationId }) ?? 0
+  );
 }
 
 function getMessageCount(db: ReadableDB, conversationId?: string): number {
@@ -2049,17 +2059,19 @@ function getMessageCount(db: ReadableDB, conversationId?: string): number {
   }
 
   const count = db
-    .prepare<Query>(
+    .prepare(
       `
-        SELECT count(1)
-        FROM messages
-        WHERE conversationId = $conversationId;
-        `
+    SELECT count(1)
+    FROM messages
+    WHERE conversationId = $conversationId;
+    `,
+      {
+        pluck: true,
+      }
     )
-    .pluck()
-    .get({ conversationId });
+    .get<number>({ conversationId });
 
-  return count;
+  return count ?? 0;
 }
 
 // Note: we really only use this in 1:1 conversations, where story replies are always
@@ -2068,20 +2080,22 @@ function hasUserInitiatedMessages(
   db: ReadableDB,
   conversationId: string
 ): boolean {
-  const exists: number = db
-    .prepare<Query>(
+  const exists = db
+    .prepare(
       `
-      SELECT EXISTS(
-        SELECT 1 FROM messages
-        INDEXED BY message_user_initiated
-        WHERE
-          conversationId IS $conversationId AND
-          isUserInitiatedMessage IS 1
-      );
-      `
+  SELECT EXISTS(
+    SELECT 1 FROM messages
+    INDEXED BY message_user_initiated
+    WHERE
+      conversationId IS $conversationId AND
+      isUserInitiatedMessage IS 1
+  );
+  `,
+      {
+        pluck: true,
+      }
     )
-    .pluck()
-    .get({ conversationId });
+    .get<number>({ conversationId });
 
   return exists !== 0;
 }
@@ -2103,7 +2117,7 @@ export function getMostRecentAddressableMessages(
     LIMIT ${limit};
   `;
 
-  const rows = db.prepare(query).all(parameters);
+  const rows = db.prepare(query).all<MessageTypeUnhydrated>(parameters);
 
   return rows.map(row => hydrateMessage(row));
 }
@@ -2126,7 +2140,7 @@ export function getMostRecentAddressableNondisappearingMessages(
     LIMIT ${limit};
   `;
 
-  const rows = db.prepare(query).all(parameters);
+  const rows = db.prepare(query).all<MessageTypeUnhydrated>(parameters);
 
   return rows.map(row => hydrateMessage(row));
 }
@@ -2139,6 +2153,26 @@ export function removeSyncTaskById(db: WritableDB, id: string): void {
 
   db.prepare(query).run(parameters);
 }
+function removeSyncTaskBatch(
+  db: WritableDB,
+  ids: ReadonlyArray<string>,
+  persistent: boolean
+): void {
+  db.prepare(
+    `
+    DELETE FROM syncTasks
+    WHERE id IN ( ${ids.map(() => '?').join(', ')} );
+    `,
+    { persistent }
+  ).run(ids);
+}
+
+function removeSyncTasks(db: WritableDB, ids: ReadonlyArray<string>): void {
+  batchMultiVarQuery(db, ids, (batch, persistent) =>
+    removeSyncTaskBatch(db, batch, persistent)
+  );
+}
+
 export function saveSyncTasks(
   db: WritableDB,
   tasks: Array<SyncTaskType>
@@ -2222,7 +2256,12 @@ export function dequeueOldestSyncTasks(
       ${limit}
     `;
 
-    const rows = db.prepare(selectAllQuery).all(selectAllParams);
+    const rows = db.prepare(selectAllQuery).all<
+      {
+        rowid: number;
+        data: string;
+      } & SyncTaskType
+    >(selectAllParams);
     if (!rows.length) {
       return { tasks: [], lastRowId: null };
     }
@@ -2254,12 +2293,15 @@ export function dequeueOldestSyncTasks(
         RETURNING id, attempts;
       `;
 
-      const res = db.prepare(updateQuery).raw().all(updateParams) as Array<
-        [string, number]
-      >;
+      const res = db.prepare(updateQuery).all<{
+        id: string;
+        attempts: number;
+      }>(updateParams);
 
       if (Array.isArray(res)) {
-        const idToAttempts = new Map<string, number>(res);
+        const idToAttempts = new Map<string, number>(
+          res.map(({ id, attempts }) => [id, attempts])
+        );
         tasks = tasks.map(task => {
           const { id } = task;
           const attempts = idToAttempts.get(id) ?? task.attempts;
@@ -2392,8 +2434,7 @@ export function saveMessage(
   } satisfies Omit<MessageTypeUnhydrated, 'json'>;
 
   if (id && !forceSave) {
-    prepare(
-      db,
+    db.prepare(
       `
       UPDATE messages SET
         ${MESSAGE_COLUMNS.map(name => `${name} = $${name}`).join(', ')}
@@ -2410,8 +2451,7 @@ export function saveMessage(
 
   const createdId = id || generateMessageId(data.received_at).id;
 
-  prepare(
-    db,
+  db.prepare(
     `
     INSERT INTO messages (
       ${MESSAGE_COLUMNS.join(', ')}
@@ -2477,20 +2517,27 @@ function saveMessagesIndividually(
 }
 
 function removeMessage(db: WritableDB, id: string): void {
-  db.prepare<Query>('DELETE FROM messages WHERE id = $id;').run({ id });
+  db.prepare('DELETE FROM messages WHERE id = $id;').run({ id });
 }
 
-function removeMessagesBatch(db: WritableDB, ids: ReadonlyArray<string>): void {
-  db.prepare<ArrayQuery>(
+function removeMessagesBatch(
+  db: WritableDB,
+  ids: ReadonlyArray<string>,
+  persistent: boolean
+): void {
+  db.prepare(
     `
     DELETE FROM messages
     WHERE id IN ( ${ids.map(() => '?').join(', ')} );
-    `
+    `,
+    { persistent }
   ).run(ids);
 }
 
 function removeMessages(db: WritableDB, ids: ReadonlyArray<string>): void {
-  batchMultiVarQuery(db, ids, batch => removeMessagesBatch(db, batch));
+  batchMultiVarQuery(db, ids, (batch, persistent) =>
+    removeMessagesBatch(db, batch, persistent)
+  );
 }
 
 export function getMessageById(
@@ -2498,14 +2545,14 @@ export function getMessageById(
   id: string
 ): MessageType | undefined {
   const row = db
-    .prepare<Query>(
+    .prepare(
       `
       SELECT ${MESSAGE_COLUMNS.join(', ')}
       FROM messages
       WHERE id = $id;
     `
     )
-    .get({
+    .get<MessageTypeUnhydrated>({
       id,
     });
 
@@ -2523,14 +2570,15 @@ function getMessagesById(
   return batchMultiVarQuery(
     db,
     messageIds,
-    (batch: ReadonlyArray<string>): Array<MessageType> => {
-      const query = db.prepare<ArrayQuery>(
+    (batch: ReadonlyArray<string>, persistent: boolean): Array<MessageType> => {
+      const query = db.prepare(
         `
           SELECT ${MESSAGE_COLUMNS.join(', ')}
           FROM messages
           WHERE id IN (
             ${Array(batch.length).fill('?').join(',')}
-          );`
+          );`,
+        { persistent }
       );
       const rows: Array<MessageTypeUnhydrated> = query.all(batch);
       return rows.map(row => hydrateMessage(row));
@@ -2540,7 +2588,7 @@ function getMessagesById(
 
 function _getAllMessages(db: ReadableDB): Array<MessageType> {
   const rows: Array<MessageTypeUnhydrated> = db
-    .prepare<EmptyQuery>(
+    .prepare(
       `
       SELECT ${MESSAGE_COLUMNS.join(', ')}
       FROM messages ORDER BY id ASC
@@ -2559,7 +2607,7 @@ function _removeAllMessages(db: WritableDB): void {
 
 function getAllMessageIds(db: ReadableDB): Array<string> {
   const rows: Array<{ id: string }> = db
-    .prepare<EmptyQuery>('SELECT id FROM messages ORDER BY id ASC;')
+    .prepare('SELECT id FROM messages ORDER BY id ASC;')
     .all();
 
   return rows.map(row => row.id);
@@ -2579,21 +2627,22 @@ function getMessageBySender(
     sent_at: number;
   }
 ): MessageType | undefined {
-  const rows: Array<MessageTypeUnhydrated> = prepare(
-    db,
-    `
+  const rows: Array<MessageTypeUnhydrated> = db
+    .prepare(
+      `
     SELECT ${MESSAGE_COLUMNS.join(', ')} FROM messages WHERE
       (source = $source OR sourceServiceId = $sourceServiceId) AND
       sourceDevice = $sourceDevice AND
       sent_at = $sent_at
     LIMIT 2;
     `
-  ).all({
-    source: source || null,
-    sourceServiceId: sourceServiceId || null,
-    sourceDevice: sourceDevice || null,
-    sent_at,
-  });
+    )
+    .all({
+      source: source || null,
+      sourceServiceId: sourceServiceId || null,
+      sourceDevice: sourceDevice || null,
+      sent_at,
+    });
 
   if (rows.length > 1) {
     logger.warn('getMessageBySender: More than one message found for', {
@@ -2620,11 +2669,11 @@ export function _storyIdPredicate(
   //   always be true. We don't just return TRUE because we want to use our passed-in
   //   $storyId parameter.
   if (includeStoryReplies && storyId === undefined) {
-    return sqlFragment`${storyId} IS NULL`;
+    return sqlFragment`NULL IS NULL`;
   }
 
   // In contrast to: replies to a specific story
-  return sqlFragment`storyId IS ${storyId}`;
+  return sqlFragment`storyId IS ${storyId ?? null}`;
 }
 
 function getUnreadByConversationAndMarkRead(
@@ -2684,7 +2733,9 @@ function getUnreadByConversationAndMarkRead(
         ORDER BY received_at DESC, sent_at DESC;
     `;
 
-    const rows = db.prepare(selectQuery).all(selectParams);
+    const rows = db
+      .prepare(selectQuery)
+      .all<MessageTypeUnhydrated>(selectParams);
 
     const statusJsonPatch = JSON.stringify({
       readStatus: ReadStatus.Read,
@@ -2740,7 +2791,7 @@ function getUnreadReactionsAndMarkRead(
 ): Array<ReactionResultType> {
   return db.transaction(() => {
     const unreadMessages: Array<ReactionResultType> = db
-      .prepare<Query>(
+      .prepare(
         `
         SELECT reactions.rowid, targetAuthorAci, targetTimestamp, messageId
         FROM reactions
@@ -2761,15 +2812,20 @@ function getUnreadReactionsAndMarkRead(
       });
 
     const idsToUpdate = unreadMessages.map(item => item.rowid);
-    batchMultiVarQuery(db, idsToUpdate, (ids: ReadonlyArray<number>): void => {
-      db.prepare<ArrayQuery>(
-        `
+    batchMultiVarQuery(
+      db,
+      idsToUpdate,
+      (ids: ReadonlyArray<number>, persistent: boolean): void => {
+        db.prepare(
+          `
         UPDATE reactions
         SET unread = 0
         WHERE rowid IN ( ${ids.map(() => '?').join(', ')} );
-        `
-      ).run(ids);
-    });
+        `,
+          { persistent }
+        ).run(ids);
+      }
+    );
 
     return unreadMessages;
   })();
@@ -2794,7 +2850,7 @@ function markReactionAsRead(
           LIMIT 1;
         `
       )
-      .get({
+      .get<ReactionType>({
         targetAuthorAci: targetAuthorServiceId,
         targetTimestamp,
       });
@@ -2906,10 +2962,10 @@ function removeReactionFromConversation(
 }
 
 function _getAllReactions(db: ReadableDB): Array<ReactionType> {
-  return db.prepare<EmptyQuery>('SELECT * from reactions;').all();
+  return db.prepare('SELECT * from reactions;').all();
 }
 function _removeAllReactions(db: WritableDB): void {
-  db.prepare<EmptyQuery>('DELETE from reactions;').run();
+  db.prepare('DELETE from reactions;').run();
 }
 
 enum AdjacentDirection {
@@ -2940,7 +2996,7 @@ function getRecentStoryReplies(
       ${sqlJoin(MESSAGE_COLUMNS_FRAGMENTS)}
     FROM messages
     WHERE
-      (${messageId} IS NULL OR id IS NOT ${messageId}) AND
+      (${messageId ?? null} IS NULL OR id IS NOT ${messageId ?? null}) AND
       isStory IS 0 AND
       storyId IS ${storyId} AND
       (
@@ -3004,7 +3060,7 @@ function getAdjacentMessagesByConversation(
       conversationId = ${conversationId} AND
       ${
         requireDifferentMessage
-          ? sqlFragment`(${messageId} IS NULL OR id IS NOT ${messageId}) AND`
+          ? sqlFragment`(${messageId ?? null} IS NULL OR id IS NOT ${messageId ?? null}) AND`
           : sqlFragment``
       }
       ${
@@ -3067,7 +3123,7 @@ function getAdjacentMessagesByConversation(
 
   const [query, params] = sql`${template}`;
 
-  const results = db.prepare(query).all(params);
+  const results = db.prepare(query).all<MessageTypeUnhydrated>(params);
 
   if (direction === AdjacentDirection.Older) {
     results.reverse();
@@ -3102,20 +3158,24 @@ function getAllStories(
     FROM messages
     WHERE
       isStory = 1 AND
-      (${conversationId} IS NULL OR conversationId IS ${conversationId}) AND
-      (${sourceServiceId} IS NULL OR sourceServiceId IS ${sourceServiceId})
+      (${conversationId ?? null} IS NULL OR
+        conversationId IS ${conversationId ?? null}) AND
+      (${sourceServiceId ?? null} IS NULL OR
+        sourceServiceId IS ${sourceServiceId ?? null})
     ORDER BY received_at ASC, sent_at ASC;
   `;
-  const rows = db.prepare(storiesQuery).all(storiesParams);
+  const rows = db
+    .prepare(storiesQuery)
+    .all<MessageTypeUnhydrated>(storiesParams);
 
   const [repliesQuery, repliesParams] = sql`
     SELECT DISTINCT storyId
     FROM messages
     WHERE storyId IS NOT NULL
   `;
-  const replies: ReadonlyArray<{
-    storyId: string;
-  }> = db.prepare(repliesQuery).all(repliesParams);
+  const replies = db
+    .prepare(repliesQuery, { pluck: true })
+    .all<string>(repliesParams);
 
   const [repliesFromSelfQuery, repliesFromSelfParams] = sql`
     SELECT DISTINCT storyId
@@ -3125,14 +3185,14 @@ function getAllStories(
       type IS 'outgoing'
     )
   `;
-  const repliesFromSelf: ReadonlyArray<{
-    storyId: string;
-  }> = db.prepare(repliesFromSelfQuery).all(repliesFromSelfParams);
+  const repliesFromSelf = db
+    .prepare(repliesFromSelfQuery, {
+      pluck: true,
+    })
+    .all<string>(repliesFromSelfParams);
 
-  const repliesLookup = new Set(replies.map(row => row.storyId));
-  const repliesFromSelfLookup = new Set(
-    repliesFromSelf.map(row => row.storyId)
-  );
+  const repliesLookup = new Set(replies);
+  const repliesFromSelfLookup = new Set(repliesFromSelf);
 
   return rows.map(row => ({
     ...hydrateMessage(row),
@@ -3171,7 +3231,11 @@ function getOldestMessageForConversation(
       LIMIT 1;
   `;
 
-  const row = db.prepare(query).get(params);
+  const row = db.prepare(query).get<{
+    received_at: number;
+    sent_at: number;
+    id: string;
+  }>(params);
 
   if (!row) {
     return undefined;
@@ -3198,7 +3262,11 @@ function getNewestMessageForConversation(
       ORDER BY received_at DESC, sent_at DESC
       LIMIT 1;
   `;
-  const row = db.prepare(query).get(params);
+  const row = db.prepare(query).get<{
+    received_at: number;
+    sent_at: number;
+    id: string;
+  }>(params);
 
   if (!row) {
     return undefined;
@@ -3241,7 +3309,7 @@ function getMessagesBetween(
     ORDER BY received_at ASC, sent_at ASC;
   `;
 
-  const rows = db.prepare(query).all(params);
+  const rows = db.prepare(query).all<{ id: string }>(params);
 
   return rows.map(row => row.id);
 }
@@ -3281,7 +3349,11 @@ function getNearbyMessageFromDeletedSet(
       LIMIT 1
     `;
 
-    return db.prepare(query).pluck().get(params);
+    return db
+      .prepare(query, {
+        pluck: true,
+      })
+      .get<string>(params);
   }
 
   const after = runQuery(true);
@@ -3307,9 +3379,9 @@ function getLastConversationActivity(
     includeStoryReplies: boolean;
   }
 ): MessageType | undefined {
-  const row = prepare(
-    db,
-    `
+  const row = db
+    .prepare(
+      `
       SELECT ${MESSAGE_COLUMNS.join(', ')} FROM messages
       INDEXED BY messages_activity
       WHERE
@@ -3321,9 +3393,10 @@ function getLastConversationActivity(
       ORDER BY received_at DESC, sent_at DESC
       LIMIT 1;
       `
-  ).get({
-    conversationId,
-  });
+    )
+    .get<MessageTypeUnhydrated>({
+      conversationId,
+    });
 
   if (!row) {
     return undefined;
@@ -3345,9 +3418,9 @@ function getLastConversationPreview(
     ? 'messages_preview'
     : 'messages_preview_without_story';
 
-  const row: MessageTypeUnhydrated | undefined = prepare(
-    db,
-    `
+  const row: MessageTypeUnhydrated | undefined = db
+    .prepare(
+      `
       SELECT ${MESSAGE_COLUMNS.join(', ')}, expiresAt FROM (
         SELECT ${MESSAGE_COLUMNS.join(', ')}, expiresAt FROM messages
         INDEXED BY ${index}
@@ -3361,10 +3434,11 @@ function getLastConversationPreview(
       WHERE likely(expiresAt > $now)
       LIMIT 1
     `
-  ).get({
-    conversationId,
-    now: Date.now(),
-  });
+    )
+    .get({
+      conversationId,
+      now: Date.now(),
+    });
 
   return row ? hydrateMessage(row) : undefined;
 }
@@ -3403,7 +3477,7 @@ function getLastConversationMessage(
   }
 ): MessageType | undefined {
   const row = db
-    .prepare<Query>(
+    .prepare(
       `
       SELECT ${MESSAGE_COLUMNS.join(', ')} FROM messages WHERE
         conversationId = $conversationId
@@ -3411,7 +3485,7 @@ function getLastConversationMessage(
       LIMIT 1;
       `
     )
-    .get({
+    .get<MessageTypeUnhydrated>({
       conversationId,
     });
 
@@ -3443,7 +3517,9 @@ function getOldestUnseenMessageForConversation(
     LIMIT 1;
   `;
 
-  const row = db.prepare(query).get(params);
+  const row = db
+    .prepare(query)
+    .get<{ received_at: number; sent_at: number; id: string }>(params);
 
   if (!row) {
     return undefined;
@@ -3494,9 +3570,13 @@ function getTotalUnreadForConversation(
       isStory IS 0 AND
       (${_storyIdPredicate(storyId, includeStoryReplies)})
   `;
-  const row = db.prepare(query).pluck().get(params);
+  const row = db
+    .prepare(query, {
+      pluck: true,
+    })
+    .get<number>(params);
 
-  return row;
+  return row ?? 0;
 }
 function getTotalUnreadMentionsOfMeForConversation(
   db: ReadableDB,
@@ -3519,9 +3599,13 @@ function getTotalUnreadMentionsOfMeForConversation(
       isStory IS 0 AND
       (${_storyIdPredicate(storyId, includeStoryReplies)})
   `;
-  const row = db.prepare(query).pluck().get(params);
+  const row = db
+    .prepare(query, {
+      pluck: true,
+    })
+    .get<number>(params);
 
-  return row;
+  return row ?? 0;
 }
 function getTotalUnseenForConversation(
   db: ReadableDB,
@@ -3543,9 +3627,13 @@ function getTotalUnseenForConversation(
         isStory IS 0 AND
         (${_storyIdPredicate(storyId, includeStoryReplies)})
   `;
-  const row = db.prepare(query).pluck().get(params);
+  const row = db
+    .prepare(query, {
+      pluck: true,
+    })
+    .get<number>(params);
 
-  return row;
+  return row ?? 0;
 }
 
 function getMessageMetricsForConversation(
@@ -3641,8 +3729,9 @@ function clearCallHistory(
     `;
 
     const adminCallLinkIds: ReadonlyArray<string> = db
-      .prepare(selectAdminCallLinksQuery)
-      .pluck()
+      .prepare(selectAdminCallLinksQuery, {
+        pluck: true,
+      })
       .all(selectAdminCallLinksParams);
     const adminCallLinkIdsFragment = sqlJoin(adminCallLinkIds);
 
@@ -3663,13 +3752,14 @@ function clearCallHistory(
     `;
 
     const deletedCallIds: ReadonlyArray<string> = db
-      .prepare(selectCallsQuery)
-      .pluck()
+      .prepare(selectCallsQuery, {
+        pluck: true,
+      })
       .all(selectCallsParams);
 
     let deletedMessageIds: ReadonlyArray<string> = [];
 
-    batchMultiVarQuery(db, deletedCallIds, (ids): void => {
+    batchMultiVarQuery(db, deletedCallIds, (ids, persistent): void => {
       const idsFragment = sqlJoin(ids);
 
       const [clearCallsHistoryQuery, clearCallsHistoryParams] = sql`
@@ -3680,7 +3770,9 @@ function clearCallHistory(
         WHERE callsHistory.callId IN (${idsFragment});
       `;
 
-      db.prepare(clearCallsHistoryQuery).run(clearCallsHistoryParams);
+      db.prepare(clearCallsHistoryQuery, { persistent }).run(
+        clearCallsHistoryParams
+      );
 
       const [deleteMessagesQuery, deleteMessagesParams] = sql`
         DELETE FROM messages
@@ -3690,9 +3782,11 @@ function clearCallHistory(
       `;
 
       const batchDeletedMessageIds = db
-        .prepare(deleteMessagesQuery)
-        .pluck()
-        .all(deleteMessagesParams);
+        .prepare(deleteMessagesQuery, {
+          pluck: true,
+          persistent,
+        })
+        .all<string>(deleteMessagesParams);
 
       deletedMessageIds = deletedMessageIds.concat(batchDeletedMessageIds);
     });
@@ -3741,7 +3835,7 @@ function getCallHistoryMessageByCallId(
       AND type = 'call-history'
       AND callId = ${options.callId}
   `;
-  const row = db.prepare(query).get(params);
+  const row = db.prepare(query).get<MessageTypeUnhydrated>(params);
   if (row == null) {
     return;
   }
@@ -3787,8 +3881,12 @@ function getCallHistoryUnreadCount(db: ReadableDB): number {
       AND callsHistory.status IS ${CALL_STATUS_MISSED}
       AND callsHistory.direction IS ${CALL_STATUS_INCOMING}
   `;
-  const row = db.prepare(query).pluck().get(params);
-  return row;
+  const row = db
+    .prepare(query, {
+      pluck: true,
+    })
+    .get<number>(params);
+  return row ?? 0;
 }
 
 function markCallHistoryRead(db: WritableDB, callId: string): void {
@@ -3906,8 +4004,9 @@ function getConversationIdForCallHistory(
   `;
 
   const conversationId = db
-    .prepare(selectConversationIdQuery)
-    .pluck()
+    .prepare(selectConversationIdQuery, {
+      pluck: true,
+    })
     .get(selectConversationIdParams);
 
   if (typeof conversationId !== 'string') {
@@ -3922,7 +4021,7 @@ function getMessageReceivedAtForCall(
   db: ReadableDB,
   callId: string,
   conversationId: string
-): number | null {
+): number | undefined {
   const [selectQuery, selectParams] = sql`
     SELECT messages.received_at
     FROM messages
@@ -3932,12 +4031,17 @@ function getMessageReceivedAtForCall(
     LIMIT 1
   `;
 
-  const receivedAt = db.prepare(selectQuery).pluck().get(selectParams);
+  const receivedAt = db
+    .prepare(selectQuery, {
+      pluck: true,
+    })
+    .get<number>(selectParams);
   if (receivedAt == null) {
     logger.warn('getMessageReceivedAtForCall: Target call message not found');
+    return undefined;
   }
 
-  return receivedAt ?? null;
+  return receivedAt;
 }
 
 export function markAllCallHistoryRead(
@@ -3960,7 +4064,7 @@ export function markAllCallHistoryRead(
     );
 
     let predicate: QueryFragment;
-    let receivedAt: number | null;
+    let receivedAt: number | undefined;
     if (callHistory.mode === CallMode.Adhoc) {
       // If the target is a call link, there's no associated conversation and messages,
       // and we can only mark call history read based on timestamp.
@@ -4051,7 +4155,7 @@ function getCallHistoryGroupData(
       if (conversationIds != null) {
         strictAssert(conversationIds.length > 0, "can't filter by empty array");
 
-        batchMultiVarQuery(db, conversationIds, ids => {
+        batchMultiVarQuery(db, conversationIds, (ids, persistent) => {
           const idList = sqlJoin(ids.map(id => sqlFragment`${id}`));
 
           const [insertQuery, insertParams] = sql`
@@ -4062,14 +4166,14 @@ function getCallHistoryGroupData(
             WHERE conversations.id IN (${idList});
           `;
 
-          db.prepare(insertQuery).run(insertParams);
+          db.prepare(insertQuery, { persistent }).run(insertParams);
         });
       }
 
       if (callLinkRoomIds != null) {
         strictAssert(callLinkRoomIds.length > 0, "can't filter by empty array");
 
-        batchMultiVarQuery(db, callLinkRoomIds, ids => {
+        batchMultiVarQuery(db, callLinkRoomIds, (ids, persistent) => {
           const idList = sqlJoin(ids.map(id => sqlFragment`(${id})`));
 
           const [insertQuery, insertParams] = sql`
@@ -4078,7 +4182,7 @@ function getCallHistoryGroupData(
             VALUES ${idList};
           `;
 
-          db.prepare(insertQuery).run(insertParams);
+          db.prepare(insertQuery, { persistent }).run(insertParams);
         });
       }
     }
@@ -4225,7 +4329,11 @@ function getCallHistoryGroupData(
     `;
 
     const result = isCount
-      ? db.prepare(query).pluck(true).get(params)
+      ? db
+          .prepare(query, {
+            pluck: true,
+          })
+          .get(params)
       : db.prepare(query).all(params);
 
     if (isUsingTempTable) {
@@ -4360,8 +4468,8 @@ function hasGroupCallHistoryMessage(
   conversationId: string,
   eraId: string
 ): boolean {
-  const exists: number = db
-    .prepare<Query>(
+  const exists = db
+    .prepare(
       `
       SELECT EXISTS(
         SELECT 1 FROM messages
@@ -4370,28 +4478,30 @@ function hasGroupCallHistoryMessage(
         AND json_extract(json, '$.callHistoryDetails.callMode') = 'Group'
         AND json_extract(json, '$.callHistoryDetails.eraId') = $eraId
       );
-      `
+      `,
+      {
+        pluck: true,
+      }
     )
-    .pluck()
-    .get({
+    .get<number>({
       conversationId,
       eraId,
     });
 
-  return exists !== 0;
+  return exists === 1;
 }
 
 function _markCallHistoryMissed(
   db: WritableDB,
   callIds: ReadonlyArray<string>
 ) {
-  batchMultiVarQuery(db, callIds, batch => {
+  batchMultiVarQuery(db, callIds, (batch, persistent) => {
     const [updateQuery, updateParams] = sql`
       UPDATE callsHistory
       SET status = ${sqlConstant(GroupCallStatus.Missed)}
       WHERE callId IN (${sqlJoin(batch)})
     `;
-    return db.prepare(updateQuery).run(updateParams);
+    return db.prepare(updateQuery, { persistent }).run(updateParams);
   });
 }
 
@@ -4418,7 +4528,10 @@ function getRecentStaleRingsAndMarkOlderMissed(
       ORDER BY timestamp DESC
     `;
 
-    const ringingCalls = db.prepare(selectQuery).all(selectParams);
+    const ringingCalls = db.prepare(selectQuery).all<{
+      callId: string;
+      peerId: string;
+    }>(selectParams);
 
     const seen = new Set<string>();
     const [latestCalls, pastCalls] = partition(ringingCalls, result => {
@@ -4550,7 +4663,7 @@ function getMessagesBySentAt(
       ORDER BY messages.received_at DESC, messages.sent_at DESC;
     `;
 
-  const rows = db.prepare(query).all(params);
+  const rows = db.prepare(query).all<MessageTypeUnhydrated>(params);
 
   return rows.map(row => hydrateMessage(row));
 }
@@ -4566,7 +4679,9 @@ function getMessageAfterDate(
     ORDER BY received_at, sent_at
     LIMIT 1;
   `;
-  const rows = db.prepare(query).all(params);
+  const rows: Array<Pick<MessageTypeUnhydrated, 'json'>> = db
+    .prepare(query)
+    .all(params);
   if (rows.length < 1) {
     return null;
   }
@@ -4577,7 +4692,7 @@ function getExpiredMessages(db: ReadableDB): Array<MessageType> {
   const now = Date.now();
 
   const rows: Array<MessageTypeUnhydrated> = db
-    .prepare<Query>(
+    .prepare(
       `
       SELECT ${MESSAGE_COLUMNS.join(', ')}, expiresAt
       FROM messages
@@ -4595,7 +4710,7 @@ function getMessagesUnexpectedlyMissingExpirationStartTimestamp(
   db: ReadableDB
 ): Array<MessageType> {
   const rows: Array<MessageTypeUnhydrated> = db
-    .prepare<EmptyQuery>(
+    .prepare(
       `
       SELECT ${MESSAGE_COLUMNS.join(', ')} FROM messages
       INDEXED BY messages_unexpectedly_missing_expiration_start_timestamp
@@ -4619,15 +4734,17 @@ function getMessagesUnexpectedlyMissingExpirationStartTimestamp(
 
 function getSoonestMessageExpiry(db: ReadableDB): undefined | number {
   // Note: we use `pluck` to only get the first column.
-  const result: null | number = db
-    .prepare<EmptyQuery>(
+  const result = db
+    .prepare(
       `
       SELECT MIN(expiresAt)
       FROM messages;
-      `
+      `,
+      {
+        pluck: true,
+      }
     )
-    .pluck(true)
-    .get();
+    .get<number | null>();
 
   if (result != null && result >= Number.MAX_SAFE_INTEGER) {
     return undefined;
@@ -4640,7 +4757,7 @@ function getNextTapToViewMessageTimestampToAgeOut(
   db: ReadableDB
 ): undefined | number {
   const row = db
-    .prepare<EmptyQuery>(
+    .prepare(
       `
       SELECT ${MESSAGE_COLUMNS.join(', ')} FROM messages
       WHERE
@@ -4651,7 +4768,7 @@ function getNextTapToViewMessageTimestampToAgeOut(
       LIMIT 1;
       `
     )
-    .get();
+    .get<MessageTypeUnhydrated>();
 
   if (!row) {
     return undefined;
@@ -4666,7 +4783,7 @@ function getTapToViewMessagesNeedingErase(
   maxTimestamp: number
 ): Array<MessageType> {
   const rows: Array<MessageTypeUnhydrated> = db
-    .prepare<Query>(
+    .prepare(
       `
       SELECT ${MESSAGE_COLUMNS.join(', ')}
       FROM messages
@@ -4715,8 +4832,7 @@ function saveUnprocessed(db: WritableDB, data: UnprocessedType): string {
     throw new Error('saveUnprocessed: id was falsey');
   }
 
-  prepare(
-    db,
+  db.prepare(
     `
     INSERT OR REPLACE INTO unprocessed (
       id,
@@ -4791,23 +4907,6 @@ function saveUnprocessed(db: WritableDB, data: UnprocessedType): string {
   return id;
 }
 
-function getUnprocessedById(
-  db: ReadableDB,
-  id: string
-): UnprocessedType | undefined {
-  const row = db
-    .prepare<Query>('SELECT * FROM unprocessed WHERE id = $id;')
-    .get({
-      id,
-    });
-
-  return {
-    ...row,
-    urgent: isNumber(row.urgent) ? Boolean(row.urgent) : true,
-    story: Boolean(row.story),
-  };
-}
-
 function getUnprocessedCount(db: ReadableDB): number {
   return getCountFromTable(db, 'unprocessed');
 }
@@ -4816,7 +4915,7 @@ function getAllUnprocessedIds(db: WritableDB): Array<string> {
   return db.transaction(() => {
     // cleanup first
     const { changes: deletedStaleCount } = db
-      .prepare<Query>(
+      .prepare(
         'DELETE FROM unprocessed WHERE receivedAtDate < $messageQueueCutoff'
       )
       .run({
@@ -4831,7 +4930,7 @@ function getAllUnprocessedIds(db: WritableDB): Array<string> {
     }
 
     const { changes: deletedInvalidCount } = db
-      .prepare<Query>(
+      .prepare(
         `
           DELETE FROM unprocessed
           WHERE attempts >= $MAX_UNPROCESSED_ATTEMPTS
@@ -4847,15 +4946,17 @@ function getAllUnprocessedIds(db: WritableDB): Array<string> {
     }
 
     return db
-      .prepare<EmptyQuery>(
+      .prepare(
         `
-          SELECT id
-          FROM unprocessed
-          ORDER BY receivedAtCounter ASC
-        `
+      SELECT id
+      FROM unprocessed
+      ORDER BY receivedAtCounter ASC
+    `,
+        {
+          pluck: true,
+        }
       )
-      .pluck()
-      .all();
+      .all<string>();
   })();
 }
 
@@ -4867,27 +4968,29 @@ function getUnprocessedByIdsAndIncrementAttempts(
     totalIds: ids.length,
   });
 
-  batchMultiVarQuery(db, ids, batch => {
+  batchMultiVarQuery(db, ids, (batch, persistent) => {
     return db
-      .prepare<ArrayQuery>(
+      .prepare(
         `
           UPDATE unprocessed
           SET attempts = attempts + 1
           WHERE id IN (${batch.map(() => '?').join(', ')})
-        `
+        `,
+        { persistent }
       )
       .run(batch);
   });
 
-  return batchMultiVarQuery(db, ids, batch => {
+  return batchMultiVarQuery(db, ids, (batch, persistent) => {
     return db
-      .prepare<ArrayQuery>(
+      .prepare(
         `
           SELECT *
           FROM unprocessed
           WHERE id IN (${batch.map(() => '?').join(', ')})
           ORDER BY receivedAtCounter ASC;
-        `
+        `,
+        { persistent }
       )
       .all(batch)
       .map(row => ({
@@ -4899,18 +5002,23 @@ function getUnprocessedByIdsAndIncrementAttempts(
   });
 }
 
-function removeUnprocesseds(db: WritableDB, ids: ReadonlyArray<string>): void {
-  db.prepare<ArrayQuery>(
+function removeUnprocesseds(
+  db: WritableDB,
+  ids: ReadonlyArray<string>,
+  persistent: boolean
+): void {
+  db.prepare(
     `
     DELETE FROM unprocessed
     WHERE id IN ( ${ids.map(() => '?').join(', ')} );
-    `
+    `,
+    { persistent }
   ).run(ids);
 }
 
 function removeUnprocessed(db: WritableDB, id: string | Array<string>): void {
   if (!Array.isArray(id)) {
-    prepare(db, 'DELETE FROM unprocessed WHERE id = $id;').run({ id });
+    db.prepare('DELETE FROM unprocessed WHERE id = $id;').run({ id });
 
     return;
   }
@@ -4921,22 +5029,24 @@ function removeUnprocessed(db: WritableDB, id: string | Array<string>): void {
     return;
   }
 
-  batchMultiVarQuery(db, id, batch => removeUnprocesseds(db, batch));
+  batchMultiVarQuery(db, id, (batch, persistent) =>
+    removeUnprocesseds(db, batch, persistent)
+  );
 }
 
 function removeAllUnprocessed(db: WritableDB): void {
-  db.prepare<EmptyQuery>('DELETE FROM unprocessed;').run();
+  db.prepare('DELETE FROM unprocessed;').run();
 }
 
 // Attachment Downloads
 
-function getAttachmentDownloadJob(
+function _getAttachmentDownloadJob(
   db: ReadableDB,
   job: Pick<
     AttachmentDownloadJobType,
     'messageId' | 'attachmentType' | 'digest'
   >
-): AttachmentDownloadJobType {
+): AttachmentDownloadJobType | undefined {
   const [query, params] = sql`
     SELECT * FROM attachment_downloads
     WHERE
@@ -4947,7 +5057,17 @@ function getAttachmentDownloadJob(
       digest = ${job.digest};
   `;
 
-  return db.prepare(query).get(params);
+  const row = db.prepare(query).get<AttachmentDownloadJobRow>(params);
+  if (row === undefined) {
+    return undefined;
+  }
+  const { attachmentJson, ...fields } = row;
+  return parseUnknown(attachmentDownloadJobSchema, {
+    ...fields,
+    active: Boolean(row.active),
+    attachment: JSON.parse(attachmentJson),
+    ciphertextSize: row.ciphertextSize || 0,
+  } as unknown);
 }
 
 function removeAllBackupAttachmentDownloadJobs(db: WritableDB): void {
@@ -4961,7 +5081,13 @@ function getSizeOfPendingBackupAttachmentDownloadJobs(db: ReadableDB): number {
   const [query, params] = sql`
     SELECT SUM(ciphertextSize) FROM attachment_downloads
     WHERE source = ${AttachmentDownloadSource.BACKUP_IMPORT};`;
-  return db.prepare(query).pluck().get(params);
+  return (
+    db
+      .prepare(query, {
+        pluck: true,
+      })
+      .get<number>(params) ?? 0
+  );
 }
 
 function getNextAttachmentDownloadJobs(
@@ -4980,7 +5106,7 @@ function getNextAttachmentDownloadJobs(
     maxLastAttemptForPrioritizedMessages?: number;
   }
 ): Array<AttachmentDownloadJobType> {
-  let priorityJobs = [];
+  let priorityJobs = new Array<AttachmentDownloadJobRow>();
 
   const sourceWhereFragment = sources
     ? sqlFragment`
@@ -5018,7 +5144,7 @@ function getNextAttachmentDownloadJobs(
 
   // Next, get any other jobs, sorted by receivedAt
   const numJobsRemaining = limit - priorityJobs.length;
-  let standardJobs = [];
+  let standardJobs: typeof priorityJobs = [];
   if (numJobsRemaining > 0) {
     const [query, params] = sql`
       SELECT * FROM attachment_downloads
@@ -5044,9 +5170,6 @@ function getNextAttachmentDownloadJobs(
           ...row,
           active: Boolean(row.active),
           attachment: jsonToObject(row.attachmentJson),
-          ciphertextSize:
-            row.ciphertextSize ||
-            getAttachmentCiphertextLength(row.attachment.size),
         } as unknown);
       } catch (error) {
         logger.error(
@@ -5122,7 +5245,7 @@ function saveAttachmentDownloadJob(
 }
 
 function resetAttachmentDownloadActive(db: WritableDB): void {
-  db.prepare<EmptyQuery>(
+  db.prepare(
     `
     UPDATE attachment_downloads
     SET active = 0
@@ -5133,7 +5256,7 @@ function resetAttachmentDownloadActive(db: WritableDB): void {
 
 function removeAttachmentDownloadJob(
   db: WritableDB,
-  job: AttachmentDownloadJobType
+  job: Pick<AttachmentDownloadJobRow, 'messageId' | 'attachmentType' | 'digest'>
 ): void {
   const [query, params] = sql`
     DELETE FROM attachment_downloads
@@ -5167,7 +5290,7 @@ function clearAllAttachmentBackupJobs(db: WritableDB): void {
 }
 
 function markAllAttachmentBackupJobsInactive(db: WritableDB): void {
-  db.prepare<EmptyQuery>(
+  db.prepare(
     `
     UPDATE attachment_backup_jobs
     SET active = 0;
@@ -5224,7 +5347,11 @@ function getNextAttachmentBackupJobs(
       type ASC, receivedAt DESC
     LIMIT ${limit}
   `;
-  const rows = db.prepare(query).all(params);
+  const rows = db.prepare(query).all<{
+    mediaName: string;
+    data: string;
+    active: number;
+  }>(params);
   return rows
     .map(row => {
       const parseResult = safeParseUnknown(attachmentBackupJobSchema, {
@@ -5326,7 +5453,7 @@ function createOrUpdateStickerPack(
   }
 
   const row = db
-    .prepare<Query>(
+    .prepare(
       `
       SELECT id
       FROM sticker_packs
@@ -5350,7 +5477,7 @@ function createOrUpdateStickerPack(
   };
 
   if (row) {
-    db.prepare<Query>(
+    db.prepare(
       `
       UPDATE sticker_packs SET
         attemptedStatus = $attemptedStatus,
@@ -5376,17 +5503,19 @@ function createOrUpdateStickerPack(
   // Assign default position when inserting a row
   if (!isNumber(position)) {
     position = db
-      .prepare<EmptyQuery>(
+      .prepare(
         `
-        SELECT IFNULL(MAX(position) + 1, 0)
-        FROM sticker_packs
-        `
+    SELECT IFNULL(MAX(position) + 1, 0)
+    FROM sticker_packs
+    `,
+        {
+          pluck: true,
+        }
       )
-      .pluck()
       .get();
   }
 
-  db.prepare<Query>(
+  db.prepare(
     `
     INSERT INTO sticker_packs (
       attemptedStatus,
@@ -5444,7 +5573,12 @@ function updateStickerPackStatus(
       SELECT status FROM sticker_packs WHERE id IS ${id};
     `;
 
-    const oldStatus = db.prepare(select).pluck().get(selectParams);
+    const oldStatus =
+      db
+        .prepare(select, {
+          pluck: true,
+        })
+        .get<StickerPackRow['status']>(selectParams) ?? null;
 
     const [update, updateParams] = sql`
       UPDATE sticker_packs
@@ -5470,7 +5604,7 @@ function updateStickerPackInfo(
   }: StickerPackInfoType
 ): void {
   if (uninstalledAt) {
-    db.prepare<Query>(
+    db.prepare(
       `
       UPDATE uninstalled_sticker_packs
       SET
@@ -5488,7 +5622,7 @@ function updateStickerPackInfo(
       storageNeedsSync: storageNeedsSync ? 1 : 0,
     });
   } else {
-    db.prepare<Query>(
+    db.prepare(
       `
       UPDATE sticker_packs
       SET
@@ -5510,7 +5644,7 @@ function updateStickerPackInfo(
   }
 }
 function clearAllErrorStickerPackAttempts(db: WritableDB): void {
-  db.prepare<EmptyQuery>(
+  db.prepare(
     `
     UPDATE sticker_packs
     SET downloadAttempts = 0
@@ -5544,7 +5678,7 @@ function createOrUpdateSticker(db: WritableDB, sticker: StickerType): void {
     );
   }
 
-  db.prepare<Query>(
+  db.prepare(
     `
     INSERT OR REPLACE INTO stickers (
       emoji,
@@ -5602,7 +5736,7 @@ function updateStickerLastUsed(
   stickerId: number,
   lastUsed: number
 ): void {
-  db.prepare<Query>(
+  db.prepare(
     `
     UPDATE stickers
     SET lastUsed = $lastUsed
@@ -5613,7 +5747,7 @@ function updateStickerLastUsed(
     packId,
     lastUsed,
   });
-  db.prepare<Query>(
+  db.prepare(
     `
     UPDATE sticker_packs
     SET lastUsed = $lastUsed
@@ -5639,8 +5773,7 @@ function addStickerPackReference(
     );
   }
 
-  prepare(
-    db,
+  db.prepare(
     `
     INSERT OR REPLACE INTO sticker_references (
       messageId,
@@ -5677,7 +5810,7 @@ function deleteStickerPackReference(
     // 4. If it's not installed, then grab all of its sticker paths
     // 5. If it's not installed, then sticker pack (which cascades to all
     //    stickers and references)
-    db.prepare<Query>(
+    db.prepare(
       `
         DELETE FROM sticker_references
         WHERE messageId = $messageId AND packId = $packId;
@@ -5687,27 +5820,30 @@ function deleteStickerPackReference(
       packId,
     });
 
-    const count = db
-      .prepare<Query>(
-        `
-          SELECT count(1) FROM sticker_references
-          WHERE packId = $packId;
+    const count =
+      db
+        .prepare(
           `
-      )
-      .pluck()
-      .get({ packId });
+      SELECT count(1) FROM sticker_references
+      WHERE packId = $packId;
+      `,
+          {
+            pluck: true,
+          }
+        )
+        .get<number>({ packId }) ?? 0;
     if (count > 0) {
       return undefined;
     }
 
-    const packRow: { status: StickerPackStatusType } = db
-      .prepare<Query>(
+    const packRow = db
+      .prepare(
         `
           SELECT status FROM sticker_packs
           WHERE id = $packId;
           `
       )
-      .get({ packId });
+      .get<{ status: StickerPackStatusType }>({ packId });
     if (!packRow) {
       logger.warn('deleteStickerPackReference: did not find referenced pack');
       return undefined;
@@ -5719,7 +5855,7 @@ function deleteStickerPackReference(
     }
 
     const stickerPathRows: Array<{ path: string }> = db
-      .prepare<Query>(
+      .prepare(
         `
           SELECT path FROM stickers
           WHERE packId = $packId;
@@ -5728,7 +5864,7 @@ function deleteStickerPackReference(
       .all({
         packId,
       });
-    db.prepare<Query>(
+    db.prepare(
       `
         DELETE FROM sticker_packs
         WHERE id = $packId;
@@ -5751,7 +5887,9 @@ function getUnresolvedStickerPackReferences(
       WHERE packId IS ${packId} AND isUnresolved IS 1
       RETURNING messageId, stickerId;
     `;
-    const rows = db.prepare(query).all(params);
+    const rows = db
+      .prepare(query)
+      .all<{ messageId: string; stickerId: number }>(params);
 
     return rows.map(({ messageId, stickerId }) => ({
       messageId,
@@ -5779,7 +5917,7 @@ function deleteStickerPack(db: WritableDB, packId: string): Array<string> {
     // 2. Delete sticker pack (which cascades to all stickers and references)
 
     const stickerPathRows: Array<{ path: string }> = db
-      .prepare<Query>(
+      .prepare(
         `
           SELECT path FROM stickers
           WHERE packId = $packId;
@@ -5788,7 +5926,7 @@ function deleteStickerPack(db: WritableDB, packId: string): Array<string> {
       .all({
         packId,
       });
-    db.prepare<Query>(
+    db.prepare(
       `
         DELETE FROM sticker_packs
         WHERE id = $packId;
@@ -5804,17 +5942,20 @@ function getStickerCount(db: ReadableDB): number {
 }
 function getAllStickerPacks(db: ReadableDB): Array<StickerPackType> {
   const rows = db
-    .prepare<EmptyQuery>(
+    .prepare(
       `
       SELECT * FROM sticker_packs
       ORDER BY position ASC, id ASC
       `
     )
-    .all();
+    .all<StickerPackRow>();
 
   return rows.map(row => {
     return {
       ...row,
+      storageNeedsSync: row.storageNeedsSync === 1,
+      stickers: {},
+
       // The columns have STRING type so if they have numeric value, sqlite
       // will return integers.
       author: String(row.author),
@@ -5826,7 +5967,7 @@ function addUninstalledStickerPack(
   db: WritableDB,
   pack: UninstalledStickerPackType
 ): void {
-  db.prepare<Query>(
+  db.prepare(
     `
       INSERT OR REPLACE INTO uninstalled_sticker_packs
       (
@@ -5868,18 +6009,19 @@ function getUninstalledStickerPacks(
   db: ReadableDB
 ): Array<UninstalledStickerPackType> {
   const rows = db
-    .prepare<EmptyQuery>(
-      'SELECT * FROM uninstalled_sticker_packs ORDER BY id ASC'
-    )
-    .all();
+    .prepare('SELECT * FROM uninstalled_sticker_packs ORDER BY id ASC')
+    .all<UninstalledStickerPackRow>();
 
-  return rows || [];
+  return rows.map(row => ({
+    ...row,
+    storageNeedsSync: row.storageNeedsSync === 1,
+  }));
 }
 function getInstalledStickerPacks(db: ReadableDB): Array<StickerPackType> {
   // If sticker pack has a storageID - it is being downloaded and about to be
   // installed so we better sync it back to storage service if asked.
   const rows = db
-    .prepare<EmptyQuery>(
+    .prepare(
       `
       SELECT *
       FROM sticker_packs
@@ -5889,9 +6031,13 @@ function getInstalledStickerPacks(db: ReadableDB): Array<StickerPackType> {
       ORDER BY id ASC
       `
     )
-    .all();
+    .all<StickerPackRow>();
 
-  return rows || [];
+  return rows.map(row => ({
+    ...row,
+    storageNeedsSync: row.storageNeedsSync === 1,
+    stickers: {},
+  }));
 }
 function getStickerPackInfo(
   db: ReadableDB,
@@ -5899,19 +6045,24 @@ function getStickerPackInfo(
 ): StickerPackInfoType | undefined {
   return db.transaction(() => {
     const uninstalled = db
-      .prepare<Query>(
+      .prepare(
         `
         SELECT * FROM uninstalled_sticker_packs
         WHERE id IS $packId
         `
       )
-      .get({ packId });
+      .get<UninstalledStickerPackRow>({ packId });
     if (uninstalled) {
-      return uninstalled as UninstalledStickerPackType;
+      return {
+        ...uninstalled,
+        storageNeedsSync: uninstalled.storageNeedsSync === 1,
+        key: undefined,
+        position: undefined,
+      };
     }
 
     const installed = db
-      .prepare<Query>(
+      .prepare(
         `
         SELECT
           id, key, position, storageID, storageVersion, storageUnknownFields
@@ -5919,9 +6070,13 @@ function getStickerPackInfo(
         WHERE id IS $packId
         `
       )
-      .get({ packId });
+      .get<InstalledStickerPackRow>({ packId });
     if (installed) {
-      return installed as InstalledStickerPackType;
+      return {
+        ...installed,
+        storageNeedsSync: installed.storageNeedsSync === 1,
+        uninstalledAt: undefined,
+      };
     }
 
     return undefined;
@@ -5986,13 +6141,13 @@ function uninstallStickerPack(
 }
 function getAllStickers(db: ReadableDB): Array<StickerType> {
   const rows = db
-    .prepare<EmptyQuery>(
+    .prepare(
       `
       SELECT * FROM stickers
       ORDER BY packId ASC, id ASC
       `
     )
-    .all();
+    .all<StickerRow>();
 
   return (rows || []).map(row => rowToSticker(row));
 }
@@ -6002,7 +6157,7 @@ function getRecentStickers(
 ): Array<StickerType> {
   // Note: we avoid 'IS NOT NULL' here because it does seem to bypass our index
   const rows = db
-    .prepare<Query>(
+    .prepare(
       `
       SELECT stickers.* FROM stickers
       JOIN sticker_packs on stickers.packId = sticker_packs.id
@@ -6011,7 +6166,7 @@ function getRecentStickers(
       LIMIT $limit
       `
     )
-    .all({
+    .all<StickerRow>({
       limit: limit || 24,
     });
 
@@ -6026,7 +6181,7 @@ function updateEmojiUsage(
 ): void {
   db.transaction(() => {
     const rows = db
-      .prepare<Query>(
+      .prepare(
         `
         SELECT * FROM emojis
         WHERE shortName = $shortName;
@@ -6037,7 +6192,7 @@ function updateEmojiUsage(
       });
 
     if (rows) {
-      db.prepare<Query>(
+      db.prepare(
         `
         UPDATE emojis
         SET lastUsage = $timeUsed
@@ -6045,7 +6200,7 @@ function updateEmojiUsage(
         `
       ).run({ shortName, timeUsed });
     } else {
-      db.prepare<Query>(
+      db.prepare(
         `
         INSERT INTO emojis(shortName, lastUsage)
         VALUES ($shortName, $timeUsed);
@@ -6057,7 +6212,7 @@ function updateEmojiUsage(
 
 function getRecentEmojis(db: ReadableDB, limit = 32): Array<EmojiType> {
   const rows = db
-    .prepare<Query>(
+    .prepare(
       `
       SELECT *
       FROM emojis
@@ -6065,41 +6220,52 @@ function getRecentEmojis(db: ReadableDB, limit = 32): Array<EmojiType> {
       LIMIT $limit;
       `
     )
-    .all({ limit });
+    .all<EmojiType>({ limit });
 
   return rows || [];
 }
 
 function getAllBadges(db: ReadableDB): Array<BadgeType> {
-  const [badgeRows, badgeImageFileRows] = db.transaction(() => [
-    db.prepare<EmptyQuery>('SELECT * FROM badges').all(),
-    db.prepare<EmptyQuery>('SELECT * FROM badgeImageFiles').all(),
-  ])();
+  return db.transaction(() => {
+    const badgeRows = db.prepare('SELECT * FROM badges').all<{
+      id: string;
+      category: string;
+      name: string;
+      descriptionTemplate: string;
+    }>();
+    const badgeImageFileRows = db.prepare('SELECT * FROM badgeImageFiles').all<{
+      badgeId: string;
+      order: number;
+      url: string;
+      localPath: string;
+      theme: BadgeImageTheme;
+    }>();
 
-  const badgeImagesByBadge = new Map<
-    string,
-    Array<undefined | BadgeImageType>
-  >();
-  for (const badgeImageFileRow of badgeImageFileRows) {
-    const { badgeId, order, localPath, url, theme } = badgeImageFileRow;
-    const badgeImages = badgeImagesByBadge.get(badgeId) || [];
-    badgeImages[order] = {
-      ...(badgeImages[order] || {}),
-      [parseBadgeImageTheme(theme)]: {
-        localPath: dropNull(localPath),
-        url,
-      },
-    };
-    badgeImagesByBadge.set(badgeId, badgeImages);
-  }
+    const badgeImagesByBadge = new Map<
+      string,
+      Array<undefined | BadgeImageType>
+    >();
+    for (const badgeImageFileRow of badgeImageFileRows) {
+      const { badgeId, order, localPath, url, theme } = badgeImageFileRow;
+      const badgeImages = badgeImagesByBadge.get(badgeId) || [];
+      badgeImages[order] = {
+        ...(badgeImages[order] || {}),
+        [parseBadgeImageTheme(theme)]: {
+          localPath: dropNull(localPath),
+          url,
+        },
+      };
+      badgeImagesByBadge.set(badgeId, badgeImages);
+    }
 
-  return badgeRows.map(badgeRow => ({
-    id: badgeRow.id,
-    category: parseBadgeCategory(badgeRow.category),
-    name: badgeRow.name,
-    descriptionTemplate: badgeRow.descriptionTemplate,
-    images: (badgeImagesByBadge.get(badgeRow.id) || []).filter(isNotNil),
-  }));
+    return badgeRows.map(badgeRow => ({
+      id: badgeRow.id,
+      category: parseBadgeCategory(badgeRow.category),
+      name: badgeRow.name,
+      descriptionTemplate: badgeRow.descriptionTemplate,
+      images: (badgeImagesByBadge.get(badgeRow.id) || []).filter(isNotNil),
+    }));
+  })();
 }
 
 // This should match the logic in the badges Redux reducer.
@@ -6107,8 +6273,7 @@ function updateOrCreateBadges(
   db: WritableDB,
   badges: ReadonlyArray<BadgeType>
 ): void {
-  const insertBadge = prepare<Query>(
-    db,
+  const insertBadge = db.prepare(
     `
     INSERT OR REPLACE INTO badges (
       id,
@@ -6123,12 +6288,10 @@ function updateOrCreateBadges(
     );
     `
   );
-  const getImageFilesForBadge = prepare<Query>(
-    db,
+  const getImageFilesForBadge = db.prepare(
     'SELECT url, localPath FROM badgeImageFiles WHERE badgeId = $badgeId'
   );
-  const insertBadgeImageFile = prepare<Query>(
-    db,
+  const insertBadgeImageFile = db.prepare(
     `
     INSERT INTO badgeImageFiles (
       badgeId,
@@ -6151,7 +6314,10 @@ function updateOrCreateBadges(
       const { id: badgeId } = badge;
 
       const oldLocalPaths = new Map<string, string>();
-      for (const { url, localPath } of getImageFilesForBadge.all({ badgeId })) {
+      for (const { url, localPath } of getImageFilesForBadge.all<{
+        url: string;
+        localPath: string;
+      }>({ badgeId })) {
         if (localPath) {
           oldLocalPaths.set(url, localPath);
         }
@@ -6185,19 +6351,20 @@ function badgeImageFileDownloaded(
   url: string,
   localPath: string
 ): void {
-  prepare<Query>(
-    db,
+  db.prepare(
     'UPDATE badgeImageFiles SET localPath = $localPath WHERE url = $url'
   ).run({ url, localPath });
 }
 
 function getAllBadgeImageFileLocalPaths(db: ReadableDB): Set<string> {
   const localPaths = db
-    .prepare<EmptyQuery>(
-      'SELECT localPath FROM badgeImageFiles WHERE localPath IS NOT NULL'
+    .prepare(
+      'SELECT localPath FROM badgeImageFiles WHERE localPath IS NOT NULL',
+      {
+        pluck: true,
+      }
     )
-    .pluck()
-    .all();
+    .all<string>();
   return new Set(localPaths);
 }
 
@@ -6311,20 +6478,18 @@ function _getAllStoryDistributions(
   db: ReadableDB
 ): Array<StoryDistributionType> {
   const storyDistributions = db
-    .prepare<EmptyQuery>('SELECT * FROM storyDistributions;')
-    .all();
+    .prepare('SELECT * FROM storyDistributions;')
+    .all<StoryDistributionForDatabase>();
 
   return storyDistributions.map(hydrateStoryDistribution);
 }
 function _getAllStoryDistributionMembers(
   db: ReadableDB
 ): Array<StoryDistributionMemberType> {
-  return db
-    .prepare<EmptyQuery>('SELECT * FROM storyDistributionMembers;')
-    .all();
+  return db.prepare('SELECT * FROM storyDistributionMembers;').all();
 }
 function _deleteAllStoryDistributions(db: WritableDB): void {
-  db.prepare<EmptyQuery>('DELETE FROM storyDistributions;').run();
+  db.prepare('DELETE FROM storyDistributions;').run();
 }
 function createNewStoryDistribution(
   db: WritableDB,
@@ -6338,8 +6503,7 @@ function createNewStoryDistribution(
   db.transaction(() => {
     const payload = freezeStoryDistribution(distribution);
 
-    prepare(
-      db,
+    db.prepare(
       `
       INSERT INTO storyDistributions(
         id,
@@ -6369,8 +6533,7 @@ function createNewStoryDistribution(
 
     const { id: listId, members } = distribution;
 
-    const memberInsertStatement = prepare(
-      db,
+    const memberInsertStatement = db.prepare(
       `
       INSERT OR REPLACE INTO storyDistributionMembers (
         listId,
@@ -6407,23 +6570,23 @@ function getStoryDistributionWithMembers(
   db: ReadableDB,
   id: string
 ): StoryDistributionWithMembersType | undefined {
-  const storyDistribution: StoryDistributionForDatabase | undefined = prepare(
-    db,
-    'SELECT * FROM storyDistributions WHERE id = $id;'
-  ).get({
-    id,
-  });
+  const storyDistribution = db
+    .prepare('SELECT * FROM storyDistributions WHERE id = $id;')
+    .get<StoryDistributionForDatabase>({
+      id,
+    });
 
   if (!storyDistribution) {
     return undefined;
   }
 
-  const members = prepare(
-    db,
-    'SELECT * FROM storyDistributionMembers WHERE listId = $id;'
-  ).all({
-    id,
-  });
+  const members = db
+    .prepare(
+      'SELECT serviceId FROM storyDistributionMembers WHERE listId = $id;'
+    )
+    .all<{ serviceId: ServiceIdString }>({
+      id,
+    });
 
   return {
     ...hydrateStoryDistribution(storyDistribution),
@@ -6448,8 +6611,7 @@ function modifyStoryDistribution(
     );
   }
 
-  prepare(
-    db,
+  db.prepare(
     `
     UPDATE storyDistributions
     SET
@@ -6474,8 +6636,7 @@ function modifyStoryDistributionMembers(
     toRemove,
   }: { toAdd: Array<ServiceIdString>; toRemove: Array<ServiceIdString> }
 ): void {
-  const memberInsertStatement = prepare(
-    db,
+  const memberInsertStatement = db.prepare(
     `
     INSERT OR REPLACE INTO storyDistributionMembers (
       listId,
@@ -6497,13 +6658,13 @@ function modifyStoryDistributionMembers(
   batchMultiVarQuery(
     db,
     toRemove,
-    (serviceIds: ReadonlyArray<ServiceIdString>) => {
+    (serviceIds: ReadonlyArray<ServiceIdString>, persistent: boolean) => {
       const serviceIdSet = sqlJoin(serviceIds);
       const [sqlQuery, sqlParams] = sql`
         DELETE FROM storyDistributionMembers
         WHERE listId = ${listId} AND serviceId IN (${serviceIdSet});
       `;
-      db.prepare(sqlQuery).run(sqlParams);
+      db.prepare(sqlQuery, { persistent }).run(sqlParams);
     }
   );
 }
@@ -6528,20 +6689,19 @@ function deleteStoryDistribution(
   db: WritableDB,
   id: StoryDistributionIdString
 ): void {
-  db.prepare<Query>('DELETE FROM storyDistributions WHERE id = $id;').run({
+  db.prepare('DELETE FROM storyDistributions WHERE id = $id;').run({
     id,
   });
 }
 
 function _getAllStoryReads(db: ReadableDB): Array<StoryReadType> {
-  return db.prepare<EmptyQuery>('SELECT * FROM storyReads;').all();
+  return db.prepare('SELECT * FROM storyReads;').all();
 }
 function _deleteAllStoryReads(db: WritableDB): void {
-  db.prepare<EmptyQuery>('DELETE FROM storyReads;').run();
+  db.prepare('DELETE FROM storyReads;').run();
 }
 function addNewStoryRead(db: WritableDB, read: StoryReadType): void {
-  prepare(
-    db,
+  db.prepare(
     `
     INSERT OR REPLACE INTO storyReads(
       authorId,
@@ -6572,7 +6732,7 @@ function getLastStoryReadsForAuthor(
   const limit = initialLimit || 5;
 
   return db
-    .prepare<Query>(
+    .prepare(
       `
       SELECT * FROM storyReads
       WHERE
@@ -6593,15 +6753,19 @@ function countStoryReadsByConversation(
   db: ReadableDB,
   conversationId: string
 ): number {
-  return db
-    .prepare<Query>(
-      `
+  return (
+    db
+      .prepare(
+        `
       SELECT count(1) FROM storyReads
       WHERE conversationId = $conversationId;
-      `
-    )
-    .pluck()
-    .get({ conversationId });
+      `,
+        {
+          pluck: true,
+        }
+      )
+      .get<number>({ conversationId }) ?? 0
+  );
 }
 
 // All data in database
@@ -6692,8 +6856,9 @@ function removeAllConfiguration(db: WritableDB): void {
     );
 
     const itemIds: ReadonlyArray<string> = db
-      .prepare<EmptyQuery>('SELECT id FROM items')
-      .pluck(true)
+      .prepare('SELECT id FROM items', {
+        pluck: true,
+      })
       .all();
 
     const allowedSet = new Set<string>(STORAGE_UI_KEYS);
@@ -6769,7 +6934,7 @@ function getMessagesNeedingUpgrade(
   { maxVersion }: { maxVersion: number }
 ): Array<MessageType> {
   const rows: Array<MessageTypeUnhydrated> = db
-    .prepare<Query>(
+    .prepare(
       `
       SELECT ${MESSAGE_COLUMNS.join(', ')}
       FROM messages
@@ -6796,9 +6961,12 @@ export function incrementMessagesMigrationAttempts(
   db: WritableDB,
   messageIds: ReadonlyArray<string>
 ): void {
-  batchMultiVarQuery(db, messageIds, (batch: ReadonlyArray<string>): void => {
-    const idSet = sqlJoin(batch);
-    const [sqlQuery, sqlParams] = sql`
+  batchMultiVarQuery(
+    db,
+    messageIds,
+    (batch: ReadonlyArray<string>, persistent: boolean): void => {
+      const idSet = sqlJoin(batch);
+      const [sqlQuery, sqlParams] = sql`
         UPDATE
           messages
         SET
@@ -6810,8 +6978,9 @@ export function incrementMessagesMigrationAttempts(
         WHERE
           id IN (${idSet})
       `;
-    db.prepare(sqlQuery).run(sqlParams);
-  });
+      db.prepare(sqlQuery, { persistent }).run(sqlParams);
+    }
+  );
 }
 function getMessageServerGuidsForSpam(
   db: ReadableDB,
@@ -6820,18 +6989,20 @@ function getMessageServerGuidsForSpam(
   // The server's maximum is 3, which is why you see `LIMIT 3` in this query. Note that we
   //   use `pluck` here to only get the first column!
   return db
-    .prepare<Query>(
+    .prepare(
       `
-      SELECT serverGuid
-      FROM messages
-      WHERE conversationId = $conversationId
-      AND type = 'incoming'
-      AND serverGuid IS NOT NULL
-      ORDER BY received_at DESC, sent_at DESC
-      LIMIT 3;
-      `
+  SELECT serverGuid
+  FROM messages
+  WHERE conversationId = $conversationId
+  AND type = 'incoming'
+  AND serverGuid IS NOT NULL
+  ORDER BY received_at DESC, sent_at DESC
+  LIMIT 3;
+  `,
+      {
+        pluck: true,
+      }
     )
-    .pluck(true)
     .all({ conversationId });
 }
 
@@ -7058,27 +7229,33 @@ function pageMessages(
     }
 
     const rowids: Array<number> = writable
-      .prepare<Query>(
+      .prepare(
         `
-          DELETE FROM tmp_${runId}_updated_messages
-          RETURNING rowid
-          ORDER BY received_at ASC, sent_at ASC
-          LIMIT $chunkSize;
-        `
+      DELETE FROM tmp_${runId}_updated_messages
+      RETURNING rowid
+      ORDER BY received_at ASC, sent_at ASC
+      LIMIT $chunkSize;
+    `,
+        {
+          pluck: true,
+        }
       )
-      .pluck()
       .all({ chunkSize });
 
     const messages = batchMultiVarQuery(
       writable,
       rowids,
-      (batch: ReadonlyArray<number>): Array<MessageType> => {
-        const query = writable.prepare<ArrayQuery>(
+      (
+        batch: ReadonlyArray<number>,
+        persistent: boolean
+      ): Array<MessageType> => {
+        const query = writable.prepare(
           `
           SELECT ${MESSAGE_COLUMNS.join(', ')}
           FROM messages
           WHERE rowid IN (${Array(batch.length).fill('?').join(',')});
-          `
+          `,
+          { persistent }
         );
         const rows: Array<MessageTypeUnhydrated> = query.all(batch);
         return rows.map(row => hydrateMessage(row));
@@ -7139,7 +7316,7 @@ function getKnownConversationAttachments(db: ReadableDB): Array<string> {
       `${conversationTotal}`
   );
 
-  const fetchConversations = db.prepare<Query>(
+  const fetchConversations = db.prepare(
     `
       SELECT json FROM conversations
       WHERE id > $id
@@ -7149,7 +7326,7 @@ function getKnownConversationAttachments(db: ReadableDB): Array<string> {
   );
 
   while (!complete) {
-    const rows = fetchConversations.all({
+    const rows = fetchConversations.all<{ json: string }>({
       id,
       chunkSize,
     });
@@ -7194,7 +7371,7 @@ function removeKnownStickers(
 
   while (!complete) {
     const rows: Array<{ rowid: number; path: string }> = db
-      .prepare<Query>(
+      .prepare(
         `
         SELECT rowid, path FROM stickers
         WHERE rowid > $rowid
@@ -7247,7 +7424,7 @@ function removeKnownDraftAttachments(
 
   while (!complete) {
     const rows: JSONRows = db
-      .prepare<Query>(
+      .prepare(
         `
         SELECT json FROM conversations
         WHERE id > $id
@@ -7290,7 +7467,7 @@ export function getJobsInQueue(
   queueType: string
 ): Array<StoredJob> {
   return db
-    .prepare<Query>(
+    .prepare(
       `
       SELECT id, timestamp, data
       FROM jobs
@@ -7298,7 +7475,7 @@ export function getJobsInQueue(
       ORDER BY timestamp;
       `
     )
-    .all({ queueType })
+    .all<{ id: string; timestamp: number; data: string }>({ queueType })
     .map(row => ({
       id: row.id,
       queueType,
@@ -7308,7 +7485,7 @@ export function getJobsInQueue(
 }
 
 export function insertJob(db: WritableDB, job: Readonly<StoredJob>): void {
-  db.prepare<Query>(
+  db.prepare(
     `
       INSERT INTO jobs
       (id, queueType, timestamp, data)
@@ -7324,40 +7501,46 @@ export function insertJob(db: WritableDB, job: Readonly<StoredJob>): void {
 }
 
 function deleteJob(db: WritableDB, id: string): void {
-  db.prepare<Query>('DELETE FROM jobs WHERE id = $id').run({ id });
+  db.prepare('DELETE FROM jobs WHERE id = $id').run({ id });
 }
 
 function wasGroupCallRingPreviouslyCanceled(
   db: ReadableDB,
   ringId: bigint
 ): boolean {
-  return db
-    .prepare<Query>(
-      `
-      SELECT EXISTS (
-        SELECT 1 FROM groupCallRingCancellations
-        WHERE ringId = $ringId
-        AND createdAt >= $ringsOlderThanThisAreIgnored
-      );
-      `
-    )
-    .pluck()
-    .get({
-      ringId,
-      ringsOlderThanThisAreIgnored: Date.now() - MAX_GROUP_CALL_RING_AGE,
-    });
+  return (
+    db
+      .prepare(
+        `
+  SELECT EXISTS (
+    SELECT 1 FROM groupCallRingCancellations
+    WHERE ringId = $ringId
+    AND createdAt >= $ringsOlderThanThisAreIgnored
+  );
+  `,
+        {
+          pluck: true,
+          bigint: true,
+        }
+      )
+      .get<number>({
+        ringId,
+        ringsOlderThanThisAreIgnored: Date.now() - MAX_GROUP_CALL_RING_AGE,
+      }) === 1
+  );
 }
 
 function processGroupCallRingCancellation(
   db: WritableDB,
   ringId: bigint
 ): void {
-  db.prepare<Query>(
+  db.prepare(
     `
     INSERT INTO groupCallRingCancellations (ringId, createdAt)
     VALUES ($ringId, $createdAt)
     ON CONFLICT (ringId) DO NOTHING;
-    `
+    `,
+    { bigint: true }
   ).run({ ringId, createdAt: Date.now() });
 }
 
@@ -7366,7 +7549,7 @@ function processGroupCallRingCancellation(
 const MAX_GROUP_CALL_RING_AGE = 30 * durations.MINUTE;
 
 function cleanExpiredGroupCallRingCancellations(db: WritableDB): void {
-  db.prepare<Query>(
+  db.prepare(
     `
     DELETE FROM groupCallRingCancellations
     WHERE createdAt < $expiredRingTime;
@@ -7378,18 +7561,20 @@ function cleanExpiredGroupCallRingCancellations(db: WritableDB): void {
 
 function getMaxMessageCounter(db: ReadableDB): number | undefined {
   return db
-    .prepare<EmptyQuery>(
+    .prepare(
       `
-    SELECT MAX(counter)
-    FROM
-      (
-        SELECT MAX(received_at) AS counter FROM messages
-        UNION
-        SELECT MAX(timestamp) AS counter FROM unprocessed
-      )
-    `
+SELECT MAX(counter)
+FROM
+  (
+    SELECT MAX(received_at) AS counter FROM messages
+    UNION
+    SELECT MAX(timestamp) AS counter FROM unprocessed
+  )
+`,
+      {
+        pluck: true,
+      }
     )
-    .pluck()
     .get();
 }
 
@@ -7411,7 +7596,7 @@ function updateAllConversationColors(
     value: CustomColorType;
   }
 ): void {
-  db.prepare<Query>(
+  db.prepare(
     `
     UPDATE conversations
     SET json = JSON_PATCH(json, $patch);
@@ -7458,7 +7643,7 @@ function saveEditedMessages(
           ${conversationId},
           ${messageId},
           ${sentAt},
-          ${readStatus}
+          ${readStatus ?? null}
         );
       `;
 
@@ -7480,7 +7665,7 @@ function _getAllEditedMessages(
   db: ReadableDB
 ): Array<{ messageId: string; sentAt: number }> {
   return db
-    .prepare<Query>(
+    .prepare(
       `
       SELECT * FROM edited_messages;
       `
@@ -7518,10 +7703,12 @@ function getUnreadEditedMessagesAndMarkRead(
       ORDER BY messages.received_at DESC, messages.sent_at DESC;
     `;
 
-    const rows = db.prepare(selectQuery).all(selectParams);
+    const rows = db
+      .prepare(selectQuery)
+      .all<MessageTypeUnhydrated>(selectParams);
 
     if (rows.length) {
-      const newestSentAt = rows[0].sentAt;
+      const newestSentAt = rows[0].sent_at;
 
       const [updateStatusQuery, updateStatusParams] = sql`
         UPDATE edited_messages
@@ -7539,18 +7726,21 @@ function getUnreadEditedMessagesAndMarkRead(
     return rows.map(row => {
       const json = hydrateMessage(row);
       return {
-        originalReadStatus: row.readStatus,
+        originalReadStatus: row.readStatus ?? undefined,
         readStatus: ReadStatus.Read,
         seenStatus: SeenStatus.Seen,
         ...pick(json, [
+          'conversationId',
           'expirationStartTimestamp',
           'id',
+          'received_at',
           'sent_at',
           'source',
           'sourceServiceId',
+          'timestamp',
           'type',
         ]),
-      };
+      } satisfies MessageType & { originalReadStatus: ReadStatus | undefined };
     });
   })();
 }

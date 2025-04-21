@@ -26,8 +26,6 @@ import { AvatarColors } from '../types/Colors';
 import { generateAci } from '../types/ServiceId';
 import { getDefaultConversation } from '../test-both/helpers/getDefaultConversation';
 import { fakeGetGroupCallVideoFrameSource } from '../test-both/helpers/fakeGetGroupCallVideoFrameSource';
-import { setupI18n } from '../util/setupI18n';
-import enMessages from '../../_locales/en/messages.json';
 import { StorySendMode } from '../types/Stories';
 import {
   FAKE_CALL_LINK,
@@ -37,7 +35,7 @@ import {
 import { allRemoteParticipants } from './CallScreen.stories';
 import { getPlaceholderContact } from '../state/selectors/conversations';
 
-const i18n = setupI18n('en', enMessages);
+const { i18n } = window.SignalContext;
 
 const getConversation = () =>
   getDefaultConversation({
@@ -81,6 +79,7 @@ const getCommonActiveCallData = () => ({
   viewMode: CallViewMode.Paginated,
   outgoingRing: true,
   pip: false,
+  selfViewExpanded: false,
   settingsDialogOpen: false,
   showParticipantsList: false,
 });
@@ -147,6 +146,7 @@ const createProps = (storyProps: Partial<PropsType> = {}): PropsType => ({
   toggleScreenRecordingPermissionsDialog: action(
     'toggle-screen-recording-permissions-dialog'
   ),
+  toggleSelfViewExpanded: action('toggle-self-view-expanded'),
   toggleSettings: action('toggle-settings'),
   pauseVoiceNotePlayer: action('pause-audio-player'),
 });
@@ -181,6 +181,7 @@ const getActiveCallForCallLink = (
     pendingParticipants: overrideProps.pendingParticipants ?? [],
     raisedHands: new Set<number>(),
     remoteAudioLevels: new Map<number, number>(),
+    selfViewExpanded: false,
     suggestLowerHand: false,
   };
 };
@@ -204,6 +205,9 @@ export function OngoingDirectCall(): JSX.Element {
           callMode: CallMode.Direct,
           callState: CallState.Accepted,
           peekedParticipants: [],
+          remoteAudioLevel: 0,
+          hasRemoteAudio: true,
+          hasRemoteVideo: true,
           remoteParticipants: [
             { hasRemoteVideo: true, presenting: false, title: 'Remy' },
           ],
@@ -291,6 +295,9 @@ export function CallRequestNeeded(): JSX.Element {
           callMode: CallMode.Direct,
           callState: CallState.Accepted,
           peekedParticipants: [],
+          remoteAudioLevel: 0,
+          hasRemoteAudio: true,
+          hasRemoteVideo: true,
           remoteParticipants: [
             { hasRemoteVideo: true, presenting: false, title: 'Mike' },
           ],

@@ -38,6 +38,9 @@
   "icu:Preferences__sent-media-quality": {
     "messageformat": "Якість медіафайлів, які ви надсилаєте"
   },
+  "icu:Preferences__sent-media-quality__description": {
+    "messageformat": "Надсилання медіафайлів високої якості споживатиме більше трафіку"
+  },
   "icu:sentMediaQualityStandard": {
     "messageformat": "Стандартна"
   },
@@ -68,6 +71,12 @@
   "icu:unknownGroup": {
     "messageformat": "Невідома група"
   },
+  "icu:cantOpenSignalError": {
+    "messageformat": "Не вдається відкрити Signal"
+  },
+  "icu:cantOpenSignalError__detail": {
+    "messageformat": "Дотримуйтесь інструкцій з відновлення на сторінці центру підтримки або зв'яжіться зі службою підтримки Signal, щоб допомогти розв'язати цю проблему.\n\nЯкщо вам потрібно використати Signal просто зараз, ви можете видалити свої дані й наново зв'язати комп'ютер з основним пристроєм. У вас буде змога перенести історію повідомлень з телефона."
+  },
   "icu:databaseError": {
     "messageformat": "Помилка бази даних"
   },
@@ -78,10 +87,10 @@
     "messageformat": "Видалити дані і перезапустити"
   },
   "icu:databaseError__deleteDataConfirmation": {
-    "messageformat": "Видалити всі дані назавжди?"
+    "messageformat": "Остаточне видалення всіх даних"
   },
   "icu:databaseError__deleteDataConfirmation__detail": {
-    "messageformat": "Усю історію повідомлень і медіафайли буде назавжди видалено з цього пристрою. Ви зможете використовувати Signal на цьому пристрої після того, як знову його прив'яжете. Ця дія не видалить дані з вашого телефона."
+    "messageformat": "Усю історію повідомлень і медіафайли буде остаточно видалено з цього пристрою. Дані на вашому телефоні не зазнають жодних змін.\n\nВи зможете використовувати Signal на цьому пристрої, коли знову його зв'яжете. У вас буде змога перенести історію повідомлень з телефона."
   },
   "icu:databaseError__startOldVersion": {
     "messageformat": "Версія вашої бази даних не відповідає цій версії Signal. Переконайтеся, що відкриваєте на комп'ютері останню версію Signal."
@@ -214,9 +223,6 @@
   },
   "icu:optimizingApplication": {
     "messageformat": "Оптимізація застосунку…"
-  },
-  "icu:migratingToSQLCipher": {
-    "messageformat": "Оптимізація повідомлень… {status} завершено."
   },
   "icu:archivedConversations": {
     "messageformat": "Архівні чати"
@@ -407,9 +413,6 @@
   "icu:unreadMessages": {
     "messageformat": "{count, plural, one {{count,number} непрочитане повідомлення} few {{count,number} непрочитані повідомлення} many {{count,number} непрочитаних повідомлень} other {{count,number} непрочитаного повідомлення}}"
   },
-  "icu:messageHistoryUnsynced": {
-    "messageformat": "З міркувань безпеки історія чатів не переноситься на нові зв'язані пристрої."
-  },
   "icu:youMarkedAsVerified": {
     "messageformat": "Ви позначили, що код безпеки для чатів з користувачем {name} перевірено"
   },
@@ -588,7 +591,7 @@
     "messageformat": "Failed to send message with endorsements"
   },
   "icu:Toast--InvalidStorageServiceHeaders": {
-    "messageformat": "Received invalid response from storage service. Please share your logs."
+    "messageformat": "Неприйнятна відповідь від сервера. Будь ласка, надішліть нам журнал налагодження."
   },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
@@ -706,9 +709,6 @@
   },
   "icu:noSearchResultsOnlyUnreadFilter": {
     "messageformat": "Непрочитаних чатів немає"
-  },
-  "icu:noSearchResults--sms-only": {
-    "messageformat": "Контакти з SMS/MMS недоступні в Signal Desktop."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "Немає результатів для «{searchTerm}» у {conversationName}"
@@ -1145,9 +1145,6 @@
   "icu:mediaNotAvailable": {
     "messageformat": "Цей медіафайл недоступний"
   },
-  "icu:mediaNotAvailable--short": {
-    "messageformat": "Медіафайл недоступний"
-  },
   "icu:attachmentNoLongerAvailable__learnMore": {
     "messageformat": "Докладніше"
   },
@@ -1162,6 +1159,12 @@
   },
   "icu:attachmentNotAvailable__voice": {
     "messageformat": "Голосове повідомлення недоступне"
+  },
+  "icu:attachmentNotAvailable__tapToView": {
+    "messageformat": "Одноразовий медіафайл недоступний"
+  },
+  "icu:attachmentNotAvailable__tapToViewCannotDownload": {
+    "messageformat": "Одноразовий медіафайл не вдалося завантажити"
   },
   "icu:AttachmentNotAvailableModal__title--file": {
     "messageformat": "Файл недоступний"
@@ -1192,6 +1195,21 @@
   },
   "icu:AttachmentNotAvailableModal__body--voice-message": {
     "messageformat": "Коли ви зв'язали цей пристрій, голосове повідомлення не було перенесено з вашого телефону. Файли й медіафайли, надіслані чи отримані понад 45 днів тому, не буде синхронізовано після зв'язування нового пристрою."
+  },
+  "icu:TapToViewNotAvailableModal__body--expired": {
+    "messageformat": "Цей одноразовий медіафайл уже неможливо завантажити. {name} має надіслати його ще раз."
+  },
+  "icu:TapToViewNotAvailableModal__body--error": {
+    "messageformat": "Не вдалося завантажити одноразовий медіафайл. {name} має надіслати його ще раз."
+  },
+  "icu:BackfillFailureModal__title": {
+    "messageformat": "Неможливо завантажити медіафайли"
+  },
+  "icu:BackfillFailureModal__body--timeout": {
+    "messageformat": "Перевірте з'єднання з інтернетом на комп'ютері й телефоні. Відкрийте Signal на телефоні, а потім знову спробуйте завантажити дані."
+  },
+  "icu:BackfillFailureModal__body--not-found": {
+    "messageformat": "Ці медіафайли більше не доступні на телефоні; їх не можна завантажити."
   },
   "icu:save": {
     "messageformat": "Зберегти"
@@ -1244,12 +1262,6 @@
   "icu:Install__support-link": {
     "messageformat": "Потрібна допомога?"
   },
-  "icu:Install__choose-device-name__description": {
-    "messageformat": "Ви побачите цю назву у «Зв'язаних пристроях» на телефоні"
-  },
-  "icu:Install__choose-device-name__placeholder": {
-    "messageformat": "Мій комп'ютер"
-  },
   "icu:Preferences--phone-number": {
     "messageformat": "Номер телефону"
   },
@@ -1259,11 +1271,8 @@
   "icu:Preferences--device-name__description": {
     "messageformat": "Щоб змінити назву цього пристрою, відкрийте Signal на телефоні й перейдіть у налаштування > Зв’язані пристрої"
   },
-  "icu:chooseDeviceName": {
-    "messageformat": "Оберіть назву пристрою"
-  },
-  "icu:finishLinkingPhone": {
-    "messageformat": "Завершити зв'язування з телефоном"
+  "icu:Preferences__EmojiSkinToneDefaultSetting__Label": {
+    "messageformat": "Колір шкіри для емоджі"
   },
   "icu:initialSync": {
     "messageformat": "Синхронізація контактів і груп"
@@ -1356,7 +1365,7 @@
     "messageformat": "Чекайте на дозвіл…"
   },
   "icu:CallingLobbyJoinButton--join": {
-    "messageformat": "Приєднатись"
+    "messageformat": "Приєднатися"
   },
   "icu:CallingLobbyJoinButton--start": {
     "messageformat": "Почати"
@@ -1814,6 +1823,18 @@
   "icu:ConversationDetails__HeaderButton--Message": {
     "messageformat": "Повідомлення"
   },
+  "icu:ConversationDetails--help-section": {
+    "messageformat": "Допомога"
+  },
+  "icu:ConversationDetails--support-center": {
+    "messageformat": "Центр підтримки"
+  },
+  "icu:ConversationDetails--contact-us": {
+    "messageformat": "Зв'яжіться з нами"
+  },
+  "icu:ConversationDetails--donate": {
+    "messageformat": "Підтримати Signal"
+  },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "Переглянути код безпеки"
   },
@@ -1873,6 +1894,9 @@
   },
   "icu:Toast--failed-to-fetch-phone-number": {
     "messageformat": "Не вдалося знайти номер телефону. Перевірте з'єднання й спробуйте ще раз."
+  },
+  "icu:Toast--download-failed": {
+    "messageformat": "Помилка завантаження"
   },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "Редагувати повідомлення можна лише протягом 24 годин з моменту надсилання."
@@ -2252,6 +2276,204 @@
   "icu:EmojiPicker__button--flag": {
     "messageformat": "Прапори"
   },
+  "icu:FunPicker__Tab--Emojis": {
+    "messageformat": "Емоджі"
+  },
+  "icu:FunPicker__Tab--Stickers": {
+    "messageformat": "Стікери"
+  },
+  "icu:FunPicker__Tab--Gifs": {
+    "messageformat": "GIF"
+  },
+  "icu:FunPanelEmojis__SearchLabel": {
+    "messageformat": "Пошук емоджі"
+  },
+  "icu:FunPanelEmojis__SearchPlaceholder": {
+    "messageformat": "Пошук емоджі"
+  },
+  "icu:FunPanelEmojis__SubNavLabel": {
+    "messageformat": "Категорії емоджі"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Recents": {
+    "messageformat": "Недавні"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--SmileysAndPeople": {
+    "messageformat": "Смайлики і люди"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--AnimalsAndNature": {
+    "messageformat": "Тварини і природа"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--FoodAndDrink": {
+    "messageformat": "Їжа і напої"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Activities": {
+    "messageformat": "Заняття"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--TravelAndPlaces": {
+    "messageformat": "Подорожі і місцевості"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Objects": {
+    "messageformat": "Предмети"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Symbols": {
+    "messageformat": "Символи"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Flags": {
+    "messageformat": "Прапори"
+  },
+  "icu:FunPanelEmojis__SearchResults__EmptyHeading": {
+    "messageformat": "Емоджі не знайдено"
+  },
+  "icu:FunPanelEmojis__ChangeSkinToneButtonLabel": {
+    "messageformat": "Обрати інший колір шкіри"
+  },
+  "icu:FunPanelEmojis__SkinTonePicker__ChooseDefaultLabel": {
+    "messageformat": "Установіть стандартний колір шкіри"
+  },
+  "icu:FunPanelEmojis__SectionTitle--SearchResults": {
+    "messageformat": "Результати пошуку"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Recents": {
+    "messageformat": "Недавні"
+  },
+  "icu:FunPanelEmojis__SectionTitle--SmileysAndPeople": {
+    "messageformat": "Смайлики і люди"
+  },
+  "icu:FunPanelEmojis__SectionTitle--AnimalsAndNature": {
+    "messageformat": "Тварини і природа"
+  },
+  "icu:FunPanelEmojis__SectionTitle--FoodAndDrink": {
+    "messageformat": "Їжа і напої"
+  },
+  "icu:FunPanelEmojis__SectionTitle--TravelAndPlaces": {
+    "messageformat": "Подорожі і місцевості"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Activities": {
+    "messageformat": "Заняття"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Objects": {
+    "messageformat": "Предмети"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Symbols": {
+    "messageformat": "Символи"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Flags": {
+    "messageformat": "Прапори"
+  },
+  "icu:FunPanelEmojis__CustomizeReactionsButtonLabel": {
+    "messageformat": "Customize reactions"
+  },
+  "icu:FunPanelStickers__SearchLabel": {
+    "messageformat": "Пошук стікерів"
+  },
+  "icu:FunPanelStickers__SearchPlaceholder": {
+    "messageformat": "Пошук стікерів"
+  },
+  "icu:FunPanelSticker__SubNavLabel": {
+    "messageformat": "Набори стікерів"
+  },
+  "icu:FunPanelStickers__SubNavCategoryLabel--Recents": {
+    "messageformat": "Недавні"
+  },
+  "icu:FunPanelStickers__SectionTitle--SearchResults": {
+    "messageformat": "Результати пошуку"
+  },
+  "icu:FunPanelStickers__SectionTitle--Recents": {
+    "messageformat": "Недавні"
+  },
+  "icu:FunPanelStickers__SectionTitle--Featured": {
+    "messageformat": "Featured"
+  },
+  "icu:FunPanelStickers__SearchResults__EmptyHeading": {
+    "messageformat": "Cтікерів не знайдено"
+  },
+  "icu:FunPanelStickers__LightboxDialog__Label": {
+    "messageformat": "Попередній вигляд стікера"
+  },
+  "icu:FunPanelGifs__SearchLabel--Tenor": {
+    "messageformat": "Пошук GIF-зображень у Tenor"
+  },
+  "icu:FunPanelGifs__SearchPlaceholder--Tenor": {
+    "messageformat": "Пошук у Tenor"
+  },
+  "icu:FunPanelGifs__SubNavLabel": {
+    "messageformat": "Категорії GIF-зображень"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Recents": {
+    "messageformat": "Недавні"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Trending": {
+    "messageformat": "Популярні"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Celebrate": {
+    "messageformat": "Свято"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Love": {
+    "messageformat": "Кохання"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--ThumbsUp": {
+    "messageformat": "Усе супер"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Surprised": {
+    "messageformat": "Подив"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Excited": {
+    "messageformat": "Радість"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Sad": {
+    "messageformat": "Сум"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Angry": {
+    "messageformat": "Злість"
+  },
+  "icu:FunPanelGifs__SearchResults__LoadingLabel": {
+    "messageformat": "Завантаження GIF-зображень"
+  },
+  "icu:FunPanelGifs__SearchResults__ErrorHeading": {
+    "messageformat": "Не вдалося завантажити GIF-зображення. Перевірте з'єднання з мережею і спробуйте ще раз"
+  },
+  "icu:FunPanelGifs__SearchResults__ErrorRetryButton": {
+    "messageformat": "Повторити"
+  },
+  "icu:FunPanelGifs__SearchResults__EmptyHeading": {
+    "messageformat": "GIF-зображень не знайдено"
+  },
+  "icu:FunPanelGifs__LightboxDialog__Label": {
+    "messageformat": "Попередній вигляд GIF"
+  },
+  "icu:FunSearch__ClearButtonLabel": {
+    "messageformat": "Очистити пошук"
+  },
+  "icu:FunSkinTones__List": {
+    "messageformat": "Колір шкіри"
+  },
+  "icu:FunSkinTones__ListItem--None": {
+    "messageformat": "Не завантажувати"
+  },
+  "icu:FunSkinTones__ListItem--Light": {
+    "messageformat": "Світлий колір шкіри"
+  },
+  "icu:FunSkinTones__ListItem--MediumLight": {
+    "messageformat": "Світлуватий колір шкіри"
+  },
+  "icu:FunSkinTones__ListItem--Medium": {
+    "messageformat": "Звичайний колір шкіри"
+  },
+  "icu:FunSkinTones__ListItem--MediumDark": {
+    "messageformat": "Темнуватий колір шкіри"
+  },
+  "icu:FunSkinTones__ListItem--Dark": {
+    "messageformat": "Темний колір шкіри"
+  },
+  "icu:FunButton__Label--FunPicker": {
+    "messageformat": "Додати емоджі, стікер або GIF-зображення"
+  },
+  "icu:FunButton__Label--EmojiPicker": {
+    "messageformat": "Додати емоджі"
+  },
+  "icu:FunButton__Label--StickerPicker": {
+    "messageformat": "Додати стікер"
+  },
   "icu:confirmation-dialog--Cancel": {
     "messageformat": "Закрити"
   },
@@ -2288,11 +2510,11 @@
   "icu:Message--update-signal": {
     "messageformat": "Оновити Signal"
   },
-  "icu:Message--tap-to-view-expired": {
+  "icu:Message--tap-to-view--viewed": {
     "messageformat": "Переглянуто"
   },
-  "icu:Message--tap-to-view--outgoing": {
-    "messageformat": "Медіафайл"
+  "icu:Message--tap-to-view--media": {
+    "messageformat": "Одноразовий медіафайл"
   },
   "icu:Message--tap-to-view--incoming--expired-toast": {
     "messageformat": "Ви вже переглянули це повідомлення."
@@ -2300,11 +2522,14 @@
   "icu:Message--tap-to-view--outgoing--expired-toast": {
     "messageformat": "Одноразові повідомлення не зберігаються у вашій історії чатів."
   },
-  "icu:Message--tap-to-view--incoming": {
-    "messageformat": "Переглянути фото"
+  "icu:Message--tap-to-view--video": {
+    "messageformat": "Одноразове відео"
   },
-  "icu:Message--tap-to-view--incoming-video": {
-    "messageformat": "Переглянути відео"
+  "icu:Message--tap-to-view--photo": {
+    "messageformat": "Одноразове фото"
+  },
+  "icu:Message--tap-to-view--helper-text": {
+    "messageformat": "Натисніть, щоб переглянути"
   },
   "icu:Conversation--getDraftPreview--attachment": {
     "messageformat": "(вкладення)"
@@ -2498,6 +2723,9 @@
   "icu:Keyboard--toggle-video": {
     "messageformat": "Увімкнути / Вимкнути відео"
   },
+  "icu:Keyboard--toggle-preview": {
+    "messageformat": "Збільшити / зменшити попередній вигляд"
+  },
   "icu:Keyboard--accept-video-call": {
     "messageformat": "Відповісти на виклик з відео (тільки для відеовикликів)"
   },
@@ -2560,6 +2788,12 @@
   },
   "icu:SafetyTipsModal__Description": {
     "messageformat": "Будьте обережні, приймаючи запити на обмін повідомленнями від незнайомих людей. На що варто звернути увагу:"
+  },
+  "icu:SafetyTipsModal__TipTitle--Fake": {
+    "messageformat": "Фейкові акаунти під чужими назвами"
+  },
+  "icu:SafetyTipsModal__TipDescription--Fake": {
+    "messageformat": "Представники Signal ніколи не питатимуть у вас ні коду для реєстрації, ні PIN-коду. Зважайте на те, що вам можуть надходити запити від фейкових користувачів. Власники акаунтів самі обирають назви своїх профілів, і ми їх не перевіряємо."
   },
   "icu:SafetyTipsModal__TipTitle--Crypto": {
     "messageformat": "Шахрайство з криптовалютою або грошима"
@@ -2693,6 +2927,12 @@
   "icu:MessageRequests--accept": {
     "messageformat": "Прийняти"
   },
+  "icu:MessageRequests--accept-confirm-title": {
+    "messageformat": "Прийняти запит?"
+  },
+  "icu:MessageRequests--accept-confirm-body": {
+    "messageformat": "Уважно перевіряйте, від кого надходять запити. Власники акаунтів самі обирають назви своїх профілів, і ми їх не перевіряємо."
+  },
   "icu:MessageRequests--continue": {
     "messageformat": "Продовжити"
   },
@@ -2704,6 +2944,21 @@
   },
   "icu:ConversationHero--members": {
     "messageformat": "{count, plural, one {{count,number} учасник} few {{count,number} учасники} many {{count,number} учасників} other {{count,number} учасника}}"
+  },
+  "icu:ConversationHero--review-carefully": {
+    "messageformat": "Уважно перевірте цей запит"
+  },
+  "icu:ConversationHero--group-names": {
+    "messageformat": "<clickable>Назви груп</clickable> не проходять перевірку"
+  },
+  "icu:ConversationHero--profile-names": {
+    "messageformat": "<clickable>Назви профілів</clickable> не проходять перевірку"
+  },
+  "icu:ConversationHero--signal-official-chat": {
+    "messageformat": "Це офіційний і єдиний чат від Signal"
+  },
+  "icu:ConversationHero--release-notes": {
+    "messageformat": "Будьте в курсі новин і впроваджених змін."
   },
   "icu:member-of-1-group": {
     "messageformat": "Учасник «{group}»"
@@ -2840,6 +3095,12 @@
   "icu:CallControls__JoinLeaveButton--hangup-group": {
     "messageformat": "Покинути"
   },
+  "icu:CallControls__JoinLeaveButton--hangup-1-1-tooltip": {
+    "messageformat": "End call"
+  },
+  "icu:CallControls__JoinLeaveButton--hangup-group-tooltip": {
+    "messageformat": "Leave call"
+  },
   "icu:CallControls__MutedToast--muted": {
     "messageformat": "Мікрофон вимкнено"
   },
@@ -2917,6 +3178,12 @@
   },
   "icu:calling__pip--off": {
     "messageformat": "Виклик на весь екран"
+  },
+  "icu:calling__preview--maximize": {
+    "messageformat": "Збільшити попередній вигляд"
+  },
+  "icu:calling__preview--minimize": {
+    "messageformat": "Зменшити попередній вигляд"
   },
   "icu:calling__change-view": {
     "messageformat": "Змінити вигляд"
@@ -3698,18 +3965,6 @@
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "Перенести ще раз"
   },
-  "icu:BackupImportScreen__skip": {
-    "messageformat": "Пропустити"
-  },
-  "icu:BackupImportScreen__skip-confirmation__title": {
-    "messageformat": "Не переносити повідомлення?"
-  },
-  "icu:BackupImportScreen__skip-confirmation__body": {
-    "messageformat": "Якщо пропустити перенесення, у вас не буде доступу до повідомлень і медіафайлів на цьому пристрої. Перенести повідомлення можна й пізніше: Налаштування > Чати > Перенести повідомлення."
-  },
-  "icu:BackupImportScreen__skip-confirmation__cancel": {
-    "messageformat": "Закрити"
-  },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "Відновлення медіафайлів"
   },
@@ -3752,6 +4007,12 @@
   "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
     "messageformat": "Скасувати передачу"
   },
+  "icu:CriticalIdlePrimaryDeviceModal__title": {
+    "messageformat": "Account action required"
+  },
+  "icu:CriticalIdlePrimaryDeviceModal__description": {
+    "messageformat": "You must open Signal on your phone to continue using this account. If you do not open Signal on your phone, your account will be deleted soon. <learnMoreLink>Learn more</learnMoreLink>"
+  },
   "icu:CompositionArea--expand": {
     "messageformat": "Розкрити"
   },
@@ -3772,6 +4033,18 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "Надіслати відредаговане повідомлення"
+  },
+  "icu:CompositionArea__FunButtonLabel": {
+    "messageformat": "Додати емоджі, стікер або GIF-зображення"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__Title": {
+    "messageformat": "Замінити вкладення?"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__Body": {
+    "messageformat": "Це GIF-зображення замінить поточне вкладення в чернетці повідомлення."
+  },
+  "icu:CompositionArea__ConfirmGifSelection__ReplaceButton": {
+    "messageformat": "Замінити"
   },
   "icu:CompositionInput__editing-message": {
     "messageformat": "Редагування повідомлення"
@@ -3989,6 +4262,9 @@
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "Нових учасників, які приєднуються до групи за посиланням, повинен затверджувати адміністратор."
   },
+  "icu:GroupLinkManagement__CopyGroupLinkButtonLabel": {
+    "messageformat": "Copy signal.group link to clipboard"
+  },
   "icu:PendingInvites--tab-requests": {
     "messageformat": "Запити ({count,number})"
   },
@@ -4193,9 +4469,6 @@
   "icu:ShareCallLinkViaSignal__DraftMessageText": {
     "messageformat": "Ось посилання, за яким можна приєднатися до виклику в Signal: {url}"
   },
-  "icu:MessageRequestWarning__learn-more": {
-    "messageformat": "Дізнатися більше"
-  },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "Заходи безпеки"
   },
@@ -4350,7 +4623,7 @@
     "messageformat": "Кінець градієнта"
   },
   "icu:GIF--download": {
-    "messageformat": "Download GIF attachment"
+    "messageformat": "Завантажити вкладення з GIF-зображенням"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "Свій час…"
@@ -4655,6 +4928,30 @@
   "icu:Preferences__button--privacy": {
     "messageformat": "Конфіденційність"
   },
+  "icu:Preferences__button--data-usage": {
+    "messageformat": "Використання даних"
+  },
+  "icu:Preferences__media-auto-download": {
+    "messageformat": "Автозавантаження медіафайлів"
+  },
+  "icu:Preferences__media-auto-download__photos": {
+    "messageformat": "Фото"
+  },
+  "icu:Preferences__media-auto-download__videos": {
+    "messageformat": "Відео"
+  },
+  "icu:Preferences__media-auto-download__audio": {
+    "messageformat": "Аудіо"
+  },
+  "icu:Preferences__media-auto-download__documents": {
+    "messageformat": "Документи"
+  },
+  "icu:Preferences__media-auto-download__description": {
+    "messageformat": "Голосові повідомлення і стікери завжди завантажуються автоматично."
+  },
+  "icu:Preferences__button--backups": {
+    "messageformat": "Backups"
+  },
   "icu:Preferences--lastSynced": {
     "messageformat": "Востаннє імпортовано: {date} {time}"
   },
@@ -4684,6 +4981,51 @@
   },
   "icu:Preferences--blocked": {
     "messageformat": "Заблоковані"
+  },
+  "icu:Preferences--backup-details__header": {
+    "messageformat": "Backup details"
+  },
+  "icu:Preferences--backup-media-plan__description": {
+    "messageformat": "Text + all media backup"
+  },
+  "icu:Preferences--backup-plan-not-found__description": {
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Backups."
+  },
+  "icu:Preferences--backup-messages-plan__description": {
+    "messageformat": "{mediaDayCount, plural, one {Text + {mediaDayCount,number} day media backup} other {Text + {mediaDayCount,number} days media backup}}"
+  },
+  "icu:Preferences--backup-messages-plan__cost-description": {
+    "messageformat": "Your backup plan is free"
+  },
+  "icu:Preferences--backup-plan__renewal-date": {
+    "messageformat": "Renews {date}"
+  },
+  "icu:Preferences--backup-plan__expiry-date": {
+    "messageformat": "Expires {date}"
+  },
+  "icu:Preferences--backup-plan__canceled": {
+    "messageformat": "Subscription canceled"
+  },
+  "icu:Preferences--backup-media-plan__note": {
+    "messageformat": "You can manage or cancel your Signal Backups subscription on your phone."
+  },
+  "icu:Preferences--backup-messages-plan__note": {
+    "messageformat": "You can manage or upgrade Signal Backups on your phone."
+  },
+  "icu:Preferences--backup-plan__not-found": {
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Backups."
+  },
+  "icu:Preferences--backup-plan__not-found__note": {
+    "messageformat": "You can manage or renew your Signal Backups subscription on your phone."
+  },
+  "icu:Preferences--backup-created-at__label": {
+    "messageformat": "Last backup"
+  },
+  "icu:Preferences--backup-created-by-phone": {
+    "messageformat": "Your phone"
+  },
+  "icu:Preferences--backup-size__label": {
+    "messageformat": "Backup size"
   },
   "icu:Preferences--blocked-count": {
     "messageformat": "{num, plural, one {{num,number} контакт} few {{num,number} контакти} many {{num,number} контактів} other {{num,number} контакту}}"
@@ -4810,6 +5152,18 @@
   },
   "icu:DialogUpdate__downloaded": {
     "messageformat": "Оновлення завантажено"
+  },
+  "icu:CriticalIdlePrimaryDevice__title": {
+    "messageformat": "Відкрийте Signal на телефоні"
+  },
+  "icu:CriticalIdlePrimaryDevice__body": {
+    "messageformat": "Якщо найближчим часом ви не ввійдете у свій акаунт Signal на телефоні, його буде видалено. Це повідомлення зникне після успішного входу. <learnMoreLink>Докладніше</learnMoreLink>"
+  },
+  "icu:IdlePrimaryDevice__body": {
+    "messageformat": "Відкрийте Signal на телефоні, щоб не втратити свій акаунт"
+  },
+  "icu:IdlePrimaryDevice__learnMore": {
+    "messageformat": "Докладніше"
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "У Signal виникли технічні проблеми. Ми робимо все можливе, щоб якнайшвидше відновити роботу."
@@ -4951,6 +5305,30 @@
   },
   "icu:MediaEditor__crop-preset--9-16": {
     "messageformat": "9:16"
+  },
+  "icu:MediaPermissionsModal__title--microphone": {
+    "messageformat": "Надайте доступ до мікрофона"
+  },
+  "icu:MediaPermissionsModal__title--camera": {
+    "messageformat": "Надайте доступ до камери"
+  },
+  "icu:MediaPermissionsModal__subtitle--call": {
+    "messageformat": "Щоб почати виклик / приєднатися до виклику:"
+  },
+  "icu:MediaPermissionsModal__subtitle--call--camera": {
+    "messageformat": "Щоб увімкнути відео:"
+  },
+  "icu:MediaPermissionsModal__subtitle--voice-note": {
+    "messageformat": "Щоб надсилати голосові повідомлення:"
+  },
+  "icu:MediaPermissionsModal__step-1": {
+    "messageformat": "Натисніть кнопку «{buttonName}»"
+  },
+  "icu:MediaPermissionsModal__step-2": {
+    "messageformat": "Надайте дозвіл для Signal"
+  },
+  "icu:MediaPermissionsModal__open": {
+    "messageformat": "Відкрити налаштування"
   },
   "icu:MyStories__title": {
     "messageformat": "Мої історії"
@@ -5610,6 +5988,15 @@
   "icu:MessageMetadata__edited": {
     "messageformat": "Змінено"
   },
+  "icu:DraftGifMessageSendModal__Title": {
+    "messageformat": "Додати повідомлення"
+  },
+  "icu:DraftGifMessageSendModal__SendButtonLabel": {
+    "messageformat": "Надіслати"
+  },
+  "icu:DraftGifMessageSendModal__CancelButtonLabel": {
+    "messageformat": "Закрити"
+  },
   "icu:EditHistoryMessagesModal__title": {
     "messageformat": "Попередній текст"
   },
@@ -5829,6 +6216,30 @@
   "icu:WhoCanFindMeReadOnlyToast": {
     "messageformat": "Щоб змінити це налаштування, виберіть «Ніхто» для параметра «Хто може бачити мій номер»."
   },
+  "icu:ProfileNameWarningModal__description--direct": {
+    "messageformat": "Назви профілів у Signal обирають їхні власники:"
+  },
+  "icu:ProfileNameWarningModal__list--item1--direct": {
+    "messageformat": "Назви профілів не проходять перевірку"
+  },
+  "icu:ProfileNameWarningModal__list--item2--direct": {
+    "messageformat": "Зважайте на те, що акаунти можуть бути фейкові"
+  },
+  "icu:ProfileNameWarningModal__list--item3--direct": {
+    "messageformat": "Не діліться особистою інформацією з незнайомцями"
+  },
+  "icu:ProfileNameWarningModal__description--group": {
+    "messageformat": "Назви груп обирають їхні учасники."
+  },
+  "icu:ProfileNameWarningModal__list--item1--group": {
+    "messageformat": "Зважайте на те, що є групи, які лише вдають, ніби представляють реальні компанії та організації"
+  },
+  "icu:ProfileNameWarningModal__list--item2--group": {
+    "messageformat": "Назви профілів учасників груп не проходять перевірку"
+  },
+  "icu:ProfileNameWarningModal__list--item3--group": {
+    "messageformat": "Не діліться особистою інформацією з незнайомцями"
+  },
   "icu:WhatsNew__modal-title": {
     "messageformat": "Що нового"
   },
@@ -5860,10 +6271,22 @@
     "messageformat": "Дрібні поліпшення, виправлення помилок і покращення роботи застосунку. Дякуємо, що ви з Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.44--0": {
-    "messageformat": "Ми виправили незначну помилку з анімацією під час групових викликів. Заздалегідь перепрошуємо в усіх, хто обожнював під час робочого дзвінка змінювати конфігурацію екрана на сітку, намагаючись зловити момент, коли відео запізнілих учасників частково закривало слайди презентації керівника."
+  "icu:WhatsNew__v7.47--0": {
+    "messageformat": "Тепер ви можете збільшити попередній вигляд свого відео під час виклику, щоб краще себе роздивитися чи поміркувати над запитанням «хто я?»."
   },
-  "icu:WhatsNew__v7.45--0": {
-    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
+  "icu:WhatsNew__v7.48--0": {
+    "messageformat": "Ми додали зручне сполучення клавіш, щоб ви могли швидко опустити руку під час групового виклику в Signal, коли вже почали говорити. Надіємося, ця функція зіграє вам на руку."
+  },
+  "icu:WhatsNew__v7.49--0": {
+    "messageformat": "Якщо ви зв'язуєте новий комп'ютер із Signal для Android і переносите історію повідомлень, тепер з основного пристрою також можна вибірково перенести старі вкладення. Щоб перенести минуле в теперішнє, натисніть на значок завантаження. Як і завжди, перенесення даних надійно захищено наскрізним шифруванням."
+  },
+  "icu:WhatsNew__v7.50--0": {
+    "messageformat": "Якщо ви зв'язуєте новий комп'ютер із Signal для Android і переносите історію повідомлень, тепер з основного пристрою також можна вибірково перенести старі вкладення. Щоб перенести минуле в теперішнє, натисніть на значок завантаження. Як і завжди, перенесення даних надійно захищено наскрізним шифруванням."
+  },
+  "icu:WhatsNew__v7.51--0": {
+    "messageformat": "Fire, the wheel, and electricity were all great developments, but they were merely necessary steps along the path that created the conditions for animated GIF search to exist. Now you can experience the pinnacle of human technological advancement in Signal Desktop with a brand-new selection interface that makes it easy to quickly find an emoji, sticker, or animated GIF that's perfect for the moment."
+  },
+  "icu:WhatsNew__v7.51--1": {
+    "messageformat": "We also resized the picture-in-picture window and added convenient new shortcuts to mute/unmute your microphone or turn the camera on/off while a call is minimized."
   }
 }

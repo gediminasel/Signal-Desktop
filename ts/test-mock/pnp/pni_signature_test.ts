@@ -24,6 +24,7 @@ import {
 } from '../../types/Receipt';
 import { sleep } from '../../util/sleep';
 import {
+  acceptConversation,
   expectSystemMessages,
   typeIntoInput,
   waitForEnabledComposer,
@@ -85,7 +86,6 @@ describe('pnp/PNI Signature', function (this: Mocha.Suite) {
     const window = await app.getWindow();
 
     const leftPane = window.locator('#LeftPane');
-    const conversationStack = window.locator('.Inbox__conversation-stack');
 
     debug('creating a stranger');
     const stranger = await server.createPrimaryDevice({
@@ -137,9 +137,7 @@ describe('pnp/PNI Signature', function (this: Mocha.Suite) {
       .click();
 
     debug('Accept conversation from a stranger');
-    await conversationStack
-      .locator('.module-message-request-actions button >> "Accept"')
-      .click();
+    await acceptConversation(window);
 
     debug('Wait for a pniSignatureMessage');
     {
@@ -262,7 +260,7 @@ describe('pnp/PNI Signature', function (this: Mocha.Suite) {
     debug('Send a PNI sync message');
     const timestamp = bootstrap.getTimestamp();
     const destinationServiceId = stranger.device.pni;
-    const destination = stranger.device.number;
+    const destinationE164 = stranger.device.number;
     const destinationPniIdentityKey = await stranger.device.getIdentityKey(
       ServiceIdKind.PNI
     );
@@ -274,7 +272,7 @@ describe('pnp/PNI Signature', function (this: Mocha.Suite) {
       syncMessage: {
         sent: {
           destinationServiceId,
-          destination,
+          destinationE164,
           timestamp: Long.fromNumber(timestamp),
           message: originalDataMessage,
           unidentifiedStatus: [
@@ -324,7 +322,7 @@ describe('pnp/PNI Signature', function (this: Mocha.Suite) {
         .innerText();
       assert.equal(
         strangerName.slice(-4),
-        destination?.slice(-4),
+        destinationE164?.slice(-4),
         'no profile, just phone number'
       );
     }

@@ -38,6 +38,9 @@
   "icu:Preferences__sent-media-quality": {
     "messageformat": "送信メディアの画質"
   },
+  "icu:Preferences__sent-media-quality__description": {
+    "messageformat": "高画質なメディアの送信には、より多くのデータを使用します。"
+  },
   "icu:sentMediaQualityStandard": {
     "messageformat": "標準"
   },
@@ -68,6 +71,12 @@
   "icu:unknownGroup": {
     "messageformat": "不明なグループ"
   },
+  "icu:cantOpenSignalError": {
+    "messageformat": "Signalを開けません"
+  },
+  "icu:cantOpenSignalError__detail": {
+    "messageformat": "問題解決のために、サポートページに記載されている復元ガイドを実行するか、Signalサポートへお問い合わせください。\n\nすぐにSignalを使う必要がある場合は、データを消去してこのデスクトップを再リンクすることができます。ご利用中のスマートフォンからメッセージ履歴を移行するかどうかを選択できます。"
+  },
   "icu:databaseError": {
     "messageformat": "データベースのエラー"
   },
@@ -78,10 +87,10 @@
     "messageformat": "すべてのデータを消去して再起動する"
   },
   "icu:databaseError__deleteDataConfirmation": {
-    "messageformat": "すべてのデータを完全に消去しますか？"
+    "messageformat": "すべてのデータを完全に消去します"
   },
   "icu:databaseError__deleteDataConfirmation__detail": {
-    "messageformat": "過去のすべてのメッセージとメディアはお使いの端末から完全に消去されます。再リンクすると、この端末でSignalを使用できるようになります。ご利用中のスマートフォンのデータは消去されません。"
+    "messageformat": "過去のすべてのメッセージとメディアはお使いの端末から完全に消去されます。ご利用中のスマートフォンのデータは消去されません。\n\n再リンクすると、この端末でSignalを使用できるようになります。ご利用中のスマートフォンからメッセージ履歴を移行するかどうかを選択できます。"
   },
   "icu:databaseError__startOldVersion": {
     "messageformat": "データベースのバージョンと、開いたSignalのバージョンが一致しません。 ご利用のコンピューターで、最新バージョンのSignalを開いているかをお確かめください。"
@@ -214,9 +223,6 @@
   },
   "icu:optimizingApplication": {
     "messageformat": "アプリケーションを最適化しています…"
-  },
-  "icu:migratingToSQLCipher": {
-    "messageformat": "メッセージを最適化してます… {status}"
   },
   "icu:archivedConversations": {
     "messageformat": "アーカイブ済みのチャット"
@@ -407,9 +413,6 @@
   "icu:unreadMessages": {
     "messageformat": "{count, plural, other {{count,number}件の未読メッセージ}}"
   },
-  "icu:messageHistoryUnsynced": {
-    "messageformat": "セキュリティ保護のため、過去のチャットは新しくリンクされた端末には転送されません。"
-  },
   "icu:youMarkedAsVerified": {
     "messageformat": "{name} に対する安全番号を検証済みにしました"
   },
@@ -588,7 +591,7 @@
     "messageformat": "Failed to send message with endorsements"
   },
   "icu:Toast--InvalidStorageServiceHeaders": {
-    "messageformat": "Received invalid response from storage service. Please share your logs."
+    "messageformat": "クラウドストレージサービスから無効な応答がありました。ログを共有してください。"
   },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
@@ -706,9 +709,6 @@
   },
   "icu:noSearchResultsOnlyUnreadFilter": {
     "messageformat": "未読のチャットはありません"
-  },
-  "icu:noSearchResults--sms-only": {
-    "messageformat": "SMS/MMSの連絡先はデスクトップでは利用できません。"
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "{conversationName} 内に「{searchTerm}」はありません"
@@ -1145,9 +1145,6 @@
   "icu:mediaNotAvailable": {
     "messageformat": "このメディアはダウンロードできません"
   },
-  "icu:mediaNotAvailable--short": {
-    "messageformat": "メディアはご利用になれません"
-  },
   "icu:attachmentNoLongerAvailable__learnMore": {
     "messageformat": "さらに詳しく"
   },
@@ -1162,6 +1159,12 @@
   },
   "icu:attachmentNotAvailable__voice": {
     "messageformat": "ボイスメッセージはご利用になれません"
+  },
+  "icu:attachmentNotAvailable__tapToView": {
+    "messageformat": "使い捨てメディアを表示できません"
+  },
+  "icu:attachmentNotAvailable__tapToViewCannotDownload": {
+    "messageformat": "使い捨てメディアをダウンロードできません。"
   },
   "icu:AttachmentNotAvailableModal__title--file": {
     "messageformat": "ファイルがダウンロードできません"
@@ -1192,6 +1195,21 @@
   },
   "icu:AttachmentNotAvailableModal__body--voice-message": {
     "messageformat": "この端末をリンクしたときにこのボイスメッセージはスマートフォンから移行されませんでした。端末をリンクした時点で45日以上経過したメディアやファイルは同期できません。"
+  },
+  "icu:TapToViewNotAvailableModal__body--expired": {
+    "messageformat": "この使い捨てメディアはダウンロードできなくなりました。{name} さんにもう一度送信してもらってください。"
+  },
+  "icu:TapToViewNotAvailableModal__body--error": {
+    "messageformat": "使い捨てメディアをダウンロードできません。{name} さんがもう一度送信する必要があります。"
+  },
+  "icu:BackfillFailureModal__title": {
+    "messageformat": "メディアをダウンロードできません"
+  },
+  "icu:BackfillFailureModal__body--timeout": {
+    "messageformat": "デスクトップとスマートフォンのインターネット接続を確認してください。スマートフォンでSignalを開き、もう一度ダウンロードしてみてください。"
+  },
+  "icu:BackfillFailureModal__body--not-found": {
+    "messageformat": "このメディアはお使いのスマートフォンではご利用できなくなっており、ダウンロードできません。"
   },
   "icu:save": {
     "messageformat": "保存"
@@ -1244,12 +1262,6 @@
   "icu:Install__support-link": {
     "messageformat": "お困りですか？"
   },
-  "icu:Install__choose-device-name__description": {
-    "messageformat": "この名前はスマートフォン版Signalの「リンク済み端末」に表示されます"
-  },
-  "icu:Install__choose-device-name__placeholder": {
-    "messageformat": "このコンピュータ"
-  },
   "icu:Preferences--phone-number": {
     "messageformat": "電話番号"
   },
@@ -1259,11 +1271,8 @@
   "icu:Preferences--device-name__description": {
     "messageformat": "この端末の名前を変更するには、スマートフォンでSignalを開き、「設定」 > 「リンク済み端末」に移動します。"
   },
-  "icu:chooseDeviceName": {
-    "messageformat": "この端末の名前を設定してください"
-  },
-  "icu:finishLinkingPhone": {
-    "messageformat": "スマートフォンとのリンクを完了"
+  "icu:Preferences__EmojiSkinToneDefaultSetting__Label": {
+    "messageformat": "絵文字のスキントーン"
   },
   "icu:initialSync": {
     "messageformat": "連絡先とグループを同期しています"
@@ -1814,6 +1823,18 @@
   "icu:ConversationDetails__HeaderButton--Message": {
     "messageformat": "メッセージを送る"
   },
+  "icu:ConversationDetails--help-section": {
+    "messageformat": "ヘルプ"
+  },
+  "icu:ConversationDetails--support-center": {
+    "messageformat": "サポートセンター"
+  },
+  "icu:ConversationDetails--contact-us": {
+    "messageformat": "お問い合わせ"
+  },
+  "icu:ConversationDetails--donate": {
+    "messageformat": "Signalへの寄付"
+  },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "安全番号の検証"
   },
@@ -1873,6 +1894,9 @@
   },
   "icu:Toast--failed-to-fetch-phone-number": {
     "messageformat": "電話番号の取得に失敗しました。接続を確認して再度お試しください。"
+  },
+  "icu:Toast--download-failed": {
+    "messageformat": "ダウンロードできませんでした"
   },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "編集は、このメッセージを送信後24時間以内のみ可能です。"
@@ -2252,6 +2276,204 @@
   "icu:EmojiPicker__button--flag": {
     "messageformat": "旗"
   },
+  "icu:FunPicker__Tab--Emojis": {
+    "messageformat": "絵文字"
+  },
+  "icu:FunPicker__Tab--Stickers": {
+    "messageformat": "ステッカー"
+  },
+  "icu:FunPicker__Tab--Gifs": {
+    "messageformat": "GIF"
+  },
+  "icu:FunPanelEmojis__SearchLabel": {
+    "messageformat": "絵文字を検索"
+  },
+  "icu:FunPanelEmojis__SearchPlaceholder": {
+    "messageformat": "絵文字を検索"
+  },
+  "icu:FunPanelEmojis__SubNavLabel": {
+    "messageformat": "絵文字カテゴリー"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Recents": {
+    "messageformat": "最近使ったもの"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--SmileysAndPeople": {
+    "messageformat": "顔文字と人"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--AnimalsAndNature": {
+    "messageformat": "動物と自然"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--FoodAndDrink": {
+    "messageformat": "食べ物と飲み物"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Activities": {
+    "messageformat": "活動"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--TravelAndPlaces": {
+    "messageformat": "旅行と場所"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Objects": {
+    "messageformat": "オブジェクト"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Symbols": {
+    "messageformat": "記号"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Flags": {
+    "messageformat": "旗"
+  },
+  "icu:FunPanelEmojis__SearchResults__EmptyHeading": {
+    "messageformat": "該当する絵文字はありません"
+  },
+  "icu:FunPanelEmojis__ChangeSkinToneButtonLabel": {
+    "messageformat": "スキントーンの設定を変更する"
+  },
+  "icu:FunPanelEmojis__SkinTonePicker__ChooseDefaultLabel": {
+    "messageformat": "デフォルトのスキントーンを選択してください"
+  },
+  "icu:FunPanelEmojis__SectionTitle--SearchResults": {
+    "messageformat": "検索結果"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Recents": {
+    "messageformat": "最近使ったもの"
+  },
+  "icu:FunPanelEmojis__SectionTitle--SmileysAndPeople": {
+    "messageformat": "顔文字と人"
+  },
+  "icu:FunPanelEmojis__SectionTitle--AnimalsAndNature": {
+    "messageformat": "動物と自然"
+  },
+  "icu:FunPanelEmojis__SectionTitle--FoodAndDrink": {
+    "messageformat": "食べ物と飲み物"
+  },
+  "icu:FunPanelEmojis__SectionTitle--TravelAndPlaces": {
+    "messageformat": "旅行と場所"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Activities": {
+    "messageformat": "活動"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Objects": {
+    "messageformat": "オブジェクト"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Symbols": {
+    "messageformat": "記号"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Flags": {
+    "messageformat": "旗"
+  },
+  "icu:FunPanelEmojis__CustomizeReactionsButtonLabel": {
+    "messageformat": "Customize reactions"
+  },
+  "icu:FunPanelStickers__SearchLabel": {
+    "messageformat": "ステッカーを検索"
+  },
+  "icu:FunPanelStickers__SearchPlaceholder": {
+    "messageformat": "ステッカーを検索"
+  },
+  "icu:FunPanelSticker__SubNavLabel": {
+    "messageformat": "ステッカーパック"
+  },
+  "icu:FunPanelStickers__SubNavCategoryLabel--Recents": {
+    "messageformat": "最近使ったもの"
+  },
+  "icu:FunPanelStickers__SectionTitle--SearchResults": {
+    "messageformat": "検索結果"
+  },
+  "icu:FunPanelStickers__SectionTitle--Recents": {
+    "messageformat": "最近使ったもの"
+  },
+  "icu:FunPanelStickers__SectionTitle--Featured": {
+    "messageformat": "Featured"
+  },
+  "icu:FunPanelStickers__SearchResults__EmptyHeading": {
+    "messageformat": "ステッカーはありません"
+  },
+  "icu:FunPanelStickers__LightboxDialog__Label": {
+    "messageformat": "ステッカープレビュー"
+  },
+  "icu:FunPanelGifs__SearchLabel--Tenor": {
+    "messageformat": "Tenor内でGIFを検索"
+  },
+  "icu:FunPanelGifs__SearchPlaceholder--Tenor": {
+    "messageformat": "Tenorを検索"
+  },
+  "icu:FunPanelGifs__SubNavLabel": {
+    "messageformat": "GIFカテゴリー"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Recents": {
+    "messageformat": "最近使ったもの"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Trending": {
+    "messageformat": "トレンド"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Celebrate": {
+    "messageformat": "お祝い"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Love": {
+    "messageformat": "ラブ"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--ThumbsUp": {
+    "messageformat": "いいね"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Surprised": {
+    "messageformat": "驚き"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Excited": {
+    "messageformat": "ワクワク"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Sad": {
+    "messageformat": "悲しみ"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Angry": {
+    "messageformat": "怒り"
+  },
+  "icu:FunPanelGifs__SearchResults__LoadingLabel": {
+    "messageformat": "GIFを読み込み中です"
+  },
+  "icu:FunPanelGifs__SearchResults__ErrorHeading": {
+    "messageformat": "GIFを読み込めませんでした。インターネット接続を確認して再度試してください"
+  },
+  "icu:FunPanelGifs__SearchResults__ErrorRetryButton": {
+    "messageformat": "再試行"
+  },
+  "icu:FunPanelGifs__SearchResults__EmptyHeading": {
+    "messageformat": "GIFが見つかりませんでした"
+  },
+  "icu:FunPanelGifs__LightboxDialog__Label": {
+    "messageformat": "GIFプレビュー"
+  },
+  "icu:FunSearch__ClearButtonLabel": {
+    "messageformat": "検索テキストを消去"
+  },
+  "icu:FunSkinTones__List": {
+    "messageformat": "スキントーン"
+  },
+  "icu:FunSkinTones__ListItem--None": {
+    "messageformat": "なし"
+  },
+  "icu:FunSkinTones__ListItem--Light": {
+    "messageformat": "明るいスキントーン"
+  },
+  "icu:FunSkinTones__ListItem--MediumLight": {
+    "messageformat": "やや明るいスキントーン"
+  },
+  "icu:FunSkinTones__ListItem--Medium": {
+    "messageformat": "中間のスキントーン"
+  },
+  "icu:FunSkinTones__ListItem--MediumDark": {
+    "messageformat": "やや暗めのスキントーン"
+  },
+  "icu:FunSkinTones__ListItem--Dark": {
+    "messageformat": "暗いスキントーン"
+  },
+  "icu:FunButton__Label--FunPicker": {
+    "messageformat": "絵文字、ステッカー、GIFを追加する"
+  },
+  "icu:FunButton__Label--EmojiPicker": {
+    "messageformat": "絵文字を追加する"
+  },
+  "icu:FunButton__Label--StickerPicker": {
+    "messageformat": "ステッカーを追加"
+  },
   "icu:confirmation-dialog--Cancel": {
     "messageformat": "キャンセル"
   },
@@ -2288,11 +2510,11 @@
   "icu:Message--update-signal": {
     "messageformat": "Signalをアップデートする"
   },
-  "icu:Message--tap-to-view-expired": {
+  "icu:Message--tap-to-view--viewed": {
     "messageformat": "閲覧済み"
   },
-  "icu:Message--tap-to-view--outgoing": {
-    "messageformat": "メディア"
+  "icu:Message--tap-to-view--media": {
+    "messageformat": "使い捨てメディア"
   },
   "icu:Message--tap-to-view--incoming--expired-toast": {
     "messageformat": "このメッセージは閲覧済みです。"
@@ -2300,11 +2522,14 @@
   "icu:Message--tap-to-view--outgoing--expired-toast": {
     "messageformat": "使い捨てメッセージはチャット履歴に保存されません。"
   },
-  "icu:Message--tap-to-view--incoming": {
-    "messageformat": "写真を見る"
+  "icu:Message--tap-to-view--video": {
+    "messageformat": "使い捨て動画"
   },
-  "icu:Message--tap-to-view--incoming-video": {
-    "messageformat": "動画を見る"
+  "icu:Message--tap-to-view--photo": {
+    "messageformat": "使い捨て写真"
+  },
+  "icu:Message--tap-to-view--helper-text": {
+    "messageformat": "クリックして表示する"
   },
   "icu:Conversation--getDraftPreview--attachment": {
     "messageformat": "(添付ファイル)"
@@ -2498,6 +2723,9 @@
   "icu:Keyboard--toggle-video": {
     "messageformat": "ビデオのオン/オフを切り替える"
   },
+  "icu:Keyboard--toggle-preview": {
+    "messageformat": "拡張プレビューのオンとオフの切り替え"
+  },
   "icu:Keyboard--accept-video-call": {
     "messageformat": "ビデオありで通話に応答する(ビデオ通話のみ)"
   },
@@ -2560,6 +2788,12 @@
   },
   "icu:SafetyTipsModal__Description": {
     "messageformat": "知らない人からのメッセージリクエストにはご注意ください。次の点にご注意ください。"
+  },
+  "icu:SafetyTipsModal__TipTitle--Fake": {
+    "messageformat": "偽名と偽アカウント"
+  },
+  "icu:SafetyTipsModal__TipDescription--Fake": {
+    "messageformat": "Signalが登録コードやPINについてお客様に連絡することは一切ありません。なりすましによる不正アクセスにはご注意ください。プロフィールネームはアカウント所有者によって選択され、検証はされません。"
   },
   "icu:SafetyTipsModal__TipTitle--Crypto": {
     "messageformat": "暗号通貨または金銭詐欺"
@@ -2693,6 +2927,12 @@
   "icu:MessageRequests--accept": {
     "messageformat": "承認する"
   },
+  "icu:MessageRequests--accept-confirm-title": {
+    "messageformat": "申請を承認しますか？"
+  },
+  "icu:MessageRequests--accept-confirm-body": {
+    "messageformat": "慎重に申請を確認してください。プロフィールネームはアカウント所有者によって選択され、検証はされません。"
+  },
   "icu:MessageRequests--continue": {
     "messageformat": "続ける"
   },
@@ -2704,6 +2944,21 @@
   },
   "icu:ConversationHero--members": {
     "messageformat": "{count, plural, other {メンバー{count,number}人}}"
+  },
+  "icu:ConversationHero--review-carefully": {
+    "messageformat": "慎重に確認してください"
+  },
+  "icu:ConversationHero--group-names": {
+    "messageformat": "<clickable>グループネーム</clickable>は検証されません"
+  },
+  "icu:ConversationHero--profile-names": {
+    "messageformat": "<clickable>プロフィールネーム</clickable>は検証されません"
+  },
+  "icu:ConversationHero--signal-official-chat": {
+    "messageformat": "これはSignalの公式かつ唯一のチャットです"
+  },
+  "icu:ConversationHero--release-notes": {
+    "messageformat": "ニュースやリリースノートで最新情報をチェックしてください。"
   },
   "icu:member-of-1-group": {
     "messageformat": "{group} のメンバー"
@@ -2840,6 +3095,12 @@
   "icu:CallControls__JoinLeaveButton--hangup-group": {
     "messageformat": "退出する"
   },
+  "icu:CallControls__JoinLeaveButton--hangup-1-1-tooltip": {
+    "messageformat": "End call"
+  },
+  "icu:CallControls__JoinLeaveButton--hangup-group-tooltip": {
+    "messageformat": "Leave call"
+  },
   "icu:CallControls__MutedToast--muted": {
     "messageformat": "マイクオフ"
   },
@@ -2917,6 +3178,12 @@
   },
   "icu:calling__pip--off": {
     "messageformat": "フルスクリーン"
+  },
+  "icu:calling__preview--maximize": {
+    "messageformat": "プレビューを最大化する"
+  },
+  "icu:calling__preview--minimize": {
+    "messageformat": "プレビューを最小化する"
   },
   "icu:calling__change-view": {
     "messageformat": "ビューを切り替える"
@@ -3698,18 +3965,6 @@
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "再試行"
   },
-  "icu:BackupImportScreen__skip": {
-    "messageformat": "スキップ"
-  },
-  "icu:BackupImportScreen__skip-confirmation__title": {
-    "messageformat": "メッセージの移行をスキップしますか？"
-  },
-  "icu:BackupImportScreen__skip-confirmation__body": {
-    "messageformat": "スキップを選択すると、この端末上のメッセージやメディアにアクセスできなくなります。スキップした後は、設定 > チャット > 移行 から改めて移行の手続きができます。"
-  },
-  "icu:BackupImportScreen__skip-confirmation__cancel": {
-    "messageformat": "キャンセル"
-  },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "メディアを復元中"
   },
@@ -3752,6 +4007,12 @@
   "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
     "messageformat": "転送をキャンセルする"
   },
+  "icu:CriticalIdlePrimaryDeviceModal__title": {
+    "messageformat": "Account action required"
+  },
+  "icu:CriticalIdlePrimaryDeviceModal__description": {
+    "messageformat": "You must open Signal on your phone to continue using this account. If you do not open Signal on your phone, your account will be deleted soon. <learnMoreLink>Learn more</learnMoreLink>"
+  },
   "icu:CompositionArea--expand": {
     "messageformat": "大きく"
   },
@@ -3772,6 +4033,18 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "編集したメッセージを送信する"
+  },
+  "icu:CompositionArea__FunButtonLabel": {
+    "messageformat": "絵文字、ステッカー、GIFを追加する"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__Title": {
+    "messageformat": "添付ファイルを置き換えますか？"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__Body": {
+    "messageformat": "このGIFを追加すると、現在の下書きのメッセージ内のアイテムが置き換えられます。"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__ReplaceButton": {
+    "messageformat": "置き換え"
   },
   "icu:CompositionInput__editing-message": {
     "messageformat": "メッセージの編集"
@@ -3989,6 +4262,9 @@
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "グループリンク経由での新メンバー参加時に、管理者の承認を要求します。"
   },
+  "icu:GroupLinkManagement__CopyGroupLinkButtonLabel": {
+    "messageformat": "Copy signal.group link to clipboard"
+  },
   "icu:PendingInvites--tab-requests": {
     "messageformat": "申請 ({count,number})"
   },
@@ -4193,9 +4469,6 @@
   "icu:ShareCallLinkViaSignal__DraftMessageText": {
     "messageformat": "リンクを使用して Signal 通話に参加する　{url}"
   },
-  "icu:MessageRequestWarning__learn-more": {
-    "messageformat": "さらに詳しく"
-  },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "安全な使い方のヒント"
   },
@@ -4350,7 +4623,7 @@
     "messageformat": "グラデーション終了"
   },
   "icu:GIF--download": {
-    "messageformat": "Download GIF attachment"
+    "messageformat": "GIFをダウンロードする"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "カスタム時間…"
@@ -4655,6 +4928,30 @@
   "icu:Preferences__button--privacy": {
     "messageformat": "プライバシー"
   },
+  "icu:Preferences__button--data-usage": {
+    "messageformat": "データ通信量"
+  },
+  "icu:Preferences__media-auto-download": {
+    "messageformat": "メディアの自動ダウンロード"
+  },
+  "icu:Preferences__media-auto-download__photos": {
+    "messageformat": "写真"
+  },
+  "icu:Preferences__media-auto-download__videos": {
+    "messageformat": "動画"
+  },
+  "icu:Preferences__media-auto-download__audio": {
+    "messageformat": "音声"
+  },
+  "icu:Preferences__media-auto-download__documents": {
+    "messageformat": "文書"
+  },
+  "icu:Preferences__media-auto-download__description": {
+    "messageformat": "ボイスメッセージとステッカーは常に自動でダウンロードされます。"
+  },
+  "icu:Preferences__button--backups": {
+    "messageformat": "Backups"
+  },
   "icu:Preferences--lastSynced": {
     "messageformat": "最終インポート: {date} {time}"
   },
@@ -4684,6 +4981,51 @@
   },
   "icu:Preferences--blocked": {
     "messageformat": "ブロック中のユーザー"
+  },
+  "icu:Preferences--backup-details__header": {
+    "messageformat": "Backup details"
+  },
+  "icu:Preferences--backup-media-plan__description": {
+    "messageformat": "Text + all media backup"
+  },
+  "icu:Preferences--backup-plan-not-found__description": {
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Backups."
+  },
+  "icu:Preferences--backup-messages-plan__description": {
+    "messageformat": "{mediaDayCount, plural, one {Text + {mediaDayCount,number} day media backup} other {Text + {mediaDayCount,number} days media backup}}"
+  },
+  "icu:Preferences--backup-messages-plan__cost-description": {
+    "messageformat": "Your backup plan is free"
+  },
+  "icu:Preferences--backup-plan__renewal-date": {
+    "messageformat": "Renews {date}"
+  },
+  "icu:Preferences--backup-plan__expiry-date": {
+    "messageformat": "Expires {date}"
+  },
+  "icu:Preferences--backup-plan__canceled": {
+    "messageformat": "Subscription canceled"
+  },
+  "icu:Preferences--backup-media-plan__note": {
+    "messageformat": "You can manage or cancel your Signal Backups subscription on your phone."
+  },
+  "icu:Preferences--backup-messages-plan__note": {
+    "messageformat": "You can manage or upgrade Signal Backups on your phone."
+  },
+  "icu:Preferences--backup-plan__not-found": {
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Backups."
+  },
+  "icu:Preferences--backup-plan__not-found__note": {
+    "messageformat": "You can manage or renew your Signal Backups subscription on your phone."
+  },
+  "icu:Preferences--backup-created-at__label": {
+    "messageformat": "Last backup"
+  },
+  "icu:Preferences--backup-created-by-phone": {
+    "messageformat": "Your phone"
+  },
+  "icu:Preferences--backup-size__label": {
+    "messageformat": "Backup size"
   },
   "icu:Preferences--blocked-count": {
     "messageformat": "{num, plural, other {{num,number}人}}"
@@ -4810,6 +5152,18 @@
   },
   "icu:DialogUpdate__downloaded": {
     "messageformat": "アップデートがダウンロードされました"
+  },
+  "icu:CriticalIdlePrimaryDevice__title": {
+    "messageformat": "ご利用のスマートフォンでSignalを開いてください"
+  },
+  "icu:CriticalIdlePrimaryDevice__body": {
+    "messageformat": "ご利用のスマートフォンでSignalを開かないと、アカウントは間もなく削除されます。Signalを開くと、このメッセージは表示されなくなります。<learnMoreLink>さらに詳しく</learnMoreLink>"
+  },
+  "icu:IdlePrimaryDevice__body": {
+    "messageformat": "アカウントをアクティブに保つために、スマートフォンでSignalを開いてください"
+  },
+  "icu:IdlePrimaryDevice__learnMore": {
+    "messageformat": "さらに詳しく"
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signalは技術的な問題を抱えています。私たちは、これをできるだけ早く解決するよう対応しています。"
@@ -4951,6 +5305,30 @@
   },
   "icu:MediaEditor__crop-preset--9-16": {
     "messageformat": "9:16"
+  },
+  "icu:MediaPermissionsModal__title--microphone": {
+    "messageformat": "マイクへのアクセスの許可"
+  },
+  "icu:MediaPermissionsModal__title--camera": {
+    "messageformat": "カメラへのアクセスを許可する"
+  },
+  "icu:MediaPermissionsModal__subtitle--call": {
+    "messageformat": "通話に参加する、または通話を開始するには："
+  },
+  "icu:MediaPermissionsModal__subtitle--call--camera": {
+    "messageformat": "動画を有効にする："
+  },
+  "icu:MediaPermissionsModal__subtitle--voice-note": {
+    "messageformat": "ボイスメッセージを送信するには："
+  },
+  "icu:MediaPermissionsModal__step-1": {
+    "messageformat": "下にある「{buttonName}」をクリックする"
+  },
+  "icu:MediaPermissionsModal__step-2": {
+    "messageformat": "「Signal」をオンにする"
+  },
+  "icu:MediaPermissionsModal__open": {
+    "messageformat": "設定へ"
   },
   "icu:MyStories__title": {
     "messageformat": "マイストーリー"
@@ -5610,6 +5988,15 @@
   "icu:MessageMetadata__edited": {
     "messageformat": "編集済み"
   },
+  "icu:DraftGifMessageSendModal__Title": {
+    "messageformat": "メッセージを追加してください"
+  },
+  "icu:DraftGifMessageSendModal__SendButtonLabel": {
+    "messageformat": "送信"
+  },
+  "icu:DraftGifMessageSendModal__CancelButtonLabel": {
+    "messageformat": "キャンセル"
+  },
   "icu:EditHistoryMessagesModal__title": {
     "messageformat": "編集履歴"
   },
@@ -5829,6 +6216,30 @@
   "icu:WhoCanFindMeReadOnlyToast": {
     "messageformat": "この設定を変更するには、「自分の番号を閲覧できる人」を「誰も閲覧できない」に設定します。"
   },
+  "icu:ProfileNameWarningModal__description--direct": {
+    "messageformat": "Signal上のプロフィールネームは、アカウント所有者によって選択されます。"
+  },
+  "icu:ProfileNameWarningModal__list--item1--direct": {
+    "messageformat": "プロフィールネームは検証されません"
+  },
+  "icu:ProfileNameWarningModal__list--item2--direct": {
+    "messageformat": "なりすましの可能性のあるアカウントにはご注意ください"
+  },
+  "icu:ProfileNameWarningModal__list--item3--direct": {
+    "messageformat": "知らない人とは個人情報を共有しないでください"
+  },
+  "icu:ProfileNameWarningModal__description--group": {
+    "messageformat": "グループネームは、グループのメンバーによって選択されます。"
+  },
+  "icu:ProfileNameWarningModal__list--item1--group": {
+    "messageformat": "組織や企業になりすましたグループにはご注意ください"
+  },
+  "icu:ProfileNameWarningModal__list--item2--group": {
+    "messageformat": "グループ内のメンバーのプロフィールネームは認証されていません"
+  },
+  "icu:ProfileNameWarningModal__list--item3--group": {
+    "messageformat": "知らない人とは個人情報を共有しないでください"
+  },
   "icu:WhatsNew__modal-title": {
     "messageformat": "更新情報"
   },
@@ -5860,10 +6271,22 @@
     "messageformat": "細かな微調整、バグ修正、パフォーマンスの向上。 Signalをご利用いただきありがとうございます。",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.44--0": {
-    "messageformat": "グループ通話中の、軽微な画面表示のバグを修正しました。"
+  "icu:WhatsNew__v7.47--0": {
+    "messageformat": "通話中にローカルビデオプレビューを拡大して、自分の姿をよく確認できるようになりました。"
   },
-  "icu:WhatsNew__v7.45--0": {
-    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
+  "icu:WhatsNew__v7.48--0": {
+    "messageformat": "Signalのグループ通話中に、話し始めてすぐに手を降ろすための便利なショートカットを追加しました。"
+  },
+  "icu:WhatsNew__v7.49--0": {
+    "messageformat": "Signal Androidで新しいデスクトップをリンクしてメッセージ履歴の移行を選択した場合、プライマリデバイス内の添付ファイルも選んで移行できるようになりました。移行プロセスはエンドツーエンドで暗号化され、安全です。"
+  },
+  "icu:WhatsNew__v7.50--0": {
+    "messageformat": "Signal Androidで新しいデスクトップをリンクしてメッセージ履歴の移行を選択した場合、プライマリデバイス内の添付ファイルも選んで移行できるようになりました。移行プロセスはエンドツーエンドで暗号化され、安全です。"
+  },
+  "icu:WhatsNew__v7.51--0": {
+    "messageformat": "Fire, the wheel, and electricity were all great developments, but they were merely necessary steps along the path that created the conditions for animated GIF search to exist. Now you can experience the pinnacle of human technological advancement in Signal Desktop with a brand-new selection interface that makes it easy to quickly find an emoji, sticker, or animated GIF that's perfect for the moment."
+  },
+  "icu:WhatsNew__v7.51--1": {
+    "messageformat": "We also resized the picture-in-picture window and added convenient new shortcuts to mute/unmute your microphone or turn the camera on/off while a call is minimized."
   }
 }

@@ -6,8 +6,8 @@ import { DialogTrigger } from 'react-aria-components';
 import type { LocalizerType } from '../../../types/I18N';
 import { strictAssert } from '../../../util/assert';
 import { missingCaseError } from '../../../util/missingCaseError';
-import type { FunEmojisSection } from '../FunConstants';
-import { FunEmojisSectionOrder, FunSectionCommon } from '../FunConstants';
+import type { FunEmojisSection } from '../constants';
+import { FunEmojisSectionOrder, FunSectionCommon } from '../constants';
 import {
   FunGridCell,
   FunGridContainer,
@@ -22,7 +22,12 @@ import {
   FunGridScrollerSection,
 } from '../base/FunGrid';
 import { FunItemButton } from '../base/FunItem';
-import { FunPanel } from '../base/FunPanel';
+import {
+  FunPanel,
+  FunPanelBody,
+  FunPanelFooter,
+  FunPanelHeader,
+} from '../base/FunPanel';
 import { FunScroller } from '../base/FunScroller';
 import { FunSearch } from '../base/FunSearch';
 import {
@@ -31,21 +36,18 @@ import {
   FunSubNavListBox,
   FunSubNavListBoxItem,
 } from '../base/FunSubNav';
-import type {
-  EmojiParentKey,
-  EmojiSkinTone,
-  EmojiVariantKey,
-} from '../data/emojis';
+import type { EmojiParentKey, EmojiVariantKey } from '../data/emojis';
 import {
+  EmojiSkinTone,
+  emojiParentKeyConstant,
   EmojiPickerCategory,
   emojiVariantConstant,
   getEmojiParentByKey,
-  getEmojiParentKeyByValueUnsafe,
   getEmojiPickerCategoryParentKeys,
   getEmojiVariantByParentKeyAndSkinTone,
   isEmojiParentKey,
-  useEmojiSearch,
 } from '../data/emojis';
+import { useFunEmojiSearch } from '../useFunEmojiSearch';
 import { FunKeyboard } from '../keyboard/FunKeyboard';
 import type { GridKeyboardState } from '../keyboard/GridKeyboardDelegate';
 import { GridKeyboardDelegate } from '../keyboard/GridKeyboardDelegate';
@@ -55,10 +57,11 @@ import type {
   GridSectionNode,
 } from '../virtual/useFunVirtualGrid';
 import { useFunVirtualGrid } from '../virtual/useFunVirtualGrid';
-import { SkinTonesListBox } from '../base/FunSkinTones';
-import { FunEmoji } from '../FunEmoji';
+import { FunSkinTonesList } from '../FunSkinTones';
+import { FunStaticEmoji } from '../FunEmoji';
 import { useFunContext } from '../FunProvider';
 import { FunResults, FunResultsHeader } from '../base/FunResults';
+import { useFunEmojiLocalizer } from '../useFunEmojiLocalizer';
 
 function getTitleForSection(
   i18n: LocalizerType,
@@ -132,13 +135,15 @@ export type FunEmojiSelection = Readonly<{
 }>;
 
 export type FunPanelEmojisProps = Readonly<{
-  onEmojiSelect: (emojiSelection: FunEmojiSelection) => void;
+  onSelectEmoji: (emojiSelection: FunEmojiSelection) => void;
   onClose: () => void;
+  showCustomizePreferredReactionsButton: boolean;
 }>;
 
 export function FunPanelEmojis({
-  onEmojiSelect,
+  onSelectEmoji,
   onClose,
+  showCustomizePreferredReactionsButton,
 }: FunPanelEmojisProps): JSX.Element {
   const fun = useFunContext();
   const {
@@ -147,14 +152,22 @@ export function FunPanelEmojis({
     onSearchInputChange,
     selectedEmojisSection,
     onChangeSelectedEmojisSection,
+    onOpenCustomizePreferredReactionsModal,
     recentEmojis,
+    onSelectEmoji: onFunSelectEmoji,
   } = fun;
 
   const scrollerRef = useRef<HTMLDivElement>(null);
 
   const [focusedCellKey, setFocusedCellKey] = useState<CellKey | null>(null);
 
-  const searchEmojis = useEmojiSearch(i18n);
+  const [skinTonePopoverOpen, setSkinTonePopoverOpen] = useState(false);
+
+  const handleSkinTonePopoverOpenChange = useCallback((open: boolean) => {
+    setSkinTonePopoverOpen(open);
+  }, []);
+
+  const searchEmojis = useFunEmojiSearch();
   const searchQuery = useMemo(() => fun.searchInput.trim(), [fun.searchInput]);
 
   const sections = useMemo(() => {
@@ -236,14 +249,22 @@ export function FunPanelEmojis({
 
   const handlePressEmoji = useCallback(
     (event: MouseEvent, emojiSelection: FunEmojiSelection) => {
-      onEmojiSelect(emojiSelection);
+      event.stopPropagation();
+      onFunSelectEmoji(emojiSelection);
+      onSelectEmoji(emojiSelection);
       // TODO(jamie): Quill is stealing focus updating the selection
       if (!(event.ctrlKey || event.metaKey)) {
         onClose();
+        setFocusedCellKey(null);
       }
     },
-    [onEmojiSelect, onClose]
+    [onFunSelectEmoji, onSelectEmoji, onClose]
   );
+
+  const handleOpenCustomizePreferredReactionsModal = useCallback(() => {
+    onOpenCustomizePreferredReactionsModal();
+    onClose();
+  }, [onOpenCustomizePreferredReactionsModal, onClose]);
 
   const hasSearchQuery = useMemo(() => {
     return searchInput.length > 0;
@@ -251,173 +272,196 @@ export function FunPanelEmojis({
 
   return (
     <FunPanel>
-      <FunSearch
-        searchInput={searchInput}
-        onSearchInputChange={onSearchInputChange}
-        placeholder={i18n('icu:FunPanelEmojis__SearchLabel')}
-        aria-label={i18n('icu:FunPanelEmojis__SearchPlaceholder')}
-      />
-      {!hasSearchQuery && (
-        <FunSubNav>
-          <FunSubNavListBox
-            aria-label={i18n('icu:FunPanelEmojis__SubNavLabel')}
-            selected={selectedEmojisSection}
-            onSelect={handleSelectSection}
-          >
-            {recentEmojis.length > 0 && (
-              <FunSubNavListBoxItem
-                id={FunSectionCommon.Recents}
-                label={i18n('icu:FunPanelEmojis__SubNavCategoryLabel--Recents')}
-              >
-                <FunSubNavIcon iconClassName="FunSubNav__Icon--Recents" />
-              </FunSubNavListBoxItem>
+      <FunPanelHeader>
+        <FunSearch
+          i18n={i18n}
+          searchInput={searchInput}
+          onSearchInputChange={onSearchInputChange}
+          placeholder={i18n('icu:FunPanelEmojis__SearchLabel')}
+          aria-label={i18n('icu:FunPanelEmojis__SearchPlaceholder')}
+        />
+        {showCustomizePreferredReactionsButton && (
+          <button
+            type="button"
+            aria-label={i18n(
+              'icu:FunPanelEmojis__CustomizeReactionsButtonLabel'
             )}
-            <FunSubNavListBoxItem
-              id={EmojiPickerCategory.SmileysAndPeople}
-              label={i18n(
-                'icu:FunPanelEmojis__SubNavCategoryLabel--SmileysAndPeople'
-              )}
-            >
-              <FunSubNavIcon iconClassName="FunSubNav__Icon--SmileysAndPeople" />
-            </FunSubNavListBoxItem>
-            <FunSubNavListBoxItem
-              id={EmojiPickerCategory.AnimalsAndNature}
-              label={i18n(
-                'icu:FunPanelEmojis__SubNavCategoryLabel--AnimalsAndNature'
-              )}
-            >
-              <FunSubNavIcon iconClassName="FunSubNav__Icon--AnimalsAndNature" />
-            </FunSubNavListBoxItem>
-            <FunSubNavListBoxItem
-              id={EmojiPickerCategory.FoodAndDrink}
-              label={i18n(
-                'icu:FunPanelEmojis__SubNavCategoryLabel--FoodAndDrink'
-              )}
-            >
-              <FunSubNavIcon iconClassName="FunSubNav__Icon--FoodAndDrink" />
-            </FunSubNavListBoxItem>
-            <FunSubNavListBoxItem
-              id={EmojiPickerCategory.Activities}
-              label={i18n(
-                'icu:FunPanelEmojis__SubNavCategoryLabel--Activities'
-              )}
-            >
-              <FunSubNavIcon iconClassName="FunSubNav__Icon--Activities" />
-            </FunSubNavListBoxItem>
-            <FunSubNavListBoxItem
-              id={EmojiPickerCategory.TravelAndPlaces}
-              label={i18n(
-                'icu:FunPanelEmojis__SubNavCategoryLabel--TravelAndPlaces'
-              )}
-            >
-              <FunSubNavIcon iconClassName="FunSubNav__Icon--TravelAndPlaces" />
-            </FunSubNavListBoxItem>
-            <FunSubNavListBoxItem
-              id={EmojiPickerCategory.Objects}
-              label={i18n('icu:FunPanelEmojis__SubNavCategoryLabel--Objects')}
-            >
-              <FunSubNavIcon iconClassName="FunSubNav__Icon--Objects" />
-            </FunSubNavListBoxItem>
-            <FunSubNavListBoxItem
-              id={EmojiPickerCategory.Symbols}
-              label={i18n('icu:FunPanelEmojis__SubNavCategoryLabel--Symbols')}
-            >
-              <FunSubNavIcon iconClassName="FunSubNav__Icon--Symbols" />
-            </FunSubNavListBoxItem>
-            <FunSubNavListBoxItem
-              id={EmojiPickerCategory.Flags}
-              label={i18n('icu:FunPanelEmojis__SubNavCategoryLabel--Flags')}
-            >
-              <FunSubNavIcon iconClassName="FunSubNav__Icon--Flags" />
-            </FunSubNavListBoxItem>
-          </FunSubNavListBox>
-        </FunSubNav>
-      )}
-      <FunScroller
-        ref={scrollerRef}
-        sectionGap={EMOJI_GRID_SECTION_GAP}
-        onScrollSectionChange={handleScrollSectionChange}
-      >
-        {layout.sections.length === 0 && (
-          <FunResults aria-busy={false}>
-            <FunResultsHeader>
-              {i18n('icu:FunPanelEmojis__SearchResults__EmptyHeading')}{' '}
-              <FunEmoji
-                size={16}
-                role="presentation"
-                // For presentation only
-                aria-label=""
-                emoji={emojiVariantConstant('\u{1F641}')}
-              />
-            </FunResultsHeader>
-          </FunResults>
-        )}
-        {layout.sections.length > 0 && (
-          <FunKeyboard
-            scrollerRef={scrollerRef}
-            keyboard={keyboard}
-            onStateChange={handleKeyboardStateChange}
+            className="FunPanelEmojis__CustomizePreferredReactionsButton"
+            onClick={handleOpenCustomizePreferredReactionsModal}
           >
-            <FunGridContainer
-              totalSize={layout.totalHeight}
-              columnCount={EMOJI_GRID_COLUMNS}
-              cellWidth={EMOJI_GRID_CELL_WIDTH}
-              cellHeight={EMOJI_GRID_CELL_HEIGHT}
-            >
-              {layout.sections.map(section => {
-                return (
-                  <FunGridScrollerSection
-                    key={section.key}
-                    id={section.id}
-                    sectionOffset={section.sectionOffset}
-                    sectionSize={section.sectionSize}
-                  >
-                    <FunGridHeader
-                      id={section.header.key}
-                      headerOffset={section.header.headerOffset}
-                      headerSize={section.header.headerSize}
-                    >
-                      <FunGridHeaderText>
-                        {getTitleForSection(
-                          i18n,
-                          section.id as FunEmojisSection
-                        )}
-                      </FunGridHeaderText>
-                      {section.id === EmojiPickerCategory.SmileysAndPeople && (
-                        <SectionSkinTonePopover
-                          i18n={i18n}
-                          skinTone={fun.defaultEmojiSkinTone}
-                          onSelectSkinTone={fun.onChangeDefaultEmojiSkinTone}
-                        />
-                      )}
-                    </FunGridHeader>
-                    <FunGridRowGroup
-                      aria-labelledby={section.header.key}
-                      colCount={section.colCount}
-                      rowCount={section.rowCount}
-                      rowGroupOffset={section.rowGroup.rowGroupOffset}
-                      rowGroupSize={section.rowGroup.rowGroupSize}
-                    >
-                      {section.rowGroup.rows.map(row => {
-                        return (
-                          <Row
-                            key={row.key}
-                            rowIndex={row.rowIndex}
-                            cells={row.cells}
-                            focusedCellKey={focusedCellKey}
-                            defaultEmojiSkinTone={fun.defaultEmojiSkinTone}
-                            onPressEmoji={handlePressEmoji}
-                          />
-                        );
-                      })}
-                    </FunGridRowGroup>
-                  </FunGridScrollerSection>
-                );
-              })}
-            </FunGridContainer>
-          </FunKeyboard>
+            <span className="FunPanelEmojis__CustomizePreferredReactionsButton__Icon" />
+          </button>
         )}
-      </FunScroller>
+      </FunPanelHeader>
+
+      {!hasSearchQuery && (
+        <FunPanelFooter>
+          <FunSubNav>
+            <FunSubNavListBox
+              aria-label={i18n('icu:FunPanelEmojis__SubNavLabel')}
+              selected={selectedEmojisSection}
+              onSelect={handleSelectSection}
+            >
+              {recentEmojis.length > 0 && (
+                <FunSubNavListBoxItem
+                  id={FunSectionCommon.Recents}
+                  label={i18n(
+                    'icu:FunPanelEmojis__SubNavCategoryLabel--Recents'
+                  )}
+                >
+                  <FunSubNavIcon iconClassName="FunSubNav__Icon--Recents" />
+                </FunSubNavListBoxItem>
+              )}
+              <FunSubNavListBoxItem
+                id={EmojiPickerCategory.SmileysAndPeople}
+                label={i18n(
+                  'icu:FunPanelEmojis__SubNavCategoryLabel--SmileysAndPeople'
+                )}
+              >
+                <FunSubNavIcon iconClassName="FunSubNav__Icon--SmileysAndPeople" />
+              </FunSubNavListBoxItem>
+              <FunSubNavListBoxItem
+                id={EmojiPickerCategory.AnimalsAndNature}
+                label={i18n(
+                  'icu:FunPanelEmojis__SubNavCategoryLabel--AnimalsAndNature'
+                )}
+              >
+                <FunSubNavIcon iconClassName="FunSubNav__Icon--AnimalsAndNature" />
+              </FunSubNavListBoxItem>
+              <FunSubNavListBoxItem
+                id={EmojiPickerCategory.FoodAndDrink}
+                label={i18n(
+                  'icu:FunPanelEmojis__SubNavCategoryLabel--FoodAndDrink'
+                )}
+              >
+                <FunSubNavIcon iconClassName="FunSubNav__Icon--FoodAndDrink" />
+              </FunSubNavListBoxItem>
+              <FunSubNavListBoxItem
+                id={EmojiPickerCategory.Activities}
+                label={i18n(
+                  'icu:FunPanelEmojis__SubNavCategoryLabel--Activities'
+                )}
+              >
+                <FunSubNavIcon iconClassName="FunSubNav__Icon--Activities" />
+              </FunSubNavListBoxItem>
+              <FunSubNavListBoxItem
+                id={EmojiPickerCategory.TravelAndPlaces}
+                label={i18n(
+                  'icu:FunPanelEmojis__SubNavCategoryLabel--TravelAndPlaces'
+                )}
+              >
+                <FunSubNavIcon iconClassName="FunSubNav__Icon--TravelAndPlaces" />
+              </FunSubNavListBoxItem>
+              <FunSubNavListBoxItem
+                id={EmojiPickerCategory.Objects}
+                label={i18n('icu:FunPanelEmojis__SubNavCategoryLabel--Objects')}
+              >
+                <FunSubNavIcon iconClassName="FunSubNav__Icon--Objects" />
+              </FunSubNavListBoxItem>
+              <FunSubNavListBoxItem
+                id={EmojiPickerCategory.Symbols}
+                label={i18n('icu:FunPanelEmojis__SubNavCategoryLabel--Symbols')}
+              >
+                <FunSubNavIcon iconClassName="FunSubNav__Icon--Symbols" />
+              </FunSubNavListBoxItem>
+              <FunSubNavListBoxItem
+                id={EmojiPickerCategory.Flags}
+                label={i18n('icu:FunPanelEmojis__SubNavCategoryLabel--Flags')}
+              >
+                <FunSubNavIcon iconClassName="FunSubNav__Icon--Flags" />
+              </FunSubNavListBoxItem>
+            </FunSubNavListBox>
+          </FunSubNav>
+        </FunPanelFooter>
+      )}
+      <FunPanelBody>
+        <FunScroller
+          ref={scrollerRef}
+          sectionGap={EMOJI_GRID_SECTION_GAP}
+          onScrollSectionChange={handleScrollSectionChange}
+        >
+          {layout.sections.length === 0 && (
+            <FunResults aria-busy={false}>
+              <FunResultsHeader>
+                {i18n('icu:FunPanelEmojis__SearchResults__EmptyHeading')}{' '}
+                <FunStaticEmoji
+                  size={16}
+                  role="presentation"
+                  emoji={emojiVariantConstant('\u{1F641}')}
+                />
+              </FunResultsHeader>
+            </FunResults>
+          )}
+          {layout.sections.length > 0 && (
+            <FunKeyboard
+              scrollerRef={scrollerRef}
+              keyboard={keyboard}
+              onStateChange={handleKeyboardStateChange}
+            >
+              <FunGridContainer
+                totalSize={layout.totalHeight}
+                columnCount={EMOJI_GRID_COLUMNS}
+                cellWidth={EMOJI_GRID_CELL_WIDTH}
+                cellHeight={EMOJI_GRID_CELL_HEIGHT}
+              >
+                {layout.sections.map(section => {
+                  return (
+                    <FunGridScrollerSection
+                      key={section.key}
+                      id={section.id}
+                      sectionOffset={section.sectionOffset}
+                      sectionSize={section.sectionSize}
+                    >
+                      <FunGridHeader
+                        id={section.header.key}
+                        headerOffset={section.header.headerOffset}
+                        headerSize={section.header.headerSize}
+                      >
+                        <FunGridHeaderText>
+                          {getTitleForSection(
+                            i18n,
+                            section.id as FunEmojisSection
+                          )}
+                        </FunGridHeaderText>
+                        {section.id ===
+                          EmojiPickerCategory.SmileysAndPeople && (
+                          <SectionSkinTonePopover
+                            i18n={i18n}
+                            open={skinTonePopoverOpen}
+                            onOpenChange={handleSkinTonePopoverOpenChange}
+                            skinTone={fun.emojiSkinToneDefault}
+                            onSelectSkinTone={fun.onEmojiSkinToneDefaultChange}
+                          />
+                        )}
+                      </FunGridHeader>
+                      <FunGridRowGroup
+                        aria-labelledby={section.header.key}
+                        colCount={section.colCount}
+                        rowCount={section.rowCount}
+                        rowGroupOffset={section.rowGroup.rowGroupOffset}
+                        rowGroupSize={section.rowGroup.rowGroupSize}
+                      >
+                        {section.rowGroup.rows.map(row => {
+                          return (
+                            <Row
+                              key={row.key}
+                              rowIndex={row.rowIndex}
+                              cells={row.cells}
+                              focusedCellKey={focusedCellKey}
+                              emojiSkinToneDefault={fun.emojiSkinToneDefault}
+                              onPressEmoji={handlePressEmoji}
+                            />
+                          );
+                        })}
+                      </FunGridRowGroup>
+                    </FunGridScrollerSection>
+                  );
+                })}
+              </FunGridContainer>
+            </FunKeyboard>
+          )}
+        </FunScroller>
+      </FunPanelBody>
     </FunPanel>
   );
 }
@@ -426,7 +470,7 @@ type RowProps = Readonly<{
   rowIndex: number;
   cells: ReadonlyArray<CellLayoutNode>;
   focusedCellKey: CellKey | null;
-  defaultEmojiSkinTone: EmojiSkinTone;
+  emojiSkinToneDefault: EmojiSkinTone | null;
   onPressEmoji: (event: MouseEvent, emojiSelection: FunEmojiSelection) => void;
 }>;
 
@@ -446,7 +490,7 @@ const Row = memo(function Row(props: RowProps): JSX.Element {
             rowIndex={cell.rowIndex}
             colIndex={cell.colIndex}
             isTabbable={isTabbable}
-            defaultEmojiSkinTone={props.defaultEmojiSkinTone}
+            emojiSkinToneDefault={props.emojiSkinToneDefault}
             onPressEmoji={props.onPressEmoji}
           />
         );
@@ -461,12 +505,13 @@ type CellProps = Readonly<{
   colIndex: number;
   rowIndex: number;
   isTabbable: boolean;
-  defaultEmojiSkinTone: EmojiSkinTone;
+  emojiSkinToneDefault: EmojiSkinTone | null;
   onPressEmoji: (event: MouseEvent, emojiSelection: FunEmojiSelection) => void;
 }>;
 
 const Cell = memo(function Cell(props: CellProps): JSX.Element {
   const { onPressEmoji } = props;
+  const emojiLocalizer = useFunEmojiLocalizer();
 
   const emojiParent = useMemo(() => {
     strictAssert(
@@ -478,8 +523,8 @@ const Cell = memo(function Cell(props: CellProps): JSX.Element {
 
   const skinTone = useMemo(() => {
     // TODO(jamie): Need to implement emoji-specific skin tone preferences
-    return props.defaultEmojiSkinTone;
-  }, [props.defaultEmojiSkinTone]);
+    return props.emojiSkinToneDefault ?? EmojiSkinTone.None;
+  }, [props.emojiSkinToneDefault]);
 
   const emojiVariant = useMemo(() => {
     return getEmojiVariantByParentKeyAndSkinTone(emojiParent.key, skinTone);
@@ -505,16 +550,10 @@ const Cell = memo(function Cell(props: CellProps): JSX.Element {
     >
       <FunItemButton
         tabIndex={props.isTabbable ? 0 : -1}
-        // TODO(jamie): Translate short name
-        aria-label={emojiParent.englishShortNameDefault}
+        aria-label={emojiLocalizer(emojiVariant.key)}
         onClick={handleClick}
       >
-        <FunEmoji
-          role="presentation"
-          aria-label=""
-          size={32}
-          emoji={emojiVariant}
-        />
+        <FunStaticEmoji role="presentation" size={32} emoji={emojiVariant} />
       </FunItemButton>
     </FunGridCell>
   );
@@ -522,41 +561,39 @@ const Cell = memo(function Cell(props: CellProps): JSX.Element {
 
 type SectionSkinTonePopoverProps = Readonly<{
   i18n: LocalizerType;
-  skinTone: EmojiSkinTone;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  skinTone: EmojiSkinTone | null;
   onSelectSkinTone: (emojiSkinTone: EmojiSkinTone) => void;
 }>;
 
 function SectionSkinTonePopover(
   props: SectionSkinTonePopoverProps
 ): JSX.Element {
-  const { i18n, onSelectSkinTone } = props;
-  const [isOpen, setIsOpen] = useState(false);
+  const { i18n, onOpenChange, onSelectSkinTone } = props;
 
   const handleSelectSkinTone = useCallback(
     (emojiSkinTone: EmojiSkinTone) => {
       onSelectSkinTone(emojiSkinTone);
-      setIsOpen(false);
+      onOpenChange(false);
     },
-    [onSelectSkinTone]
+    [onSelectSkinTone, onOpenChange]
   );
 
-  const handleOpenChange = useCallback((open: boolean) => {
-    setIsOpen(open);
-  }, []);
-
   return (
-    <DialogTrigger isOpen={isOpen} onOpenChange={handleOpenChange}>
+    <DialogTrigger isOpen={props.open} onOpenChange={props.onOpenChange}>
       <FunGridHeaderButton
         label={i18n('icu:FunPanelEmojis__ChangeSkinToneButtonLabel')}
       >
-        <FunGridHeaderIcon iconClassName="FunGrid__HeaderIcon--Settings" />
+        <FunGridHeaderIcon iconClassName="FunGrid__HeaderIcon--More" />
       </FunGridHeaderButton>
       <FunGridHeaderPopover>
         <FunGridHeaderPopoverHeader>
           {i18n('icu:FunPanelEmojis__SkinTonePicker__ChooseDefaultLabel')}
         </FunGridHeaderPopoverHeader>
-        <SkinTonesListBox
-          emoji={getEmojiParentKeyByValueUnsafe('\u{270B}')}
+        <FunSkinTonesList
+          i18n={i18n}
+          emoji={emojiParentKeyConstant('\u{270B}')}
           skinTone={props.skinTone}
           onSelectSkinTone={handleSelectSkinTone}
         />

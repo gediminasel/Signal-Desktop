@@ -20,8 +20,19 @@ import { ButtonVariant } from './Button';
 import { ConfirmationDialog } from './ConfirmationDialog';
 import { SignalConnectionsModal } from './SignalConnectionsModal';
 import { WhatsNewModal } from './WhatsNewModal';
+import { MediaPermissionsModal } from './MediaPermissionsModal';
 import type { StartCallData } from './ConfirmLeaveCallModal';
 import type { AttachmentNotAvailableModalType } from './AttachmentNotAvailableModal';
+import {
+  TapToViewNotAvailableModal,
+  type DataPropsType as TapToViewNotAvailablePropsType,
+} from './TapToViewNotAvailableModal';
+import {
+  BackfillFailureModal,
+  type DataPropsType as BackfillFailureModalPropsType,
+} from './BackfillFailureModal';
+import type { SmartDraftGifMessageSendModalProps } from '../state/smart/DraftGifMessageSendModal';
+import { CriticalIdlePrimaryDeviceModal } from './CriticalIdlePrimaryDeviceModal';
 
 // NOTE: All types should be required for this component so that the smart
 // component gives you type errors when adding/removing props.
@@ -71,9 +82,21 @@ export type PropsType = {
   // DeleteMessageModal
   deleteMessagesProps: DeleteMessagesPropsType | undefined;
   renderDeleteMessagesModal: () => JSX.Element;
+  // DraftGifMessageSendModal
+  draftGifMessageSendModalProps: SmartDraftGifMessageSendModalProps | null;
+  renderDraftGifMessageSendModal: () => JSX.Element;
   // ForwardMessageModal
   forwardMessagesProps: ForwardMessagesPropsType | undefined;
   renderForwardMessagesModal: () => JSX.Element;
+  // MediaPermissionsModal
+  mediaPermissionsModalProps:
+    | {
+        mediaType: 'camera' | 'microphone';
+        requestor: 'call' | 'voiceNote';
+      }
+    | undefined;
+  closeMediaPermissionsModal: () => void;
+  openSystemMediaPermissions: (mediaType: 'camera' | 'microphone') => void;
   // MessageRequestActionsConfirmation
   messageRequestActionsConfirmationProps: MessageRequestActionsConfirmationPropsType | null;
   renderMessageRequestActionsConfirmation: () => JSX.Element;
@@ -107,6 +130,12 @@ export type PropsType = {
     | SafetyNumberChangedBlockingDataType
     | undefined;
   renderSendAnywayDialog: () => JSX.Element;
+  // TapToViewNotAvailableModal
+  tapToViewNotAvailableModalProps: TapToViewNotAvailablePropsType | undefined;
+  hideTapToViewNotAvailableModal: () => void;
+  // BackfillFailureModal
+  backfillFailureModalProps: BackfillFailureModalPropsType | undefined;
+  hideBackfillFailureModal: () => void;
   // UserNotFoundModal
   hideUserNotFoundModal: () => unknown;
   userNotFoundModalState: UserNotFoundModalStateType | undefined;
@@ -116,6 +145,12 @@ export type PropsType = {
   // UsernameOnboarding
   usernameOnboardingState: UsernameOnboardingState;
   renderUsernameOnboarding: () => JSX.Element;
+  isProfileNameWarningModalVisible: boolean;
+  profileNameWarningModalConversationType?: string;
+  renderProfileNameWarningModal: () => JSX.Element;
+  // CriticalIdlePrimaryDeviceModal,
+  criticalIdlePrimaryDeviceModal: boolean;
+  hideCriticalIdlePrimaryDeviceModal: () => void;
 };
 
 export function GlobalModalContainer({
@@ -153,9 +188,16 @@ export function GlobalModalContainer({
   // DeleteMessageModal
   deleteMessagesProps,
   renderDeleteMessagesModal,
+  // DraftGifMessageSendModal
+  draftGifMessageSendModalProps,
+  renderDraftGifMessageSendModal,
   // ForwardMessageModal
   forwardMessagesProps,
   renderForwardMessagesModal,
+  // MediaPermissionsModal
+  mediaPermissionsModalProps,
+  closeMediaPermissionsModal,
+  openSystemMediaPermissions,
   // MessageRequestActionsConfirmation
   messageRequestActionsConfirmationProps,
   renderMessageRequestActionsConfirmation,
@@ -187,6 +229,12 @@ export function GlobalModalContainer({
   hasSafetyNumberChangeModal,
   safetyNumberChangedBlockingData,
   renderSendAnywayDialog,
+  // TapToViewNotAvailableModal
+  tapToViewNotAvailableModalProps,
+  hideTapToViewNotAvailableModal,
+  // BackfillFailureModal
+  backfillFailureModalProps,
+  hideBackfillFailureModal,
   // UserNotFoundModal
   hideUserNotFoundModal,
   userNotFoundModalState,
@@ -196,6 +244,12 @@ export function GlobalModalContainer({
   // UsernameOnboarding
   usernameOnboardingState,
   renderUsernameOnboarding,
+  // ProfileNameWarningModal
+  isProfileNameWarningModalVisible,
+  renderProfileNameWarningModal,
+  // CriticalIdlePrimaryDeviceModal
+  criticalIdlePrimaryDeviceModal,
+  hideCriticalIdlePrimaryDeviceModal,
 }: PropsType): JSX.Element | null {
   // We want the following dialogs to show in this order:
   // 1. Errors
@@ -216,6 +270,18 @@ export function GlobalModalContainer({
   // Forward Modal
   if (forwardMessagesProps) {
     return renderForwardMessagesModal();
+  }
+
+  // Media Permissions Modal
+  if (mediaPermissionsModalProps) {
+    return (
+      <MediaPermissionsModal
+        i18n={i18n}
+        {...mediaPermissionsModalProps}
+        openSystemMediaPermissions={openSystemMediaPermissions}
+        onClose={closeMediaPermissionsModal}
+      />
+    );
   }
 
   // The Rest
@@ -248,6 +314,10 @@ export function GlobalModalContainer({
     return renderDeleteMessagesModal();
   }
 
+  if (draftGifMessageSendModalProps) {
+    return renderDraftGifMessageSendModal();
+  }
+
   if (messageRequestActionsConfirmationProps) {
     return renderMessageRequestActionsConfirmation();
   }
@@ -258,6 +328,10 @@ export function GlobalModalContainer({
 
   if (isProfileEditorVisible) {
     return renderProfileEditor();
+  }
+
+  if (isProfileNameWarningModalVisible) {
+    return renderProfileNameWarningModal();
   }
 
   if (isShortcutGuideModalVisible) {
@@ -336,6 +410,35 @@ export function GlobalModalContainer({
 
   if (attachmentNotAvailableModalType) {
     return renderAttachmentNotAvailableModal();
+  }
+
+  if (tapToViewNotAvailableModalProps) {
+    return (
+      <TapToViewNotAvailableModal
+        i18n={i18n}
+        onClose={hideTapToViewNotAvailableModal}
+        {...tapToViewNotAvailableModalProps}
+      />
+    );
+  }
+
+  if (backfillFailureModalProps != null) {
+    return (
+      <BackfillFailureModal
+        i18n={i18n}
+        onClose={hideBackfillFailureModal}
+        {...backfillFailureModalProps}
+      />
+    );
+  }
+
+  if (criticalIdlePrimaryDeviceModal) {
+    return (
+      <CriticalIdlePrimaryDeviceModal
+        i18n={i18n}
+        onClose={hideCriticalIdlePrimaryDeviceModal}
+      />
+    );
   }
 
   return null;

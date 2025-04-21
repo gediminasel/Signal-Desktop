@@ -22,7 +22,7 @@ import {
 import { DataReader, DataWriter } from '../../sql/Client';
 import type { BoundActionCreatorsMapObject } from '../../hooks/useBoundActions';
 import type { DraftBodyRanges } from '../../types/BodyRange';
-import type { LinkPreviewType } from '../../types/message/LinkPreviews';
+import type { LinkPreviewForUIType } from '../../types/message/LinkPreviews';
 import type { ReadonlyMessageAttributesType } from '../../model-types.d';
 import type { NoopActionType } from './noop';
 import type { ShowToastActionType } from './toast';
@@ -103,7 +103,7 @@ type ComposerStateByConversationType = {
   focusCounter: number;
   isDisabled: boolean;
   linkPreviewLoading: boolean;
-  linkPreviewResult?: LinkPreviewType;
+  linkPreviewResult?: LinkPreviewForUIType;
   messageCompositionId: string;
   quotedMessage?: QuotedMessageForComposerType;
   sendCounter: number;
@@ -408,6 +408,7 @@ export function saveDraftRecordingIfNeeded(): ThunkAction<
 type WithPreSendChecksOptions = Readonly<{
   message?: string;
   voiceNoteAttachment?: InMemoryAttachmentDraftType;
+  draftAttachments?: ReadonlyArray<AttachmentDraftType>;
 }>;
 
 async function withPreSendChecks(
@@ -422,7 +423,7 @@ async function withPreSendChecks(
 ): Promise<void> {
   const conversation = window.ConversationController.get(conversationId);
   if (!conversation) {
-    throw new Error('sendMultiMediaMessage: No conversation found');
+    throw new Error('withPreSendChecks: No conversation found');
   }
 
   const sendStart = Date.now();
@@ -431,6 +432,8 @@ async function withPreSendChecks(
   ]);
 
   const { message, voiceNoteAttachment } = options;
+  const draftAttachments =
+    options.draftAttachments ?? conversation.attributes.draftAttachments;
 
   try {
     dispatch(setComposerDisabledState(conversationId, true));
@@ -466,7 +469,7 @@ async function withPreSendChecks(
 
     if (
       !message?.length &&
-      !hasDraftAttachments(conversation.attributes.draftAttachments, {
+      !hasDraftAttachments(draftAttachments, {
         includePending: false,
       }) &&
       !voiceNoteAttachment
@@ -967,7 +970,7 @@ function onEditorStateChange({
 
     const conversation = window.ConversationController.get(conversationId);
     if (!conversation) {
-      throw new Error('processAttachments: Unable to find conversation');
+      throw new Error('onEditorStateChange: Unable to find conversation');
     }
 
     const state = getState().composer.conversations[conversationId];

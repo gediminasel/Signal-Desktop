@@ -10,11 +10,13 @@ import { omit } from 'lodash';
 import * as MIME from '../../types/MIME';
 import {
   AttachmentDownloadManager,
-  AttachmentDownloadUrgency,
   runDownloadAttachmentJobInner,
   type NewAttachmentDownloadJobType,
 } from '../../jobs/AttachmentDownloadManager';
-import type { AttachmentDownloadJobType } from '../../types/AttachmentDownload';
+import {
+  type AttachmentDownloadJobType,
+  AttachmentDownloadUrgency,
+} from '../../types/AttachmentDownload';
 import { DataReader, DataWriter } from '../../sql/Client';
 import { MINUTE } from '../../util/durations';
 import { type AttachmentType, AttachmentVariant } from '../../types/Attachment';
@@ -122,6 +124,7 @@ describe('AttachmentDownloadManager/JobManager', () => {
     await downloadManager?.addJob({
       urgency,
       ...job,
+      isManualDownload: Boolean(job.isManualDownload),
     });
   }
   async function addJobs(
@@ -314,8 +317,8 @@ describe('AttachmentDownloadManager/JobManager', () => {
     assert.strictEqual(runJob.callCount, 2);
     assertRunJobCalledWith([jobs[1], jobs[0]]);
 
-    const retriedJob = await DataReader.getAttachmentDownloadJob(jobs[1]);
-    const finishedJob = await DataReader.getAttachmentDownloadJob(jobs[0]);
+    const retriedJob = await DataReader._getAttachmentDownloadJob(jobs[1]);
+    const finishedJob = await DataReader._getAttachmentDownloadJob(jobs[0]);
 
     assert.isUndefined(finishedJob);
     assert.strictEqual(retriedJob?.attempts, 1);
@@ -348,7 +351,7 @@ describe('AttachmentDownloadManager/JobManager', () => {
     ]);
 
     // Ensure it's been removed after completed
-    assert.isUndefined(await DataReader.getAttachmentDownloadJob(jobs[1]));
+    assert.isUndefined(await DataReader._getAttachmentDownloadJob(jobs[1]));
   });
 
   it('will reset attempts if addJob is called again', async () => {
@@ -377,7 +380,10 @@ describe('AttachmentDownloadManager/JobManager', () => {
 
     // add the same job again and it should retry ASAP and reset attempts
     attempts = getPromisesForAttempts(jobs[0], 5);
-    await downloadManager?.addJob(jobs[0]);
+    await downloadManager?.addJob({
+      ...jobs[0],
+      isManualDownload: Boolean(jobs[0].isManualDownload),
+    });
     await attempts[0].completed;
     assert.strictEqual(runJob.callCount, 4);
 
@@ -398,7 +404,7 @@ describe('AttachmentDownloadManager/JobManager', () => {
     assert.strictEqual(runJob.callCount, 8);
 
     // Ensure it's been removed
-    assert.isUndefined(await DataReader.getAttachmentDownloadJob(jobs[0]));
+    assert.isUndefined(await DataReader._getAttachmentDownloadJob(jobs[0]));
   });
 
   it('only selects backup_import jobs if the mediaDownload is not paused', async () => {

@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { AudioDevice } from '@signalapp/ringrtc';
-import type { ReactNode } from 'react';
 import React, {
   useCallback,
   useEffect,
@@ -12,11 +11,11 @@ import React, {
 } from 'react';
 import { noop, partition } from 'lodash';
 import classNames from 'classnames';
-import { v4 as uuid } from 'uuid';
 import * as LocaleMatcher from '@formatjs/intl-localematcher';
 
 import type { MediaDeviceSettings } from '../types/Calling';
 import type {
+  AutoDownloadAttachmentType,
   NotificationSettingType,
   SentMediaQualitySettingType,
   ZoomFactorType,
@@ -40,10 +39,7 @@ import { Button, ButtonVariant } from './Button';
 import { ChatColorPicker } from './ChatColorPicker';
 import { Checkbox } from './Checkbox';
 import { WidthBreakpoint } from './_util';
-import {
-  CircleCheckbox,
-  Variant as CircleCheckboxVariant,
-} from './CircleCheckbox';
+
 import { ConfirmationDialog } from './ConfirmationDialog';
 import { DisappearingTimeDialog } from './DisappearingTimeDialog';
 import { PhoneNumberDiscoverability } from '../util/phoneNumberDiscoverability';
@@ -67,16 +63,34 @@ import { SearchInput } from './SearchInput';
 import { removeDiacritics } from '../util/removeDiacritics';
 import { assertDev } from '../util/assert';
 import { I18n } from './I18n';
+import { FunSkinTonesList } from './fun/FunSkinTones';
+import { emojiParentKeyConstant, type EmojiSkinTone } from './fun/data/emojis';
+import type {
+  BackupsSubscriptionType,
+  BackupStatusType,
+} from '../types/backups';
+import {
+  SettingsControl as Control,
+  SettingsRadio,
+  SettingsRow,
+} from './PreferencesUtil';
+import { PreferencesBackups } from './PreferencesBackups';
+import { FunEmojiLocalizationProvider } from './fun/FunEmojiLocalizationProvider';
 
 type CheckboxChangeHandlerType = (value: boolean) => unknown;
 type SelectChangeHandlerType<T = string | number> = (value: T) => unknown;
 
 export type PropsDataType = {
   // Settings
+  autoDownloadAttachment: AutoDownloadAttachmentType;
+  backupFeatureEnabled: boolean;
   blockedCount: number;
+  cloudBackupStatus?: BackupStatusType;
+  backupSubscriptionStatus?: BackupsSubscriptionType;
   customColors: Record<string, CustomColorType>;
   defaultConversationColor: DefaultConversationColorType;
   deviceName?: string;
+  emojiSkinToneDefault: EmojiSkinTone;
   hasAudioNotifications?: boolean;
   hasAutoConvertEmoji: boolean;
   hasAutoDownloadUpdate: boolean;
@@ -87,7 +101,7 @@ export type PropsDataType = {
   hasHideMenuBar?: boolean;
   hasIncomingCallNotifications: boolean;
   hasLinkPreviews: boolean;
-  hasMediaCameraPermissions: boolean;
+  hasMediaCameraPermissions: boolean | undefined;
   hasMediaPermissions: boolean;
   hasMessageAudio: boolean;
   hasMinimizeToAndStartInSystemTray: boolean;
@@ -100,6 +114,7 @@ export type PropsDataType = {
   hasStoriesDisabled: boolean;
   hasTextFormatting: boolean;
   hasTypingIndicators: boolean;
+  initialPage?: Page;
   lastSyncTime?: number;
   notificationContent: NotificationSettingType;
   phoneNumber: string | undefined;
@@ -147,6 +162,8 @@ type PropsFunctionType = {
     colorId: string
   ) => Promise<Array<ConversationType>>;
   makeSyncRequest: () => unknown;
+  refreshCloudBackupStatus: () => void;
+  refreshBackupSubscriptionStatus: () => void;
   removeCustomColor: (colorId: string) => unknown;
   removeCustomColorOnConversations: (colorId: string) => unknown;
   resetAllChatColors: () => unknown;
@@ -162,11 +179,15 @@ type PropsFunctionType = {
   // Change handlers
   onAudioNotificationsChange: CheckboxChangeHandlerType;
   onAutoConvertEmojiChange: CheckboxChangeHandlerType;
+  onAutoDownloadAttachmentChange: (
+    setting: AutoDownloadAttachmentType
+  ) => unknown;
   onAutoDownloadUpdateChange: CheckboxChangeHandlerType;
   onAutoLaunchChange: CheckboxChangeHandlerType;
   onCallNotificationsChange: CheckboxChangeHandlerType;
   onCallRingtoneNotificationChange: CheckboxChangeHandlerType;
   onCountMutedConversationsChange: CheckboxChangeHandlerType;
+  onEmojiSkinToneDefaultChange: (emojiSkinTone: EmojiSkinTone) => void;
   onHasStoriesDisabledChanged: SelectChangeHandlerType<boolean>;
   onHideMenuBarChange: CheckboxChangeHandlerType;
   onIncomingCallNotificationsChange: CheckboxChangeHandlerType;
@@ -201,7 +222,7 @@ export type PropsType = PropsDataType & PropsFunctionType;
 
 export type PropsPreloadType = Omit<PropsType, 'i18n'>;
 
-enum Page {
+export enum Page {
   // Accessible through left nav
   General = 'General',
   Appearance = 'Appearance',
@@ -209,6 +230,8 @@ enum Page {
   Calls = 'Calls',
   Notifications = 'Notifications',
   Privacy = 'Privacy',
+  DataUsage = 'DataUsage',
+  Backups = 'Backups',
 
   // Sub pages
   ChatColor = 'ChatColor',
@@ -245,18 +268,23 @@ const DEFAULT_ZOOM_FACTORS = [
 
 export function Preferences({
   addCustomColor,
+  autoDownloadAttachment,
   availableCameras,
   availableLocales,
   availableMicrophones,
   availableSpeakers,
+  backupFeatureEnabled,
+  backupSubscriptionStatus,
   blockedCount,
   closeSettings,
+  cloudBackupStatus,
   customColors,
   defaultConversationColor,
   deviceName = '',
   doDeleteAllData,
   doneRendering,
   editCustomColor,
+  emojiSkinToneDefault,
   getConversationsWithCustomColor,
   hasAudioNotifications,
   hasAutoConvertEmoji,
@@ -282,6 +310,7 @@ export function Preferences({
   hasTextFormatting,
   hasTypingIndicators,
   i18n,
+  initialPage = Page.General,
   initialSpellCheckSetting,
   isAutoDownloadUpdatesSupported,
   isAutoLaunchSupported,
@@ -295,11 +324,13 @@ export function Preferences({
   notificationContent,
   onAudioNotificationsChange,
   onAutoConvertEmojiChange,
+  onAutoDownloadAttachmentChange,
   onAutoDownloadUpdateChange,
   onAutoLaunchChange,
   onCallNotificationsChange,
   onCallRingtoneNotificationChange,
   onCountMutedConversationsChange,
+  onEmojiSkinToneDefaultChange,
   onHasStoriesDisabledChanged,
   onHideMenuBarChange,
   onIncomingCallNotificationsChange,
@@ -327,6 +358,8 @@ export function Preferences({
   onZoomFactorChange,
   phoneNumber = '',
   preferredSystemLocales,
+  refreshCloudBackupStatus,
+  refreshBackupSubscriptionStatus,
   removeCustomColor,
   removeCustomColorOnConversations,
   resetAllChatColors,
@@ -351,7 +384,7 @@ export function Preferences({
 
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [confirmStoriesOff, setConfirmStoriesOff] = useState(false);
-  const [page, setPage] = useState<Page>(Page.General);
+  const [page, setPage] = useState<Page>(initialPage);
   const [showSyncFailed, setShowSyncFailed] = useState(false);
   const [nowSyncing, setNowSyncing] = useState(false);
   const [showDisappearingTimerDialog, setShowDisappearingTimerDialog] =
@@ -371,6 +404,19 @@ export function Preferences({
     setLanguageDialog(null);
     setSelectedLanguageLocale(localeOverride);
   }
+  const shouldShowBackupsPage =
+    backupFeatureEnabled && backupSubscriptionStatus != null;
+
+  if (page === Page.Backups && !shouldShowBackupsPage) {
+    setPage(Page.General);
+  }
+
+  useEffect(() => {
+    if (page === Page.Backups) {
+      refreshCloudBackupStatus();
+      refreshBackupSubscriptionStatus();
+    }
+  }, [page, refreshCloudBackupStatus, refreshBackupSubscriptionStatus]);
 
   useEffect(() => {
     doneRendering();
@@ -601,7 +647,7 @@ export function Preferences({
             onChange={onMediaPermissionsChange}
           />
           <Checkbox
-            checked={hasMediaCameraPermissions}
+            checked={hasMediaCameraPermissions ?? false}
             label={i18n('icu:mediaCameraPermissionsDescription')}
             moduleClassName="Preferences__checkbox"
             name="mediaCameraPermissions"
@@ -884,25 +930,20 @@ export function Preferences({
             name="autoConvertEmoji"
             onChange={onAutoConvertEmojiChange}
           />
-          <Control
-            left={i18n('icu:Preferences__sent-media-quality')}
-            right={
-              <Select
-                onChange={onSentMediaQualityChange}
-                options={[
-                  {
-                    text: i18n('icu:sentMediaQualityStandard'),
-                    value: 'standard',
-                  },
-                  {
-                    text: i18n('icu:sentMediaQualityHigh'),
-                    value: 'high',
-                  },
-                ]}
-                value={sentMediaQualitySetting}
-              />
-            }
-          />
+          <SettingsRow>
+            <Control
+              left={i18n('icu:Preferences__EmojiSkinToneDefaultSetting__Label')}
+              right={
+                <FunSkinTonesList
+                  i18n={i18n}
+                  // Raised Hand
+                  emoji={emojiParentKeyConstant('\u{270B}')}
+                  skinTone={emojiSkinToneDefault}
+                  onSelectSkinTone={onEmojiSkinToneDefaultChange}
+                />
+              }
+            />
+          </SettingsRow>
         </SettingsRow>
         {isSyncSupported && (
           <SettingsRow>
@@ -1404,6 +1445,111 @@ export function Preferences({
         ) : null}
       </>
     );
+  } else if (page === Page.DataUsage) {
+    settings = (
+      <>
+        <div className="Preferences__title">
+          <div className="Preferences__title--header">
+            {i18n('icu:Preferences__button--data-usage')}
+          </div>
+        </div>
+        <SettingsRow title={i18n('icu:Preferences__media-auto-download')}>
+          <Checkbox
+            checked={autoDownloadAttachment.photos !== false}
+            label={i18n('icu:Preferences__media-auto-download__photos')}
+            moduleClassName="Preferences__checkbox"
+            name="autoLaunch"
+            onChange={(newValue: boolean) =>
+              onAutoDownloadAttachmentChange({
+                ...autoDownloadAttachment,
+                photos: newValue,
+              })
+            }
+          />
+          <Checkbox
+            checked={autoDownloadAttachment.videos !== false}
+            label={i18n('icu:Preferences__media-auto-download__videos')}
+            moduleClassName="Preferences__checkbox"
+            name="autoLaunch"
+            onChange={(newValue: boolean) =>
+              onAutoDownloadAttachmentChange({
+                ...autoDownloadAttachment,
+                videos: newValue,
+              })
+            }
+          />
+          <Checkbox
+            checked={autoDownloadAttachment.audio !== false}
+            label={i18n('icu:Preferences__media-auto-download__audio')}
+            moduleClassName="Preferences__checkbox"
+            name="autoLaunch"
+            onChange={(newValue: boolean) =>
+              onAutoDownloadAttachmentChange({
+                ...autoDownloadAttachment,
+                audio: newValue,
+              })
+            }
+          />
+          <Checkbox
+            checked={autoDownloadAttachment.documents !== false}
+            label={i18n('icu:Preferences__media-auto-download__documents')}
+            moduleClassName="Preferences__checkbox"
+            name="autoLaunch"
+            onChange={(newValue: boolean) =>
+              onAutoDownloadAttachmentChange({
+                ...autoDownloadAttachment,
+                documents: newValue,
+              })
+            }
+          />
+          <div className="Preferences__padding">
+            <div
+              className={classNames(
+                'Preferences__description',
+                'Preferences__description--medium'
+              )}
+            >
+              {i18n('icu:Preferences__media-auto-download__description')}
+            </div>
+          </div>
+        </SettingsRow>
+        <SettingsRow>
+          <Control
+            left={
+              <>
+                <div className="Preferences__option-name">
+                  {i18n('icu:Preferences__sent-media-quality')}
+                </div>
+                <div
+                  className={classNames(
+                    'Preferences__description',
+                    'Preferences__description--medium'
+                  )}
+                >
+                  {i18n('icu:Preferences__sent-media-quality__description')}
+                </div>
+              </>
+            }
+            right={
+              <Select
+                onChange={onSentMediaQualityChange}
+                options={[
+                  {
+                    text: i18n('icu:sentMediaQualityStandard'),
+                    value: 'standard',
+                  },
+                  {
+                    text: i18n('icu:sentMediaQualityHigh'),
+                    value: 'high',
+                  },
+                ]}
+                value={sentMediaQualitySetting}
+              />
+            }
+          />
+        </SettingsRow>
+      </>
+    );
   } else if (page === Page.ChatColor) {
     settings = (
       <>
@@ -1573,10 +1719,19 @@ export function Preferences({
         )}
       </>
     );
+  } else if (page === Page.Backups) {
+    settings = (
+      <PreferencesBackups
+        i18n={i18n}
+        cloudBackupStatus={cloudBackupStatus}
+        backupSubscriptionStatus={backupSubscriptionStatus}
+        locale={resolvedLocale}
+      />
+    );
   }
 
   return (
-    <>
+    <FunEmojiLocalizationProvider i18n={i18n}>
       <div className="module-title-bar-drag-area" />
       <div className="Preferences">
         <div className="Preferences__page-selector">
@@ -1649,6 +1804,31 @@ export function Preferences({
           >
             {i18n('icu:Preferences__button--privacy')}
           </button>
+
+          <button
+            type="button"
+            className={classNames({
+              Preferences__button: true,
+              'Preferences__button--data-usage': true,
+              'Preferences__button--selected': page === Page.DataUsage,
+            })}
+            onClick={() => setPage(Page.DataUsage)}
+          >
+            {i18n('icu:Preferences__button--data-usage')}
+          </button>
+          {shouldShowBackupsPage ? (
+            <button
+              type="button"
+              className={classNames({
+                Preferences__button: true,
+                'Preferences__button--backups': true,
+                'Preferences__button--selected': page === Page.Backups,
+              })}
+              onClick={() => setPage(Page.Backups)}
+            >
+              {i18n('icu:Preferences__button--backups')}
+            </button>
+          ) : null}
         </div>
         <div className="Preferences__settings-pane" ref={settingsPaneRef}>
           {settings}
@@ -1666,114 +1846,7 @@ export function Preferences({
         containerWidthBreakpoint={WidthBreakpoint.Narrow}
         isInFullScreenCall={false}
       />
-    </>
-  );
-}
-
-function SettingsRow({
-  children,
-  title,
-  className,
-}: {
-  children: ReactNode;
-  title?: string;
-  className?: string;
-}): JSX.Element {
-  return (
-    <fieldset className={classNames('Preferences__settings-row', className)}>
-      {title && <legend className="Preferences__padding">{title}</legend>}
-      {children}
-    </fieldset>
-  );
-}
-
-function Control({
-  icon,
-  left,
-  onClick,
-  right,
-}: {
-  /** A className or `true` to leave room for icon */
-  icon?: string | true;
-  left: ReactNode;
-  onClick?: () => unknown;
-  right: ReactNode;
-}): JSX.Element {
-  const content = (
-    <>
-      {icon && (
-        <div
-          className={classNames(
-            'Preferences__control--icon',
-            icon === true ? null : icon
-          )}
-        />
-      )}
-      <div className="Preferences__control--key">{left}</div>
-      <div className="Preferences__control--value">{right}</div>
-    </>
-  );
-
-  if (onClick) {
-    return (
-      <button
-        className="Preferences__control Preferences__control--clickable"
-        type="button"
-        onClick={onClick}
-      >
-        {content}
-      </button>
-    );
-  }
-
-  return <div className="Preferences__control">{content}</div>;
-}
-
-type SettingsRadioOptionType<Enum> = Readonly<{
-  text: string;
-  value: Enum;
-  readOnly?: boolean;
-  onClick?: () => void;
-}>;
-
-function SettingsRadio<Enum>({
-  value,
-  options,
-  onChange,
-}: {
-  value: Enum;
-  options: ReadonlyArray<SettingsRadioOptionType<Enum>>;
-  onChange: (value: Enum) => void;
-}): JSX.Element {
-  const htmlIds = useMemo(() => {
-    return Array.from({ length: options.length }, () => uuid());
-  }, [options.length]);
-
-  return (
-    <div className="Preferences__padding">
-      {options.map(({ text, value: optionValue, readOnly, onClick }, i) => {
-        const htmlId = htmlIds[i];
-        return (
-          <label
-            className={classNames('Preferences__settings-radio__label', {
-              'Preferences__settings-radio__label--readonly': readOnly,
-            })}
-            key={htmlId}
-            htmlFor={htmlId}
-          >
-            <CircleCheckbox
-              isRadio
-              variant={CircleCheckboxVariant.Small}
-              id={htmlId}
-              checked={value === optionValue}
-              onClick={onClick}
-              onChange={readOnly ? noop : () => onChange(optionValue)}
-            />
-            {text}
-          </label>
-        );
-      })}
-    </div>
+    </FunEmojiLocalizationProvider>
   );
 }
 

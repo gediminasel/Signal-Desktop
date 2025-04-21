@@ -1,7 +1,7 @@
 // Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { Database } from '@signalapp/better-sqlite3';
+import type { Database } from '@signalapp/sqlcipher';
 import type { ReadonlyDeep } from 'type-fest';
 import type {
   ConversationAttributesType,
@@ -235,6 +235,13 @@ export type SentProtoType = {
   timestamp: number;
   urgent: boolean;
   hasPniSignatureMessage: boolean;
+};
+export type SentProtoDBType = {
+  contentHint: number;
+  proto: Uint8Array;
+  timestamp: number;
+  urgent: number;
+  hasPniSignatureMessage: number;
 };
 export type SentProtoWithMessageIdsType = SentProtoType & {
   messageIds: Array<string>;
@@ -525,6 +532,7 @@ export type GetRecentStoryRepliesOptionsType = {
 export enum AttachmentDownloadSource {
   BACKUP_IMPORT = 'backup_import',
   STANDARD = 'standard',
+  BACKFILL = 'backfill',
 }
 
 type ReadableInterface = {
@@ -680,14 +688,14 @@ type ReadableInterface = {
   ) => Array<MessageType>;
 
   getUnprocessedCount: () => number;
-  getUnprocessedById: (id: string) => UnprocessedType | undefined;
 
-  getAttachmentDownloadJob(
+  // Test-only
+  _getAttachmentDownloadJob(
     job: Pick<
       AttachmentDownloadJobType,
       'messageId' | 'attachmentType' | 'digest'
     >
-  ): AttachmentDownloadJobType;
+  ): AttachmentDownloadJobType | undefined;
 
   getBackupCdnObjectMetadata: (
     mediaId: string
@@ -899,6 +907,7 @@ type WritableInterface = {
   ) => void;
 
   removeSyncTaskById: (id: string) => void;
+  removeSyncTasks: (ids: ReadonlyArray<string>) => void;
   saveSyncTasks: (tasks: Array<SyncTaskType>) => void;
 
   incrementAllSyncTaskAttempts: () => void;

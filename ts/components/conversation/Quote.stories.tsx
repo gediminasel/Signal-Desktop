@@ -21,14 +21,12 @@ import {
 import type { Props } from './Quote';
 import { Quote } from './Quote';
 import { ReadStatus } from '../../messages/MessageReadStatus';
-import { setupI18n } from '../../util/setupI18n';
-import enMessages from '../../../_locales/en/messages.json';
 import { getDefaultConversation } from '../../test-both/helpers/getDefaultConversation';
 import { WidthBreakpoint } from '../_util';
 import { ThemeType } from '../../types/Util';
 import { PaymentEventKind } from '../../types/Payment';
 
-const i18n = setupI18n('en', enMessages);
+const { i18n } = window.SignalContext;
 
 export default {
   component: Quote,
@@ -147,6 +145,7 @@ const defaultMessageProps: TimelineMessagesProps = {
     'showExpiredOutgoingTapToViewToast'
   ),
   showMediaNoLongerAvailableToast: action('showMediaNoLongerAvailableToast'),
+  showTapToViewNotAvailableModal: action('showTapToViewNotAvailableModal'),
   toggleDeleteMessagesModal: action('default--toggleDeleteMessagesModal'),
   toggleForwardMessagesModal: action('default--toggleForwardMessagesModal'),
   showLightbox: action('default--showLightbox'),
@@ -269,6 +268,39 @@ ImageAttachment.args = {
   },
 };
 
+export const ImageAttachmentUndownloaded = Template.bind({});
+ImageAttachmentUndownloaded.args = {
+  rawAttachment: {
+    contentType: IMAGE_PNG,
+    fileName: 'sax.png',
+    isVoiceMessage: false,
+    thumbnail: {
+      contentType: IMAGE_PNG,
+      height: 100,
+      width: 100,
+      path: undefined,
+      size: 100000,
+    },
+  },
+};
+export const ImageAttachmentDownloading = Template.bind({});
+ImageAttachmentDownloading.args = {
+  rawAttachment: {
+    contentType: IMAGE_PNG,
+    fileName: 'sax.png',
+    isVoiceMessage: false,
+    thumbnail: {
+      contentType: IMAGE_PNG,
+      height: 100,
+      width: 100,
+      path: undefined,
+      pending: true,
+      size: 100000,
+      totalDownloaded: 75000,
+    },
+  },
+};
+
 export const ImageAttachmentNoThumbnail = Template.bind({});
 ImageAttachmentNoThumbnail.args = {
   rawAttachment: {
@@ -320,6 +352,39 @@ VideoAttachment.args = {
       size: 100,
       path: pngUrl,
       objectUrl: pngUrl,
+    },
+  },
+};
+
+export const VideoAttachmentUndownloaded = Template.bind({});
+VideoAttachmentUndownloaded.args = {
+  rawAttachment: {
+    contentType: VIDEO_MP4,
+    fileName: 'great-video.mp4',
+    isVoiceMessage: false,
+    thumbnail: {
+      contentType: IMAGE_PNG,
+      height: 100,
+      width: 100,
+      path: undefined,
+      size: 100000,
+    },
+  },
+};
+export const VideoAttachmentDownloading = Template.bind({});
+VideoAttachmentDownloading.args = {
+  rawAttachment: {
+    contentType: VIDEO_MP4,
+    fileName: 'great-video.mp4',
+    isVoiceMessage: false,
+    thumbnail: {
+      contentType: IMAGE_PNG,
+      height: 100,
+      width: 100,
+      path: undefined,
+      pending: true,
+      size: 100000,
+      totalDownloaded: 75000,
     },
   },
 };

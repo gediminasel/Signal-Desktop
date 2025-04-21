@@ -39,7 +39,7 @@ import type {
   ChatServerMessageAck,
   ChatServiceListener,
   ConnectionEventsListener,
-} from '@signalapp/libsignal-client/dist/net';
+} from '@signalapp/libsignal-client/dist/net/Chat';
 import type { EventHandler } from './EventTarget';
 import EventTarget from './EventTarget';
 
@@ -58,6 +58,10 @@ import { AbortableProcess } from '../util/AbortableProcess';
 import type { WebAPICredentials } from './Types';
 import { NORMAL_DISCONNECT_CODE } from './SocketManager';
 import { parseUnknown } from '../util/schemas';
+import {
+  parseServerAlertsFromHeader,
+  type ServerAlert,
+} from '../util/handleServerAlerts';
 
 const THIRTY_SECONDS = 30 * durations.SECOND;
 
@@ -345,11 +349,13 @@ export function connectAuthenticatedLibsignal({
   handler,
   receiveStories,
   keepalive,
+  onReceivedAlerts,
 }: {
   libsignalNet: Net.Net;
   name: string;
   credentials: WebAPICredentials;
   handler: (request: IncomingWebSocketRequest) => void;
+  onReceivedAlerts: (alerts: Array<ServerAlert>) => void;
   receiveStories: boolean;
   keepalive: KeepAliveOptionsType;
 }): AbortableProcess<LibsignalWebSocketResource> {
@@ -390,6 +396,9 @@ export function connectAuthenticatedLibsignal({
       }
       this.resource.onConnectionInterrupted(cause);
       this.resource = undefined;
+    },
+    onReceivedAlerts(alerts: Array<string>): void {
+      onReceivedAlerts(alerts.map(parseServerAlertsFromHeader).flat());
     },
   };
   return connectLibsignal(

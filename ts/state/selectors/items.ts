@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { createSelector } from 'reselect';
-import { isInteger } from 'lodash';
 
 import { ITEM_NAME as UNIVERSAL_EXPIRE_TIMER_ITEM } from '../../util/universalExpireTimer';
 import { innerIsBucketValueEnabled } from '../../RemoteConfig';
@@ -20,6 +19,10 @@ import { DurationInSeconds } from '../../util/durations';
 import * as Bytes from '../../Bytes';
 import { contactByEncryptedUsernameRoute } from '../../util/signalRoutes';
 import { isNotUpdatable } from '../../util/version';
+import {
+  EmojiSkinTone,
+  isValidEmojiSkinTone,
+} from '../../components/fun/data/emojis';
 
 const DEFAULT_PREFERRED_LEFT_PANE_WIDTH = 320;
 
@@ -153,15 +156,10 @@ export const getCustomColors = createSelector(
     state.customColors?.colors
 );
 
-export const getEmojiSkinTone = createSelector(
+export const getEmojiSkinToneDefault = createSelector(
   getItems,
-  ({ skinTone }: Readonly<ItemsStateType>): number =>
-    typeof skinTone === 'number' &&
-    isInteger(skinTone) &&
-    skinTone >= 0 &&
-    skinTone <= 5
-      ? skinTone
-      : 0
+  ({ emojiSkinToneDefault }: Readonly<ItemsStateType>): EmojiSkinTone | null =>
+    isValidEmojiSkinTone(emojiSkinToneDefault) ? emojiSkinToneDefault : null
 );
 
 export const getPreferredLeftPaneWidth = createSelector(
@@ -175,11 +173,14 @@ export const getPreferredLeftPaneWidth = createSelector(
 
 export const getPreferredReactionEmoji = createSelector(
   getItems,
-  getEmojiSkinTone,
-  (state: Readonly<ItemsStateType>, skinTone: number): Array<string> =>
+  getEmojiSkinToneDefault,
+  (
+    state: Readonly<ItemsStateType>,
+    emojiSkinToneDefault: EmojiSkinTone | null
+  ): Array<string> =>
     getPreferredReactionEmojiFromStoredValue(
       state.preferredReactionEmoji,
-      skinTone
+      emojiSkinToneDefault ?? EmojiSkinTone.None
     )
 );
 
@@ -272,4 +273,9 @@ export const getBackupMediaDownloadProgress = createSelector(
     isIdle: state.backupMediaDownloadIdle ?? false,
     downloadBannerDismissed: state.backupMediaDownloadBannerDismissed ?? false,
   })
+);
+
+export const getServerAlerts = createSelector(
+  getItems,
+  (state: ItemsStateType) => state.serverAlerts ?? {}
 );

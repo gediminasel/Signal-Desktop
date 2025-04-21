@@ -38,6 +38,9 @@
   "icu:Preferences__sent-media-quality": {
     "messageformat": "已傳送媒體檔品質"
   },
+  "icu:Preferences__sent-media-quality__description": {
+    "messageformat": "傳送高畫質的媒體檔將會使用較多數據。"
+  },
   "icu:sentMediaQualityStandard": {
     "messageformat": "標準"
   },
@@ -68,6 +71,12 @@
   "icu:unknownGroup": {
     "messageformat": "未知的群組"
   },
+  "icu:cantOpenSignalError": {
+    "messageformat": "無法開啟 Signal"
+  },
+  "icu:cantOpenSignalError__detail": {
+    "messageformat": "若要解決問題，請依照支援頁面上的復原指南，或聯絡 Signal 支援尋求協助。\n\n如果你需要立即使用 Signal，可以刪除你的資料，並重新連結此桌面電腦。你可以選擇從手機轉移訊息紀錄。"
+  },
   "icu:databaseError": {
     "messageformat": "資料庫錯誤"
   },
@@ -78,10 +87,10 @@
     "messageformat": "刪除資料並重新啟動"
   },
   "icu:databaseError__deleteDataConfirmation": {
-    "messageformat": "要永久刪除所有資料？"
+    "messageformat": "永久刪除所有資料"
   },
   "icu:databaseError__deleteDataConfirmation__detail": {
-    "messageformat": "你的所有訊息歷史紀錄和多媒體將從此裝置中永久刪除。重新連結後，你將可以在此裝置上使用 Signal。這不會刪除你手機中的任何資料。"
+    "messageformat": "你的所有訊息紀錄和媒體將從此裝置中永久刪除。這不會刪除你手機中的任何資料。\n\n重新連結後，你將可以在此裝置上使用 Signal。你可以選擇從手機轉移訊息紀錄。"
   },
   "icu:databaseError__startOldVersion": {
     "messageformat": "你的資料庫版本與此 Signal 的版本不匹配。請確定你在電腦上開啟了最新版本的 Signal。"
@@ -214,9 +223,6 @@
   },
   "icu:optimizingApplication": {
     "messageformat": "正在最佳化應用程式…"
-  },
-  "icu:migratingToSQLCipher": {
-    "messageformat": "正在最佳化訊息… {status} 完成"
   },
   "icu:archivedConversations": {
     "messageformat": "已封存的聊天"
@@ -407,9 +413,6 @@
   "icu:unreadMessages": {
     "messageformat": "{count, plural, other {{count,number} 則未讀訊息}}"
   },
-  "icu:messageHistoryUnsynced": {
-    "messageformat": "為了安全起見，聊天歷史紀錄不會轉移到新的已連結裝置上。"
-  },
   "icu:youMarkedAsVerified": {
     "messageformat": "您標記了與 {name} 的安全碼為已驗證"
   },
@@ -588,7 +591,7 @@
     "messageformat": "Failed to send message with endorsements"
   },
   "icu:Toast--InvalidStorageServiceHeaders": {
-    "messageformat": "Received invalid response from storage service. Please share your logs."
+    "messageformat": "伺服器傳回無效的回應。請分享你的除錯日誌。"
   },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
@@ -706,9 +709,6 @@
   },
   "icu:noSearchResultsOnlyUnreadFilter": {
     "messageformat": "沒有未讀聊天訊息"
-  },
-  "icu:noSearchResults--sms-only": {
-    "messageformat": "SMS / MMS聯絡人在電腦版上不可使用。"
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "在{conversationName}找不到\"{searchTerm}\"的結果"
@@ -1145,9 +1145,6 @@
   "icu:mediaNotAvailable": {
     "messageformat": "未能提供此媒體"
   },
-  "icu:mediaNotAvailable--short": {
-    "messageformat": "無法取得媒體"
-  },
   "icu:attachmentNoLongerAvailable__learnMore": {
     "messageformat": "了解更多"
   },
@@ -1162,6 +1159,12 @@
   },
   "icu:attachmentNotAvailable__voice": {
     "messageformat": "無法取得語音訊息"
+  },
+  "icu:attachmentNotAvailable__tapToView": {
+    "messageformat": "無法取得閱後即焚媒體"
+  },
+  "icu:attachmentNotAvailable__tapToViewCannotDownload": {
+    "messageformat": "無法下載閱後即焚媒體"
   },
   "icu:AttachmentNotAvailableModal__title--file": {
     "messageformat": "無法取得檔案"
@@ -1192,6 +1195,21 @@
   },
   "icu:AttachmentNotAvailableModal__body--voice-message": {
     "messageformat": "連結此裝置時，此語音訊息未從你的手機轉移過來。當裝置連結時，超過 45 天的媒體和檔案無法同步。"
+  },
+  "icu:TapToViewNotAvailableModal__body--expired": {
+    "messageformat": "此閱後即焚媒體不再提供下載。請{name}再次傳送。"
+  },
+  "icu:TapToViewNotAvailableModal__body--error": {
+    "messageformat": "無法下載閱後即焚媒體。{name} 需要再次傳送。"
+  },
+  "icu:BackfillFailureModal__title": {
+    "messageformat": "無法下載媒體"
+  },
+  "icu:BackfillFailureModal__body--timeout": {
+    "messageformat": "檢查桌面電腦和手機的網路連線。開啟手機上的 Signal，然後嘗試再次下載。"
+  },
+  "icu:BackfillFailureModal__body--not-found": {
+    "messageformat": "無法在你的手機上取得此媒體，也無法下載。"
   },
   "icu:save": {
     "messageformat": "儲存"
@@ -1244,12 +1262,6 @@
   "icu:Install__support-link": {
     "messageformat": "需要幫助嗎？"
   },
-  "icu:Install__choose-device-name__description": {
-    "messageformat": "你會在手機上的“已連結的裝置”下看到此名稱"
-  },
-  "icu:Install__choose-device-name__placeholder": {
-    "messageformat": "本機"
-  },
   "icu:Preferences--phone-number": {
     "messageformat": "電話號碼"
   },
@@ -1259,11 +1271,8 @@
   "icu:Preferences--device-name__description": {
     "messageformat": "要變更此裝置名稱，請在你的手機上開啟 Signal 並前往「設定」 > 「已連結裝置」"
   },
-  "icu:chooseDeviceName": {
-    "messageformat": "選擇此裝置的名稱"
-  },
-  "icu:finishLinkingPhone": {
-    "messageformat": "完成連結手機"
+  "icu:Preferences__EmojiSkinToneDefaultSetting__Label": {
+    "messageformat": "表情符號膚色"
   },
   "icu:initialSync": {
     "messageformat": "正在同步聯絡人與群組"
@@ -1814,6 +1823,18 @@
   "icu:ConversationDetails__HeaderButton--Message": {
     "messageformat": "訊息"
   },
+  "icu:ConversationDetails--help-section": {
+    "messageformat": "幫助"
+  },
+  "icu:ConversationDetails--support-center": {
+    "messageformat": "支援中心"
+  },
+  "icu:ConversationDetails--contact-us": {
+    "messageformat": "與我們聯繫"
+  },
+  "icu:ConversationDetails--donate": {
+    "messageformat": "贊助 Signal"
+  },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "檢視安全碼"
   },
@@ -1873,6 +1894,9 @@
   },
   "icu:Toast--failed-to-fetch-phone-number": {
     "messageformat": "取得使用者名稱失敗。檢查你的網路連接並重試。"
+  },
+  "icu:Toast--download-failed": {
+    "messageformat": "下載失敗"
   },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "編輯只能在你傳送此訊息後的 24 小時內套用。"
@@ -2252,6 +2276,204 @@
   "icu:EmojiPicker__button--flag": {
     "messageformat": "旗幟"
   },
+  "icu:FunPicker__Tab--Emojis": {
+    "messageformat": "表情"
+  },
+  "icu:FunPicker__Tab--Stickers": {
+    "messageformat": "貼圖"
+  },
+  "icu:FunPicker__Tab--Gifs": {
+    "messageformat": "動態圖檔"
+  },
+  "icu:FunPanelEmojis__SearchLabel": {
+    "messageformat": "搜尋表情符號"
+  },
+  "icu:FunPanelEmojis__SearchPlaceholder": {
+    "messageformat": "搜尋表情符號"
+  },
+  "icu:FunPanelEmojis__SubNavLabel": {
+    "messageformat": "表情符號類別"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Recents": {
+    "messageformat": "最近使用"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--SmileysAndPeople": {
+    "messageformat": "笑臉及人物"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--AnimalsAndNature": {
+    "messageformat": "動物及自然"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--FoodAndDrink": {
+    "messageformat": "食物 & 飲料"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Activities": {
+    "messageformat": "活動"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--TravelAndPlaces": {
+    "messageformat": "旅行 & 地點"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Objects": {
+    "messageformat": "物品"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Symbols": {
+    "messageformat": "符號"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Flags": {
+    "messageformat": "旗幟"
+  },
+  "icu:FunPanelEmojis__SearchResults__EmptyHeading": {
+    "messageformat": "找不到 Emoji"
+  },
+  "icu:FunPanelEmojis__ChangeSkinToneButtonLabel": {
+    "messageformat": "更改膚色偏好"
+  },
+  "icu:FunPanelEmojis__SkinTonePicker__ChooseDefaultLabel": {
+    "messageformat": "選擇你的預設膚色"
+  },
+  "icu:FunPanelEmojis__SectionTitle--SearchResults": {
+    "messageformat": "搜尋結果"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Recents": {
+    "messageformat": "最近使用"
+  },
+  "icu:FunPanelEmojis__SectionTitle--SmileysAndPeople": {
+    "messageformat": "笑臉及人物"
+  },
+  "icu:FunPanelEmojis__SectionTitle--AnimalsAndNature": {
+    "messageformat": "動物及自然"
+  },
+  "icu:FunPanelEmojis__SectionTitle--FoodAndDrink": {
+    "messageformat": "食物 & 飲料"
+  },
+  "icu:FunPanelEmojis__SectionTitle--TravelAndPlaces": {
+    "messageformat": "旅行 & 地點"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Activities": {
+    "messageformat": "活動"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Objects": {
+    "messageformat": "物品"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Symbols": {
+    "messageformat": "符號"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Flags": {
+    "messageformat": "旗幟"
+  },
+  "icu:FunPanelEmojis__CustomizeReactionsButtonLabel": {
+    "messageformat": "Customize reactions"
+  },
+  "icu:FunPanelStickers__SearchLabel": {
+    "messageformat": "搜尋貼圖"
+  },
+  "icu:FunPanelStickers__SearchPlaceholder": {
+    "messageformat": "搜尋貼圖"
+  },
+  "icu:FunPanelSticker__SubNavLabel": {
+    "messageformat": "貼圖包"
+  },
+  "icu:FunPanelStickers__SubNavCategoryLabel--Recents": {
+    "messageformat": "最近使用"
+  },
+  "icu:FunPanelStickers__SectionTitle--SearchResults": {
+    "messageformat": "搜尋結果"
+  },
+  "icu:FunPanelStickers__SectionTitle--Recents": {
+    "messageformat": "最近使用"
+  },
+  "icu:FunPanelStickers__SectionTitle--Featured": {
+    "messageformat": "Featured"
+  },
+  "icu:FunPanelStickers__SearchResults__EmptyHeading": {
+    "messageformat": "找不到貼圖"
+  },
+  "icu:FunPanelStickers__LightboxDialog__Label": {
+    "messageformat": "貼圖預覽"
+  },
+  "icu:FunPanelGifs__SearchLabel--Tenor": {
+    "messageformat": "透過 Tenor 搜尋 GIF"
+  },
+  "icu:FunPanelGifs__SearchPlaceholder--Tenor": {
+    "messageformat": "搜尋 Tenor 內容"
+  },
+  "icu:FunPanelGifs__SubNavLabel": {
+    "messageformat": "GIF 類別"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Recents": {
+    "messageformat": "最近使用"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Trending": {
+    "messageformat": "熱門"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Celebrate": {
+    "messageformat": "慶祝"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Love": {
+    "messageformat": "愛"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--ThumbsUp": {
+    "messageformat": "拇指比讚"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Surprised": {
+    "messageformat": "驚訝"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Excited": {
+    "messageformat": "興奮"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Sad": {
+    "messageformat": "傷心"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Angry": {
+    "messageformat": "憤怒"
+  },
+  "icu:FunPanelGifs__SearchResults__LoadingLabel": {
+    "messageformat": "正在載入 GIF"
+  },
+  "icu:FunPanelGifs__SearchResults__ErrorHeading": {
+    "messageformat": "無法載入 GIF。請檢查你的網路連線，然後再試一次"
+  },
+  "icu:FunPanelGifs__SearchResults__ErrorRetryButton": {
+    "messageformat": "重試"
+  },
+  "icu:FunPanelGifs__SearchResults__EmptyHeading": {
+    "messageformat": "找不到 GIF"
+  },
+  "icu:FunPanelGifs__LightboxDialog__Label": {
+    "messageformat": "GIF 預覽"
+  },
+  "icu:FunSearch__ClearButtonLabel": {
+    "messageformat": "清除搜尋"
+  },
+  "icu:FunSkinTones__List": {
+    "messageformat": "膚色"
+  },
+  "icu:FunSkinTones__ListItem--None": {
+    "messageformat": "無"
+  },
+  "icu:FunSkinTones__ListItem--Light": {
+    "messageformat": "淺膚色"
+  },
+  "icu:FunSkinTones__ListItem--MediumLight": {
+    "messageformat": "中等偏淺膚色"
+  },
+  "icu:FunSkinTones__ListItem--Medium": {
+    "messageformat": "中等膚色"
+  },
+  "icu:FunSkinTones__ListItem--MediumDark": {
+    "messageformat": "中等偏深膚色"
+  },
+  "icu:FunSkinTones__ListItem--Dark": {
+    "messageformat": "深膚色"
+  },
+  "icu:FunButton__Label--FunPicker": {
+    "messageformat": "新增表情符號、貼圖或 GIF"
+  },
+  "icu:FunButton__Label--EmojiPicker": {
+    "messageformat": "新增表情符號"
+  },
+  "icu:FunButton__Label--StickerPicker": {
+    "messageformat": "新增貼圖"
+  },
   "icu:confirmation-dialog--Cancel": {
     "messageformat": "取消"
   },
@@ -2288,11 +2510,11 @@
   "icu:Message--update-signal": {
     "messageformat": "更新 Signal"
   },
-  "icu:Message--tap-to-view-expired": {
+  "icu:Message--tap-to-view--viewed": {
     "messageformat": "已查看"
   },
-  "icu:Message--tap-to-view--outgoing": {
-    "messageformat": "媒體"
+  "icu:Message--tap-to-view--media": {
+    "messageformat": "一次性多媒體內容"
   },
   "icu:Message--tap-to-view--incoming--expired-toast": {
     "messageformat": "你已經看過這個訊息。"
@@ -2300,11 +2522,14 @@
   "icu:Message--tap-to-view--outgoing--expired-toast": {
     "messageformat": "一次性訊息將不會儲存在你的聊天紀錄中。"
   },
-  "icu:Message--tap-to-view--incoming": {
-    "messageformat": "查看照片"
+  "icu:Message--tap-to-view--video": {
+    "messageformat": "閱後即焚影片"
   },
-  "icu:Message--tap-to-view--incoming-video": {
-    "messageformat": "檢視影片"
+  "icu:Message--tap-to-view--photo": {
+    "messageformat": "閱後即焚相片"
+  },
+  "icu:Message--tap-to-view--helper-text": {
+    "messageformat": "點擊以檢視"
   },
   "icu:Conversation--getDraftPreview--attachment": {
     "messageformat": "(附件)"
@@ -2498,6 +2723,9 @@
   "icu:Keyboard--toggle-video": {
     "messageformat": "撥動影片開或關"
   },
+  "icu:Keyboard--toggle-preview": {
+    "messageformat": "撥動放大預覽開或關"
+  },
   "icu:Keyboard--accept-video-call": {
     "messageformat": "接聽並開啟視訊（僅限視訊通話）"
   },
@@ -2560,6 +2788,12 @@
   },
   "icu:SafetyTipsModal__Description": {
     "messageformat": "接受陌生人的訊息請求時要小心。注意："
+  },
+  "icu:SafetyTipsModal__TipTitle--Fake": {
+    "messageformat": "假名稱和帳戶"
+  },
+  "icu:SafetyTipsModal__TipDescription--Fake": {
+    "messageformat": "Signal 永遠不會聯絡你來索取你的註冊碼或 PIN 碼。請小心那些冒充他人的請求。個人檔案名稱由其帳戶持有人選擇，並未經過驗證。"
   },
   "icu:SafetyTipsModal__TipTitle--Crypto": {
     "messageformat": "加密貨幣或金錢詐騙"
@@ -2693,6 +2927,12 @@
   "icu:MessageRequests--accept": {
     "messageformat": "接受"
   },
+  "icu:MessageRequests--accept-confirm-title": {
+    "messageformat": "要接受請求嗎？"
+  },
+  "icu:MessageRequests--accept-confirm-body": {
+    "messageformat": "請仔細檢視請求。個人檔案名稱由其帳戶持有人選擇，並未經過驗證。"
+  },
   "icu:MessageRequests--continue": {
     "messageformat": "繼續"
   },
@@ -2704,6 +2944,21 @@
   },
   "icu:ConversationHero--members": {
     "messageformat": "{count, plural, other {{count,number} 個成員}}"
+  },
+  "icu:ConversationHero--review-carefully": {
+    "messageformat": "仔細檢查"
+  },
+  "icu:ConversationHero--group-names": {
+    "messageformat": "<clickable>群組名稱</clickable>未經驗證"
+  },
+  "icu:ConversationHero--profile-names": {
+    "messageformat": "<clickable>個人檔案名稱</clickable>未經驗證"
+  },
+  "icu:ConversationHero--signal-official-chat": {
+    "messageformat": "這是 Signal 官方及唯一版本的聊天"
+  },
+  "icu:ConversationHero--release-notes": {
+    "messageformat": "隨時了解最新消息和發行版本備註。"
   },
   "icu:member-of-1-group": {
     "messageformat": "{group}的成員"
@@ -2840,6 +3095,12 @@
   "icu:CallControls__JoinLeaveButton--hangup-group": {
     "messageformat": "離開"
   },
+  "icu:CallControls__JoinLeaveButton--hangup-1-1-tooltip": {
+    "messageformat": "End call"
+  },
+  "icu:CallControls__JoinLeaveButton--hangup-group-tooltip": {
+    "messageformat": "Leave call"
+  },
   "icu:CallControls__MutedToast--muted": {
     "messageformat": "關閉麥克風"
   },
@@ -2917,6 +3178,12 @@
   },
   "icu:calling__pip--off": {
     "messageformat": "全螢幕通話"
+  },
+  "icu:calling__preview--maximize": {
+    "messageformat": "將預覽放大"
+  },
+  "icu:calling__preview--minimize": {
+    "messageformat": "將預覽縮小"
   },
   "icu:calling__change-view": {
     "messageformat": "變更檢視"
@@ -3698,18 +3965,6 @@
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "重試"
   },
-  "icu:BackupImportScreen__skip": {
-    "messageformat": "略過"
-  },
-  "icu:BackupImportScreen__skip-confirmation__title": {
-    "messageformat": "要跳過訊息轉移嗎？"
-  },
-  "icu:BackupImportScreen__skip-confirmation__body": {
-    "messageformat": "如果你選擇跳過，你將無法存取此裝置上的任何訊息或媒體。你可以在跳過「設定」 > 「聊天」 > 「轉移」後開始新的轉移。"
-  },
-  "icu:BackupImportScreen__skip-confirmation__cancel": {
-    "messageformat": "取消"
-  },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "正在還原媒體"
   },
@@ -3752,6 +4007,12 @@
   "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
     "messageformat": "取消轉移"
   },
+  "icu:CriticalIdlePrimaryDeviceModal__title": {
+    "messageformat": "Account action required"
+  },
+  "icu:CriticalIdlePrimaryDeviceModal__description": {
+    "messageformat": "You must open Signal on your phone to continue using this account. If you do not open Signal on your phone, your account will be deleted soon. <learnMoreLink>Learn more</learnMoreLink>"
+  },
   "icu:CompositionArea--expand": {
     "messageformat": "擴充"
   },
@@ -3772,6 +4033,18 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "傳送已編輯的訊息"
+  },
+  "icu:CompositionArea__FunButtonLabel": {
+    "messageformat": "新增表情符號、貼圖或 GIF"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__Title": {
+    "messageformat": "要更換附件嗎？"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__Body": {
+    "messageformat": "新增此 GIF 將取代目前草稿訊息中的項目。"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__ReplaceButton": {
+    "messageformat": "取代"
   },
   "icu:CompositionInput__editing-message": {
     "messageformat": "編輯訊息"
@@ -3989,6 +4262,9 @@
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "需要管理員批准透過群組連結加入的新成員"
   },
+  "icu:GroupLinkManagement__CopyGroupLinkButtonLabel": {
+    "messageformat": "Copy signal.group link to clipboard"
+  },
   "icu:PendingInvites--tab-requests": {
     "messageformat": "要求 ({count,number})"
   },
@@ -4193,9 +4469,6 @@
   "icu:ShareCallLinkViaSignal__DraftMessageText": {
     "messageformat": "使用此連結加入 Signal 通話：{url}"
   },
-  "icu:MessageRequestWarning__learn-more": {
-    "messageformat": "了解更多"
-  },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "安全提示"
   },
@@ -4350,7 +4623,7 @@
     "messageformat": "漸變結束"
   },
   "icu:GIF--download": {
-    "messageformat": "Download GIF attachment"
+    "messageformat": "下載 GIF 附件"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "自定義時間…"
@@ -4655,6 +4928,30 @@
   "icu:Preferences__button--privacy": {
     "messageformat": "隱私權"
   },
+  "icu:Preferences__button--data-usage": {
+    "messageformat": "數據使用量"
+  },
+  "icu:Preferences__media-auto-download": {
+    "messageformat": "媒體自動下載"
+  },
+  "icu:Preferences__media-auto-download__photos": {
+    "messageformat": "相片"
+  },
+  "icu:Preferences__media-auto-download__videos": {
+    "messageformat": "影片"
+  },
+  "icu:Preferences__media-auto-download__audio": {
+    "messageformat": "聲音"
+  },
+  "icu:Preferences__media-auto-download__documents": {
+    "messageformat": "文件"
+  },
+  "icu:Preferences__media-auto-download__description": {
+    "messageformat": "語音訊息及貼圖每次都會自動下載。"
+  },
+  "icu:Preferences__button--backups": {
+    "messageformat": "Backups"
+  },
   "icu:Preferences--lastSynced": {
     "messageformat": "最後匯入時間在{date} {time}"
   },
@@ -4684,6 +4981,51 @@
   },
   "icu:Preferences--blocked": {
     "messageformat": "已封鎖"
+  },
+  "icu:Preferences--backup-details__header": {
+    "messageformat": "Backup details"
+  },
+  "icu:Preferences--backup-media-plan__description": {
+    "messageformat": "Text + all media backup"
+  },
+  "icu:Preferences--backup-plan-not-found__description": {
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Backups."
+  },
+  "icu:Preferences--backup-messages-plan__description": {
+    "messageformat": "{mediaDayCount, plural, one {Text + {mediaDayCount,number} day media backup} other {Text + {mediaDayCount,number} days media backup}}"
+  },
+  "icu:Preferences--backup-messages-plan__cost-description": {
+    "messageformat": "Your backup plan is free"
+  },
+  "icu:Preferences--backup-plan__renewal-date": {
+    "messageformat": "Renews {date}"
+  },
+  "icu:Preferences--backup-plan__expiry-date": {
+    "messageformat": "Expires {date}"
+  },
+  "icu:Preferences--backup-plan__canceled": {
+    "messageformat": "Subscription canceled"
+  },
+  "icu:Preferences--backup-media-plan__note": {
+    "messageformat": "You can manage or cancel your Signal Backups subscription on your phone."
+  },
+  "icu:Preferences--backup-messages-plan__note": {
+    "messageformat": "You can manage or upgrade Signal Backups on your phone."
+  },
+  "icu:Preferences--backup-plan__not-found": {
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Backups."
+  },
+  "icu:Preferences--backup-plan__not-found__note": {
+    "messageformat": "You can manage or renew your Signal Backups subscription on your phone."
+  },
+  "icu:Preferences--backup-created-at__label": {
+    "messageformat": "Last backup"
+  },
+  "icu:Preferences--backup-created-by-phone": {
+    "messageformat": "Your phone"
+  },
+  "icu:Preferences--backup-size__label": {
+    "messageformat": "Backup size"
   },
   "icu:Preferences--blocked-count": {
     "messageformat": "{num, plural, other {{num,number} 位聯絡人}}"
@@ -4810,6 +5152,18 @@
   },
   "icu:DialogUpdate__downloaded": {
     "messageformat": "更新已下載"
+  },
+  "icu:CriticalIdlePrimaryDevice__title": {
+    "messageformat": "在手機上開啟 Signal"
+  },
+  "icu:CriticalIdlePrimaryDevice__body": {
+    "messageformat": "如果你沒在手機上開啟 Signal，你的帳戶很快會被刪除。如你已成功開啟，此訊息就會消失。<learnMoreLink>了解更多</learnMoreLink>"
+  },
+  "icu:IdlePrimaryDevice__body": {
+    "messageformat": "在手機上打開 Signal 以保持你的帳戶活躍"
+  },
+  "icu:IdlePrimaryDevice__learnMore": {
+    "messageformat": "了解更多"
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signal 正面臨技術上的問題。我們正在盡力的盡快地恢復服務。"
@@ -4951,6 +5305,30 @@
   },
   "icu:MediaEditor__crop-preset--9-16": {
     "messageformat": "9:16"
+  },
+  "icu:MediaPermissionsModal__title--microphone": {
+    "messageformat": "允許連接你的麥克風"
+  },
+  "icu:MediaPermissionsModal__title--camera": {
+    "messageformat": "允許存取你的相機"
+  },
+  "icu:MediaPermissionsModal__subtitle--call": {
+    "messageformat": "要加入或開始通話："
+  },
+  "icu:MediaPermissionsModal__subtitle--call--camera": {
+    "messageformat": "要啟用你的視訊："
+  },
+  "icu:MediaPermissionsModal__subtitle--voice-note": {
+    "messageformat": "傳送語音訊息："
+  },
+  "icu:MediaPermissionsModal__step-1": {
+    "messageformat": "點擊下方的「{buttonName}」"
+  },
+  "icu:MediaPermissionsModal__step-2": {
+    "messageformat": "開啟「Signal」"
+  },
+  "icu:MediaPermissionsModal__open": {
+    "messageformat": "前往「設定」"
   },
   "icu:MyStories__title": {
     "messageformat": "我的報導"
@@ -5610,6 +5988,15 @@
   "icu:MessageMetadata__edited": {
     "messageformat": "已編輯"
   },
+  "icu:DraftGifMessageSendModal__Title": {
+    "messageformat": "新增訊息"
+  },
+  "icu:DraftGifMessageSendModal__SendButtonLabel": {
+    "messageformat": "傳送"
+  },
+  "icu:DraftGifMessageSendModal__CancelButtonLabel": {
+    "messageformat": "取消"
+  },
   "icu:EditHistoryMessagesModal__title": {
     "messageformat": "編輯歷史記錄"
   },
@@ -5829,6 +6216,30 @@
   "icu:WhoCanFindMeReadOnlyToast": {
     "messageformat": "若要變更此設定，請將「誰可以看到我的號碼」設定為「沒有人」。"
   },
+  "icu:ProfileNameWarningModal__description--direct": {
+    "messageformat": "Signal 上的個人檔案名稱由其帳戶持有人選擇："
+  },
+  "icu:ProfileNameWarningModal__list--item1--direct": {
+    "messageformat": "個人檔案名稱未經驗證"
+  },
+  "icu:ProfileNameWarningModal__list--item2--direct": {
+    "messageformat": "請小心那些冒充他人的帳戶"
+  },
+  "icu:ProfileNameWarningModal__list--item3--direct": {
+    "messageformat": "不要與不認識的人分享個人資料"
+  },
+  "icu:ProfileNameWarningModal__description--group": {
+    "messageformat": "群組名稱由群組成員選擇。"
+  },
+  "icu:ProfileNameWarningModal__list--item1--group": {
+    "messageformat": "請小心那些冒充其他組織和企業的群組"
+  },
+  "icu:ProfileNameWarningModal__list--item2--group": {
+    "messageformat": "群組中成員的個人檔案名稱未經驗證"
+  },
+  "icu:ProfileNameWarningModal__list--item3--group": {
+    "messageformat": "不要與不認識的人分享個人資料"
+  },
   "icu:WhatsNew__modal-title": {
     "messageformat": "有甚麼新的"
   },
@@ -5860,10 +6271,22 @@
     "messageformat": "細微的調整、問題修復和效能改善。感謝各位使用 Signal！",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.44--0": {
-    "messageformat": "我們修復了群組通話期間的小動畫錯誤。"
+  "icu:WhatsNew__v7.47--0": {
+    "messageformat": "現在你可以在通話期間放大自己的視訊預覽，讓你更清楚看到自己。"
   },
-  "icu:WhatsNew__v7.45--0": {
-    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
+  "icu:WhatsNew__v7.48--0": {
+    "messageformat": "我們新增了一個方便的捷徑，讓你在 Signal 群組通話中開始發言後，可以快速放下你的手。這是此發行版本中我們最喜歡的功能。"
+  },
+  "icu:WhatsNew__v7.49--0": {
+    "messageformat": "如果你在 Signal Android 上連結新的桌面電腦並選擇轉移訊息紀錄，現在你也可以選擇性地從主裝置轉移舊附件。回顧過去並點擊下載圖示，將過去帶入現在。與往常一樣，轉移過程是端對端加密且安全的。"
+  },
+  "icu:WhatsNew__v7.50--0": {
+    "messageformat": "如果你在 Signal Android 上連結新的桌面電腦並選擇轉移訊息紀錄，現在你也可以選擇性地從主裝置轉移舊附件。回顧過去並點擊下載圖示，將過去帶入現在。與往常一樣，轉移過程是端對端加密且安全的。"
+  },
+  "icu:WhatsNew__v7.51--0": {
+    "messageformat": "Fire, the wheel, and electricity were all great developments, but they were merely necessary steps along the path that created the conditions for animated GIF search to exist. Now you can experience the pinnacle of human technological advancement in Signal Desktop with a brand-new selection interface that makes it easy to quickly find an emoji, sticker, or animated GIF that's perfect for the moment."
+  },
+  "icu:WhatsNew__v7.51--1": {
+    "messageformat": "We also resized the picture-in-picture window and added convenient new shortcuts to mute/unmute your microphone or turn the camera on/off while a call is minimized."
   }
 }

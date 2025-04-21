@@ -41,7 +41,7 @@ import { showStickerPackPreview } from './globalModals';
 import { useBoundActions } from '../../hooks/useBoundActions';
 import { DataReader } from '../../sql/Client';
 import { deleteDownloadsJobQueue } from '../../jobs/deleteDownloadsJobQueue';
-import { AttachmentDownloadUrgency } from '../../jobs/AttachmentDownloadManager';
+import { AttachmentDownloadUrgency } from '../../types/AttachmentDownload';
 import { queueAttachmentDownloads } from '../../util/queueAttachmentDownloads';
 import { getMessageIdForLogging } from '../../util/idForLogging';
 import { markViewOnceMessageViewed } from '../../services/MessageUpdater';
@@ -285,8 +285,9 @@ function showLightbox(opts: {
     if (isIncremental(attachment)) {
       // Queue all attachments, but this target attachment should be IMMEDIATE
       const wasUpdated = await queueAttachmentDownloads(message, {
-        urgency: AttachmentDownloadUrgency.STANDARD,
         attachmentDigestForImmediate: attachment.digest,
+        isManualDownload: true,
+        urgency: AttachmentDownloadUrgency.STANDARD,
       });
       if (wasUpdated) {
         await window.MessageCache.saveMessage(message);

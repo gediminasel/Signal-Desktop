@@ -16,12 +16,18 @@ import { setupI18n } from '../ts/util/setupI18n';
 import { HourCyclePreference } from '../ts/types/I18N';
 import { Provider } from 'react-redux';
 import { Store, combineReducers, createStore } from 'redux';
+import { Globals } from '@react-spring/web';
 import { StateType } from '../ts/state/reducer';
 import {
   ScrollerLockContext,
   createScrollerLock,
 } from '../ts/hooks/useScrollLock';
 import { Environment, setEnvironment } from '../ts/environment.ts';
+import { parseUnknown } from '../ts/util/schemas.ts';
+import { LocaleEmojiListSchema } from '../ts/types/emoji.ts';
+import { FunProvider } from '../ts/components/fun/FunProvider.tsx';
+import { EmojiSkinTone } from '../ts/components/fun/data/emojis.ts';
+import { MOCK_GIFS_PAGINATED_ONE_PAGE } from '../ts/components/fun/mocks.tsx';
 
 setEnvironment(Environment.Development, true);
 
@@ -130,6 +136,15 @@ window.SignalContext = {
     const result = parseUnknown(LocaleEmojiListSchema, json);
     return result;
   },
+
+  // For test-runner
+  _skipAnimation: () => {
+    Globals.assign({
+      skipAnimation: true,
+    });
+  },
+  _trackICUStrings: () => i18n.trackUsage(),
+  _stopTrackingICUStrings: () => i18n.stopTrackingUsage(),
 };
 
 window.i18n = i18n;
@@ -196,10 +211,33 @@ function withScrollLockProvider(Story, context) {
   );
 }
 
+function withFunProvider(Story, context) {
+  return (
+    <FunProvider
+      i18n={window.SignalContext.i18n}
+      recentEmojis={[]}
+      recentStickers={[]}
+      recentGifs={[]}
+      emojiSkinToneDefault={EmojiSkinTone.None}
+      onEmojiSkinToneDefaultChange={noop}
+      installedStickerPacks={[]}
+      showStickerPickerHint={false}
+      onClearStickerPickerHint={noop}
+      onOpenCustomizePreferredReactionsModal={noop}
+      fetchGifsSearch={() => Promise.resolve(MOCK_GIFS_PAGINATED_ONE_PAGE)}
+      fetchGifsFeatured={() => Promise.resolve(MOCK_GIFS_PAGINATED_ONE_PAGE)}
+      fetchGif={() => Promise.resolve(new Blob([new Uint8Array(1)]))}
+    >
+      <Story {...context} />
+    </FunProvider>
+  );
+}
+
 export const decorators = [
   withGlobalTypesProvider,
   withMockStoreProvider,
   withScrollLockProvider,
+  withFunProvider,
 ];
 
 export const parameters = {

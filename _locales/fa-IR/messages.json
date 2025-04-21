@@ -38,6 +38,9 @@
   "icu:Preferences__sent-media-quality": {
     "messageformat": "کیفیت ارسال رسانه"
   },
+  "icu:Preferences__sent-media-quality__description": {
+    "messageformat": "ارسال رسانه با کیفیت بالا از داده‌های بیشتری استفاده خواهد کرد."
+  },
   "icu:sentMediaQualityStandard": {
     "messageformat": "استاندارد"
   },
@@ -68,6 +71,12 @@
   "icu:unknownGroup": {
     "messageformat": "گروه ناشناخته"
   },
+  "icu:cantOpenSignalError": {
+    "messageformat": "سیگنال باز نمی‌شود"
+  },
+  "icu:cantOpenSignalError__detail": {
+    "messageformat": "برای کمک به رفع مشکل، راهنمای بازیابی را در صفحه پشتیبانی دنبال کنید یا با پشتیبانی سیگنال تماس بگیرید تا در رفع مشکل کمکتان کنند.\n\nاگر می‌خواهید فوراً از سیگنال استفاده کنید، می‌توانید داده‌های خود را حذف و این دسک‌تاپ را مجدداً پیوند دهید. شما می‌توانید تاریخچه پیام را از تلفن خود منتقل کنید."
+  },
   "icu:databaseError": {
     "messageformat": "خطای پایگاه داده"
   },
@@ -78,10 +87,10 @@
     "messageformat": "حذف داده‌ها و راه‌اندازی مجدد"
   },
   "icu:databaseError__deleteDataConfirmation": {
-    "messageformat": "همه داده‌ها به‌طور دائم پاک شود؟"
+    "messageformat": "حذف دائمی تمام داده‌ها"
   },
   "icu:databaseError__deleteDataConfirmation__detail": {
-    "messageformat": "کل تاریخچه پیام و رسانه شما به‌طور دائم از این دستگاه پاک خواهد شد. پس از پیوند دادن مجدد سیگنال، قادر به استفاده از آن در این دستگاه خواهید بود. این موجب پاک شدن داده‌ها از تلفن شما نمی‌شود."
+    "messageformat": "کل تاریخچه پیام و رسانه شما به‌طور دائم از این دستگاه حذف خواهد شد. این کار موجب حذف داده‌ها از تلفن شما نمی‌شود.\n\nپس از پیوند دادن مجدد سیگنال، قادر به استفاده از آن در این دستگاه خواهید بود. شما می‌توانید تاریخچه پیام را از تلفن خود منتقل کنید."
   },
   "icu:databaseError__startOldVersion": {
     "messageformat": "نسخه پایگاه داده شما با این نسخه سیگنال مطابقت ندارد. مطمئن شوید که جدیدترین نسخه سیگنال را در رایانه‌تان باز می‌کنید."
@@ -214,9 +223,6 @@
   },
   "icu:optimizingApplication": {
     "messageformat": "بهینه‌سازی برنامه..."
-  },
-  "icu:migratingToSQLCipher": {
-    "messageformat": "بهینه‌سازی پیام‌ها... {status} انجام شد."
   },
   "icu:archivedConversations": {
     "messageformat": "گفتگوهای بایگانی‌شده"
@@ -407,9 +413,6 @@
   "icu:unreadMessages": {
     "messageformat": "{count, plural, one {{count,number} پیام نخوانده} other {{count,number} پیام نخوانده}}"
   },
-  "icu:messageHistoryUnsynced": {
-    "messageformat": "برای حفظ امنیت شما، تاریخچه گفتگوها به دستگاه‌های پیوندداده‌شده جدید منتقل نمی‌شود."
-  },
   "icu:youMarkedAsVerified": {
     "messageformat": "شما کد امنیتی خود را با {name} به عنوان تایید شده علامت زدید"
   },
@@ -588,7 +591,7 @@
     "messageformat": "Failed to send message with endorsements"
   },
   "icu:Toast--InvalidStorageServiceHeaders": {
-    "messageformat": "Received invalid response from storage service. Please share your logs."
+    "messageformat": "پاسخ نامعتبر از سرویس ذخیره‌سازی دریافت شد. لطفاً گزارش‌های رفع اشکال را به اشتراک بگذارید."
   },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
@@ -706,9 +709,6 @@
   },
   "icu:noSearchResultsOnlyUnreadFilter": {
     "messageformat": "گفتگوی خوانده‌نشده وجود ندارد"
-  },
-  "icu:noSearchResults--sms-only": {
-    "messageformat": "مخاطبین پیامک/پیام چندرسانه‌ای در دسکتاپ در دسترس نیستند."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "هیچ نتیجه ای برای{searchTerm}در {conversationName}"
@@ -1145,9 +1145,6 @@
   "icu:mediaNotAvailable": {
     "messageformat": "این رسانه در دسترس نیست"
   },
-  "icu:mediaNotAvailable--short": {
-    "messageformat": "رسانه در دسترس نیست"
-  },
   "icu:attachmentNoLongerAvailable__learnMore": {
     "messageformat": "بیشتر بدانید"
   },
@@ -1162,6 +1159,12 @@
   },
   "icu:attachmentNotAvailable__voice": {
     "messageformat": "پیام صوتی در دسترس نیست"
+  },
+  "icu:attachmentNotAvailable__tapToView": {
+    "messageformat": "فایل رسانه با قابلیت یک‌بار مشاهده در دسترس نیست"
+  },
+  "icu:attachmentNotAvailable__tapToViewCannotDownload": {
+    "messageformat": "فایل رسانه با قابلیت یک‌بار مشاهده دانلود نمی‌شود"
   },
   "icu:AttachmentNotAvailableModal__title--file": {
     "messageformat": "فایل موجود نیست"
@@ -1192,6 +1195,21 @@
   },
   "icu:AttachmentNotAvailableModal__body--voice-message": {
     "messageformat": "در زمان اتصال این دستگاه، این پیام صوتی از گوشی شما انتقال داده نشد. رسانه‌ها و فایل‌های قدیمی‌تر از ۴۵ روز در زمان اتصال دستگاه، قابل همگام‌سازی نیستند."
+  },
+  "icu:TapToViewNotAvailableModal__body--expired": {
+    "messageformat": "این فایل رسانه با قابلیت یک‌بار مشاهده دیگر برای دانلود در دسترس نیست. از {name} بخواهید دوباره آن را ارسال کند."
+  },
+  "icu:TapToViewNotAvailableModal__body--error": {
+    "messageformat": "فایل رسانه با قابلیت یک‌بار مشاهده دانلود نمی‌شود. {name} باید دوباره آن را ارسال کند."
+  },
+  "icu:BackfillFailureModal__title": {
+    "messageformat": "رسانه دانلود نمی‌شود"
+  },
+  "icu:BackfillFailureModal__body--timeout": {
+    "messageformat": "اتصال اینترنت دسک‌تاپ و تلفن خود را بررسی کنید. سیگنال را در تلفن خود باز کنید، سپس دوباره دانلود کنید."
+  },
+  "icu:BackfillFailureModal__body--not-found": {
+    "messageformat": "این رسانه دیگر در تلفن شما در دسترس نیست و دانلود نمی‌شود."
   },
   "icu:save": {
     "messageformat": "ذخیره"
@@ -1244,12 +1262,6 @@
   "icu:Install__support-link": {
     "messageformat": "به راهنمایی نیاز دارید؟"
   },
-  "icu:Install__choose-device-name__description": {
-    "messageformat": "این نام را زیر \"دستگاه های متصل\" روی گوشی خود خواهید دید."
-  },
-  "icu:Install__choose-device-name__placeholder": {
-    "messageformat": "کامپیوتر من"
-  },
   "icu:Preferences--phone-number": {
     "messageformat": "شماره تلفن"
   },
@@ -1259,11 +1271,8 @@
   "icu:Preferences--device-name__description": {
     "messageformat": "برای تغییر نام این دستگاه، سیگنال را در گوشی خود باز کنید و به «تنظیمات > دستگاه‌های متصل‌شده» بروید"
   },
-  "icu:chooseDeviceName": {
-    "messageformat": "نام این دستگاه را انتخاب کنید"
-  },
-  "icu:finishLinkingPhone": {
-    "messageformat": "پایان لینک کردن گوشی"
+  "icu:Preferences__EmojiSkinToneDefaultSetting__Label": {
+    "messageformat": "رنگ پوست ایموجی"
   },
   "icu:initialSync": {
     "messageformat": "هماهنگ سازی مخاطبین و گروه ها"
@@ -1814,6 +1823,18 @@
   "icu:ConversationDetails__HeaderButton--Message": {
     "messageformat": "پیام"
   },
+  "icu:ConversationDetails--help-section": {
+    "messageformat": "راهنمایی"
+  },
+  "icu:ConversationDetails--support-center": {
+    "messageformat": "مرکز پشتیبانی"
+  },
+  "icu:ConversationDetails--contact-us": {
+    "messageformat": "تماس با ما"
+  },
+  "icu:ConversationDetails--donate": {
+    "messageformat": "حمایت از سیگنال"
+  },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "دیدن شمارهٔ ایمنی"
   },
@@ -1873,6 +1894,9 @@
   },
   "icu:Toast--failed-to-fetch-phone-number": {
     "messageformat": "شماره تلفن به دست نیامد. . اتصال خود را بررسی کنید و دوباره امتحان کنید."
+  },
+  "icu:Toast--download-failed": {
+    "messageformat": "دانلود انجام نشد"
   },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "ویرایش‌ها فقط تا ۲۴ ساعت بعد از ارسال این پیام قابل اعمال هستند."
@@ -2252,6 +2276,204 @@
   "icu:EmojiPicker__button--flag": {
     "messageformat": "پرچم"
   },
+  "icu:FunPicker__Tab--Emojis": {
+    "messageformat": "ایموجی"
+  },
+  "icu:FunPicker__Tab--Stickers": {
+    "messageformat": "استیکرها"
+  },
+  "icu:FunPicker__Tab--Gifs": {
+    "messageformat": "گیف‌ها"
+  },
+  "icu:FunPanelEmojis__SearchLabel": {
+    "messageformat": "جستجوی ایموجی"
+  },
+  "icu:FunPanelEmojis__SearchPlaceholder": {
+    "messageformat": "جستجوی ایموجی"
+  },
+  "icu:FunPanelEmojis__SubNavLabel": {
+    "messageformat": "دسته‌بندی ایموجی‌ها"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Recents": {
+    "messageformat": "به‌تازگی استفاده شده"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--SmileysAndPeople": {
+    "messageformat": "لبخندها و آدم‌ها"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--AnimalsAndNature": {
+    "messageformat": "حیوانات و طبیعت"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--FoodAndDrink": {
+    "messageformat": "غذا و نوشیدنی"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Activities": {
+    "messageformat": "فعالیت‌ها"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--TravelAndPlaces": {
+    "messageformat": "سفر و مکان‌ها"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Objects": {
+    "messageformat": "اشیا"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Symbols": {
+    "messageformat": "نمادها"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Flags": {
+    "messageformat": "پرچم‌ها"
+  },
+  "icu:FunPanelEmojis__SearchResults__EmptyHeading": {
+    "messageformat": "ایموجی پیدا نشد"
+  },
+  "icu:FunPanelEmojis__ChangeSkinToneButtonLabel": {
+    "messageformat": "تغییر رنگ پوست دلخواه"
+  },
+  "icu:FunPanelEmojis__SkinTonePicker__ChooseDefaultLabel": {
+    "messageformat": "رنگ پوست پیش‌فرض خود را انتخاب کنید"
+  },
+  "icu:FunPanelEmojis__SectionTitle--SearchResults": {
+    "messageformat": "نتایج جستجو"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Recents": {
+    "messageformat": "به‌تازگی استفاده شده"
+  },
+  "icu:FunPanelEmojis__SectionTitle--SmileysAndPeople": {
+    "messageformat": "لبخندها و آدم‌ها"
+  },
+  "icu:FunPanelEmojis__SectionTitle--AnimalsAndNature": {
+    "messageformat": "حیوانات و طبیعت"
+  },
+  "icu:FunPanelEmojis__SectionTitle--FoodAndDrink": {
+    "messageformat": "غذا و نوشیدنی"
+  },
+  "icu:FunPanelEmojis__SectionTitle--TravelAndPlaces": {
+    "messageformat": "سفر و مکان‌ها"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Activities": {
+    "messageformat": "فعالیت‌ها"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Objects": {
+    "messageformat": "اشیا"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Symbols": {
+    "messageformat": "نمادها"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Flags": {
+    "messageformat": "پرچم‌ها"
+  },
+  "icu:FunPanelEmojis__CustomizeReactionsButtonLabel": {
+    "messageformat": "Customize reactions"
+  },
+  "icu:FunPanelStickers__SearchLabel": {
+    "messageformat": "استیکرها را جستجو کنید"
+  },
+  "icu:FunPanelStickers__SearchPlaceholder": {
+    "messageformat": "استیکرها را جستجو کنید"
+  },
+  "icu:FunPanelSticker__SubNavLabel": {
+    "messageformat": "بسته‌های استیکر"
+  },
+  "icu:FunPanelStickers__SubNavCategoryLabel--Recents": {
+    "messageformat": "به‌تازگی استفاده شده"
+  },
+  "icu:FunPanelStickers__SectionTitle--SearchResults": {
+    "messageformat": "نتایج جستجو"
+  },
+  "icu:FunPanelStickers__SectionTitle--Recents": {
+    "messageformat": "به‌تازگی استفاده شده"
+  },
+  "icu:FunPanelStickers__SectionTitle--Featured": {
+    "messageformat": "Featured"
+  },
+  "icu:FunPanelStickers__SearchResults__EmptyHeading": {
+    "messageformat": "هیچ استیکری یافت نشد"
+  },
+  "icu:FunPanelStickers__LightboxDialog__Label": {
+    "messageformat": "پیش‌نمایش استیکر"
+  },
+  "icu:FunPanelGifs__SearchLabel--Tenor": {
+    "messageformat": "جستجوی گیف‌ها در Tenor"
+  },
+  "icu:FunPanelGifs__SearchPlaceholder--Tenor": {
+    "messageformat": "جستجو در Tenor"
+  },
+  "icu:FunPanelGifs__SubNavLabel": {
+    "messageformat": "دسته‌بندی‌های گیف"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Recents": {
+    "messageformat": "به‌تازگی استفاده شده"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Trending": {
+    "messageformat": "پرطرفدار"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Celebrate": {
+    "messageformat": "جشن"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Love": {
+    "messageformat": "عشق"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--ThumbsUp": {
+    "messageformat": "لایک"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Surprised": {
+    "messageformat": "متعجب"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Excited": {
+    "messageformat": "هیجان‌زده"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Sad": {
+    "messageformat": "غمگین"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Angry": {
+    "messageformat": "عصبانی"
+  },
+  "icu:FunPanelGifs__SearchResults__LoadingLabel": {
+    "messageformat": "در حال بارگیری گیف‌ها"
+  },
+  "icu:FunPanelGifs__SearchResults__ErrorHeading": {
+    "messageformat": "گیف‌ها بارگیری نشدند. اتصال خود را بررسی و دوباره امتحان کنید"
+  },
+  "icu:FunPanelGifs__SearchResults__ErrorRetryButton": {
+    "messageformat": "تلاش مجدد"
+  },
+  "icu:FunPanelGifs__SearchResults__EmptyHeading": {
+    "messageformat": "گیف پیدا نشد"
+  },
+  "icu:FunPanelGifs__LightboxDialog__Label": {
+    "messageformat": "پیش‌نمایش گیف"
+  },
+  "icu:FunSearch__ClearButtonLabel": {
+    "messageformat": "پاک کردن جستجو"
+  },
+  "icu:FunSkinTones__List": {
+    "messageformat": "رنگ پوست"
+  },
+  "icu:FunSkinTones__ListItem--None": {
+    "messageformat": "هیچ"
+  },
+  "icu:FunSkinTones__ListItem--Light": {
+    "messageformat": "رنگ پوست روشن"
+  },
+  "icu:FunSkinTones__ListItem--MediumLight": {
+    "messageformat": "رنگ پوست متوسط مایل به روشن"
+  },
+  "icu:FunSkinTones__ListItem--Medium": {
+    "messageformat": "رنگ پوست متوسط"
+  },
+  "icu:FunSkinTones__ListItem--MediumDark": {
+    "messageformat": "رنگ پوست متوسط مایل به تیره"
+  },
+  "icu:FunSkinTones__ListItem--Dark": {
+    "messageformat": "رنگ پوست تیره"
+  },
+  "icu:FunButton__Label--FunPicker": {
+    "messageformat": "افزودن ایموجی، استیکر یا گیف"
+  },
+  "icu:FunButton__Label--EmojiPicker": {
+    "messageformat": "افزودن ایموجی"
+  },
+  "icu:FunButton__Label--StickerPicker": {
+    "messageformat": "افزودن یک استیکر"
+  },
   "icu:confirmation-dialog--Cancel": {
     "messageformat": "لغو"
   },
@@ -2288,11 +2510,11 @@
   "icu:Message--update-signal": {
     "messageformat": "به‌روزرسانی سیگنال"
   },
-  "icu:Message--tap-to-view-expired": {
+  "icu:Message--tap-to-view--viewed": {
     "messageformat": "مشاهده شده"
   },
-  "icu:Message--tap-to-view--outgoing": {
-    "messageformat": "رسانه"
+  "icu:Message--tap-to-view--media": {
+    "messageformat": "رسانه با قابلیت یک‌بار مشاهده"
   },
   "icu:Message--tap-to-view--incoming--expired-toast": {
     "messageformat": "شما این پیام را قبلا مشاهده کرده‌اید."
@@ -2300,11 +2522,14 @@
   "icu:Message--tap-to-view--outgoing--expired-toast": {
     "messageformat": "پیام‌های یک‌بار مصرف در تاریخچه گفتگوی شما ذخیره نمی‌شوند."
   },
-  "icu:Message--tap-to-view--incoming": {
-    "messageformat": "مشاهده عکس"
+  "icu:Message--tap-to-view--video": {
+    "messageformat": "ویدئو با قابلیت یک‌بار مشاهده"
   },
-  "icu:Message--tap-to-view--incoming-video": {
-    "messageformat": "نمایش ویدئو"
+  "icu:Message--tap-to-view--photo": {
+    "messageformat": "عکس با قابلیت یک‌بار مشاهده"
+  },
+  "icu:Message--tap-to-view--helper-text": {
+    "messageformat": "برای مشاهده کلیک کنید"
   },
   "icu:Conversation--getDraftPreview--attachment": {
     "messageformat": "(پیوست)"
@@ -2498,6 +2723,9 @@
   "icu:Keyboard--toggle-video": {
     "messageformat": "خاموش و روشن کردن ویدئو"
   },
+  "icu:Keyboard--toggle-preview": {
+    "messageformat": "روشن و خاموش کردن پیش‌نمایش گسترده"
+  },
   "icu:Keyboard--accept-video-call": {
     "messageformat": "پاسخ به تماس با تصویر (فقط تماس‌های تصویری)"
   },
@@ -2560,6 +2788,12 @@
   },
   "icu:SafetyTipsModal__Description": {
     "messageformat": "هنگام پذیرفتن درخواست پیام از افراد ناشناس احتیاط کنید. در موارد زیر احتیاط کنید:"
+  },
+  "icu:SafetyTipsModal__TipTitle--Fake": {
+    "messageformat": "نام‌ها و حساب‌های جعلی"
+  },
+  "icu:SafetyTipsModal__TipDescription--Fake": {
+    "messageformat": "سیگنال هرگز برای دریافت کد ثبت‌نام یا پین با شما تماس نمی‌گیرد. مراقب درخواست‌هایی باشید که خود را به جای دیگران جا می‌زنند. نام نمایه توسط دارنده حساب انتخاب می‌شود و نیاز به تأیید ندارد."
   },
   "icu:SafetyTipsModal__TipTitle--Crypto": {
     "messageformat": "کلاه‌برداری‌های پولی یا رمزارز"
@@ -2693,6 +2927,12 @@
   "icu:MessageRequests--accept": {
     "messageformat": "پذیرفتن"
   },
+  "icu:MessageRequests--accept-confirm-title": {
+    "messageformat": "درخواست پذیرفته شود؟"
+  },
+  "icu:MessageRequests--accept-confirm-body": {
+    "messageformat": "درخواست‌ها را با دقت بازنگری کنید. نام نمایه توسط دارنده حساب انتخاب می‌شود و نیاز به تأیید ندارد."
+  },
   "icu:MessageRequests--continue": {
     "messageformat": "ادامه"
   },
@@ -2704,6 +2944,21 @@
   },
   "icu:ConversationHero--members": {
     "messageformat": "{count, plural, one {۱ عضو} other {{count,number} عضو}}"
+  },
+  "icu:ConversationHero--review-carefully": {
+    "messageformat": "با دقت بازنگری کنید"
+  },
+  "icu:ConversationHero--group-names": {
+    "messageformat": "<clickable>نام‌های گروه</clickable> نیاز به تأیید ندارند"
+  },
+  "icu:ConversationHero--profile-names": {
+    "messageformat": "<clickable>نام‌های نمایه</clickable> نیاز به تأیید ندارند"
+  },
+  "icu:ConversationHero--signal-official-chat": {
+    "messageformat": "این گفتگوی رسمی و انحصاری سیگنال است"
+  },
+  "icu:ConversationHero--release-notes": {
+    "messageformat": "از اخبار و تغییرات جدید با خبر شوید."
   },
   "icu:member-of-1-group": {
     "messageformat": "عضو {group}"
@@ -2840,6 +3095,12 @@
   "icu:CallControls__JoinLeaveButton--hangup-group": {
     "messageformat": "ترک"
   },
+  "icu:CallControls__JoinLeaveButton--hangup-1-1-tooltip": {
+    "messageformat": "End call"
+  },
+  "icu:CallControls__JoinLeaveButton--hangup-group-tooltip": {
+    "messageformat": "Leave call"
+  },
   "icu:CallControls__MutedToast--muted": {
     "messageformat": "میکروفون خاموش"
   },
@@ -2917,6 +3178,12 @@
   },
   "icu:calling__pip--off": {
     "messageformat": "تماس تمام‌صفحه"
+  },
+  "icu:calling__preview--maximize": {
+    "messageformat": "بزرگ کردن پیش‌نمایش"
+  },
+  "icu:calling__preview--minimize": {
+    "messageformat": "کوچک‌کردن پیش‌نمایش"
   },
   "icu:calling__change-view": {
     "messageformat": "تغییر نما"
@@ -3698,18 +3965,6 @@
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "تلاش مجدد"
   },
-  "icu:BackupImportScreen__skip": {
-    "messageformat": "رد کردن"
-  },
-  "icu:BackupImportScreen__skip-confirmation__title": {
-    "messageformat": "انتقال پیام رد شود؟"
-  },
-  "icu:BackupImportScreen__skip-confirmation__body": {
-    "messageformat": "اگر رد شوید، به هیچ یک از پیام‌ها یا رسانه‌های خود در این دستگاه دسترسی نخواهید داشت. پس از رد کردن، می‌توانید از قسمت «تنظیمات» > «گفتگوها» > «انتقال»، انتقال جدیدی را شروع کنید."
-  },
-  "icu:BackupImportScreen__skip-confirmation__cancel": {
-    "messageformat": "لغو"
-  },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "در حال بازیابی رسانه"
   },
@@ -3752,6 +4007,12 @@
   "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
     "messageformat": "لغو انتقال"
   },
+  "icu:CriticalIdlePrimaryDeviceModal__title": {
+    "messageformat": "Account action required"
+  },
+  "icu:CriticalIdlePrimaryDeviceModal__description": {
+    "messageformat": "You must open Signal on your phone to continue using this account. If you do not open Signal on your phone, your account will be deleted soon. <learnMoreLink>Learn more</learnMoreLink>"
+  },
   "icu:CompositionArea--expand": {
     "messageformat": "گسترش"
   },
@@ -3772,6 +4033,18 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "ارسال پیام ویرایش‌شده"
+  },
+  "icu:CompositionArea__FunButtonLabel": {
+    "messageformat": "افزودن ایموجی، استیکر یا گیف"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__Title": {
+    "messageformat": "پیوست جایگزین شود؟"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__Body": {
+    "messageformat": "افزودن این گیف جایگزین پیوست مندرج در پیام پیش‌نویس فعلی شما می‌شود."
+  },
+  "icu:CompositionArea__ConfirmGifSelection__ReplaceButton": {
+    "messageformat": "جایگزینی"
   },
   "icu:CompositionInput__editing-message": {
     "messageformat": "ویرایش پیام"
@@ -3989,6 +4262,9 @@
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "نیاز به یک مدیر برای تأیید اعضای جدیدی که از طریق پیوند گروه می‌پیوندند"
   },
+  "icu:GroupLinkManagement__CopyGroupLinkButtonLabel": {
+    "messageformat": "Copy signal.group link to clipboard"
+  },
   "icu:PendingInvites--tab-requests": {
     "messageformat": "درخواست‌ها ({count,number})"
   },
@@ -4193,9 +4469,6 @@
   "icu:ShareCallLinkViaSignal__DraftMessageText": {
     "messageformat": "با استفاده از این پیوند به تماس سیگنال بپیوندید: {url}"
   },
-  "icu:MessageRequestWarning__learn-more": {
-    "messageformat": "بیشتر یاد بگیرید"
-  },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "نکات ایمنی"
   },
@@ -4350,7 +4623,7 @@
     "messageformat": "پایان گرادیان"
   },
   "icu:GIF--download": {
-    "messageformat": "Download GIF attachment"
+    "messageformat": "دانلود گیف پیوست"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "زمان سفارشی..."
@@ -4655,6 +4928,30 @@
   "icu:Preferences__button--privacy": {
     "messageformat": "حریم خصوصی"
   },
+  "icu:Preferences__button--data-usage": {
+    "messageformat": "مصرف داده"
+  },
+  "icu:Preferences__media-auto-download": {
+    "messageformat": "بارگیری خودکار رسانه"
+  },
+  "icu:Preferences__media-auto-download__photos": {
+    "messageformat": "تصاویر"
+  },
+  "icu:Preferences__media-auto-download__videos": {
+    "messageformat": "ویدئو‌ها"
+  },
+  "icu:Preferences__media-auto-download__audio": {
+    "messageformat": "صوت"
+  },
+  "icu:Preferences__media-auto-download__documents": {
+    "messageformat": "اسناد"
+  },
+  "icu:Preferences__media-auto-download__description": {
+    "messageformat": "پیام‌های صوتی و استیکرها همیشه به‌صورت خودکار دانلود می‌شوند."
+  },
+  "icu:Preferences__button--backups": {
+    "messageformat": "Backups"
+  },
   "icu:Preferences--lastSynced": {
     "messageformat": "آخرین واردسازی در {time} {date}"
   },
@@ -4684,6 +4981,51 @@
   },
   "icu:Preferences--blocked": {
     "messageformat": "مسدودشده"
+  },
+  "icu:Preferences--backup-details__header": {
+    "messageformat": "Backup details"
+  },
+  "icu:Preferences--backup-media-plan__description": {
+    "messageformat": "Text + all media backup"
+  },
+  "icu:Preferences--backup-plan-not-found__description": {
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Backups."
+  },
+  "icu:Preferences--backup-messages-plan__description": {
+    "messageformat": "{mediaDayCount, plural, one {Text + {mediaDayCount,number} day media backup} other {Text + {mediaDayCount,number} days media backup}}"
+  },
+  "icu:Preferences--backup-messages-plan__cost-description": {
+    "messageformat": "Your backup plan is free"
+  },
+  "icu:Preferences--backup-plan__renewal-date": {
+    "messageformat": "Renews {date}"
+  },
+  "icu:Preferences--backup-plan__expiry-date": {
+    "messageformat": "Expires {date}"
+  },
+  "icu:Preferences--backup-plan__canceled": {
+    "messageformat": "Subscription canceled"
+  },
+  "icu:Preferences--backup-media-plan__note": {
+    "messageformat": "You can manage or cancel your Signal Backups subscription on your phone."
+  },
+  "icu:Preferences--backup-messages-plan__note": {
+    "messageformat": "You can manage or upgrade Signal Backups on your phone."
+  },
+  "icu:Preferences--backup-plan__not-found": {
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Backups."
+  },
+  "icu:Preferences--backup-plan__not-found__note": {
+    "messageformat": "You can manage or renew your Signal Backups subscription on your phone."
+  },
+  "icu:Preferences--backup-created-at__label": {
+    "messageformat": "Last backup"
+  },
+  "icu:Preferences--backup-created-by-phone": {
+    "messageformat": "Your phone"
+  },
+  "icu:Preferences--backup-size__label": {
+    "messageformat": "Backup size"
   },
   "icu:Preferences--blocked-count": {
     "messageformat": "{num, plural, one {{num,number} مخاطب} other {{num,number} مخاطب}}"
@@ -4810,6 +5152,18 @@
   },
   "icu:DialogUpdate__downloaded": {
     "messageformat": "به‌روزرسانی بارگیری شد"
+  },
+  "icu:CriticalIdlePrimaryDevice__title": {
+    "messageformat": "باز کردن سیگنال روی گوشی"
+  },
+  "icu:CriticalIdlePrimaryDevice__body": {
+    "messageformat": "اگر سیگنال را در تلفن خود باز نکنید، حساب شما به‌زودی حذف خواهد شد. اگر این کار را با موفقیت انجام داده باشید، این پیام از بین خواهد رفت. <learnMoreLink>اطلاعات بیشتر</learnMoreLink>"
+  },
+  "icu:IdlePrimaryDevice__body": {
+    "messageformat": "سیگنال را روی گوشی خود باز کنید تا حسابتان فعال بماند"
+  },
+  "icu:IdlePrimaryDevice__learnMore": {
+    "messageformat": "بیشتر بدانید"
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "سیگنال با مشکلات فنی روبروست. به سختی تلاش میکنیم تا سرویس را تا حد ممکن سریعا برگردانیم."
@@ -4951,6 +5305,30 @@
   },
   "icu:MediaEditor__crop-preset--9-16": {
     "messageformat": "9:16"
+  },
+  "icu:MediaPermissionsModal__title--microphone": {
+    "messageformat": "اجازۀ دسترسی به میکروفون‌تان"
+  },
+  "icu:MediaPermissionsModal__title--camera": {
+    "messageformat": "اجازه دسترسی به دوربین"
+  },
+  "icu:MediaPermissionsModal__subtitle--call": {
+    "messageformat": "برای پیوستن یا شروع تماس:"
+  },
+  "icu:MediaPermissionsModal__subtitle--call--camera": {
+    "messageformat": "برای فعال کردن ویدیو:"
+  },
+  "icu:MediaPermissionsModal__subtitle--voice-note": {
+    "messageformat": "برای ارسال پیام صوتی:"
+  },
+  "icu:MediaPermissionsModal__step-1": {
+    "messageformat": "روی « {buttonName} » در زیر کلیک کنید"
+  },
+  "icu:MediaPermissionsModal__step-2": {
+    "messageformat": "«سیگنال» را روشن کنید"
+  },
+  "icu:MediaPermissionsModal__open": {
+    "messageformat": "رفتن به تنظیمات"
   },
   "icu:MyStories__title": {
     "messageformat": "استوری‌های من"
@@ -5610,6 +5988,15 @@
   "icu:MessageMetadata__edited": {
     "messageformat": "ویرایش‌شده"
   },
+  "icu:DraftGifMessageSendModal__Title": {
+    "messageformat": "افزودن یک پیام"
+  },
+  "icu:DraftGifMessageSendModal__SendButtonLabel": {
+    "messageformat": "ارسال"
+  },
+  "icu:DraftGifMessageSendModal__CancelButtonLabel": {
+    "messageformat": "لغو"
+  },
   "icu:EditHistoryMessagesModal__title": {
     "messageformat": "تاریخچه ویرایش‌ها"
   },
@@ -5829,6 +6216,30 @@
   "icu:WhoCanFindMeReadOnlyToast": {
     "messageformat": "برای تغییر این تنظیمات، «چه‌کسی می‌تواند شمارۀ من را ببیند» را روی «هیچ‌کس» تنظیم کنید."
   },
+  "icu:ProfileNameWarningModal__description--direct": {
+    "messageformat": "نام نمایه در سیگنال توسط دارنده حساب انتخاب می‌شود:"
+  },
+  "icu:ProfileNameWarningModal__list--item1--direct": {
+    "messageformat": "نام‌های نمایه نیاز به تأیید ندارند"
+  },
+  "icu:ProfileNameWarningModal__list--item2--direct": {
+    "messageformat": "مراقب حساب‌هایی باشید که خود را به جای دیگران جا می‌زنند"
+  },
+  "icu:ProfileNameWarningModal__list--item3--direct": {
+    "messageformat": "اطلاعات شخصی خود را با افرادی که نمی‌شناسید به اشتراک نگذارید"
+  },
+  "icu:ProfileNameWarningModal__description--group": {
+    "messageformat": "نام گروه توسط اعضای گروه انتخاب می‌شود."
+  },
+  "icu:ProfileNameWarningModal__list--item1--group": {
+    "messageformat": "مراقب گروه‌هایی باشید که خود را به جای سازمان‌ها و کسب‌وکارها جا می‌زنند"
+  },
+  "icu:ProfileNameWarningModal__list--item2--group": {
+    "messageformat": "نام‌های نمایه اعضای گروه‌ها نیاز به تأیید ندارد"
+  },
+  "icu:ProfileNameWarningModal__list--item3--group": {
+    "messageformat": "اطلاعات شخصی خود را با افرادی که نمی‌شناسید به اشتراک نگذارید"
+  },
   "icu:WhatsNew__modal-title": {
     "messageformat": "تازه‌ها"
   },
@@ -5860,10 +6271,22 @@
     "messageformat": "تغییرات کوچک، رفع اشکالات و بهبود عملکرد. بابت استفاده از سیگنال سپاسگزاریم!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.44--0": {
-    "messageformat": "یک اشکال جزئی انیمیشن که حین تماس‌های گروهی رخ می‌داد را برطرف کردیم."
+  "icu:WhatsNew__v7.47--0": {
+    "messageformat": "اکنون می‌توانید پیش‌نمایش ویدئوی محلی خود را در طول تماس گسترش دهید تا خود را بهتر ببینید."
   },
-  "icu:WhatsNew__v7.45--0": {
-    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
+  "icu:WhatsNew__v7.48--0": {
+    "messageformat": "ما یک میان‌بُر آسان اضافه کردیم تا بعد از شروع صحبت در طول تماس گروهی سیگنال فوراً دست خود را پایین بیاورید."
+  },
+  "icu:WhatsNew__v7.49--0": {
+    "messageformat": "اگر یک دسک‌تاپ جدید را در سیگنال اندروید پیوند دهید و انتقال تاریخچه پیام‌های خود را انتخاب کنید، می‌توانید پیوست‌های قدیمی را نیز به‌صورت گزینشی از دستگاه اصلی خود منتقل کنید. مثل همیشه، فرایند انتقال سرتاسر رمزگذاری‌شده و امن است."
+  },
+  "icu:WhatsNew__v7.50--0": {
+    "messageformat": "اگر یک دسک‌تاپ جدید را در سیگنال اندروید پیوند دهید و انتقال تاریخچه پیام‌های خود را انتخاب کنید، می‌توانید پیوست‌های قدیمی را نیز به‌صورت گزینشی از دستگاه اصلی خود منتقل کنید. مثل همیشه، فرایند انتقال سرتاسر رمزگذاری‌شده و امن است."
+  },
+  "icu:WhatsNew__v7.51--0": {
+    "messageformat": "Fire, the wheel, and electricity were all great developments, but they were merely necessary steps along the path that created the conditions for animated GIF search to exist. Now you can experience the pinnacle of human technological advancement in Signal Desktop with a brand-new selection interface that makes it easy to quickly find an emoji, sticker, or animated GIF that's perfect for the moment."
+  },
+  "icu:WhatsNew__v7.51--1": {
+    "messageformat": "We also resized the picture-in-picture window and added convenient new shortcuts to mute/unmute your microphone or turn the camera on/off while a call is minimized."
   }
 }

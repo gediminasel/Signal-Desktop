@@ -122,8 +122,8 @@ export type PropsType = {
   sendGroupCallReaction: (payload: SendGroupCallReactionType) => void;
   setGroupCallVideoRequest: (_: SetGroupCallVideoRequestType) => void;
   setIsCallActive: (_: boolean) => void;
-  setLocalAudio: (_: SetLocalAudioType) => void;
-  setLocalVideo: (_: SetLocalVideoType) => void;
+  setLocalAudio: SetLocalAudioType;
+  setLocalVideo: SetLocalVideoType;
   setLocalPreviewContainer: (container: HTMLDivElement | null) => void;
   setOutgoingRing: (_: boolean) => void;
   setRendererCanvas: (_: SetRendererCanvasType) => void;
@@ -138,6 +138,7 @@ export type PropsType = {
   togglePip: () => void;
   toggleCallLinkPendingParticipantModal: (contactId: string) => void;
   toggleScreenRecordingPermissionsDialog: () => unknown;
+  toggleSelfViewExpanded: () => unknown;
   toggleSettings: () => void;
   pauseVoiceNotePlayer: () => void;
 } & Pick<ReactionPickerProps, 'renderEmojiPicker'>;
@@ -200,6 +201,7 @@ function ActiveCallManager({
   toggleParticipants,
   togglePip,
   toggleScreenRecordingPermissionsDialog,
+  toggleSelfViewExpanded,
   toggleSettings,
   pauseVoiceNotePlayer,
 }: ActiveCallManagerPropsType): JSX.Element {
@@ -343,14 +345,19 @@ function ActiveCallManager({
         getGroupCallVideoFrameSource={getGroupCallVideoFrameSourceForActiveCall}
         imageDataCache={imageDataCache}
         hangUpActiveCall={hangUpActiveCall}
-        hasLocalVideo={hasLocalVideo}
         i18n={i18n}
+        me={me}
         setGroupCallVideoRequest={setGroupCallVideoRequestForConversation}
         setLocalPreviewContainer={setLocalPreviewContainer}
         setRendererCanvas={setRendererCanvas}
         switchToPresentationView={switchToPresentationView}
         switchFromPresentationView={switchFromPresentationView}
+        toggleAudio={setLocalAudio}
         togglePip={togglePip}
+        toggleVideo={() => {
+          const enabled = !activeCall.hasLocalVideo;
+          setLocalVideo({ enabled });
+        }}
       />
     );
   }
@@ -480,6 +487,7 @@ function ActiveCallManager({
         }
         toggleParticipants={toggleParticipants}
         togglePip={togglePip}
+        toggleSelfViewExpanded={toggleSelfViewExpanded}
         toggleSettings={toggleSettings}
       />
       {presentingSourcesAvailable && presentingSourcesAvailable.length ? (
@@ -573,6 +581,7 @@ export function CallManager({
   togglePip,
   toggleCallLinkPendingParticipantModal,
   toggleScreenRecordingPermissionsDialog,
+  toggleSelfViewExpanded,
   toggleSettings,
 }: PropsType): JSX.Element | null {
   const isCallActive = Boolean(activeCall);
@@ -667,6 +676,7 @@ export function CallManager({
           toggleScreenRecordingPermissionsDialog={
             toggleScreenRecordingPermissionsDialog
           }
+          toggleSelfViewExpanded={toggleSelfViewExpanded}
           toggleSettings={toggleSettings}
         />
       </CallingToastProvider>

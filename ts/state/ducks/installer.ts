@@ -17,7 +17,6 @@ import { type Loadable, LoadingState } from '../../util/loadable';
 import { isRecord } from '../../util/isRecord';
 import { strictAssert } from '../../util/assert';
 import * as Registration from '../../util/registration';
-import { isBackupEnabled } from '../../util/isBackupEnabled';
 import { missingCaseError } from '../../util/missingCaseError';
 import { HTTPError } from '../../textsecure/Errors';
 import {
@@ -144,7 +143,6 @@ export const actions = {
   retryBackupImport,
   showBackupImport,
   handleMissingBackup,
-  showLinkInProgress,
 };
 
 export const useInstallerActions = (): BoundActionCreatorsMapObject<
@@ -322,7 +320,7 @@ function finishInstall({
     const accountManager = window.getAccountManager();
     strictAssert(accountManager, 'Expected an account manager');
 
-    if (isBackupEnabled() || isLinkAndSync) {
+    if (isLinkAndSync) {
       dispatch({ type: SHOW_BACKUP_IMPORT });
     } else {
       dispatch({ type: SHOW_LINK_IN_PROGRESS });
@@ -383,10 +381,6 @@ function finishInstall({
 
 function showBackupImport(): ShowBackupImportActionType {
   return { type: SHOW_BACKUP_IMPORT };
-}
-
-function showLinkInProgress(): ShowLinkInProgressActionType {
-  return { type: SHOW_LINK_IN_PROGRESS };
 }
 
 function handleMissingBackup(): ShowLinkInProgressActionType {

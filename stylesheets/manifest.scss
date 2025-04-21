@@ -8,9 +8,6 @@
 @use 'global';
 @use 'titlebar';
 
-// Old style: components
-@use 'emoji';
-
 // Old style: modules
 @use 'modules';
 
@@ -26,6 +23,7 @@
 @use 'components/App.scss';
 @use 'components/AttachmentDetailPill.scss';
 @use 'components/AttachmentNotAvailableModal.scss';
+@use 'components/AttachmentStatusIcon.scss';
 @use 'components/AudioCapture.scss';
 @use 'components/AutoSizeInput.scss';
 @use 'components/Avatar.scss';
@@ -33,6 +31,7 @@
 @use 'components/AvatarModalButtons.scss';
 @use 'components/AvatarPreview.scss';
 @use 'components/AvatarTextEditor.scss';
+@use 'components/BackfillFailureModal.scss';
 @use 'components/BackupMediaDownloadProgress.scss';
 @use 'components/BadgeCarouselIndex.scss';
 @use 'components/BadgeDialog.scss';
@@ -89,12 +88,14 @@
 @use 'components/ConversationPanel.scss';
 @use 'components/ConversationView.scss';
 @use 'components/CountryCodeSelect.scss';
+@use 'components/CriticalIdlePrimaryDeviceModal.scss';
 @use 'components/CustomColorEditor.scss';
 @use 'components/CustomizingPreferredReactionsModal.scss';
 @use 'components/DebugLogWindow.scss';
 @use 'components/DeleteMessagesModal.scss';
 @use 'components/DisappearingTimeDialog.scss';
 @use 'components/DisappearingTimerSelect.scss';
+@use 'components/DraftGifMessageSendModal.scss';
 @use 'components/EditConversationAttributesModal.scss';
 @use 'components/EditHistoryMessagesModal.scss';
 @use 'components/EditNicknameAndNoteModal.scss';
@@ -125,6 +126,7 @@
 @use 'components/ListTile.scss';
 @use 'components/LocalDeleteWarningModal.scss';
 @use 'components/MediaEditor.scss';
+@use 'components/MediaPermissionsModal.scss';
 @use 'components/MediaQualitySelector.scss';
 @use 'components/MessageAudio.scss';
 @use 'components/MessageBody.scss';
@@ -142,6 +144,7 @@
 @use 'components/PlaybackRateButton.scss';
 @use 'components/Preferences.scss';
 @use 'components/ProfileEditor.scss';
+@use 'components/ProfileNameWarningModal.scss';
 @use 'components/ProgressBar.scss';
 @use 'components/ProgressCircle.scss';
 @use 'components/Quote.scss';
@@ -178,6 +181,7 @@
 @use 'components/StoryViewsNRepliesModal.scss';
 @use 'components/SystemMessage.scss';
 @use 'components/Tabs.scss';
+@use 'components/TapToViewNotAvailableModal.scss';
 @use 'components/TextAttachment.scss';
 @use 'components/TimelineDateHeader.scss';
 @use 'components/TimelineFloatingHeader.scss';

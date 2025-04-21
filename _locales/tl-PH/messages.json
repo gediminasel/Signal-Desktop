@@ -38,6 +38,9 @@
   "icu:Preferences__sent-media-quality": {
     "messageformat": "Sent media quality"
   },
+  "icu:Preferences__sent-media-quality__description": {
+    "messageformat": "Ang pag-send ng high quality media will use more data."
+  },
   "icu:sentMediaQualityStandard": {
     "messageformat": "Standard"
   },
@@ -68,6 +71,12 @@
   "icu:unknownGroup": {
     "messageformat": "Unknown group"
   },
+  "icu:cantOpenSignalError": {
+    "messageformat": "Hindi Mabuksan ang Signal"
+  },
+  "icu:cantOpenSignalError__detail": {
+    "messageformat": "Para maayos ang isyu, sundin ang recovery guide sa support page o kontakin ang Signal support para matulungan ka.\n\nKung kailangan mong gamitin agad ang Signal, maaari mong burahin ang data mo at i-relink ang desktop na ito. May option kang ilipat ang message history mula sa phone mo."
+  },
   "icu:databaseError": {
     "messageformat": "Database Error"
   },
@@ -78,10 +87,10 @@
     "messageformat": "Burahin ang data at mag-restart"
   },
   "icu:databaseError__deleteDataConfirmation": {
-    "messageformat": "Gusto mo bang permanenteng burahin ang lahat ng data?"
+    "messageformat": "Permanenteng Burahin ang Lahat ng Data"
   },
   "icu:databaseError__deleteDataConfirmation__detail": {
-    "messageformat": "Ang lahat ng message history at media mo ay permanenteng buburahin sa device na ito. Pwede mong gamitin ang Signal sa device na ito pagkatapos mo itong i-relink. Hindi nito buburahin ang anumang data sa phone mo."
+    "messageformat": "Ang lahat ng message history at media mo ay permanenteng buburahin sa device na ito. Hindi nito buburahin ang anumang data sa phone mo.\n\nPwede mong gamitin ang Signal sa device na ito pagkatapos mo itong i-relink. May option kang ilipat ang message history mula sa phone mo."
   },
   "icu:databaseError__startOldVersion": {
     "messageformat": "Hindi magka-match ang version ng database mo at ang version na ito ng Signal. Siguraduhing buksan ang pinakabagong version ng Signal sa computer mo."
@@ -214,9 +223,6 @@
   },
   "icu:optimizingApplication": {
     "messageformat": "Ino-optimize ang application…"
-  },
-  "icu:migratingToSQLCipher": {
-    "messageformat": "Ino-optimize ang messages… {status} tapos na."
   },
   "icu:archivedConversations": {
     "messageformat": "Archived Chats"
@@ -407,9 +413,6 @@
   "icu:unreadMessages": {
     "messageformat": "{count, plural, one {{count,number} hindi pa nabasang mensahe} other {{count,number} hindi pa nabasang mensahe}}"
   },
-  "icu:messageHistoryUnsynced": {
-    "messageformat": "Para sa iyong kaligtasan, ang chat history ay hindi nililipat sa bagong linked devices."
-  },
   "icu:youMarkedAsVerified": {
     "messageformat": "You marked your Safety Number with {name} as verified"
   },
@@ -588,7 +591,7 @@
     "messageformat": "Failed to send message with endorsements"
   },
   "icu:Toast--InvalidStorageServiceHeaders": {
-    "messageformat": "Received invalid response from storage service. Please share your logs."
+    "messageformat": "Nakatanggap ng invalid response mula sa storage service. Mangyaring i-share ang iyong logs."
   },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
@@ -706,9 +709,6 @@
   },
   "icu:noSearchResultsOnlyUnreadFilter": {
     "messageformat": "Walang unread chats"
-  },
-  "icu:noSearchResults--sms-only": {
-    "messageformat": "Ang SMS/MMS contacts ay hindi available sa Desktop."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "Walang results for \"{searchTerm}\" sa {conversationName}"
@@ -1145,9 +1145,6 @@
   "icu:mediaNotAvailable": {
     "messageformat": "Hindi available ang media na ito"
   },
-  "icu:mediaNotAvailable--short": {
-    "messageformat": "Hindi available ang media"
-  },
   "icu:attachmentNoLongerAvailable__learnMore": {
     "messageformat": "Matuto pa"
   },
@@ -1162,6 +1159,12 @@
   },
   "icu:attachmentNotAvailable__voice": {
     "messageformat": "Hindi available ang voice message"
+  },
+  "icu:attachmentNotAvailable__tapToView": {
+    "messageformat": "Hindi available ang view once media"
+  },
+  "icu:attachmentNotAvailable__tapToViewCannotDownload": {
+    "messageformat": "Hindi ma-download ang view once media"
   },
   "icu:AttachmentNotAvailableModal__title--file": {
     "messageformat": "Hindi available ang file"
@@ -1192,6 +1195,21 @@
   },
   "icu:AttachmentNotAvailableModal__body--voice-message": {
     "messageformat": "Ang voice message na ito ay hindi nalipat mula sa phone mo noong ni-link ang device na ito. Ang media at files na higit sa 45 araw noong ni-link ang device ay hindi masy-sync."
+  },
+  "icu:TapToViewNotAvailableModal__body--expired": {
+    "messageformat": "Ang view once media na ito ay hindi na available para ma-download. Sabihan si {name} na i-send ulit ito."
+  },
+  "icu:TapToViewNotAvailableModal__body--error": {
+    "messageformat": "Hindi ma-download ang view once media. Kailangan ulit itong i-send ni {name}."
+  },
+  "icu:BackfillFailureModal__title": {
+    "messageformat": "Hindi ma-download ang media"
+  },
+  "icu:BackfillFailureModal__body--timeout": {
+    "messageformat": "I-check ang desktop mo at ang internet connection ng iyong phone. Buksan ang Signal sa phone mo, at subukang mag-download ulit."
+  },
+  "icu:BackfillFailureModal__body--not-found": {
+    "messageformat": "Ang media na ito ay hindi na available sa phone mo at hindi na maaaring ma-download."
   },
   "icu:save": {
     "messageformat": "I-save"
@@ -1244,12 +1262,6 @@
   "icu:Install__support-link": {
     "messageformat": "Kailangan mo ba ng tulong?"
   },
-  "icu:Install__choose-device-name__description": {
-    "messageformat": "Makikita mo ang name na ito under \"Linked Devices\" sa iyong phone"
-  },
-  "icu:Install__choose-device-name__placeholder": {
-    "messageformat": "My Computer"
-  },
   "icu:Preferences--phone-number": {
     "messageformat": "Phone Number"
   },
@@ -1259,11 +1271,8 @@
   "icu:Preferences--device-name__description": {
     "messageformat": "Para palitan ang pangalan ng device na ito, buksan ang Signal sa phone mo at pumunta sa Settings > Linked devices"
   },
-  "icu:chooseDeviceName": {
-    "messageformat": "Choose this device's name"
-  },
-  "icu:finishLinkingPhone": {
-    "messageformat": "Finish linking phone"
+  "icu:Preferences__EmojiSkinToneDefaultSetting__Label": {
+    "messageformat": "Skin tone ng emoji"
   },
   "icu:initialSync": {
     "messageformat": "Syncing contacts and groups"
@@ -1814,6 +1823,18 @@
   "icu:ConversationDetails__HeaderButton--Message": {
     "messageformat": "Message"
   },
+  "icu:ConversationDetails--help-section": {
+    "messageformat": "Tulong"
+  },
+  "icu:ConversationDetails--support-center": {
+    "messageformat": "Support center"
+  },
+  "icu:ConversationDetails--contact-us": {
+    "messageformat": "Kontakin kami"
+  },
+  "icu:ConversationDetails--donate": {
+    "messageformat": "Mag-donate sa Signal"
+  },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "Tingnan ang Safety Number"
   },
@@ -1873,6 +1894,9 @@
   },
   "icu:Toast--failed-to-fetch-phone-number": {
     "messageformat": "Failed to fetch phone number. I-check ang iyong internet connection at subukan ulit."
+  },
+  "icu:Toast--download-failed": {
+    "messageformat": "Failed ang pag-download"
   },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "May 3 oras ka lang para i-edit ang message pagkatapos mo itong i-send."
@@ -2252,6 +2276,204 @@
   "icu:EmojiPicker__button--flag": {
     "messageformat": "Flag"
   },
+  "icu:FunPicker__Tab--Emojis": {
+    "messageformat": "Emoji"
+  },
+  "icu:FunPicker__Tab--Stickers": {
+    "messageformat": "Mga Sticker"
+  },
+  "icu:FunPicker__Tab--Gifs": {
+    "messageformat": "Mga GIF"
+  },
+  "icu:FunPanelEmojis__SearchLabel": {
+    "messageformat": "Mag-search ng emoji"
+  },
+  "icu:FunPanelEmojis__SearchPlaceholder": {
+    "messageformat": "Mag-search ng emoji"
+  },
+  "icu:FunPanelEmojis__SubNavLabel": {
+    "messageformat": "Mga Kategorya ng Emoji"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Recents": {
+    "messageformat": "Recently Used"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--SmileysAndPeople": {
+    "messageformat": "Smileys & People"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--AnimalsAndNature": {
+    "messageformat": "Animals & Nature"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--FoodAndDrink": {
+    "messageformat": "Food & Drink"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Activities": {
+    "messageformat": "Activities"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--TravelAndPlaces": {
+    "messageformat": "Travel & Places"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Objects": {
+    "messageformat": "Objects"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Symbols": {
+    "messageformat": "Symbols"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Flags": {
+    "messageformat": "Flags"
+  },
+  "icu:FunPanelEmojis__SearchResults__EmptyHeading": {
+    "messageformat": "No emoji found"
+  },
+  "icu:FunPanelEmojis__ChangeSkinToneButtonLabel": {
+    "messageformat": "Palitan ang Preference sa Kulay ng Balat"
+  },
+  "icu:FunPanelEmojis__SkinTonePicker__ChooseDefaultLabel": {
+    "messageformat": "Pumili ng default na kulay ng balat mo"
+  },
+  "icu:FunPanelEmojis__SectionTitle--SearchResults": {
+    "messageformat": "Search Results"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Recents": {
+    "messageformat": "Recently Used"
+  },
+  "icu:FunPanelEmojis__SectionTitle--SmileysAndPeople": {
+    "messageformat": "Smileys & People"
+  },
+  "icu:FunPanelEmojis__SectionTitle--AnimalsAndNature": {
+    "messageformat": "Animals & Nature"
+  },
+  "icu:FunPanelEmojis__SectionTitle--FoodAndDrink": {
+    "messageformat": "Food & Drink"
+  },
+  "icu:FunPanelEmojis__SectionTitle--TravelAndPlaces": {
+    "messageformat": "Travel & Places"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Activities": {
+    "messageformat": "Activities"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Objects": {
+    "messageformat": "Objects"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Symbols": {
+    "messageformat": "Symbols"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Flags": {
+    "messageformat": "Flags"
+  },
+  "icu:FunPanelEmojis__CustomizeReactionsButtonLabel": {
+    "messageformat": "Customize reactions"
+  },
+  "icu:FunPanelStickers__SearchLabel": {
+    "messageformat": "Mag-search ng stickers"
+  },
+  "icu:FunPanelStickers__SearchPlaceholder": {
+    "messageformat": "Mag-search ng stickers"
+  },
+  "icu:FunPanelSticker__SubNavLabel": {
+    "messageformat": "Sticker Packs"
+  },
+  "icu:FunPanelStickers__SubNavCategoryLabel--Recents": {
+    "messageformat": "Recently Used"
+  },
+  "icu:FunPanelStickers__SectionTitle--SearchResults": {
+    "messageformat": "Search Results"
+  },
+  "icu:FunPanelStickers__SectionTitle--Recents": {
+    "messageformat": "Recently Used"
+  },
+  "icu:FunPanelStickers__SectionTitle--Featured": {
+    "messageformat": "Featured"
+  },
+  "icu:FunPanelStickers__SearchResults__EmptyHeading": {
+    "messageformat": "No stickers found"
+  },
+  "icu:FunPanelStickers__LightboxDialog__Label": {
+    "messageformat": "Preview ng Sticker"
+  },
+  "icu:FunPanelGifs__SearchLabel--Tenor": {
+    "messageformat": "Maghanap ng GIFs sa Tenor"
+  },
+  "icu:FunPanelGifs__SearchPlaceholder--Tenor": {
+    "messageformat": "Maghanap sa Tenor"
+  },
+  "icu:FunPanelGifs__SubNavLabel": {
+    "messageformat": "Mga Kategorya ng GIF"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Recents": {
+    "messageformat": "Recently Used"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Trending": {
+    "messageformat": "Trending"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Celebrate": {
+    "messageformat": "Celebrate"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Love": {
+    "messageformat": "Love"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--ThumbsUp": {
+    "messageformat": "Thumbs Up"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Surprised": {
+    "messageformat": "Surprised"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Excited": {
+    "messageformat": "Excited"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Sad": {
+    "messageformat": "Sad"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Angry": {
+    "messageformat": "Angry"
+  },
+  "icu:FunPanelGifs__SearchResults__LoadingLabel": {
+    "messageformat": "Naglo-load ang GIFs"
+  },
+  "icu:FunPanelGifs__SearchResults__ErrorHeading": {
+    "messageformat": "Hindi ma-load ang GIFs. I-check ang iyong connection at subukan ulit"
+  },
+  "icu:FunPanelGifs__SearchResults__ErrorRetryButton": {
+    "messageformat": "Subukang muli"
+  },
+  "icu:FunPanelGifs__SearchResults__EmptyHeading": {
+    "messageformat": "Walang nakitang GIFs"
+  },
+  "icu:FunPanelGifs__LightboxDialog__Label": {
+    "messageformat": "Preview ng GIF"
+  },
+  "icu:FunSearch__ClearButtonLabel": {
+    "messageformat": "Clear Search"
+  },
+  "icu:FunSkinTones__List": {
+    "messageformat": "Skin tone"
+  },
+  "icu:FunSkinTones__ListItem--None": {
+    "messageformat": "Wala"
+  },
+  "icu:FunSkinTones__ListItem--Light": {
+    "messageformat": "Light skin tone"
+  },
+  "icu:FunSkinTones__ListItem--MediumLight": {
+    "messageformat": "Medium-light skin tone"
+  },
+  "icu:FunSkinTones__ListItem--Medium": {
+    "messageformat": "Medium skin tone"
+  },
+  "icu:FunSkinTones__ListItem--MediumDark": {
+    "messageformat": "Medium-dark skin tone"
+  },
+  "icu:FunSkinTones__ListItem--Dark": {
+    "messageformat": "Dark skin tone"
+  },
+  "icu:FunButton__Label--FunPicker": {
+    "messageformat": "Maglagay ng Emoji, Sticker, o GIF"
+  },
+  "icu:FunButton__Label--EmojiPicker": {
+    "messageformat": "Mag-add ng emoji"
+  },
+  "icu:FunButton__Label--StickerPicker": {
+    "messageformat": "Mag-add ng sticker"
+  },
   "icu:confirmation-dialog--Cancel": {
     "messageformat": "Kanselahin"
   },
@@ -2288,11 +2510,11 @@
   "icu:Message--update-signal": {
     "messageformat": "I-update ang Signal"
   },
-  "icu:Message--tap-to-view-expired": {
+  "icu:Message--tap-to-view--viewed": {
     "messageformat": "Nakita na"
   },
-  "icu:Message--tap-to-view--outgoing": {
-    "messageformat": "Media"
+  "icu:Message--tap-to-view--media": {
+    "messageformat": "View-once media"
   },
   "icu:Message--tap-to-view--incoming--expired-toast": {
     "messageformat": "Nakita mo na ang mensaheng ito."
@@ -2300,11 +2522,14 @@
   "icu:Message--tap-to-view--outgoing--expired-toast": {
     "messageformat": "Hindi nakalagay sa iyong chat history ang view-once messages."
   },
-  "icu:Message--tap-to-view--incoming": {
-    "messageformat": "Tingnan ang Larawan"
+  "icu:Message--tap-to-view--video": {
+    "messageformat": "View Once Video"
   },
-  "icu:Message--tap-to-view--incoming-video": {
-    "messageformat": "Tingnan ang Video"
+  "icu:Message--tap-to-view--photo": {
+    "messageformat": "View Once Photo"
+  },
+  "icu:Message--tap-to-view--helper-text": {
+    "messageformat": "I-click para tignan"
   },
   "icu:Conversation--getDraftPreview--attachment": {
     "messageformat": "(attachment)"
@@ -2498,6 +2723,9 @@
   "icu:Keyboard--toggle-video": {
     "messageformat": "Toggle video on and off"
   },
+  "icu:Keyboard--toggle-preview": {
+    "messageformat": "I-on o i-off ang expanded preview"
+  },
   "icu:Keyboard--accept-video-call": {
     "messageformat": "Sagutin ang tawag na may video (video call lang)"
   },
@@ -2560,6 +2788,12 @@
   },
   "icu:SafetyTipsModal__Description": {
     "messageformat": "Mag-ingat sa pagtanggap ng mga message request mula sa mga taong hindi mo kilala. Mag-ingat sa:"
+  },
+  "icu:SafetyTipsModal__TipTitle--Fake": {
+    "messageformat": "Pekeng pangalan at accounts"
+  },
+  "icu:SafetyTipsModal__TipDescription--Fake": {
+    "messageformat": "Hindi kailanman makikipag-ugnayan sa 'yo ang Signal para hingin ang registration code o PIN mo. Mag-ingat sa requests na nagpapanggap bilang ibang tao. Ang profile names ay pinili ng may-ari ng account at hindi verified."
   },
   "icu:SafetyTipsModal__TipTitle--Crypto": {
     "messageformat": "Mga scam kaugnay ng crypto o pera"
@@ -2693,6 +2927,12 @@
   "icu:MessageRequests--accept": {
     "messageformat": "Tanggapin"
   },
+  "icu:MessageRequests--accept-confirm-title": {
+    "messageformat": "Tanggapin ang request?"
+  },
+  "icu:MessageRequests--accept-confirm-body": {
+    "messageformat": "Suriin nang maigi ang requests. Ang profile names ay pinili ng may-ari ng account at hindi verified."
+  },
   "icu:MessageRequests--continue": {
     "messageformat": "Magpatuloy"
   },
@@ -2704,6 +2944,21 @@
   },
   "icu:ConversationHero--members": {
     "messageformat": "{count, plural, one {1 member} other {{count,number} members}}"
+  },
+  "icu:ConversationHero--review-carefully": {
+    "messageformat": "Suriing mabuti"
+  },
+  "icu:ConversationHero--group-names": {
+    "messageformat": "Hindi verified ang <clickable>Group names</clickable>"
+  },
+  "icu:ConversationHero--profile-names": {
+    "messageformat": "Hindi verified ang <clickable>Profile names</clickable>"
+  },
+  "icu:ConversationHero--signal-official-chat": {
+    "messageformat": "Ito ang opisyal at natatanging chat mula sa Signal"
+  },
+  "icu:ConversationHero--release-notes": {
+    "messageformat": "Maging updated sa mga balita at release notes."
   },
   "icu:member-of-1-group": {
     "messageformat": "Kasapi ng {group}"
@@ -2840,6 +3095,12 @@
   "icu:CallControls__JoinLeaveButton--hangup-group": {
     "messageformat": "Umalis"
   },
+  "icu:CallControls__JoinLeaveButton--hangup-1-1-tooltip": {
+    "messageformat": "End call"
+  },
+  "icu:CallControls__JoinLeaveButton--hangup-group-tooltip": {
+    "messageformat": "Leave call"
+  },
   "icu:CallControls__MutedToast--muted": {
     "messageformat": "Naka-off ang mic"
   },
@@ -2917,6 +3178,12 @@
   },
   "icu:calling__pip--off": {
     "messageformat": "I-fullscreen ang call"
+  },
+  "icu:calling__preview--maximize": {
+    "messageformat": "I-maximize ang preview"
+  },
+  "icu:calling__preview--minimize": {
+    "messageformat": "I-minimize ang preview"
   },
   "icu:calling__change-view": {
     "messageformat": "Palitan ang view"
@@ -3698,18 +3965,6 @@
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "Subukang muli"
   },
-  "icu:BackupImportScreen__skip": {
-    "messageformat": "Laktawan"
-  },
-  "icu:BackupImportScreen__skip-confirmation__title": {
-    "messageformat": "Gusto mo bang i-skip ang message transfer?"
-  },
-  "icu:BackupImportScreen__skip-confirmation__body": {
-    "messageformat": "Kapag nilaktawan mo ito, hindi mo na ma-a-access ang anumang messages o media sa device na ito. Maaari kang magsimula ng bagong transfer pagkatapos mong mag-skip mula sa Settings > Chats > Transfer"
-  },
-  "icu:BackupImportScreen__skip-confirmation__cancel": {
-    "messageformat": "I-cancel"
-  },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "Nire-restore ang media"
   },
@@ -3752,6 +4007,12 @@
   "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
     "messageformat": "I-cancel ang transfer"
   },
+  "icu:CriticalIdlePrimaryDeviceModal__title": {
+    "messageformat": "Account action required"
+  },
+  "icu:CriticalIdlePrimaryDeviceModal__description": {
+    "messageformat": "You must open Signal on your phone to continue using this account. If you do not open Signal on your phone, your account will be deleted soon. <learnMoreLink>Learn more</learnMoreLink>"
+  },
   "icu:CompositionArea--expand": {
     "messageformat": "I-expand"
   },
@@ -3772,6 +4033,18 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "I-send ang edited message"
+  },
+  "icu:CompositionArea__FunButtonLabel": {
+    "messageformat": "Maglagay ng Emoji, Sticker, o GIF"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__Title": {
+    "messageformat": "Palitan ang attachment?"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__Body": {
+    "messageformat": "Kapag idinagdag mo ang GIF na ito, papalitan nito ang item sa kasalukuyang draft message mo."
+  },
+  "icu:CompositionArea__ConfirmGifSelection__ReplaceButton": {
+    "messageformat": "Palitan"
   },
   "icu:CompositionInput__editing-message": {
     "messageformat": "I-edit ang message"
@@ -3989,6 +4262,9 @@
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "I-require ang admin na mag-approve ng bagong members na nag-join gamit ang group link."
   },
+  "icu:GroupLinkManagement__CopyGroupLinkButtonLabel": {
+    "messageformat": "Copy signal.group link to clipboard"
+  },
   "icu:PendingInvites--tab-requests": {
     "messageformat": "Requests ({count,number})"
   },
@@ -4193,9 +4469,6 @@
   "icu:ShareCallLinkViaSignal__DraftMessageText": {
     "messageformat": "Gamitin ang link na ito para sumali sa Signal call: {url}"
   },
-  "icu:MessageRequestWarning__learn-more": {
-    "messageformat": "Matuto pa"
-  },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "Tips Para Sa Kaligtasan"
   },
@@ -4350,7 +4623,7 @@
     "messageformat": "Gradient end"
   },
   "icu:GIF--download": {
-    "messageformat": "Download GIF attachment"
+    "messageformat": "I-download ang GIF attachment"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "Custom time…"
@@ -4655,6 +4928,30 @@
   "icu:Preferences__button--privacy": {
     "messageformat": "Pagkapribado"
   },
+  "icu:Preferences__button--data-usage": {
+    "messageformat": "Paggamit ng data"
+  },
+  "icu:Preferences__media-auto-download": {
+    "messageformat": "Awtomatikong pag-download ng media"
+  },
+  "icu:Preferences__media-auto-download__photos": {
+    "messageformat": "Photos"
+  },
+  "icu:Preferences__media-auto-download__videos": {
+    "messageformat": "Mga video"
+  },
+  "icu:Preferences__media-auto-download__audio": {
+    "messageformat": "Audio"
+  },
+  "icu:Preferences__media-auto-download__documents": {
+    "messageformat": "Mga dokumento"
+  },
+  "icu:Preferences__media-auto-download__description": {
+    "messageformat": "Palaging automatic na i-download ang voice messages at stickers."
+  },
+  "icu:Preferences__button--backups": {
+    "messageformat": "Backups"
+  },
   "icu:Preferences--lastSynced": {
     "messageformat": "Last import at {date} {time}"
   },
@@ -4684,6 +4981,51 @@
   },
   "icu:Preferences--blocked": {
     "messageformat": "Naka-block"
+  },
+  "icu:Preferences--backup-details__header": {
+    "messageformat": "Backup details"
+  },
+  "icu:Preferences--backup-media-plan__description": {
+    "messageformat": "Text + all media backup"
+  },
+  "icu:Preferences--backup-plan-not-found__description": {
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Backups."
+  },
+  "icu:Preferences--backup-messages-plan__description": {
+    "messageformat": "{mediaDayCount, plural, one {Text + {mediaDayCount,number} day media backup} other {Text + {mediaDayCount,number} days media backup}}"
+  },
+  "icu:Preferences--backup-messages-plan__cost-description": {
+    "messageformat": "Your backup plan is free"
+  },
+  "icu:Preferences--backup-plan__renewal-date": {
+    "messageformat": "Renews {date}"
+  },
+  "icu:Preferences--backup-plan__expiry-date": {
+    "messageformat": "Expires {date}"
+  },
+  "icu:Preferences--backup-plan__canceled": {
+    "messageformat": "Subscription canceled"
+  },
+  "icu:Preferences--backup-media-plan__note": {
+    "messageformat": "You can manage or cancel your Signal Backups subscription on your phone."
+  },
+  "icu:Preferences--backup-messages-plan__note": {
+    "messageformat": "You can manage or upgrade Signal Backups on your phone."
+  },
+  "icu:Preferences--backup-plan__not-found": {
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Backups."
+  },
+  "icu:Preferences--backup-plan__not-found__note": {
+    "messageformat": "You can manage or renew your Signal Backups subscription on your phone."
+  },
+  "icu:Preferences--backup-created-at__label": {
+    "messageformat": "Last backup"
+  },
+  "icu:Preferences--backup-created-by-phone": {
+    "messageformat": "Your phone"
+  },
+  "icu:Preferences--backup-size__label": {
+    "messageformat": "Backup size"
   },
   "icu:Preferences--blocked-count": {
     "messageformat": "{num, plural, one {{num,number} contact} other {{num,number} contacts}}"
@@ -4810,6 +5152,18 @@
   },
   "icu:DialogUpdate__downloaded": {
     "messageformat": "Na-download na ang Update"
+  },
+  "icu:CriticalIdlePrimaryDevice__title": {
+    "messageformat": "I-open ang Signal sa iyong phone"
+  },
+  "icu:CriticalIdlePrimaryDevice__body": {
+    "messageformat": "Mabubura na ang account mo kapag hindi mo binuksan ang Signal app sa phone mo. Mawawala ang message na ito kung nagawa mo ito successfully. <learnMoreLink>Matuto pa</learnMoreLink>"
+  },
+  "icu:IdlePrimaryDevice__body": {
+    "messageformat": "Buksan ang Signal sa phone mo para mapanatiling active ang iyong account"
+  },
+  "icu:IdlePrimaryDevice__learnMore": {
+    "messageformat": "Matuto pa"
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Nakakaranas ng mga teknikal na problema ang Signal. Nagsisikap kaming ibalik ang serbisyo sa lalong madaling panahon."
@@ -4951,6 +5305,30 @@
   },
   "icu:MediaEditor__crop-preset--9-16": {
     "messageformat": "9:16"
+  },
+  "icu:MediaPermissionsModal__title--microphone": {
+    "messageformat": "Payagang ma-access ang microphone mo"
+  },
+  "icu:MediaPermissionsModal__title--camera": {
+    "messageformat": "Magbigay ng access sa camera mo"
+  },
+  "icu:MediaPermissionsModal__subtitle--call": {
+    "messageformat": "Para sumali o magsimula ng call:"
+  },
+  "icu:MediaPermissionsModal__subtitle--call--camera": {
+    "messageformat": "Para i-enable ang video mo:"
+  },
+  "icu:MediaPermissionsModal__subtitle--voice-note": {
+    "messageformat": "Para mag-send ng voice message:"
+  },
+  "icu:MediaPermissionsModal__step-1": {
+    "messageformat": "I-click ang \"{buttonName}\" sa ibaba"
+  },
+  "icu:MediaPermissionsModal__step-2": {
+    "messageformat": "I-on ang \"Signal\""
+  },
+  "icu:MediaPermissionsModal__open": {
+    "messageformat": "Pumunta sa settings"
   },
   "icu:MyStories__title": {
     "messageformat": "My Stories"
@@ -5610,6 +5988,15 @@
   "icu:MessageMetadata__edited": {
     "messageformat": "In-edit"
   },
+  "icu:DraftGifMessageSendModal__Title": {
+    "messageformat": "Mag-add ng message"
+  },
+  "icu:DraftGifMessageSendModal__SendButtonLabel": {
+    "messageformat": "I-send"
+  },
+  "icu:DraftGifMessageSendModal__CancelButtonLabel": {
+    "messageformat": "I-cancel"
+  },
   "icu:EditHistoryMessagesModal__title": {
     "messageformat": "History ng edits"
   },
@@ -5829,6 +6216,30 @@
   "icu:WhoCanFindMeReadOnlyToast": {
     "messageformat": "Para baguhin ang setting na ito, i-set sa \"Nobody\" ang \"Who can see my number\"."
   },
+  "icu:ProfileNameWarningModal__description--direct": {
+    "messageformat": "Ang profile names sa Signal ay pinili ng may-ari ng account:"
+  },
+  "icu:ProfileNameWarningModal__list--item1--direct": {
+    "messageformat": "Hindi verified ang profile names"
+  },
+  "icu:ProfileNameWarningModal__list--item2--direct": {
+    "messageformat": "Mag-ingat sa accounts na nagpapanggap bilang ibang tao"
+  },
+  "icu:ProfileNameWarningModal__list--item3--direct": {
+    "messageformat": "Huwag magbigay ng personal na impormasyon sa mga hindi mo kakilala"
+  },
+  "icu:ProfileNameWarningModal__description--group": {
+    "messageformat": "Ang group names ay pinili ng members ng group."
+  },
+  "icu:ProfileNameWarningModal__list--item1--group": {
+    "messageformat": "Mag-ingat sa groups na nagpapanggap bilang mga organisasyon at negosyo"
+  },
+  "icu:ProfileNameWarningModal__list--item2--group": {
+    "messageformat": "Ang profile names ng group members ay hindi verified"
+  },
+  "icu:ProfileNameWarningModal__list--item3--group": {
+    "messageformat": "Huwag magbigay ng personal na impormasyon sa mga hindi mo kakilala"
+  },
   "icu:WhatsNew__modal-title": {
     "messageformat": "what's new"
   },
@@ -5860,10 +6271,22 @@
     "messageformat": "Dagdag na maliliit na pag-aayos, pag-alis ng bugs, at pagpapaganda ng takbo ng app. Maraming salamat sa paggamit ng Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.44--0": {
-    "messageformat": "May inayos kaming minor animation bug sa group calls."
+  "icu:WhatsNew__v7.47--0": {
+    "messageformat": "Pwede mo nang i-expand ang local video preview mo habang nasa call ka para mas makita mo nang maayos ang iyong sarili."
   },
-  "icu:WhatsNew__v7.45--0": {
-    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
+  "icu:WhatsNew__v7.48--0": {
+    "messageformat": "Nagdagdag kami ng shortcut para maibababa mo agad ang iyong kamay kapag nagsimula ka nang magsalita sa isang Signal group call."
+  },
+  "icu:WhatsNew__v7.49--0": {
+    "messageformat": "Kapag nag-link ka ng bagong Desktop sa Signal Android at pinili mong ilipat ang message history mo, maaari mo na ring piliin ang mga gusto mong ilipat na lumang attachments mula sa primary device mo. Ang proseso ng paglipat ay end-to-end encrypted at secure."
+  },
+  "icu:WhatsNew__v7.50--0": {
+    "messageformat": "Kapag nag-link ka ng bagong Desktop sa Signal Android at pinili mong ilipat ang message history mo, maaari mo na ring piliin ang mga gusto mong ilipat na lumang attachments mula sa primary device mo. Ang proseso ng paglipat ay end-to-end encrypted at secure."
+  },
+  "icu:WhatsNew__v7.51--0": {
+    "messageformat": "Fire, the wheel, and electricity were all great developments, but they were merely necessary steps along the path that created the conditions for animated GIF search to exist. Now you can experience the pinnacle of human technological advancement in Signal Desktop with a brand-new selection interface that makes it easy to quickly find an emoji, sticker, or animated GIF that's perfect for the moment."
+  },
+  "icu:WhatsNew__v7.51--1": {
+    "messageformat": "We also resized the picture-in-picture window and added convenient new shortcuts to mute/unmute your microphone or turn the camera on/off while a call is minimized."
   }
 }

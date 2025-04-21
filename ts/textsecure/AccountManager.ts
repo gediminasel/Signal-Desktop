@@ -63,7 +63,7 @@ import { SignalService as Proto } from '../protobuf';
 import * as log from '../logging/log';
 import type { StorageAccessType } from '../types/Storage';
 import { getRelativePath, createName } from '../util/attachmentPath';
-import { isBackupEnabled } from '../util/isBackupEnabled';
+import { isBackupFeatureEnabled } from '../util/isBackupEnabled';
 import { isLinkAndSyncEnabled } from '../util/isLinkAndSyncEnabled';
 import { getMessageQueueTime } from '../util/getMessageQueueTime';
 
@@ -1115,7 +1115,7 @@ export default class AccountManager extends EventTarget {
     }
 
     const shouldDownloadBackup =
-      isBackupEnabled() ||
+      isBackupFeatureEnabled() ||
       (isLinkAndSyncEnabled() && options.ephemeralBackupKey);
 
     // Set backup download path before storing credentials to ensure that
@@ -1123,8 +1123,10 @@ export default class AccountManager extends EventTarget {
     // until the backup is downloaded and imported.
     if (shouldDownloadBackup && cleanStart) {
       if (options.type === AccountType.Linked && options.ephemeralBackupKey) {
+        log.info('createAccount: setting ephemeral key');
         await storage.put('backupEphemeralKey', options.ephemeralBackupKey);
       }
+      log.info('createAccount: setting backup download path');
       await storage.put('backupDownloadPath', getRelativePath(createName()));
     }
 

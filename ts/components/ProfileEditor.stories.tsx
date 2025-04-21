@@ -8,7 +8,6 @@ import casual from 'casual';
 import { v4 as generateUuid } from 'uuid';
 
 import type { PropsType } from './ProfileEditor';
-import enMessages from '../../_locales/en/messages.json';
 import { ProfileEditor } from './ProfileEditor';
 import { EditUsernameModalBody } from './EditUsernameModalBody';
 import {
@@ -17,10 +16,10 @@ import {
   UsernameReservationState,
 } from '../state/ducks/usernameEnums';
 import { getRandomColor } from '../test-both/helpers/getRandomColor';
-import { setupI18n } from '../util/setupI18n';
 import { SignalService as Proto } from '../protobuf';
+import { EmojiSkinTone } from './fun/data/emojis';
 
-const i18n = setupI18n('en', enMessages);
+const { i18n } = window.SignalContext;
 
 export default {
   component: ProfileEditor,
@@ -62,13 +61,13 @@ export default {
     usernameLinkState: UsernameLinkState.Ready,
 
     recentEmojis: [],
-    skinTone: 0,
+    emojiSkinToneDefault: EmojiSkinTone.None,
     userAvatarData: [],
     username: undefined,
 
     onEditStateChanged: action('onEditStateChanged'),
     onProfileChanged: action('onProfileChanged'),
-    onSetSkinTone: action('onSetSkinTone'),
+    onEmojiSkinToneDefaultChange: action('onEmojiSkinToneDefaultChange'),
     saveAttachment: action('saveAttachment'),
     setUsernameLinkColor: action('setUsernameLinkColor'),
     showToast: action('showToast'),
@@ -109,13 +108,15 @@ function renderEditUsernameModalBody(props: {
 
 // eslint-disable-next-line react/function-component-definition
 const Template: StoryFn<PropsType> = args => {
-  const [skinTone, setSkinTone] = useState(0);
+  const [emojiSkinToneDefault, setEmojiSkinToneDefault] = useState(
+    EmojiSkinTone.None
+  );
 
   return (
     <ProfileEditor
       {...args}
-      skinTone={skinTone}
-      onSetSkinTone={setSkinTone}
+      emojiSkinToneDefault={emojiSkinToneDefault}
+      onEmojiSkinToneDefaultChange={setEmojiSkinToneDefault}
       renderEditUsernameModalBody={renderEditUsernameModalBody}
     />
   );

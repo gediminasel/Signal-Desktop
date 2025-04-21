@@ -1,7 +1,7 @@
 // Copyright 2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React from 'react';
+import React, { useRef, useCallback, useState } from 'react';
 import type { LocalizerType } from '../types/I18N';
 import type { EmojiPickDataType } from './emoji/EmojiPicker';
 import type { InputApi } from './CompositionInput';
@@ -15,6 +15,11 @@ import type { ThemeType } from '../types/Util';
 import type { Props as EmojiButtonProps } from './emoji/EmojiButton';
 import type { PreferredBadgeSelectorType } from '../state/selectors/badges';
 import * as grapheme from '../util/grapheme';
+import { FunEmojiPicker } from './fun/FunEmojiPicker';
+import type { FunEmojiSelection } from './fun/panels/FunPanelEmojis';
+import type { EmojiSkinTone } from './fun/data/emojis';
+import { FunEmojiPickerButton } from './fun/FunButton';
+import { isFunPickerEnabled } from './fun/isFunPickerEnabled';
 
 export type CompositionTextAreaProps = {
   bodyRanges: HydratedBodyRangesType | null;
@@ -31,7 +36,7 @@ export type CompositionTextAreaProps = {
     draftBodyRanges: HydratedBodyRangesType,
     caretLocation?: number | undefined
   ) => void;
-  onSetSkinTone: (tone: number) => void;
+  onEmojiSkinToneDefaultChange: (emojiSkinToneDefault: EmojiSkinTone) => void;
   onSubmit: (
     message: string,
     draftBodyRanges: DraftBodyRanges,
@@ -43,7 +48,7 @@ export type CompositionTextAreaProps = {
   getPreferredBadge: PreferredBadgeSelectorType;
   draftText: string;
   theme: ThemeType;
-} & Pick<EmojiButtonProps, 'recentEmojis' | 'skinTone'>;
+} & Pick<EmojiButtonProps, 'recentEmojis' | 'emojiSkinToneDefault'>;
 
 /**
  * Essentially an HTML textarea but with support for emoji picker and
@@ -63,23 +68,23 @@ export function CompositionTextArea({
   onChange,
   onPickEmoji,
   onScroll,
-  onSetSkinTone,
+  onEmojiSkinToneDefaultChange,
   onSubmit,
   onTextTooLong,
   ourConversationId,
   placeholder,
   platform,
   recentEmojis,
-  skinTone,
+  emojiSkinToneDefault,
   theme,
   whenToShowRemainingCount = Infinity,
 }: CompositionTextAreaProps): JSX.Element {
-  const inputApiRef = React.useRef<InputApi | undefined>();
-  const [characterCount, setCharacterCount] = React.useState(
+  const inputApiRef = useRef<InputApi | undefined>();
+  const [characterCount, setCharacterCount] = useState(
     grapheme.count(draftText)
   );
 
-  const insertEmoji = React.useCallback(
+  const insertEmoji = useCallback(
     (e: EmojiPickDataType) => {
       if (inputApiRef.current) {
         inputApiRef.current.insertEmoji(e);
@@ -89,13 +94,36 @@ export function CompositionTextArea({
     [inputApiRef, onPickEmoji]
   );
 
-  const focusTextEditInput = React.useCallback(() => {
+  const handleSelectEmoji = useCallback(
+    (emojiSelection: FunEmojiSelection) => {
+      const data: EmojiPickDataType = {
+        shortName: emojiSelection.englishShortName,
+        skinTone: emojiSelection.skinTone,
+      };
+      insertEmoji(data);
+    },
+    [insertEmoji]
+  );
+
+  const focusTextEditInput = useCallback(() => {
     if (inputApiRef.current) {
       inputApiRef.current.focus();
     }
   }, [inputApiRef]);
 
-  const handleChange = React.useCallback(
+  const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
+
+  const handleEmojiPickerOpenChange = useCallback(
+    (open: boolean) => {
+      setEmojiPickerOpen(open);
+      if (!open) {
+        focusTextEditInput();
+      }
+    },
+    [focusTextEditInput]
+  );
+
+  const handleChange = useCallback(
     ({
       bodyRanges: updatedBodyRanges,
       caretLocation,
@@ -140,7 +168,7 @@ export function CompositionTextArea({
         isActive={isActive}
         isFormattingEnabled={isFormattingEnabled}
         inputApi={inputApiRef}
-        large
+        large={false}
         moduleClassName="CompositionTextArea__input"
         onEditorStateChange={handleChange}
         onPickEmoji={onPickEmoji}
@@ -153,7 +181,7 @@ export function CompositionTextArea({
         quotedMessageId={null}
         sendCounter={0}
         theme={theme}
-        skinTone={skinTone ?? null}
+        emojiSkinToneDefault={emojiSkinToneDefault}
         // These do not apply in the forward modal because there isn't
         // strictly one conversation
         conversationId={null}
@@ -166,14 +194,26 @@ export function CompositionTextArea({
         shouldHidePopovers={null}
       />
       <div className="CompositionTextArea__emoji">
-        <EmojiButton
-          i18n={i18n}
-          onClose={focusTextEditInput}
-          onPickEmoji={insertEmoji}
-          onSetSkinTone={onSetSkinTone}
-          recentEmojis={recentEmojis}
-          skinTone={skinTone}
-        />
+        {!isFunPickerEnabled() && (
+          <EmojiButton
+            i18n={i18n}
+            onClose={focusTextEditInput}
+            onPickEmoji={insertEmoji}
+            onEmojiSkinToneDefaultChange={onEmojiSkinToneDefaultChange}
+            recentEmojis={recentEmojis}
+            emojiSkinToneDefault={emojiSkinToneDefault}
+          />
+        )}
+        {isFunPickerEnabled() && (
+          <FunEmojiPicker
+            placement="bottom"
+            open={emojiPickerOpen}
+            onOpenChange={handleEmojiPickerOpenChange}
+            onSelectEmoji={handleSelectEmoji}
+          >
+            <FunEmojiPickerButton i18n={i18n} />
+          </FunEmojiPicker>
+        )}
       </div>
       {maxLength !== undefined &&
         characterCount >= whenToShowRemainingCount && (

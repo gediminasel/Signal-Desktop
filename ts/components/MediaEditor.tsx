@@ -13,7 +13,6 @@ import { createPortal } from 'react-dom';
 import { fabric } from 'fabric';
 import { useSelector } from 'react-redux';
 import { get, has, noop } from 'lodash';
-
 import type {
   EmojiPickDataType,
   Props as EmojiPickerProps,
@@ -41,7 +40,6 @@ import {
   getTextStyleAttributes,
   TextStyle,
 } from '../mediaEditor/util/getTextStyleAttributes';
-
 import * as log from '../logging/log';
 import { Button, ButtonVariant } from './Button';
 import { CompositionInput } from './CompositionInput';
@@ -63,6 +61,14 @@ import { useConfirmDiscard } from '../hooks/useConfirmDiscard';
 import { useFabricHistory } from '../mediaEditor/useFabricHistory';
 import { usePortal } from '../hooks/usePortal';
 import { useUniqueId } from '../hooks/useUniqueId';
+import { isFunPickerEnabled } from './fun/isFunPickerEnabled';
+import { FunEmojiPicker } from './fun/FunEmojiPicker';
+import { FunEmojiPickerButton, FunStickerPickerButton } from './fun/FunButton';
+import type { FunEmojiSelection } from './fun/panels/FunPanelEmojis';
+import { FunStickerPicker } from './fun/FunStickerPicker';
+import type { FunStickerSelection } from './fun/panels/FunPanelStickers';
+import { drop } from '../util/drop';
+import type { FunTimeStickerStyle } from './fun/constants';
 
 export type MediaEditorResultType = Readonly<{
   data: Uint8Array;
@@ -163,9 +169,9 @@ export function MediaEditor({
   sortedGroupMembers,
 
   // EmojiPickerProps
-  onSetSkinTone,
+  onEmojiSkinToneDefaultChange,
   recentEmojis,
-  skinTone,
+  emojiSkinToneDefault,
 
   // StickerButtonProps
   installedPacks,
@@ -174,9 +180,8 @@ export function MediaEditor({
 }: PropsType): JSX.Element | null {
   const [fabricCanvas, setFabricCanvas] = useState<fabric.Canvas | undefined>();
   const [image, setImage] = useState<HTMLImageElement>(new Image());
-  const [isStickerPopperOpen, setIsStickerPopperOpen] =
-    useState<boolean>(false);
-  const [isEmojiPopperOpen, setEmojiPopperOpen] = useState<boolean>(false);
+  const [stickerPickerOpen, setStickerPickerOpen] = useState(false);
+  const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
 
   const [caption, setCaption] = useState(draftText ?? '');
   const [captionBodyRanges, setCaptionBodyRanges] =
@@ -190,11 +195,16 @@ export function MediaEditor({
 
   const inputApiRef = useRef<InputApi | undefined>();
 
+  const canvasId = useUniqueId();
+
+  const [imageState, setImageState] =
+    useState<ImageStateType>(INITIAL_IMAGE_STATE);
+
   const closeEmojiPickerAndFocusComposer = useCallback(() => {
     if (inputApiRef.current) {
       inputApiRef.current.focus();
     }
-    setEmojiPopperOpen(false);
+    setEmojiPickerOpen(false);
   }, [inputApiRef]);
 
   const insertEmoji = useCallback(
@@ -207,10 +217,111 @@ export function MediaEditor({
     [inputApiRef, onPickEmoji]
   );
 
-  const canvasId = useUniqueId();
+  const handleEmojiPickerOpenChange = useCallback((open: boolean) => {
+    setEmojiPickerOpen(open);
+  }, []);
 
-  const [imageState, setImageState] =
-    useState<ImageStateType>(INITIAL_IMAGE_STATE);
+  const handleStickerPickerOpenChange = useCallback((open: boolean) => {
+    setStickerPickerOpen(open);
+  }, []);
+
+  const handleSelectEmoji = useCallback(
+    (emojiSelection: FunEmojiSelection) => {
+      const data: EmojiPickDataType = {
+        shortName: emojiSelection.englishShortName,
+        skinTone: emojiSelection.skinTone,
+      };
+      insertEmoji(data);
+    },
+    [insertEmoji]
+  );
+
+  const handlePickSticker = useCallback(
+    (_packId, _stickerId, src: string) => {
+      async function run() {
+        if (!fabricCanvas) {
+          return;
+        }
+
+        const img = await loadImage(src);
+
+        const STICKER_SIZE_RELATIVE_TO_CANVAS = 4;
+        const size =
+          Math.min(imageState.width, imageState.height) /
+          STICKER_SIZE_RELATIVE_TO_CANVAS;
+
+        const sticker = new MediaEditorFabricSticker(img);
+        sticker.scaleToHeight(size);
+        sticker.setPositionByOrigin(
+          new fabric.Point(imageState.width / 2, imageState.height / 2),
+          'center',
+          'center'
+        );
+        sticker.setCoords();
+
+        fabricCanvas.add(sticker);
+        fabricCanvas.setActiveObject(sticker);
+        setEditMode(undefined);
+      }
+
+      drop(run());
+    },
+    [fabricCanvas, imageState.height, imageState.width]
+  );
+
+  const handlePickTimeSticker = useCallback(
+    (style: FunTimeStickerStyle) => {
+      if (!fabricCanvas) {
+        return;
+      }
+
+      if (style === 'digital') {
+        const sticker = new MediaEditorFabricDigitalTimeSticker(Date.now());
+        sticker.setPositionByOrigin(
+          new fabric.Point(imageState.width / 2, imageState.height / 2),
+          'center',
+          'center'
+        );
+        sticker.setCoords();
+
+        fabricCanvas.add(sticker);
+        fabricCanvas.setActiveObject(sticker);
+      }
+
+      if (style === 'analog') {
+        const sticker = new MediaEditorFabricAnalogTimeSticker();
+        const STICKER_SIZE_RELATIVE_TO_CANVAS = 4;
+        const size =
+          Math.min(imageState.width, imageState.height) /
+          STICKER_SIZE_RELATIVE_TO_CANVAS;
+
+        sticker.scaleToHeight(size);
+        sticker.setPositionByOrigin(
+          new fabric.Point(imageState.width / 2, imageState.height / 2),
+          'center',
+          'center'
+        );
+        sticker.setCoords();
+
+        fabricCanvas.add(sticker);
+        fabricCanvas.setActiveObject(sticker);
+      }
+
+      setEditMode(undefined);
+    },
+    [fabricCanvas, imageState.height, imageState.width]
+  );
+
+  const handleSelectSticker = useCallback(
+    (stickerSelection: FunStickerSelection) => {
+      handlePickSticker(
+        stickerSelection.stickerPackId,
+        stickerSelection.stickerId,
+        stickerSelection.stickerUrl
+      );
+    },
+    [handlePickSticker]
+  );
 
   const [cropPreset, setCropPreset] = useState<CropPreset>(CropPreset.Freeform);
 
@@ -294,7 +405,7 @@ export function MediaEditor({
         () => {
           // if the emoji popper is open,
           // it will use the escape key to close itself
-          if (isEmojiPopperOpen) {
+          if (emojiPickerOpen) {
             return;
           }
 
@@ -305,7 +416,7 @@ export function MediaEditor({
             //
             // there's no easy way to prevent an ESC meant for the
             // sticker-picker from hitting this handler first
-            if (!isStickerPopperOpen) {
+            if (!stickerPickerOpen) {
               onTryClose();
             }
           } else {
@@ -447,8 +558,8 @@ export function MediaEditor({
   }, [
     fabricCanvas,
     editMode,
-    isEmojiPopperOpen,
-    isStickerPopperOpen,
+    emojiPickerOpen,
+    stickerPickerOpen,
     onTryClose,
     redoIfPossible,
     undoIfPossible,
@@ -1076,7 +1187,7 @@ export function MediaEditor({
   }
 
   return createPortal(
-    <div className="MediaEditor">
+    <div className="MediaEditor dark-theme">
       <div className="MediaEditor__history-buttons">
         <button
           aria-label={i18n('icu:MediaEditor__control--undo')}
@@ -1196,106 +1307,48 @@ export function MediaEditor({
                 }}
                 type="button"
               />
-              <StickerButton
-                blessedPacks={[]}
-                className={classNames({
-                  MediaEditor__control: true,
-                  'MediaEditor__control--sticker': true,
-                })}
-                onOpenStateChanged={value => {
-                  setIsStickerPopperOpen(value);
-                }}
-                clearInstalledStickerPack={noop}
-                clearShowIntroduction={() => {
-                  // We're using this as a callback for when the sticker button
-                  // is pressed.
-                  fabricCanvas?.discardActiveObject();
-                  setEditMode(undefined);
-                }}
-                clearShowPickerHint={noop}
-                i18n={i18n}
-                installedPacks={installedPacks}
-                knownPacks={[]}
-                onPickSticker={async (_packId, _stickerId, src: string) => {
-                  if (!fabricCanvas) {
-                    return;
-                  }
-
-                  const img = await loadImage(src);
-
-                  const STICKER_SIZE_RELATIVE_TO_CANVAS = 4;
-                  const size =
-                    Math.min(imageState.width, imageState.height) /
-                    STICKER_SIZE_RELATIVE_TO_CANVAS;
-
-                  const sticker = new MediaEditorFabricSticker(img);
-                  sticker.scaleToHeight(size);
-                  sticker.setPositionByOrigin(
-                    new fabric.Point(
-                      imageState.width / 2,
-                      imageState.height / 2
-                    ),
-                    'center',
-                    'center'
-                  );
-                  sticker.setCoords();
-
-                  fabricCanvas.add(sticker);
-                  fabricCanvas.setActiveObject(sticker);
-                  setEditMode(undefined);
-                }}
-                onPickTimeSticker={(style: 'analog' | 'digital') => {
-                  if (!fabricCanvas) {
-                    return;
-                  }
-
-                  if (style === 'digital') {
-                    const sticker = new MediaEditorFabricDigitalTimeSticker(
-                      Date.now()
-                    );
-                    sticker.setPositionByOrigin(
-                      new fabric.Point(
-                        imageState.width / 2,
-                        imageState.height / 2
-                      ),
-                      'center',
-                      'center'
-                    );
-                    sticker.setCoords();
-
-                    fabricCanvas.add(sticker);
-                    fabricCanvas.setActiveObject(sticker);
-                  }
-
-                  if (style === 'analog') {
-                    const sticker = new MediaEditorFabricAnalogTimeSticker();
-                    const STICKER_SIZE_RELATIVE_TO_CANVAS = 4;
-                    const size =
-                      Math.min(imageState.width, imageState.height) /
-                      STICKER_SIZE_RELATIVE_TO_CANVAS;
-
-                    sticker.scaleToHeight(size);
-                    sticker.setPositionByOrigin(
-                      new fabric.Point(
-                        imageState.width / 2,
-                        imageState.height / 2
-                      ),
-                      'center',
-                      'center'
-                    );
-                    sticker.setCoords();
-
-                    fabricCanvas.add(sticker);
-                    fabricCanvas.setActiveObject(sticker);
-                  }
-
-                  setEditMode(undefined);
-                }}
-                receivedPacks={[]}
-                recentStickers={recentStickers}
-                showPickerHint={false}
-                theme={Theme.Dark}
-              />
+              {!isFunPickerEnabled() && (
+                <StickerButton
+                  blessedPacks={[]}
+                  className={classNames({
+                    MediaEditor__control: true,
+                    'MediaEditor__control--sticker': true,
+                  })}
+                  onOpenStateChanged={value => {
+                    setStickerPickerOpen(value);
+                  }}
+                  clearInstalledStickerPack={noop}
+                  clearShowIntroduction={() => {
+                    // We're using this as a callback for when the sticker button
+                    // is pressed.
+                    fabricCanvas?.discardActiveObject();
+                    setEditMode(undefined);
+                  }}
+                  clearShowPickerHint={noop}
+                  i18n={i18n}
+                  installedPacks={installedPacks}
+                  knownPacks={[]}
+                  onPickSticker={handlePickSticker}
+                  onPickTimeSticker={handlePickTimeSticker}
+                  receivedPacks={[]}
+                  recentStickers={recentStickers}
+                  showPickerHint={false}
+                  theme={Theme.Dark}
+                />
+              )}
+              {isFunPickerEnabled() && (
+                <FunStickerPicker
+                  open={stickerPickerOpen}
+                  onOpenChange={handleStickerPickerOpenChange}
+                  onSelectSticker={handleSelectSticker}
+                  showTimeStickers
+                  onSelectTimeSticker={handlePickTimeSticker}
+                  placement="top"
+                  theme={ThemeType.dark}
+                >
+                  <FunStickerPickerButton i18n={i18n} />
+                </FunStickerPicker>
+              )}
             </div>
             <div className="MediaEditor__tools-row-2">
               <div className="MediaEditor__tools--input dark-theme">
@@ -1313,7 +1366,7 @@ export function MediaEditor({
                     setCaptionBodyRanges(bodyRanges);
                     setCaption(messageText);
                   }}
-                  skinTone={skinTone ?? null}
+                  emojiSkinToneDefault={emojiSkinToneDefault ?? null}
                   onPickEmoji={onPickEmoji}
                   onSubmit={noop}
                   onTextTooLong={onTextTooLong}
@@ -1335,16 +1388,31 @@ export function MediaEditor({
                   // link previews not displayed with media
                   linkPreviewResult={null}
                 >
-                  <EmojiButton
-                    className="StoryViewsNRepliesModal__emoji-button"
-                    i18n={i18n}
-                    onPickEmoji={insertEmoji}
-                    onOpen={() => setEmojiPopperOpen(true)}
-                    onClose={closeEmojiPickerAndFocusComposer}
-                    recentEmojis={recentEmojis}
-                    skinTone={skinTone}
-                    onSetSkinTone={onSetSkinTone}
-                  />
+                  {!isFunPickerEnabled() && (
+                    <EmojiButton
+                      className="StoryViewsNRepliesModal__emoji-button"
+                      i18n={i18n}
+                      onPickEmoji={insertEmoji}
+                      onOpen={() => setEmojiPickerOpen(true)}
+                      onClose={closeEmojiPickerAndFocusComposer}
+                      recentEmojis={recentEmojis}
+                      emojiSkinToneDefault={emojiSkinToneDefault}
+                      onEmojiSkinToneDefaultChange={
+                        onEmojiSkinToneDefaultChange
+                      }
+                    />
+                  )}
+                  {isFunPickerEnabled() && (
+                    <FunEmojiPicker
+                      open={emojiPickerOpen}
+                      onOpenChange={handleEmojiPickerOpenChange}
+                      onSelectEmoji={handleSelectEmoji}
+                      placement="top"
+                      theme={ThemeType.dark}
+                    >
+                      <FunEmojiPickerButton i18n={i18n} />
+                    </FunEmojiPicker>
+                  )}
                 </CompositionInput>
               </div>
               <Button

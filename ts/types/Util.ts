@@ -48,6 +48,10 @@ export type LocalizerType = {
   getLocaleMessages(): LocaleMessagesType;
   getLocaleDirection(): LocaleDirection;
   getHourCyclePreference(): HourCyclePreference;
+
+  // Storybook
+  trackUsage(): void;
+  stopTrackingUsage(): Array<[string, string]>;
 };
 
 export enum SentMediaQualityType {

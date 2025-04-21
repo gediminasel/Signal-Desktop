@@ -38,6 +38,9 @@
   "icu:Preferences__sent-media-quality": {
     "messageformat": "Skickade mediekvalitet"
   },
+  "icu:Preferences__sent-media-quality__description": {
+    "messageformat": "Att skicka media av hög kvalitet kommer att använda mer data."
+  },
   "icu:sentMediaQualityStandard": {
     "messageformat": "Standard"
   },
@@ -68,6 +71,12 @@
   "icu:unknownGroup": {
     "messageformat": "Okänd grupp"
   },
+  "icu:cantOpenSignalError": {
+    "messageformat": "Det går inte att öppna Signal"
+  },
+  "icu:cantOpenSignalError__detail": {
+    "messageformat": "För att lösa problemet, följ återställningsguiden på supportsidan eller kontakta Signal-supporten.\n\nOm du behöver använda Signal på en gång kan du radera dina data och länka om det här skrivbordet. Du kommer att ha möjlighet att överföra meddelandehistorik från din telefon."
+  },
   "icu:databaseError": {
     "messageformat": "Databasfel"
   },
@@ -78,10 +87,10 @@
     "messageformat": "Ta bort data och starta om"
   },
   "icu:databaseError__deleteDataConfirmation": {
-    "messageformat": "Ta bort alla data permanent?"
+    "messageformat": "Ta bort alla data permanent"
   },
   "icu:databaseError__deleteDataConfirmation__detail": {
-    "messageformat": "All din meddelandehistorik och media kommer att tas bort permanent från den här enheten. Du kommer att kunna använda Signal på den här enheten efter att du har länkat om den. Detta tar inte bort några data från din telefon."
+    "messageformat": "All din meddelandehistorik och media kommer att tas bort permanent från den här enheten. Detta tar inte bort några data från din telefon.\n\nDu kommer att kunna använda Signal på den här enheten efter att du har länkat om den. Du kommer att ha möjlighet att överföra meddelandehistorik från din telefon."
   },
   "icu:databaseError__startOldVersion": {
     "messageformat": "Versionen av din databas matchar inte den här versionen av Signal. Se till att du öppnar den senaste versionen av Signal på din dator."
@@ -214,9 +223,6 @@
   },
   "icu:optimizingApplication": {
     "messageformat": "Optimerar applikationen …"
-  },
-  "icu:migratingToSQLCipher": {
-    "messageformat": "Optimerar meddelanden … {status} slutförda."
   },
   "icu:archivedConversations": {
     "messageformat": "Arkiverade chattar"
@@ -407,9 +413,6 @@
   "icu:unreadMessages": {
     "messageformat": "{count, plural, one {{count,number} oläst meddelande} other {{count,number} olästa meddelanden}}"
   },
-  "icu:messageHistoryUnsynced": {
-    "messageformat": "För din säkerhet överförs inte chatthistoriken till nya länkade enheter."
-  },
   "icu:youMarkedAsVerified": {
     "messageformat": "Du markerade ditt Säkerhetsnummer med {name} som verifierat"
   },
@@ -588,7 +591,7 @@
     "messageformat": "Failed to send message with endorsements"
   },
   "icu:Toast--InvalidStorageServiceHeaders": {
-    "messageformat": "Received invalid response from storage service. Please share your logs."
+    "messageformat": "Fick ogiltigt svar från lagringstjänsten. Dela dina loggar."
   },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
@@ -706,9 +709,6 @@
   },
   "icu:noSearchResultsOnlyUnreadFilter": {
     "messageformat": "Inga olästa chattar"
-  },
-  "icu:noSearchResults--sms-only": {
-    "messageformat": "SMS/MMS-kontakter är inte tillgängliga på Desktop."
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "Inga resultat för \"{searchTerm}\" i {conversationName}"
@@ -1145,9 +1145,6 @@
   "icu:mediaNotAvailable": {
     "messageformat": "Den här mediafilen är inte tillgänglig"
   },
-  "icu:mediaNotAvailable--short": {
-    "messageformat": "Media är inte tillgängligt"
-  },
   "icu:attachmentNoLongerAvailable__learnMore": {
     "messageformat": "Läs mer"
   },
@@ -1162,6 +1159,12 @@
   },
   "icu:attachmentNotAvailable__voice": {
     "messageformat": "Röstmeddelandet är inte tillgängligt"
+  },
+  "icu:attachmentNotAvailable__tapToView": {
+    "messageformat": "Tillfällig mediefil är inte tillgänglig"
+  },
+  "icu:attachmentNotAvailable__tapToViewCannotDownload": {
+    "messageformat": "Det går inte att ladda ned tillfällig mediefil"
   },
   "icu:AttachmentNotAvailableModal__title--file": {
     "messageformat": "Filen är inte tillgänglig"
@@ -1192,6 +1195,21 @@
   },
   "icu:AttachmentNotAvailableModal__body--voice-message": {
     "messageformat": "Det här röstmeddelandet överfördes inte från din telefon när den här enheten länkades. Media och filer som är äldre än 45 dagar vid tidpunkten för enhetslänkning kan inte synkroniseras."
+  },
+  "icu:TapToViewNotAvailableModal__body--expired": {
+    "messageformat": "Den här tillfälliga mediefilen är inte längre tillgänglig för nedladdning. Be {name} att skicka den igen."
+  },
+  "icu:TapToViewNotAvailableModal__body--error": {
+    "messageformat": "Det går inte att ladda ned tillfällig mediefil. {name} behöver skicka den igen."
+  },
+  "icu:BackfillFailureModal__title": {
+    "messageformat": "Det går inte att ladda ned media"
+  },
+  "icu:BackfillFailureModal__body--timeout": {
+    "messageformat": "Kontrollera din dators och telefonens internetanslutning. Öppna Signal på din telefon och försök sedan ladda ner igen."
+  },
+  "icu:BackfillFailureModal__body--not-found": {
+    "messageformat": "Den här mediefilen är inte längre tillgänglig på din telefon och kan inte laddas ner."
   },
   "icu:save": {
     "messageformat": "Spara"
@@ -1244,12 +1262,6 @@
   "icu:Install__support-link": {
     "messageformat": "Behöver du hjälp?"
   },
-  "icu:Install__choose-device-name__description": {
-    "messageformat": "Du kommer att se det här namnet under \"Länkade enheter\" på din telefon"
-  },
-  "icu:Install__choose-device-name__placeholder": {
-    "messageformat": "Min dator"
-  },
   "icu:Preferences--phone-number": {
     "messageformat": "Telefonnummer"
   },
@@ -1259,11 +1271,8 @@
   "icu:Preferences--device-name__description": {
     "messageformat": "För att ändra namnet på den här enheten öppnar du Signal på din telefon och navigerar till Inställningar > Länkade enheter"
   },
-  "icu:chooseDeviceName": {
-    "messageformat": "Välj enhetsnamn"
-  },
-  "icu:finishLinkingPhone": {
-    "messageformat": "Slutför länkning med mobil"
+  "icu:Preferences__EmojiSkinToneDefaultSetting__Label": {
+    "messageformat": "Emoji-hudton"
   },
   "icu:initialSync": {
     "messageformat": "Synkroniserar kontakter och grupper"
@@ -1814,6 +1823,18 @@
   "icu:ConversationDetails__HeaderButton--Message": {
     "messageformat": "Meddelande"
   },
+  "icu:ConversationDetails--help-section": {
+    "messageformat": "Hjälp"
+  },
+  "icu:ConversationDetails--support-center": {
+    "messageformat": "Supportcenter"
+  },
+  "icu:ConversationDetails--contact-us": {
+    "messageformat": "Kontakta oss"
+  },
+  "icu:ConversationDetails--donate": {
+    "messageformat": "Donera till Signal"
+  },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "Visa säkerhetsnummer"
   },
@@ -1873,6 +1894,9 @@
   },
   "icu:Toast--failed-to-fetch-phone-number": {
     "messageformat": "Det gick inte att hämta telefonnummer. Kontrollera din anslutning och försök igen."
+  },
+  "icu:Toast--download-failed": {
+    "messageformat": "Nedladdningen misslyckades"
   },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "Redigeringar kan bara tillämpas inom 24 timmar från det att du skickade det här meddelandet."
@@ -2252,6 +2276,204 @@
   "icu:EmojiPicker__button--flag": {
     "messageformat": "Flagga"
   },
+  "icu:FunPicker__Tab--Emojis": {
+    "messageformat": "Emoji"
+  },
+  "icu:FunPicker__Tab--Stickers": {
+    "messageformat": "Klistermärken"
+  },
+  "icu:FunPicker__Tab--Gifs": {
+    "messageformat": "GIF-bilder"
+  },
+  "icu:FunPanelEmojis__SearchLabel": {
+    "messageformat": "Sök emoji"
+  },
+  "icu:FunPanelEmojis__SearchPlaceholder": {
+    "messageformat": "Sök emoji"
+  },
+  "icu:FunPanelEmojis__SubNavLabel": {
+    "messageformat": "Emoji-kategorier"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Recents": {
+    "messageformat": "Nyligen använda"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--SmileysAndPeople": {
+    "messageformat": "Smileys och människor"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--AnimalsAndNature": {
+    "messageformat": "Djur och natur"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--FoodAndDrink": {
+    "messageformat": "Mat och dryck"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Activities": {
+    "messageformat": "Aktiviteter"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--TravelAndPlaces": {
+    "messageformat": "Resor och platser"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Objects": {
+    "messageformat": "Objekt"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Symbols": {
+    "messageformat": "Symboler"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Flags": {
+    "messageformat": "Flaggor"
+  },
+  "icu:FunPanelEmojis__SearchResults__EmptyHeading": {
+    "messageformat": "Inga emoji hittades"
+  },
+  "icu:FunPanelEmojis__ChangeSkinToneButtonLabel": {
+    "messageformat": "Ändra val av hudton"
+  },
+  "icu:FunPanelEmojis__SkinTonePicker__ChooseDefaultLabel": {
+    "messageformat": "Välj din standardhudton"
+  },
+  "icu:FunPanelEmojis__SectionTitle--SearchResults": {
+    "messageformat": "Sökresultat"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Recents": {
+    "messageformat": "Nyligen använda"
+  },
+  "icu:FunPanelEmojis__SectionTitle--SmileysAndPeople": {
+    "messageformat": "Smileys och människor"
+  },
+  "icu:FunPanelEmojis__SectionTitle--AnimalsAndNature": {
+    "messageformat": "Djur och natur"
+  },
+  "icu:FunPanelEmojis__SectionTitle--FoodAndDrink": {
+    "messageformat": "Mat och dryck"
+  },
+  "icu:FunPanelEmojis__SectionTitle--TravelAndPlaces": {
+    "messageformat": "Resor och platser"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Activities": {
+    "messageformat": "Aktiviteter"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Objects": {
+    "messageformat": "Objekt"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Symbols": {
+    "messageformat": "Symboler"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Flags": {
+    "messageformat": "Flaggor"
+  },
+  "icu:FunPanelEmojis__CustomizeReactionsButtonLabel": {
+    "messageformat": "Customize reactions"
+  },
+  "icu:FunPanelStickers__SearchLabel": {
+    "messageformat": "Sök klistermärken"
+  },
+  "icu:FunPanelStickers__SearchPlaceholder": {
+    "messageformat": "Sök klistermärken"
+  },
+  "icu:FunPanelSticker__SubNavLabel": {
+    "messageformat": "Klistermärkespaket"
+  },
+  "icu:FunPanelStickers__SubNavCategoryLabel--Recents": {
+    "messageformat": "Nyligen använda"
+  },
+  "icu:FunPanelStickers__SectionTitle--SearchResults": {
+    "messageformat": "Sökresultat"
+  },
+  "icu:FunPanelStickers__SectionTitle--Recents": {
+    "messageformat": "Nyligen använda"
+  },
+  "icu:FunPanelStickers__SectionTitle--Featured": {
+    "messageformat": "Featured"
+  },
+  "icu:FunPanelStickers__SearchResults__EmptyHeading": {
+    "messageformat": "Inga klistermärken hittades"
+  },
+  "icu:FunPanelStickers__LightboxDialog__Label": {
+    "messageformat": "Förhandsvisning av klistermärke"
+  },
+  "icu:FunPanelGifs__SearchLabel--Tenor": {
+    "messageformat": "Sök GIF-filer via Tenor"
+  },
+  "icu:FunPanelGifs__SearchPlaceholder--Tenor": {
+    "messageformat": "Sök på Tenor"
+  },
+  "icu:FunPanelGifs__SubNavLabel": {
+    "messageformat": "GIF-kategorier"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Recents": {
+    "messageformat": "Nyligen använda"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Trending": {
+    "messageformat": "Populärt"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Celebrate": {
+    "messageformat": "Fira"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Love": {
+    "messageformat": "Kärlek"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--ThumbsUp": {
+    "messageformat": "Tummen upp"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Surprised": {
+    "messageformat": "Överraskad"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Excited": {
+    "messageformat": "Upprymd"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Sad": {
+    "messageformat": "Ledsen"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Angry": {
+    "messageformat": "Arg"
+  },
+  "icu:FunPanelGifs__SearchResults__LoadingLabel": {
+    "messageformat": "Laddar GIF-filer"
+  },
+  "icu:FunPanelGifs__SearchResults__ErrorHeading": {
+    "messageformat": "Det gick inte att ladda GIF-filer. Kontrollera din anslutning och försök igen"
+  },
+  "icu:FunPanelGifs__SearchResults__ErrorRetryButton": {
+    "messageformat": "Försök igen"
+  },
+  "icu:FunPanelGifs__SearchResults__EmptyHeading": {
+    "messageformat": "Inga GIF-filer hittades"
+  },
+  "icu:FunPanelGifs__LightboxDialog__Label": {
+    "messageformat": "GIF-förhandsvisning"
+  },
+  "icu:FunSearch__ClearButtonLabel": {
+    "messageformat": "Rensa sökning"
+  },
+  "icu:FunSkinTones__List": {
+    "messageformat": "Hudton"
+  },
+  "icu:FunSkinTones__ListItem--None": {
+    "messageformat": "Ingen"
+  },
+  "icu:FunSkinTones__ListItem--Light": {
+    "messageformat": "Ljus hudton"
+  },
+  "icu:FunSkinTones__ListItem--MediumLight": {
+    "messageformat": "Medelljus hudton"
+  },
+  "icu:FunSkinTones__ListItem--Medium": {
+    "messageformat": "Medium hudton"
+  },
+  "icu:FunSkinTones__ListItem--MediumDark": {
+    "messageformat": "Medelmörk hudton"
+  },
+  "icu:FunSkinTones__ListItem--Dark": {
+    "messageformat": "Mörk hudton"
+  },
+  "icu:FunButton__Label--FunPicker": {
+    "messageformat": "Lägg till emoji, klistermärke eller GIF"
+  },
+  "icu:FunButton__Label--EmojiPicker": {
+    "messageformat": "Lägg till en emoji"
+  },
+  "icu:FunButton__Label--StickerPicker": {
+    "messageformat": "Lägg till ett klistermärke"
+  },
   "icu:confirmation-dialog--Cancel": {
     "messageformat": "Avbryt"
   },
@@ -2288,11 +2510,11 @@
   "icu:Message--update-signal": {
     "messageformat": "Uppdatera Signal"
   },
-  "icu:Message--tap-to-view-expired": {
+  "icu:Message--tap-to-view--viewed": {
     "messageformat": "Sett"
   },
-  "icu:Message--tap-to-view--outgoing": {
-    "messageformat": "Media"
+  "icu:Message--tap-to-view--media": {
+    "messageformat": "Visa en gång-media"
   },
   "icu:Message--tap-to-view--incoming--expired-toast": {
     "messageformat": "Du har redan sett det här meddelandet."
@@ -2300,11 +2522,14 @@
   "icu:Message--tap-to-view--outgoing--expired-toast": {
     "messageformat": "Visa en gång-meddelanden lagras inte i chatthistoriken."
   },
-  "icu:Message--tap-to-view--incoming": {
-    "messageformat": "Visa foto"
+  "icu:Message--tap-to-view--video": {
+    "messageformat": "Visa tillfällig video"
   },
-  "icu:Message--tap-to-view--incoming-video": {
-    "messageformat": "Visa video"
+  "icu:Message--tap-to-view--photo": {
+    "messageformat": "Visa tillfälligt foto"
+  },
+  "icu:Message--tap-to-view--helper-text": {
+    "messageformat": "Klicka för att visa"
   },
   "icu:Conversation--getDraftPreview--attachment": {
     "messageformat": "(bilaga)"
@@ -2498,6 +2723,9 @@
   "icu:Keyboard--toggle-video": {
     "messageformat": "Växla video på och av"
   },
+  "icu:Keyboard--toggle-preview": {
+    "messageformat": "Växla expanderad förhandsvisning på och av"
+  },
   "icu:Keyboard--accept-video-call": {
     "messageformat": "Svara samtal med video (endast videosamtal)"
   },
@@ -2560,6 +2788,12 @@
   },
   "icu:SafetyTipsModal__Description": {
     "messageformat": "Var försiktig när du accepterar meddelandeförfrågningar från personer du inte känner. Se upp för:"
+  },
+  "icu:SafetyTipsModal__TipTitle--Fake": {
+    "messageformat": "Falska namn och konton"
+  },
+  "icu:SafetyTipsModal__TipDescription--Fake": {
+    "messageformat": "Signal kommer aldrig att kontakta dig för din registreringskod eller pinkod. Var försiktig med förfrågningar där någon utger sig för att vara en annan person. Profilnamn väljs av deras kontoinnehavare och är inte verifierade."
   },
   "icu:SafetyTipsModal__TipTitle--Crypto": {
     "messageformat": "Krypto- eller penningbedrägerier"
@@ -2693,6 +2927,12 @@
   "icu:MessageRequests--accept": {
     "messageformat": "Acceptera"
   },
+  "icu:MessageRequests--accept-confirm-title": {
+    "messageformat": "Acceptera förfrågan?"
+  },
+  "icu:MessageRequests--accept-confirm-body": {
+    "messageformat": "Granska förfrågningar noggrant. Profilnamn väljs av deras kontoinnehavare och verifieras inte."
+  },
   "icu:MessageRequests--continue": {
     "messageformat": "Fortsätt"
   },
@@ -2704,6 +2944,21 @@
   },
   "icu:ConversationHero--members": {
     "messageformat": "{count, plural, one {1 medlem} other {{count,number} medlemmar}}"
+  },
+  "icu:ConversationHero--review-carefully": {
+    "messageformat": "Granska noggrant"
+  },
+  "icu:ConversationHero--group-names": {
+    "messageformat": "<clickable>Gruppnamn</clickable> verifieras inte"
+  },
+  "icu:ConversationHero--profile-names": {
+    "messageformat": "<clickable>Profilnamn</clickable> verifieras inte"
+  },
+  "icu:ConversationHero--signal-official-chat": {
+    "messageformat": "Det här är den officiella och enda chatten från Signal"
+  },
+  "icu:ConversationHero--release-notes": {
+    "messageformat": "Håll dig uppdaterad med nyheter och versionsinformation."
   },
   "icu:member-of-1-group": {
     "messageformat": "Medlem i {group}"
@@ -2840,6 +3095,12 @@
   "icu:CallControls__JoinLeaveButton--hangup-group": {
     "messageformat": "Lämna"
   },
+  "icu:CallControls__JoinLeaveButton--hangup-1-1-tooltip": {
+    "messageformat": "End call"
+  },
+  "icu:CallControls__JoinLeaveButton--hangup-group-tooltip": {
+    "messageformat": "Leave call"
+  },
   "icu:CallControls__MutedToast--muted": {
     "messageformat": "Mikrofon av"
   },
@@ -2917,6 +3178,12 @@
   },
   "icu:calling__pip--off": {
     "messageformat": "Helskärmssamtal"
+  },
+  "icu:calling__preview--maximize": {
+    "messageformat": "Maximera förhandsvisning"
+  },
+  "icu:calling__preview--minimize": {
+    "messageformat": "Minimera förhandsvisning"
   },
   "icu:calling__change-view": {
     "messageformat": "Ändra vy"
@@ -3698,18 +3965,6 @@
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "Försök igen"
   },
-  "icu:BackupImportScreen__skip": {
-    "messageformat": "Hoppa över"
-  },
-  "icu:BackupImportScreen__skip-confirmation__title": {
-    "messageformat": "Hoppa över meddelandeöverföring?"
-  },
-  "icu:BackupImportScreen__skip-confirmation__body": {
-    "messageformat": "Om du väljer att hoppa över kommer du inte att ha tillgång till några av dina meddelanden eller media på den här enheten. Du kan starta en ny överföring efter att ha hoppat över från Inställningar > Chattar > Överför."
-  },
-  "icu:BackupImportScreen__skip-confirmation__cancel": {
-    "messageformat": "Avbryt"
-  },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "Återställer media"
   },
@@ -3752,6 +4007,12 @@
   "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
     "messageformat": "Avbryt överföringen"
   },
+  "icu:CriticalIdlePrimaryDeviceModal__title": {
+    "messageformat": "Account action required"
+  },
+  "icu:CriticalIdlePrimaryDeviceModal__description": {
+    "messageformat": "You must open Signal on your phone to continue using this account. If you do not open Signal on your phone, your account will be deleted soon. <learnMoreLink>Learn more</learnMoreLink>"
+  },
   "icu:CompositionArea--expand": {
     "messageformat": "Fäll ut"
   },
@@ -3772,6 +4033,18 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "Skicka redigerat meddelande"
+  },
+  "icu:CompositionArea__FunButtonLabel": {
+    "messageformat": "Lägg till emoji, klistermärke eller GIF"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__Title": {
+    "messageformat": "Ersätt bilagan?"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__Body": {
+    "messageformat": "Om du lägger till den här GIF:en ersätts objektet i ditt aktuella meddelandeutkast."
+  },
+  "icu:CompositionArea__ConfirmGifSelection__ReplaceButton": {
+    "messageformat": "Ersätt"
   },
   "icu:CompositionInput__editing-message": {
     "messageformat": "Redigera meddelande"
@@ -3989,6 +4262,9 @@
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "Kräv att en administratör ska godkänna nya medlemmar som går med via grupplänken"
   },
+  "icu:GroupLinkManagement__CopyGroupLinkButtonLabel": {
+    "messageformat": "Copy signal.group link to clipboard"
+  },
   "icu:PendingInvites--tab-requests": {
     "messageformat": "Förfrågningar ({count,number})"
   },
@@ -4193,9 +4469,6 @@
   "icu:ShareCallLinkViaSignal__DraftMessageText": {
     "messageformat": "Använd den här länken för att gå med i ett Signal-samtal: {url}"
   },
-  "icu:MessageRequestWarning__learn-more": {
-    "messageformat": "Läs mer"
-  },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "Säkerhetstips"
   },
@@ -4350,7 +4623,7 @@
     "messageformat": "Toning slut"
   },
   "icu:GIF--download": {
-    "messageformat": "Download GIF attachment"
+    "messageformat": "Ladda ner GIF-bilaga"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "Anpassad tid …"
@@ -4655,6 +4928,30 @@
   "icu:Preferences__button--privacy": {
     "messageformat": "Integritet"
   },
+  "icu:Preferences__button--data-usage": {
+    "messageformat": "Dataanvändning"
+  },
+  "icu:Preferences__media-auto-download": {
+    "messageformat": "Automatisk hämtning av media"
+  },
+  "icu:Preferences__media-auto-download__photos": {
+    "messageformat": "Foton"
+  },
+  "icu:Preferences__media-auto-download__videos": {
+    "messageformat": "Videor"
+  },
+  "icu:Preferences__media-auto-download__audio": {
+    "messageformat": "Ljud"
+  },
+  "icu:Preferences__media-auto-download__documents": {
+    "messageformat": "Dokument"
+  },
+  "icu:Preferences__media-auto-download__description": {
+    "messageformat": "Röstmeddelanden och klistermärken laddas alltid ned automatiskt."
+  },
+  "icu:Preferences__button--backups": {
+    "messageformat": "Backups"
+  },
   "icu:Preferences--lastSynced": {
     "messageformat": "Senaste importen vid {date} {time}"
   },
@@ -4684,6 +4981,51 @@
   },
   "icu:Preferences--blocked": {
     "messageformat": "Blockerade"
+  },
+  "icu:Preferences--backup-details__header": {
+    "messageformat": "Backup details"
+  },
+  "icu:Preferences--backup-media-plan__description": {
+    "messageformat": "Text + all media backup"
+  },
+  "icu:Preferences--backup-plan-not-found__description": {
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Backups."
+  },
+  "icu:Preferences--backup-messages-plan__description": {
+    "messageformat": "{mediaDayCount, plural, one {Text + {mediaDayCount,number} day media backup} other {Text + {mediaDayCount,number} days media backup}}"
+  },
+  "icu:Preferences--backup-messages-plan__cost-description": {
+    "messageformat": "Your backup plan is free"
+  },
+  "icu:Preferences--backup-plan__renewal-date": {
+    "messageformat": "Renews {date}"
+  },
+  "icu:Preferences--backup-plan__expiry-date": {
+    "messageformat": "Expires {date}"
+  },
+  "icu:Preferences--backup-plan__canceled": {
+    "messageformat": "Subscription canceled"
+  },
+  "icu:Preferences--backup-media-plan__note": {
+    "messageformat": "You can manage or cancel your Signal Backups subscription on your phone."
+  },
+  "icu:Preferences--backup-messages-plan__note": {
+    "messageformat": "You can manage or upgrade Signal Backups on your phone."
+  },
+  "icu:Preferences--backup-plan__not-found": {
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Backups."
+  },
+  "icu:Preferences--backup-plan__not-found__note": {
+    "messageformat": "You can manage or renew your Signal Backups subscription on your phone."
+  },
+  "icu:Preferences--backup-created-at__label": {
+    "messageformat": "Last backup"
+  },
+  "icu:Preferences--backup-created-by-phone": {
+    "messageformat": "Your phone"
+  },
+  "icu:Preferences--backup-size__label": {
+    "messageformat": "Backup size"
   },
   "icu:Preferences--blocked-count": {
     "messageformat": "{num, plural, one {{num,number} kontakt} other {{num,number} kontakter}}"
@@ -4810,6 +5152,18 @@
   },
   "icu:DialogUpdate__downloaded": {
     "messageformat": "Uppdatering nedladdad"
+  },
+  "icu:CriticalIdlePrimaryDevice__title": {
+    "messageformat": "Öppna Signal på din telefon"
+  },
+  "icu:CriticalIdlePrimaryDevice__body": {
+    "messageformat": "Ditt konto kommer snart att raderas om du inte öppnar Signal på din telefon. Det här meddelandet försvinner när du har gjort det. <learnMoreLink>Läs mer</learnMoreLink>"
+  },
+  "icu:IdlePrimaryDevice__body": {
+    "messageformat": "Öppna Signal på din telefon för att hålla ditt konto aktivt"
+  },
+  "icu:IdlePrimaryDevice__learnMore": {
+    "messageformat": "Läs mer"
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signal har tekniska problem. Vi arbetar för fullt med att få igång tjänsten så snabbt vi kan."
@@ -4951,6 +5305,30 @@
   },
   "icu:MediaEditor__crop-preset--9-16": {
     "messageformat": "9:16"
+  },
+  "icu:MediaPermissionsModal__title--microphone": {
+    "messageformat": "Tillåt åtkomst till din mikrofon"
+  },
+  "icu:MediaPermissionsModal__title--camera": {
+    "messageformat": "Tillåt åtkomst till din kamera"
+  },
+  "icu:MediaPermissionsModal__subtitle--call": {
+    "messageformat": "För att gå med eller starta ett samtal:"
+  },
+  "icu:MediaPermissionsModal__subtitle--call--camera": {
+    "messageformat": "Så här aktiverar du din video:"
+  },
+  "icu:MediaPermissionsModal__subtitle--voice-note": {
+    "messageformat": "Så här skickar du röstmeddelanden:"
+  },
+  "icu:MediaPermissionsModal__step-1": {
+    "messageformat": "Klicka på {buttonName} nedan"
+  },
+  "icu:MediaPermissionsModal__step-2": {
+    "messageformat": "Slå på Signal"
+  },
+  "icu:MediaPermissionsModal__open": {
+    "messageformat": "Gå till inställningar"
   },
   "icu:MyStories__title": {
     "messageformat": "Mina Stories"
@@ -5610,6 +5988,15 @@
   "icu:MessageMetadata__edited": {
     "messageformat": "Redigerad"
   },
+  "icu:DraftGifMessageSendModal__Title": {
+    "messageformat": "Lägg till ett meddelande"
+  },
+  "icu:DraftGifMessageSendModal__SendButtonLabel": {
+    "messageformat": "Skicka"
+  },
+  "icu:DraftGifMessageSendModal__CancelButtonLabel": {
+    "messageformat": "Avbryt"
+  },
   "icu:EditHistoryMessagesModal__title": {
     "messageformat": "Redigeringshistorik"
   },
@@ -5829,6 +6216,30 @@
   "icu:WhoCanFindMeReadOnlyToast": {
     "messageformat": "Om du vill ändra den här inställningen ställer du in Vem kan se mitt nummer till Ingen."
   },
+  "icu:ProfileNameWarningModal__description--direct": {
+    "messageformat": "Profilnamn på Signal väljs av kontoinnehavaren:"
+  },
+  "icu:ProfileNameWarningModal__list--item1--direct": {
+    "messageformat": "Profilnamn verifieras inte"
+  },
+  "icu:ProfileNameWarningModal__list--item2--direct": {
+    "messageformat": "Var försiktig med konton där någon utger sig för att vara en annan person"
+  },
+  "icu:ProfileNameWarningModal__list--item3--direct": {
+    "messageformat": "Dela inte personlig information med personer du inte känner"
+  },
+  "icu:ProfileNameWarningModal__description--group": {
+    "messageformat": "Gruppnamn väljs av medlemmar i gruppen."
+  },
+  "icu:ProfileNameWarningModal__list--item1--group": {
+    "messageformat": "Var försiktig med grupper som utger sig för att vara organisationer och företag"
+  },
+  "icu:ProfileNameWarningModal__list--item2--group": {
+    "messageformat": "Profilnamn på medlemmar i grupper verifieras inte"
+  },
+  "icu:ProfileNameWarningModal__list--item3--group": {
+    "messageformat": "Dela inte personlig information med personer du inte känner"
+  },
   "icu:WhatsNew__modal-title": {
     "messageformat": "Vad är nytt"
   },
@@ -5860,10 +6271,22 @@
     "messageformat": "Små justeringer, buggfixar och prestandaförbättringar. Tack för att du använder Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.44--0": {
-    "messageformat": "Vi har åtgärdat en mindre animationsbugg under gruppsamtal."
+  "icu:WhatsNew__v7.47--0": {
+    "messageformat": "Nu kan du expandera din lokala förhandsvisning av video under ett samtal för att få en bättre bild av dig själv."
   },
-  "icu:WhatsNew__v7.45--0": {
-    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
+  "icu:WhatsNew__v7.48--0": {
+    "messageformat": "Vi har lagt till en praktisk genväg för att snabbt sänka handen när du börjar prata i ett Signal-gruppsamtal."
+  },
+  "icu:WhatsNew__v7.49--0": {
+    "messageformat": "Om du länkar ett nytt skrivbord på Signal Android och väljer att överföra din meddelandehistorik kan du nu också selektivt överföra gamla bilagor från din primära enhet. Överföringsprocessen är totalsträckskrypterad och säker."
+  },
+  "icu:WhatsNew__v7.50--0": {
+    "messageformat": "Om du länkar ett nytt skrivbord på Signal Android och väljer att överföra din meddelandehistorik kan du nu också selektivt överföra gamla bilagor från din primära enhet. Överföringsprocessen är totalsträckskrypterad och säker."
+  },
+  "icu:WhatsNew__v7.51--0": {
+    "messageformat": "Fire, the wheel, and electricity were all great developments, but they were merely necessary steps along the path that created the conditions for animated GIF search to exist. Now you can experience the pinnacle of human technological advancement in Signal Desktop with a brand-new selection interface that makes it easy to quickly find an emoji, sticker, or animated GIF that's perfect for the moment."
+  },
+  "icu:WhatsNew__v7.51--1": {
+    "messageformat": "We also resized the picture-in-picture window and added convenient new shortcuts to mute/unmute your microphone or turn the camera on/off while a call is minimized."
   }
 }

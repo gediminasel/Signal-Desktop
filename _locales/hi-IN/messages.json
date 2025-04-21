@@ -38,6 +38,9 @@
   "icu:Preferences__sent-media-quality": {
     "messageformat": "मीडिया क्वालिटी भेजी गई"
   },
+  "icu:Preferences__sent-media-quality__description": {
+    "messageformat": "हाई क्वालिटी मीडिया भेजने के लिए अधिक डेटा खर्च होगा।"
+  },
   "icu:sentMediaQualityStandard": {
     "messageformat": "मानक"
   },
@@ -68,6 +71,12 @@
   "icu:unknownGroup": {
     "messageformat": "अंजान ग्रुप"
   },
+  "icu:cantOpenSignalError": {
+    "messageformat": "Signal नहीं खोला जा सकता"
+  },
+  "icu:cantOpenSignalError__detail": {
+    "messageformat": "समस्या ठीक करने के लिए, सपोर्ट पेज पर रिकवरी गाइड का पालन करें या समस्या ठीक करने में मदद पाने के लिए, Signal समर्थन से संपर्क करें।\n\nअगर आपको Signal तुरंत इस्तेमाल करना हो, तो आप अपना डेटा डिलीट कर सकते हैं और यह डेस्कटॉप फिर से लिंक कर सकते हैं। आपके पास अपने फ़ोन से संदेश इतिहास ट्रांसफ़र करने का विकल्प होगा।"
+  },
   "icu:databaseError": {
     "messageformat": "डेटाबेस त्रुटि"
   },
@@ -78,10 +87,10 @@
     "messageformat": "डेटा को डिलीट करें और रीस्टार्ट करें"
   },
   "icu:databaseError__deleteDataConfirmation": {
-    "messageformat": "सारा डेटा हमेशा के लिए डिलीट करें?"
+    "messageformat": "पूरा डेटा हमेशा के लिए डिलीट करें"
   },
   "icu:databaseError__deleteDataConfirmation__detail": {
-    "messageformat": "आपकी सारी संदेश हिस्ट्री और मीडिया को हमेशा के लिए इस डिवाइस से डिलीट कर दिया जाएगा। दोबारा लिंक करने के बाद ही आप इस डिवाइस पर सिग्नल का उपयोग कर पाएंगे। इससे आपके फोन से कोई भी डेटा डिलीट नहीं होगा।"
+    "messageformat": "आपके पूरे संदेश इतिहास और मीडिया को हमेशा के लिए इस डिवाइस से डिलीट कर दिया जाएगा। इससे आपके फ़ोन से कोई भी डेटा डिलीट नहीं होगा।\n\nदोबारा लिंक करने के बाद ही आप इस डिवाइस पर Signal का इस्तेमाल कर पाएँगे। आपके पास अपने फ़ोन से संदेश इतिहास ट्रांसफ़र करने का विकल्प होगा।"
   },
   "icu:databaseError__startOldVersion": {
     "messageformat": "आपके डेटाबेस का वर्ज़न सिग्नल के इस वर्ज़न से मेल नहीं खाता है। सुनिश्चित करें कि आप अपने कंप्यूटर पर सिग्नल का सबसे नया वर्ज़न खोल रहे हैं।"
@@ -214,9 +223,6 @@
   },
   "icu:optimizingApplication": {
     "messageformat": "ऐप्लिकेशन को बेहतर कर रहे हैं..."
-  },
-  "icu:migratingToSQLCipher": {
-    "messageformat": "मेसेज बेहतर कर रहे हैं... {status} पूरा हुआ।"
   },
   "icu:archivedConversations": {
     "messageformat": "संग्रहीत की हुई चैट"
@@ -407,9 +413,6 @@
   "icu:unreadMessages": {
     "messageformat": "{count, plural, one {{count,number} अपठित मेसेज} other {{count,number}अपठित मेसेज}}"
   },
-  "icu:messageHistoryUnsynced": {
-    "messageformat": "आपकी सुरक्षा के लिए, चैट इतिहास को लिंक किए गए नए डिवाइस पर स्थानांतरित नहीं किया जाता है।"
-  },
   "icu:youMarkedAsVerified": {
     "messageformat": "आपने {name} के साथ अपने सुरक्षा नंबर को सत्यापित मार्क किया है"
   },
@@ -588,7 +591,7 @@
     "messageformat": "Failed to send message with endorsements"
   },
   "icu:Toast--InvalidStorageServiceHeaders": {
-    "messageformat": "Received invalid response from storage service. Please share your logs."
+    "messageformat": "स्टोरेज सेवा से अमान्य जवाब मिला। कृपया अपने लॉग शेयर करें।"
   },
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
@@ -706,9 +709,6 @@
   },
   "icu:noSearchResultsOnlyUnreadFilter": {
     "messageformat": "कोई भी अपठित चैट नहीं"
-  },
-  "icu:noSearchResults--sms-only": {
-    "messageformat": "डेस्कटॉप पर SMS/MMS संपर्क उपलब्ध नहीं हैं।"
   },
   "icu:noSearchResultsInConversation": {
     "messageformat": "{conversationName} में \"{searchTerm}\" के कोई परिणाम नहीं मिले"
@@ -1145,9 +1145,6 @@
   "icu:mediaNotAvailable": {
     "messageformat": "यह मीडिया उपलब्ध नहीं है"
   },
-  "icu:mediaNotAvailable--short": {
-    "messageformat": "मीडिया उपलब्ध नहीं है"
-  },
   "icu:attachmentNoLongerAvailable__learnMore": {
     "messageformat": "अधिक जानें"
   },
@@ -1162,6 +1159,12 @@
   },
   "icu:attachmentNotAvailable__voice": {
     "messageformat": "वॉइस संदेश उपलब्ध नहीं है"
+  },
+  "icu:attachmentNotAvailable__tapToView": {
+    "messageformat": "'देखें-एक बार मीडिया' उपलब्ध नहीं है"
+  },
+  "icu:attachmentNotAvailable__tapToViewCannotDownload": {
+    "messageformat": "'देखें-एक बार मीडिया' डाउनलोड नहीं किया जा सकता"
   },
   "icu:AttachmentNotAvailableModal__title--file": {
     "messageformat": "फ़ाइल उपलब्ध नहीं है"
@@ -1192,6 +1195,21 @@
   },
   "icu:AttachmentNotAvailableModal__body--voice-message": {
     "messageformat": "जब यह डिवाइस लिंक था, तब यह वॉइस संदेश आपके फ़ोन से ट्रांसफ़र नहीं हुआ था। डिवाइस लिंक करते समय, 45 दिनों से पुराने मीडिया और फ़ाइलों को सिंक नहीं किया जा सकता।"
+  },
+  "icu:TapToViewNotAvailableModal__body--expired": {
+    "messageformat": "यह 'देखें-एक बार मीडिया' अब डाउनलोड के लिए उपलब्ध नहीं है। {name} को इसे फिर से भेजने के लिए कहें।"
+  },
+  "icu:TapToViewNotAvailableModal__body--error": {
+    "messageformat": "'देखें-एक बार मीडिया' डाउनलोड नहीं किया जा सका। {name} को इसे फिर से भेजना होगा।"
+  },
+  "icu:BackfillFailureModal__title": {
+    "messageformat": "मीडिया डाउनलोड नहीं किया जा सकता"
+  },
+  "icu:BackfillFailureModal__body--timeout": {
+    "messageformat": "अपने डेस्कटॉप और फ़ोन का इंटरनेट कनेक्शन जाँच लें। अपने फ़ोन पर Signal खोलें, फिर दोबारा डाउनलोड करने की कोशिश करें।"
+  },
+  "icu:BackfillFailureModal__body--not-found": {
+    "messageformat": "यह मीडिया अब आपके फ़ोन पर उपलब्ध नहीं है और डाउनलोड नहीं किया जा सकता।"
   },
   "icu:save": {
     "messageformat": "संरक्षित करें"
@@ -1244,12 +1262,6 @@
   "icu:Install__support-link": {
     "messageformat": "मदद चाहिए?"
   },
-  "icu:Install__choose-device-name__description": {
-    "messageformat": "आपको यह नाम अपने फ़ोन पर \"लिंक किए गए डिवाइस\" के तहत दिखेगा।"
-  },
-  "icu:Install__choose-device-name__placeholder": {
-    "messageformat": "मेरा कंप्यूटर"
-  },
   "icu:Preferences--phone-number": {
     "messageformat": "फोन नंबर"
   },
@@ -1259,11 +1271,8 @@
   "icu:Preferences--device-name__description": {
     "messageformat": "इस डिवाइस का नाम बदलने के लिए, अपने फ़ोन पर Signal खोलें और सेटिंग्स > लिंक किए गए डिवाइस पर जाएँ"
   },
-  "icu:chooseDeviceName": {
-    "messageformat": "डिवाइस का नाम चुनें"
-  },
-  "icu:finishLinkingPhone": {
-    "messageformat": "फ़ोन लिंक करना पूरा करें"
+  "icu:Preferences__EmojiSkinToneDefaultSetting__Label": {
+    "messageformat": "इमोजी स्किन टोन"
   },
   "icu:initialSync": {
     "messageformat": "संपर्क और समूह सिंक हो रहे हैं"
@@ -1814,6 +1823,18 @@
   "icu:ConversationDetails__HeaderButton--Message": {
     "messageformat": "संदेश"
   },
+  "icu:ConversationDetails--help-section": {
+    "messageformat": "मदद"
+  },
+  "icu:ConversationDetails--support-center": {
+    "messageformat": "सहायता केंद्र"
+  },
+  "icu:ConversationDetails--contact-us": {
+    "messageformat": "हमसे संपर्क करें"
+  },
+  "icu:ConversationDetails--donate": {
+    "messageformat": "Signal  को दान करें"
+  },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "सुरक्षा संख्या देखें"
   },
@@ -1873,6 +1894,9 @@
   },
   "icu:Toast--failed-to-fetch-phone-number": {
     "messageformat": "फोन नंबर नहीं ला सका। अपना कनेक्शन जाँचें और फिर से प्रयास करें।"
+  },
+  "icu:Toast--download-failed": {
+    "messageformat": "डाउनलोड नहीं हो पाया"
   },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "आपके द्वारा इस संदेश को भेजे जाने के 24 घंटे के भीतर ही संपादन लागू किए जा सकते हैं।"
@@ -2252,6 +2276,204 @@
   "icu:EmojiPicker__button--flag": {
     "messageformat": "झंडा"
   },
+  "icu:FunPicker__Tab--Emojis": {
+    "messageformat": "इमोजी"
+  },
+  "icu:FunPicker__Tab--Stickers": {
+    "messageformat": "स्टिकर"
+  },
+  "icu:FunPicker__Tab--Gifs": {
+    "messageformat": "GIFs"
+  },
+  "icu:FunPanelEmojis__SearchLabel": {
+    "messageformat": "इमोजी खोजें"
+  },
+  "icu:FunPanelEmojis__SearchPlaceholder": {
+    "messageformat": "इमोजी खोजें"
+  },
+  "icu:FunPanelEmojis__SubNavLabel": {
+    "messageformat": "इमोजी कैटेगरीज़"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Recents": {
+    "messageformat": "हाल ही में इस्तेमाल किया"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--SmileysAndPeople": {
+    "messageformat": "स्माइली और लोग"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--AnimalsAndNature": {
+    "messageformat": "जानवर और प्रकृति"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--FoodAndDrink": {
+    "messageformat": "भोजन और ड्रिंक"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Activities": {
+    "messageformat": "गतिविधियाँ"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--TravelAndPlaces": {
+    "messageformat": "सफर और जगहें"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Objects": {
+    "messageformat": "वस्तुएँ"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Symbols": {
+    "messageformat": "चिन्ह"
+  },
+  "icu:FunPanelEmojis__SubNavCategoryLabel--Flags": {
+    "messageformat": "झंडे"
+  },
+  "icu:FunPanelEmojis__SearchResults__EmptyHeading": {
+    "messageformat": "इमोजी नहीं मिला"
+  },
+  "icu:FunPanelEmojis__ChangeSkinToneButtonLabel": {
+    "messageformat": "स्किन टोन की पसंदगी बदलें"
+  },
+  "icu:FunPanelEmojis__SkinTonePicker__ChooseDefaultLabel": {
+    "messageformat": "अपनी डिफ़ॉल्ट स्किनटोन चुनें"
+  },
+  "icu:FunPanelEmojis__SectionTitle--SearchResults": {
+    "messageformat": "खोज नतीजे"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Recents": {
+    "messageformat": "हाल ही में इस्तेमाल किया"
+  },
+  "icu:FunPanelEmojis__SectionTitle--SmileysAndPeople": {
+    "messageformat": "स्माइली और लोग"
+  },
+  "icu:FunPanelEmojis__SectionTitle--AnimalsAndNature": {
+    "messageformat": "जानवर और प्रकृति"
+  },
+  "icu:FunPanelEmojis__SectionTitle--FoodAndDrink": {
+    "messageformat": "भोजन और ड्रिंक"
+  },
+  "icu:FunPanelEmojis__SectionTitle--TravelAndPlaces": {
+    "messageformat": "सफर और जगहें"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Activities": {
+    "messageformat": "गतिविधियाँ"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Objects": {
+    "messageformat": "वस्तुएँ"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Symbols": {
+    "messageformat": "चिन्ह"
+  },
+  "icu:FunPanelEmojis__SectionTitle--Flags": {
+    "messageformat": "झंडे"
+  },
+  "icu:FunPanelEmojis__CustomizeReactionsButtonLabel": {
+    "messageformat": "Customize reactions"
+  },
+  "icu:FunPanelStickers__SearchLabel": {
+    "messageformat": "स्टिकर खोजें"
+  },
+  "icu:FunPanelStickers__SearchPlaceholder": {
+    "messageformat": "स्टिकर खोजें"
+  },
+  "icu:FunPanelSticker__SubNavLabel": {
+    "messageformat": "स्टिकर पैक"
+  },
+  "icu:FunPanelStickers__SubNavCategoryLabel--Recents": {
+    "messageformat": "हाल ही में इस्तेमाल किया"
+  },
+  "icu:FunPanelStickers__SectionTitle--SearchResults": {
+    "messageformat": "खोज नतीजे"
+  },
+  "icu:FunPanelStickers__SectionTitle--Recents": {
+    "messageformat": "हाल ही में इस्तेमाल किया"
+  },
+  "icu:FunPanelStickers__SectionTitle--Featured": {
+    "messageformat": "Featured"
+  },
+  "icu:FunPanelStickers__SearchResults__EmptyHeading": {
+    "messageformat": "स्टिकर नहीं मिले"
+  },
+  "icu:FunPanelStickers__LightboxDialog__Label": {
+    "messageformat": "स्टिकर प्रीव्यू"
+  },
+  "icu:FunPanelGifs__SearchLabel--Tenor": {
+    "messageformat": "Tenor के ज़रिए GIF खोजें"
+  },
+  "icu:FunPanelGifs__SearchPlaceholder--Tenor": {
+    "messageformat": "Tenor खोजें"
+  },
+  "icu:FunPanelGifs__SubNavLabel": {
+    "messageformat": "GIF कैटेगरीज़"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Recents": {
+    "messageformat": "हाल ही में इस्तेमाल किया"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Trending": {
+    "messageformat": "ट्रेंडिंग"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Celebrate": {
+    "messageformat": "जश्न"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Love": {
+    "messageformat": "प्यार"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--ThumbsUp": {
+    "messageformat": "थंब्स अप"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Surprised": {
+    "messageformat": "हैरान"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Excited": {
+    "messageformat": "उत्साहित"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Sad": {
+    "messageformat": "उदास"
+  },
+  "icu:FunPanelGifs__SubNavCategoryLabel--Angry": {
+    "messageformat": "गुस्से में"
+  },
+  "icu:FunPanelGifs__SearchResults__LoadingLabel": {
+    "messageformat": "GIF लोड हो रहा है"
+  },
+  "icu:FunPanelGifs__SearchResults__ErrorHeading": {
+    "messageformat": "GIF लोड नहीं हो पाया। अपना कनेक्शन जाँचें और फिर से कोशिश करें"
+  },
+  "icu:FunPanelGifs__SearchResults__ErrorRetryButton": {
+    "messageformat": "दोबारा कोशिश करें"
+  },
+  "icu:FunPanelGifs__SearchResults__EmptyHeading": {
+    "messageformat": "कोई GIF नहीं मिला"
+  },
+  "icu:FunPanelGifs__LightboxDialog__Label": {
+    "messageformat": "GIF प्रीव्यू"
+  },
+  "icu:FunSearch__ClearButtonLabel": {
+    "messageformat": "सर्च को साफ करें"
+  },
+  "icu:FunSkinTones__List": {
+    "messageformat": "स्किन टोन"
+  },
+  "icu:FunSkinTones__ListItem--None": {
+    "messageformat": "कुछ नहीं"
+  },
+  "icu:FunSkinTones__ListItem--Light": {
+    "messageformat": "हल्का स्किन टोन"
+  },
+  "icu:FunSkinTones__ListItem--MediumLight": {
+    "messageformat": "मध्यम हल्का स्किन टोन"
+  },
+  "icu:FunSkinTones__ListItem--Medium": {
+    "messageformat": "मध्यम स्किन टोन"
+  },
+  "icu:FunSkinTones__ListItem--MediumDark": {
+    "messageformat": "मध्यम गहरा स्किन टोन"
+  },
+  "icu:FunSkinTones__ListItem--Dark": {
+    "messageformat": "गहरा स्किन टोन"
+  },
+  "icu:FunButton__Label--FunPicker": {
+    "messageformat": "इमोजी, स्टिकर या GIF जोड़ें"
+  },
+  "icu:FunButton__Label--EmojiPicker": {
+    "messageformat": "एक इमोजी जोड़ें"
+  },
+  "icu:FunButton__Label--StickerPicker": {
+    "messageformat": "एक स्टिकर लगाएं"
+  },
   "icu:confirmation-dialog--Cancel": {
     "messageformat": "रद्द करें"
   },
@@ -2288,11 +2510,11 @@
   "icu:Message--update-signal": {
     "messageformat": "Signal अपडेट करें"
   },
-  "icu:Message--tap-to-view-expired": {
+  "icu:Message--tap-to-view--viewed": {
     "messageformat": "देखा गया"
   },
-  "icu:Message--tap-to-view--outgoing": {
-    "messageformat": "मीडिया"
+  "icu:Message--tap-to-view--media": {
+    "messageformat": "एक बार मीडिया देखें"
   },
   "icu:Message--tap-to-view--incoming--expired-toast": {
     "messageformat": "आपने यह मेसेज पहले ही देख लिया है"
@@ -2300,11 +2522,14 @@
   "icu:Message--tap-to-view--outgoing--expired-toast": {
     "messageformat": "एक बार देखें संदेश आपके चैट इतिहास में संगृहीत नहीं होते हैं।"
   },
-  "icu:Message--tap-to-view--incoming": {
-    "messageformat": "फ़ोटो देखें"
+  "icu:Message--tap-to-view--video": {
+    "messageformat": "देखें-एक बार वीडियो"
   },
-  "icu:Message--tap-to-view--incoming-video": {
-    "messageformat": "वीडियो देखें"
+  "icu:Message--tap-to-view--photo": {
+    "messageformat": "देखें-एक बार फ़ोटो"
+  },
+  "icu:Message--tap-to-view--helper-text": {
+    "messageformat": "देखने के लिए क्लिक करें"
   },
   "icu:Conversation--getDraftPreview--attachment": {
     "messageformat": "(अटैचमेंट)"
@@ -2498,6 +2723,9 @@
   "icu:Keyboard--toggle-video": {
     "messageformat": "टॉगल वीडियो चालू और बंद"
   },
+  "icu:Keyboard--toggle-preview": {
+    "messageformat": "बढ़ाए गए प्रीव्यू को टॉगल ऑन और ऑफ़ करें"
+  },
   "icu:Keyboard--accept-video-call": {
     "messageformat": "वीडियो से कॉल का जवाब दें (केवल वीडियो कॉल)"
   },
@@ -2560,6 +2788,12 @@
   },
   "icu:SafetyTipsModal__Description": {
     "messageformat": "जिन लोगों को आप नहीं जानते उनसे संदेश अनुरोध स्वीकार करते समय सावधान रहें। इन बातों से सावधान रहें:"
+  },
+  "icu:SafetyTipsModal__TipTitle--Fake": {
+    "messageformat": "फ़र्ज़ी नाम और अकाउंट्स"
+  },
+  "icu:SafetyTipsModal__TipDescription--Fake": {
+    "messageformat": "Signal कभी भी रजिस्ट्रेशन कोड या पिन के लिए आपसे संपर्क नहीं करेगा। दूसरों की पहचान चुराने वाले अनुरोधों से सावधान रहें। प्रोफ़ाइल नाम को अकाउंट के मालिक चुनते हैं और वे वेरिफ़ाइड नहीं होते।"
   },
   "icu:SafetyTipsModal__TipTitle--Crypto": {
     "messageformat": "क्रिप्टो या मनी स्कैम"
@@ -2693,6 +2927,12 @@
   "icu:MessageRequests--accept": {
     "messageformat": "स्वीकृत"
   },
+  "icu:MessageRequests--accept-confirm-title": {
+    "messageformat": "अनुरोध मंज़ूर करें?"
+  },
+  "icu:MessageRequests--accept-confirm-body": {
+    "messageformat": "अनुरोधों की सावधानी से समीक्षा करें। प्रोफ़ाइल नाम को अकाउंट के मालिक चुनते हैं और वे वेरिफ़ाइड नहीं होते।"
+  },
   "icu:MessageRequests--continue": {
     "messageformat": "आगे"
   },
@@ -2704,6 +2944,21 @@
   },
   "icu:ConversationHero--members": {
     "messageformat": "{count, plural, one {1 सदस्य} other {{count,number} सदस्य}}"
+  },
+  "icu:ConversationHero--review-carefully": {
+    "messageformat": "सावधानी से समीक्षा करें"
+  },
+  "icu:ConversationHero--group-names": {
+    "messageformat": "<clickable>ग्रुप नाम</clickable> वेरिफ़ाइड नहीं हैं"
+  },
+  "icu:ConversationHero--profile-names": {
+    "messageformat": "<clickable>प्रोफ़ाइल नाम</clickable> वेरिफ़ाइड नहीं हैं"
+  },
+  "icu:ConversationHero--signal-official-chat": {
+    "messageformat": "यह Signal की ओर से आधिकारिक और इकलौती चैट है"
+  },
+  "icu:ConversationHero--release-notes": {
+    "messageformat": "खबरों और रिलीज़ नोट्स के साथ अप-टू-डेट रहें।"
   },
   "icu:member-of-1-group": {
     "messageformat": "{group} के मेंबर।"
@@ -2840,6 +3095,12 @@
   "icu:CallControls__JoinLeaveButton--hangup-group": {
     "messageformat": "छोङें"
   },
+  "icu:CallControls__JoinLeaveButton--hangup-1-1-tooltip": {
+    "messageformat": "End call"
+  },
+  "icu:CallControls__JoinLeaveButton--hangup-group-tooltip": {
+    "messageformat": "Leave call"
+  },
   "icu:CallControls__MutedToast--muted": {
     "messageformat": "माइक बंद"
   },
@@ -2917,6 +3178,12 @@
   },
   "icu:calling__pip--off": {
     "messageformat": "कॉल को फुलस्क्रीन करें"
+  },
+  "icu:calling__preview--maximize": {
+    "messageformat": "प्रीव्यू को मैक्सिमाइज़ करें"
+  },
+  "icu:calling__preview--minimize": {
+    "messageformat": "प्रीव्यू को मिनिमाइज़ करें"
   },
   "icu:calling__change-view": {
     "messageformat": "व्यु बदलें"
@@ -3698,18 +3965,6 @@
   "icu:BackupImportScreen__error__confirm": {
     "messageformat": "दोबारा कोशिश करें"
   },
-  "icu:BackupImportScreen__skip": {
-    "messageformat": "छोड़ दे"
-  },
-  "icu:BackupImportScreen__skip-confirmation__title": {
-    "messageformat": "संदेश ट्रांसफ़र को छोड़ें?"
-  },
-  "icu:BackupImportScreen__skip-confirmation__body": {
-    "messageformat": "अगर आप छोड़ने का विकल्प चुनते हैं, आपके पास इस डिवाइस पर किसी भी संदेश या मीडिया का ऐक्सेस नहीं होगा। सेटिंग्स > चैट > ट्रांसफ़र से छोड़ने के बाद, आप नया ट्रांसफ़र शुरू कर सकते हैं।"
-  },
-  "icu:BackupImportScreen__skip-confirmation__cancel": {
-    "messageformat": "रद्द करें"
-  },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
     "messageformat": "मीडिया रीस्टोर किया जा रहा है"
   },
@@ -3752,6 +4007,12 @@
   "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
     "messageformat": "ट्रांसफ़र रद्द करें"
   },
+  "icu:CriticalIdlePrimaryDeviceModal__title": {
+    "messageformat": "Account action required"
+  },
+  "icu:CriticalIdlePrimaryDeviceModal__description": {
+    "messageformat": "You must open Signal on your phone to continue using this account. If you do not open Signal on your phone, your account will be deleted soon. <learnMoreLink>Learn more</learnMoreLink>"
+  },
   "icu:CompositionArea--expand": {
     "messageformat": "बड़ा करें"
   },
@@ -3772,6 +4033,18 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "संपादित संदेश भेजें"
+  },
+  "icu:CompositionArea__FunButtonLabel": {
+    "messageformat": "इमोजी, स्टिकर या GIF जोड़ें"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__Title": {
+    "messageformat": "अटैचमेंट बदलें?"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__Body": {
+    "messageformat": "यह GIF जोड़ने से, आपके मौजूदा ड्राफ़्ट संदेश में आइटम बदल जाएगा।"
+  },
+  "icu:CompositionArea__ConfirmGifSelection__ReplaceButton": {
+    "messageformat": "बदलें"
   },
   "icu:CompositionInput__editing-message": {
     "messageformat": "संदेश संपादित करें"
@@ -3989,6 +4262,9 @@
   "icu:GroupLinkManagement--approve-info": {
     "messageformat": "समूह लिंक के माध्यम से शामिल होने वाले नए सदस्यों को स्वीकृति देने के लिए एक व्यवस्थापक की आवश्यकता है"
   },
+  "icu:GroupLinkManagement__CopyGroupLinkButtonLabel": {
+    "messageformat": "Copy signal.group link to clipboard"
+  },
   "icu:PendingInvites--tab-requests": {
     "messageformat": "अनुरोध ({count,number})"
   },
@@ -4193,9 +4469,6 @@
   "icu:ShareCallLinkViaSignal__DraftMessageText": {
     "messageformat": "Signal कॉल से जुड़ने के लिए यह लिंक इस्तेमाल करें: {url}"
   },
-  "icu:MessageRequestWarning__learn-more": {
-    "messageformat": "अधिक जानें"
-  },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "सुरक्षा टिप्स"
   },
@@ -4350,7 +4623,7 @@
     "messageformat": "ग्रेडिएंट बंद"
   },
   "icu:GIF--download": {
-    "messageformat": "Download GIF attachment"
+    "messageformat": "GIF अटैचमेंट डाउनलोड करें"
   },
   "icu:customDisappearingTimeOption": {
     "messageformat": "कस्टम समय..."
@@ -4655,6 +4928,30 @@
   "icu:Preferences__button--privacy": {
     "messageformat": "गोपनियता"
   },
+  "icu:Preferences__button--data-usage": {
+    "messageformat": "डेटा का उपयोग"
+  },
+  "icu:Preferences__media-auto-download": {
+    "messageformat": "मीडिया ऑटो डाउनलोड"
+  },
+  "icu:Preferences__media-auto-download__photos": {
+    "messageformat": "तस्वीरें"
+  },
+  "icu:Preferences__media-auto-download__videos": {
+    "messageformat": "वीडियो"
+  },
+  "icu:Preferences__media-auto-download__audio": {
+    "messageformat": "ऑडियो"
+  },
+  "icu:Preferences__media-auto-download__documents": {
+    "messageformat": "डॉक्युमेंट्स"
+  },
+  "icu:Preferences__media-auto-download__description": {
+    "messageformat": "वॉइस संदेश और स्टिकर्स हमेशा अपने-आप डाउनलोड किए जाते हैं।"
+  },
+  "icu:Preferences__button--backups": {
+    "messageformat": "Backups"
+  },
   "icu:Preferences--lastSynced": {
     "messageformat": "{date} {time} पर आख़िरी एक्सपोर्ट"
   },
@@ -4684,6 +4981,51 @@
   },
   "icu:Preferences--blocked": {
     "messageformat": "ब्लॉक किया गया"
+  },
+  "icu:Preferences--backup-details__header": {
+    "messageformat": "Backup details"
+  },
+  "icu:Preferences--backup-media-plan__description": {
+    "messageformat": "Text + all media backup"
+  },
+  "icu:Preferences--backup-plan-not-found__description": {
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Backups."
+  },
+  "icu:Preferences--backup-messages-plan__description": {
+    "messageformat": "{mediaDayCount, plural, one {Text + {mediaDayCount,number} day media backup} other {Text + {mediaDayCount,number} days media backup}}"
+  },
+  "icu:Preferences--backup-messages-plan__cost-description": {
+    "messageformat": "Your backup plan is free"
+  },
+  "icu:Preferences--backup-plan__renewal-date": {
+    "messageformat": "Renews {date}"
+  },
+  "icu:Preferences--backup-plan__expiry-date": {
+    "messageformat": "Expires {date}"
+  },
+  "icu:Preferences--backup-plan__canceled": {
+    "messageformat": "Subscription canceled"
+  },
+  "icu:Preferences--backup-media-plan__note": {
+    "messageformat": "You can manage or cancel your Signal Backups subscription on your phone."
+  },
+  "icu:Preferences--backup-messages-plan__note": {
+    "messageformat": "You can manage or upgrade Signal Backups on your phone."
+  },
+  "icu:Preferences--backup-plan__not-found": {
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Backups."
+  },
+  "icu:Preferences--backup-plan__not-found__note": {
+    "messageformat": "You can manage or renew your Signal Backups subscription on your phone."
+  },
+  "icu:Preferences--backup-created-at__label": {
+    "messageformat": "Last backup"
+  },
+  "icu:Preferences--backup-created-by-phone": {
+    "messageformat": "Your phone"
+  },
+  "icu:Preferences--backup-size__label": {
+    "messageformat": "Backup size"
   },
   "icu:Preferences--blocked-count": {
     "messageformat": "{num, plural, one {{num,number} कॉन्टैक्ट} other {{num,number} कॉन्टैक्ट}}"
@@ -4810,6 +5152,18 @@
   },
   "icu:DialogUpdate__downloaded": {
     "messageformat": "अपडेट डाउनलोड किया गया"
+  },
+  "icu:CriticalIdlePrimaryDevice__title": {
+    "messageformat": "अपने फ़ोन पर Signal को ओपेन करें"
+  },
+  "icu:CriticalIdlePrimaryDevice__body": {
+    "messageformat": "अगर आप अपने फ़ोन पर Signal नहीं खोलते, तो आपका अकाउंट जल्द ही डिलीट हो जाएगा। अगर आप ऐसा कर लेते हैं, तो यह संदेश चला जाएगा। <learnMoreLink>ज़्यादा जानें</learnMoreLink>"
+  },
+  "icu:IdlePrimaryDevice__body": {
+    "messageformat": "अपने अकाउंट को ऐक्टिव रखने के लिए, अपने फ़ोन पर Signal खोलें"
+  },
+  "icu:IdlePrimaryDevice__learnMore": {
+    "messageformat": "अधिक जानें"
   },
   "icu:DialogNetworkStatus__outage": {
     "messageformat": "Signal तकनीकी कठिनाइयों का सामना कर रहा है। हम जितनी जल्दी हो सके सेवा बहाल करने के लिए कड़ी मेहनत कर रहे हैं।"
@@ -4951,6 +5305,30 @@
   },
   "icu:MediaEditor__crop-preset--9-16": {
     "messageformat": "9:16"
+  },
+  "icu:MediaPermissionsModal__title--microphone": {
+    "messageformat": "माइक्रोफोन इस्तेमाल करने की अनुमति दें"
+  },
+  "icu:MediaPermissionsModal__title--camera": {
+    "messageformat": "कैमरा के एक्सेस की अनुमति दें"
+  },
+  "icu:MediaPermissionsModal__subtitle--call": {
+    "messageformat": "कॉल से जुड़ें या कॉल शुरू करें:"
+  },
+  "icu:MediaPermissionsModal__subtitle--call--camera": {
+    "messageformat": "अपना वीडियो सक्षम करने के लिए:"
+  },
+  "icu:MediaPermissionsModal__subtitle--voice-note": {
+    "messageformat": "वॉइस संदेश भेजने के लिए:"
+  },
+  "icu:MediaPermissionsModal__step-1": {
+    "messageformat": "नीचे किए गए “{buttonName}” पर क्लिक करें"
+  },
+  "icu:MediaPermissionsModal__step-2": {
+    "messageformat": "“Signal” चालू करें"
+  },
+  "icu:MediaPermissionsModal__open": {
+    "messageformat": "सेटिंग्स पर जाएँ"
   },
   "icu:MyStories__title": {
     "messageformat": "मेरी स्टोरीज़"
@@ -5610,6 +5988,15 @@
   "icu:MessageMetadata__edited": {
     "messageformat": "संपादित है"
   },
+  "icu:DraftGifMessageSendModal__Title": {
+    "messageformat": "एक मेसेज को शामिल करें"
+  },
+  "icu:DraftGifMessageSendModal__SendButtonLabel": {
+    "messageformat": "भेजें"
+  },
+  "icu:DraftGifMessageSendModal__CancelButtonLabel": {
+    "messageformat": "रद्द करें"
+  },
   "icu:EditHistoryMessagesModal__title": {
     "messageformat": "संपादित इतिहास"
   },
@@ -5829,6 +6216,30 @@
   "icu:WhoCanFindMeReadOnlyToast": {
     "messageformat": "इस सेटिंग्स को बदलने के लिए, \"मेरा नंबर कौन देख सकता है\" को \"कोई नहीं\" पर सेट करें।"
   },
+  "icu:ProfileNameWarningModal__description--direct": {
+    "messageformat": "Signal पर प्रोफ़ाइल नाम को उनके अकाउंट के मालिक चुनते हैं:"
+  },
+  "icu:ProfileNameWarningModal__list--item1--direct": {
+    "messageformat": "प्रोफ़ाइल नाम वेरिफ़ाइड नहीं हैं"
+  },
+  "icu:ProfileNameWarningModal__list--item2--direct": {
+    "messageformat": "दूसरों की पहचान चुराने वाले अकाउंट्स से सावधान रहें"
+  },
+  "icu:ProfileNameWarningModal__list--item3--direct": {
+    "messageformat": "आप जिन लोगों को नहीं जानते उनके साथ व्यक्तिगत जानकारी शेयन न करें"
+  },
+  "icu:ProfileNameWarningModal__description--group": {
+    "messageformat": "ग्रुप के नाम ग्रुप के सदस्य चुनते हैं।"
+  },
+  "icu:ProfileNameWarningModal__list--item1--group": {
+    "messageformat": "संगठनों और व्यवसायों की पहचान चुराने वाले ग्रुप्स से सावधान रहें"
+  },
+  "icu:ProfileNameWarningModal__list--item2--group": {
+    "messageformat": "ग्रुप्स में सदस्यों के प्रोफ़ाइल नाम वेरिफ़ाइड नहीं होते"
+  },
+  "icu:ProfileNameWarningModal__list--item3--group": {
+    "messageformat": "आप जिन लोगों को नहीं जानते उनके साथ व्यक्तिगत जानकारी शेयन न करें"
+  },
   "icu:WhatsNew__modal-title": {
     "messageformat": "नया क्या है"
   },
@@ -5860,10 +6271,22 @@
     "messageformat": "छोटे-छोटे ट्वीक, बग फ़िक्स, और प्रदर्शन में सुधार। Signal इस्तेमाल करने के लिए धन्यवाद।",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.44--0": {
-    "messageformat": "हमने ग्रुप कॉल्स के दौरान ऐनिमेशन से जुड़ी एक छोटी गड़बड़ी ठीक कर दी है। अगर आपके दिन का सबसे मज़ेदार हिस्सा एक मीटिंग के दौरान ग्रिड व्यू में स्विच करना और उस पल को कैद करने का था जहाँ देर से आने वाले लोगों के स्क्वायर ने उस डेक को छिपा दिया था जो आपके बॉस प्रज़ेंट कर रहे थे, तो हम एडवांस में आपसे माफ़ी चाहते हैं।"
+  "icu:WhatsNew__v7.47--0": {
+    "messageformat": "अब आप कॉल के दौरान अपने लोकल वीडियो के प्रीव्यू का आकार बढ़ा सकते हैं, ताकि आप खुद को बेहतर तरीके से देख सकें या समझ सकें कि आप कौन हैं।"
   },
-  "icu:WhatsNew__v7.45--0": {
-    "messageformat": "Stickers should feel sticky, not stuck, so now you can click on a sticker on a newly linked Signal Desktop and that sticker download will automatically get prioritized even when other attachments are downloading too."
+  "icu:WhatsNew__v7.48--0": {
+    "messageformat": "Signal ग्रुप के दौरान आप बोलना शुरू करने के बाद जल्दी हाथ नीचे कर सकें, इसके लिए हमने एक सुविधाजनक शॉर्टकट बनाया है। इस रिलीज़ में यह हमारा सबसे पसंदीदा फ़ीचर है।"
+  },
+  "icu:WhatsNew__v7.49--0": {
+    "messageformat": "अगर आप Signal Android पर नया डेस्कटॉप लिंक करते हैं और अपना संदेश इतिहास ट्रांसफ़र करना चुनते हैं, तो अब आप अपने प्राथमिक डिवाइस से भी चुनिंदा पुराने अटैचमेंट ट्रांसफ़र भी कर सकते हैं। समय में पीछे जाकर और डाउनलोड आइकन पर क्लिक करके अतीत को वर्तमान में लाएँ। हमेशा की तरह, ट्रांसफ़र की प्रोसेस एंड-टू-एंड एनक्रिप्टेड और सुरक्षित है।"
+  },
+  "icu:WhatsNew__v7.50--0": {
+    "messageformat": "अगर आप Signal Android पर नया डेस्कटॉप लिंक करते हैं और अपना संदेश इतिहास ट्रांसफ़र करना चुनते हैं, तो अब आप अपने प्राथमिक डिवाइस से भी चुनिंदा पुराने अटैचमेंट ट्रांसफ़र भी कर सकते हैं। समय में पीछे जाकर और डाउनलोड आइकन पर क्लिक करके अतीत को वर्तमान में लाएँ। हमेशा की तरह, ट्रांसफ़र की प्रोसेस एंड-टू-एंड एनक्रिप्टेड और सुरक्षित है।"
+  },
+  "icu:WhatsNew__v7.51--0": {
+    "messageformat": "Fire, the wheel, and electricity were all great developments, but they were merely necessary steps along the path that created the conditions for animated GIF search to exist. Now you can experience the pinnacle of human technological advancement in Signal Desktop with a brand-new selection interface that makes it easy to quickly find an emoji, sticker, or animated GIF that's perfect for the moment."
+  },
+  "icu:WhatsNew__v7.51--1": {
+    "messageformat": "We also resized the picture-in-picture window and added convenient new shortcuts to mute/unmute your microphone or turn the camera on/off while a call is minimized."
   }
 }

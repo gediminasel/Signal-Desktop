@@ -40,7 +40,7 @@ import { isWindowDragElement } from './util/isWindowDragElement';
 import { assertDev, strictAssert } from './util/assert';
 import { filter } from './util/iterables';
 import { isNotNil } from './util/isNotNil';
-import { isBackupEnabled } from './util/isBackupEnabled';
+import { isBackupFeatureEnabled } from './util/isBackupEnabled';
 import { setAppLoadingScreenMessage } from './setAppLoadingScreenMessage';
 import { IdleDetector } from './IdleDetector';
 import {
@@ -76,6 +76,7 @@ import { LatestQueue } from './util/LatestQueue';
 import { parseIntOrThrow } from './util/parseIntOrThrow';
 import { getProfile } from './util/getProfile';
 import type {
+  AttachmentBackfillResponseSyncEvent,
   ConfigurationEvent,
   DeliveryEvent,
   EnvelopeQueuedEvent,
@@ -208,6 +209,7 @@ import { handleDataMessage } from './messages/handleDataMessage';
 import { MessageModel } from './models/messages';
 import { waitForEvent } from './shims/events';
 import { sendSyncRequests } from './textsecure/syncRequests';
+import { handleServerAlerts } from './util/handleServerAlerts';
 
 export function isOverHourIntoPast(timestamp: number): boolean {
   return isNumber(timestamp) && isOlderThan(timestamp, HOUR);
@@ -511,6 +513,7 @@ export async function startApp(): Promise<void> {
     restoreRemoteConfigFromStorage();
 
     window.Whisper.events.on('firstEnvelope', checkFirstEnvelope);
+
     server = window.WebAPI.connect({
       ...window.textsecure.storage.user.getWebAPICredentials(),
       hasStoriesDisabled: window.storage.get('hasStoriesDisabled', false),
@@ -718,6 +721,10 @@ export async function startApp(): Promise<void> {
     messageReceiver.addEventListener(
       'deleteForMeSync',
       queuedEventListener(onDeleteForMeSync, false)
+    );
+    messageReceiver.addEventListener(
+      'attachmentBackfillResponseSync',
+      queuedEventListener(onAttachmentBackfillResponseSync, false)
     );
     messageReceiver.addEventListener(
       'deviceNameChangeSync',
@@ -1438,6 +1445,10 @@ export async function startApp(): Promise<void> {
       if (window.isBeforeVersion(lastVersion, 'v5.31.0')) {
         window.ConversationController.repairPinnedConversations();
       }
+
+      if (!window.storage.get('avatarsHaveBeenMigrated', false)) {
+        window.ConversationController.migrateAvatarsForNonAcceptedConversations();
+      }
     }
 
     void badgeImageFileDownloader.checkForFilesToDownload();
@@ -1726,9 +1737,9 @@ export async function startApp(): Promise<void> {
         log.info(`${logId}: postRegistrationSyncs not complete, sending sync`);
 
         setIsInitialContactSync(true);
-        const syncRequest = await sendSyncRequests();
+        contactSyncComplete = waitForEvent('contactSync:complete');
+        drop(sendSyncRequests());
         hasSentSyncRequests = true;
-        contactSyncComplete = syncRequest.contactSyncComplete;
       }
 
       // 4. Download (or resume download) of link & sync backup
@@ -1762,6 +1773,7 @@ export async function startApp(): Promise<void> {
         }
 
         try {
+          log.info(`${logId}: waiting for postRegistrationSyncs`);
           await Promise.all(syncsToAwaitBeforeShowingInbox);
           await window.storage.put('postRegistrationSyncsStatus', 'complete');
           log.info(`${logId}: postRegistrationSyncs complete`);
@@ -1915,6 +1927,7 @@ export async function startApp(): Promise<void> {
         deleteSync: true,
         versionedExpirationTimer: true,
         ssre2: true,
+        attachmentBackfill: true,
       });
     } catch (error) {
       log.error(
@@ -1927,13 +1940,17 @@ export async function startApp(): Promise<void> {
   function afterEveryAuthConnect() {
     log.info('afterAuthSocketConnect/afterEveryAuthConnect');
 
+    strictAssert(server, 'afterEveryAuthConnect: server');
+    drop(handleServerAlerts(server.getServerAlerts()));
+
     strictAssert(challengeHandler, 'afterEveryAuthConnect: challengeHandler');
     drop(challengeHandler.onOnline());
+
     reconnectBackOff.reset();
     drop(window.Signal.Services.initializeGroupCredentialFetcher());
     drop(AttachmentDownloadManager.start());
 
-    if (isBackupEnabled()) {
+    if (isBackupFeatureEnabled()) {
       backupsService.start();
       drop(AttachmentBackupManager.start());
     }
@@ -3682,6 +3699,13 @@ export async function startApp(): Promise<void> {
     await queueSyncTasks(syncTasks, DataWriter.removeSyncTaskById);
 
     log.info(`${logId}: Done`);
+  }
+  async function onAttachmentBackfillResponseSync(
+    ev: AttachmentBackfillResponseSyncEvent
+  ) {
+    const { confirm } = ev;
+    await AttachmentDownloadManager.handleBackfillResponse(ev);
+    confirm();
   }
 }
 

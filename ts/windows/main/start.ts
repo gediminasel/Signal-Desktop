@@ -6,6 +6,11 @@ import { contextBridge } from 'electron';
 
 import * as log from '../../logging/log';
 
+import '../context';
+
+// Connect websocket early
+import '../../textsecure/preconnect';
+
 import './phase0-devtools';
 import './phase1-ipc';
 import '../preload';
@@ -61,9 +66,16 @@ if (
     cdsLookup: (options: CdsLookupOptionsType) =>
       window.textsecure.server?.cdsLookup(options),
     getSelectedConversation: () => {
-      return window.ConversationController.get(
-        window.reduxStore.getState().conversations.selectedConversationId
-      )?.attributes;
+      const conversationId =
+        window.reduxStore.getState().conversations.selectedConversationId;
+      return window.ConversationController.get(conversationId)?.attributes;
+    },
+    archiveSessionsForCurrentConversation: async () => {
+      const conversationId =
+        window.reduxStore.getState().conversations.selectedConversationId;
+      await window.ConversationController.archiveSessionsForConversation(
+        conversationId
+      );
     },
     getConversation: (id: string) => window.ConversationController.get(id),
     getMessageById: (id: string) => window.MessageCache.getById(id)?.attributes,

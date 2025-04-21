@@ -10,7 +10,6 @@ import React, {
 } from 'react';
 import classNames from 'classnames';
 import { noop, orderBy } from 'lodash';
-
 import type { DraftBodyRanges } from '../types/BodyRange';
 import type { LocalizerType } from '../types/Util';
 import type { ConversationType } from '../state/ducks/conversations';
@@ -37,6 +36,11 @@ import { getAvatarColor } from '../types/Colors';
 import { shouldNeverBeCalled } from '../util/shouldNeverBeCalled';
 import { ContextMenu } from './ContextMenu';
 import { ConfirmationDialog } from './ConfirmationDialog';
+import type { EmojiSkinTone } from './fun/data/emojis';
+import { isFunPickerEnabled } from './fun/isFunPickerEnabled';
+import { FunEmojiPicker } from './fun/FunEmojiPicker';
+import { FunEmojiPickerButton } from './fun/FunButton';
+import type { FunEmojiSelection } from './fun/panels/FunPanelEmojis';
 
 // Menu is disabled so these actions are inaccessible. We also don't support
 // link previews, tap to view messages, attachments, or gifts. Just regular
@@ -75,6 +79,7 @@ const MESSAGE_DEFAULT_PROPS = {
   showLightbox: shouldNeverBeCalled,
   showLightboxForViewOnceMedia: shouldNeverBeCalled,
   showMediaNoLongerAvailableToast: shouldNeverBeCalled,
+  showTapToViewNotAvailableModal: shouldNeverBeCalled,
   startConversation: shouldNeverBeCalled,
   theme: ThemeType.dark,
   viewStory: shouldNeverBeCalled,
@@ -106,7 +111,7 @@ export type PropsType = {
     bodyRanges: DraftBodyRanges,
     timestamp: number
   ) => unknown;
-  onSetSkinTone: (tone: number) => unknown;
+  onEmojiSkinToneDefaultChange: (emojiSkinTone: EmojiSkinTone) => void;
   onTextTooLong: () => unknown;
   onUseEmoji: (_: EmojiPickDataType) => unknown;
   ourConversationId: string | undefined;
@@ -115,7 +120,7 @@ export type PropsType = {
   renderEmojiPicker: (props: RenderEmojiPickerProps) => JSX.Element;
   replies: ReadonlyArray<ReplyType>;
   showContactModal: (contactId: string, conversationId?: string) => void;
-  skinTone?: number;
+  emojiSkinToneDefault: EmojiSkinTone | null;
   sortedGroupMembers?: ReadonlyArray<ConversationType>;
   views: ReadonlyArray<StorySendStateType>;
   viewTarget: StoryViewTargetType;
@@ -138,7 +143,7 @@ export function StoryViewsNRepliesModal({
   onClose,
   onReact,
   onReply,
-  onSetSkinTone,
+  onEmojiSkinToneDefaultChange,
   onTextTooLong,
   onUseEmoji,
   ourConversationId,
@@ -147,7 +152,7 @@ export function StoryViewsNRepliesModal({
   renderEmojiPicker,
   replies,
   showContactModal,
-  skinTone,
+  emojiSkinToneDefault,
   sortedGroupMembers,
   viewTarget,
   views,
@@ -172,6 +177,7 @@ export function StoryViewsNRepliesModal({
   const shouldScrollToBottomRef = useRef(true);
   const bottomRef = useRef<HTMLDivElement>(null);
   const [messageBodyText, setMessageBodyText] = useState('');
+  const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
 
   const currentTab = useMemo<StoryViewsNRepliesTab>(() => {
     return viewTarget === StoryViewTargetType.Replies
@@ -191,6 +197,10 @@ export function StoryViewsNRepliesModal({
     );
   };
 
+  const handleEmojiPickerOpenChange = useCallback((open: boolean) => {
+    setEmojiPickerOpen(open);
+  }, []);
+
   const focusComposer = useCallback(() => {
     if (inputApiRef.current) {
       inputApiRef.current.focus();
@@ -205,6 +215,17 @@ export function StoryViewsNRepliesModal({
       }
     },
     [inputApiRef, onUseEmoji]
+  );
+
+  const handleSelectEmoji = useCallback(
+    (emojiSelection: FunEmojiSelection) => {
+      const data: EmojiPickDataType = {
+        shortName: emojiSelection.englishShortName,
+        skinTone: emojiSelection.skinTone,
+      };
+      insertEmoji(data);
+    },
+    [insertEmoji]
   );
 
   let composerElement: JSX.Element | undefined;
@@ -237,9 +258,10 @@ export function StoryViewsNRepliesModal({
             }
             onReact(emoji);
           }}
-          onSetSkinTone={onSetSkinTone}
+          onEmojiSkinToneDefaultChange={onEmojiSkinToneDefaultChange}
           preferredReactionEmoji={preferredReactionEmoji}
           renderEmojiPicker={renderEmojiPicker}
+          theme={ThemeType.dark}
         />
         <div className="StoryViewsNRepliesModal__compose-container">
           <div className="StoryViewsNRepliesModal__composer">
@@ -273,7 +295,7 @@ export function StoryViewsNRepliesModal({
               platform={platform}
               quotedMessageId={null}
               sendCounter={0}
-              skinTone={skinTone ?? null}
+              emojiSkinToneDefault={emojiSkinToneDefault}
               sortedGroupMembers={sortedGroupMembers ?? null}
               theme={ThemeType.dark}
               conversationId={null}
@@ -283,15 +305,28 @@ export function StoryViewsNRepliesModal({
               shouldHidePopovers={null}
               linkPreviewResult={null}
             >
-              <EmojiButton
-                className="StoryViewsNRepliesModal__emoji-button"
-                i18n={i18n}
-                onPickEmoji={insertEmoji}
-                onClose={focusComposer}
-                recentEmojis={recentEmojis}
-                skinTone={skinTone}
-                onSetSkinTone={onSetSkinTone}
-              />
+              {!isFunPickerEnabled() && (
+                <EmojiButton
+                  className="StoryViewsNRepliesModal__emoji-button"
+                  i18n={i18n}
+                  onPickEmoji={insertEmoji}
+                  onClose={focusComposer}
+                  recentEmojis={recentEmojis}
+                  emojiSkinToneDefault={emojiSkinToneDefault}
+                  onEmojiSkinToneDefaultChange={onEmojiSkinToneDefaultChange}
+                />
+              )}
+              {isFunPickerEnabled() && (
+                <FunEmojiPicker
+                  open={emojiPickerOpen}
+                  onOpenChange={handleEmojiPickerOpenChange}
+                  onSelectEmoji={handleSelectEmoji}
+                  placement="top"
+                  theme={ThemeType.dark}
+                >
+                  <FunEmojiPickerButton i18n={i18n} />
+                </FunEmojiPicker>
+              )}
             </CompositionInput>
           </div>
         </div>
@@ -380,13 +415,11 @@ export function StoryViewsNRepliesModal({
           >
             <div>
               <Avatar
-                acceptedMessageRequest={view.recipient.acceptedMessageRequest}
                 avatarUrl={view.recipient.avatarUrl}
                 badge={undefined}
                 color={getAvatarColor(view.recipient.color)}
                 conversationType="direct"
                 i18n={i18n}
-                isMe={Boolean(view.recipient.isMe)}
                 profileName={view.recipient.profileName}
                 sharedGroupNames={view.recipient.sharedGroupNames || []}
                 size={AvatarSize.TWENTY_EIGHT}
@@ -461,7 +494,6 @@ export function StoryViewsNRepliesModal({
         })}
         onClose={onClose}
         padded={false}
-        useFocusTrap={Boolean(composerElement)}
         theme={Theme.Dark}
       >
         <div className="StoryViewsNRepliesModal__content">
@@ -562,13 +594,11 @@ function ReplyOrReactionMessage({
         >
           <div className="StoryViewsNRepliesModal__reaction--container">
             <Avatar
-              acceptedMessageRequest={reply.author.acceptedMessageRequest}
               avatarUrl={reply.author.avatarUrl}
               badge={getPreferredBadge(reply.author.badges)}
               color={getAvatarColor(reply.author.color)}
               conversationType="direct"
               i18n={i18n}
-              isMe={Boolean(reply.author.isMe)}
               profileName={reply.author.profileName}
               sharedGroupNames={reply.author.sharedGroupNames || []}
               size={AvatarSize.TWENTY_EIGHT}

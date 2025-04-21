@@ -21,7 +21,7 @@ import { getAuthorId } from './messages/helpers';
 import { maybeDeriveGroupV2Id } from './groups';
 import { assertDev, strictAssert } from './util/assert';
 import { drop } from './util/drop';
-import { isGroupV1, isGroupV2 } from './util/whatTypeOfConversation';
+import { isGroup, isGroupV1, isGroupV2 } from './util/whatTypeOfConversation';
 import type { ServiceIdString, AciString, PniString } from './types/ServiceId';
 import {
   isServiceIdString,
@@ -39,6 +39,9 @@ import * as StorageService from './services/storage';
 import type { ConversationPropsForUnreadStats } from './util/countUnreadStats';
 import { countAllConversationsUnreadStats } from './util/countUnreadStats';
 import { isTestOrMockEnvironment } from './environment';
+import { isConversationAccepted } from './util/isConversationAccepted';
+import { areWePending } from './util/groupMembershipUtils';
+import { conversationJobQueue } from './jobs/conversationJobQueue';
 
 type ConvoMatchType =
   | {
@@ -1371,6 +1374,52 @@ export class ConversationController {
     this.get(conversationId)?.onOpenComplete(loadStart);
   }
 
+  migrateAvatarsForNonAcceptedConversations(): void {
+    if (window.storage.get('avatarsHaveBeenMigrated')) {
+      return;
+    }
+    const conversations = this.getAll();
+    let numberOfConversationsMigrated = 0;
+    for (const conversation of conversations) {
+      const attrs = conversation.attributes;
+      if (
+        !isConversationAccepted(attrs) ||
+        (isGroup(attrs) && areWePending(attrs))
+      ) {
+        const avatarPath = attrs.avatar?.path;
+        const profileAvatarPath = attrs.profileAvatar?.path;
+
+        if (avatarPath || profileAvatarPath) {
+          drop(
+            (async () => {
+              const { doesAttachmentExist, deleteAttachmentData } =
+                window.Signal.Migrations;
+              if (avatarPath && (await doesAttachmentExist(avatarPath))) {
+                await deleteAttachmentData(avatarPath);
+              }
+
+              if (
+                profileAvatarPath &&
+                (await doesAttachmentExist(profileAvatarPath))
+              ) {
+                await deleteAttachmentData(profileAvatarPath);
+              }
+            })()
+          );
+        }
+
+        conversation.set('avatar', undefined);
+        conversation.set('profileAvatar', undefined);
+        drop(updateConversation(conversation.attributes));
+        numberOfConversationsMigrated += 1;
+      }
+    }
+    log.info(
+      `ConversationController: unset avatars for ${numberOfConversationsMigrated} unaccepted conversations`
+    );
+    drop(window.storage.put('avatarsHaveBeenMigrated', true));
+  }
+
   repairPinnedConversations(): void {
     const pinnedIds = window.storage.get('pinnedConversationIds', []);
 
@@ -1531,5 +1580,46 @@ export class ConversationController {
       );
       throw error;
     }
+  }
+  async archiveSessionsForConversation(
+    conversationId: string | undefined
+  ): Promise<void> {
+    const conversation = window.ConversationController.get(conversationId);
+    if (!conversation) {
+      return;
+    }
+
+    const logId = `archiveSessionsForConversation/${conversation.idForLogging()}`;
+
+    log.info(`${logId}: Starting. First archiving sessions...`);
+    const recipients = conversation.getRecipients();
+    const queue = new PQueue({ concurrency: 1 });
+    recipients.forEach(serviceId => {
+      drop(
+        queue.add(async () => {
+          await window.textsecure.storage.protocol.archiveAllSessions(
+            serviceId
+          );
+        })
+      );
+    });
+    await queue.onEmpty();
+
+    if (conversation.get('senderKeyInfo')) {
+      log.info(`${logId}: Next, clearing senderKeyInfo...`);
+      conversation.set({ senderKeyInfo: undefined });
+      await DataWriter.updateConversation(conversation.attributes);
+    }
+
+    log.info(`${logId}: Now queuing null message send...`);
+    const job = await conversationJobQueue.add({
+      type: 'NullMessage',
+      conversationId: conversation.id,
+    });
+
+    log.info(`${logId}: Send queued; waiting for send completion...`);
+    await job.completion;
+
+    log.info(`${logId}: Complete!`);
   }
 }
