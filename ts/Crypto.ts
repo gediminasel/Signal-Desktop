@@ -4,7 +4,8 @@
 import { Buffer } from 'buffer';
 import Long from 'long';
 import { sample } from 'lodash';
-import { Aci, Pni, HKDF } from '@signalapp/libsignal-client';
+import { Aci, Pni, hkdf } from '@signalapp/libsignal-client';
+import type { PublicKey, PrivateKey } from '@signalapp/libsignal-client';
 import { AccountEntropyPool } from '@signalapp/libsignal-client/dist/AccountKeys';
 
 import * as Bytes from './Bytes';
@@ -57,14 +58,17 @@ export function deriveSecrets(
   salt: Uint8Array,
   info: Uint8Array
 ): [Uint8Array, Uint8Array, Uint8Array] {
-  const hkdf = HKDF.new(3);
-  const output = hkdf.deriveSecrets(
+  const output = hkdf(
     3 * 32,
     Buffer.from(input),
     Buffer.from(info),
     Buffer.from(salt)
   );
-  return [output.slice(0, 32), output.slice(32, 64), output.slice(64, 96)];
+  return [
+    output.subarray(0, 32),
+    output.subarray(32, 64),
+    output.subarray(64, 96),
+  ];
 }
 
 export function deriveMasterKeyFromGroupV1(groupV1Id: Uint8Array): Uint8Array {
@@ -103,20 +107,20 @@ export function computeHash(data: Uint8Array): string {
 // High-level Operations
 
 export type EncryptedDeviceName = {
-  ephemeralPublic: Uint8Array;
+  ephemeralPublic: PublicKey;
   syntheticIv: Uint8Array;
   ciphertext: Uint8Array;
 };
 
 export function encryptDeviceName(
   deviceName: string,
-  identityPublic: Uint8Array
+  identityPublic: PublicKey
 ): EncryptedDeviceName {
   const plaintext = Bytes.fromString(deviceName);
   const ephemeralKeyPair = generateKeyPair();
   const masterSecret = calculateAgreement(
     identityPublic,
-    ephemeralKeyPair.privKey
+    ephemeralKeyPair.privateKey
   );
 
   const key1 = hmacSha256(masterSecret, Bytes.fromString('auth'));
@@ -129,7 +133,7 @@ export function encryptDeviceName(
   const ciphertext = encryptAesCtr(cipherKey, plaintext, counter);
 
   return {
-    ephemeralPublic: ephemeralKeyPair.pubKey,
+    ephemeralPublic: ephemeralKeyPair.publicKey,
     syntheticIv,
     ciphertext,
   };
@@ -137,7 +141,7 @@ export function encryptDeviceName(
 
 export function decryptDeviceName(
   { ephemeralPublic, syntheticIv, ciphertext }: EncryptedDeviceName,
-  identityPrivate: Uint8Array
+  identityPrivate: PrivateKey
 ): string {
   const masterSecret = calculateAgreement(ephemeralPublic, identityPrivate);
 
@@ -192,8 +196,7 @@ export function deriveStorageItemKey({
     return hmacSha256(storageServiceKey, Bytes.fromString(`Item_${itemID}`));
   }
 
-  const hkdf = HKDF.new(3);
-  return hkdf.deriveSecrets(
+  return hkdf(
     STORAGE_SERVICE_ITEM_KEY_LEN,
     Buffer.from(recordIkm),
     Buffer.concat([

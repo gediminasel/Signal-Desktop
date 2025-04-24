@@ -87,7 +87,7 @@ export function CustomizingPreferredReactionsModal({
       target => {
         if (
           target instanceof Element &&
-          target.closest('.FunPopover') != null
+          target.closest('[data-fun-overlay]') != null
         ) {
           return true;
         }
@@ -262,6 +262,7 @@ function CustomizingPreferredReactionsModalItem(props: {
         onOpenChange={handleEmojiPickerOpenChange}
         placement="bottom"
         onSelectEmoji={props.onSelectEmoji}
+        closeOnSelect
       >
         {button}
       </FunEmojiPicker>

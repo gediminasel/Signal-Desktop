@@ -37,14 +37,14 @@ export function FunSkinTonesList(props: FunSkinTonesListProps): JSX.Element {
       aria-label={i18n('icu:FunSkinTones__List')}
       className="FunSkinTones__ListBox"
       orientation="horizontal"
-      selectedKeys={props.skinTone != null ? [props.skinTone] : []}
+      selectedKeys={props.skinTone != null ? [props.skinTone] : undefined}
       selectionMode="single"
-      disallowEmptySelection
+      disallowEmptySelection={false}
       onSelectionChange={handleSelectionChange}
     >
       <FunSkinTonesListItem
         emoji={props.emoji}
-        aria-label={i18n('icu:FunSkinTones__ListItem--Light')}
+        aria-label={i18n('icu:FunSkinTones__ListItem--None')}
         skinTone={EmojiSkinTone.None}
       />
       <FunSkinTonesListItem

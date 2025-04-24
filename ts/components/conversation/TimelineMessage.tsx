@@ -196,7 +196,7 @@ export function TimelineMessage(props: Props): JSX.Element {
         target => {
           if (
             target instanceof Element &&
-            target.closest('.FunPopover') != null
+            target.closest('[data-fun-overlay]') != null
           ) {
             return true;
           }

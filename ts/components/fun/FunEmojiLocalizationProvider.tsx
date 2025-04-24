@@ -38,7 +38,10 @@ export const FunEmojiLocalizationContext =
 
 export function useFunEmojiLocalization(): FunEmojiLocalizationContextType {
   const fun = useContext(FunEmojiLocalizationContext);
-  strictAssert(fun != null, 'Must be wrapped with <FunProvider>');
+  strictAssert(
+    fun != null,
+    'Must be wrapped with <FunEmojiLocalizationProvider>'
+  );
   return fun;
 }
 
@@ -66,6 +69,26 @@ export const FunEmojiLocalizationProvider = memo(
     );
   }
 );
+
+export type FunEmptyEmojiLocalizationProviderProps = Readonly<{
+  children: ReactNode;
+}>;
+
+export function FunDefaultEnglishEmojiLocalizationProvider(
+  props: FunEmptyEmojiLocalizationProviderProps
+): JSX.Element {
+  const context = useMemo(() => {
+    return {
+      emojiSearchIndex: getEmojiDefaultEnglishSearchIndex(),
+      emojiLocalizerIndex: getEmojiDefaultEnglishLocalizerIndex(),
+    };
+  }, []);
+  return (
+    <FunEmojiLocalizationContext.Provider value={context}>
+      {props.children}
+    </FunEmojiLocalizationContext.Provider>
+  );
+}
 
 function useLocaleEmojiList(i18n: LocalizerType): LocaleEmojiListType | null {
   const locale = useMemo(() => i18n.getLocale(), [i18n]);

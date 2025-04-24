@@ -27,6 +27,7 @@ import { type CustomColorType } from '../../types/Colors';
 import { StorySendMode, MY_STORY_ID } from '../../types/Stories';
 import { getStickerPacksForBackup } from '../../types/Stickers';
 import {
+  isServiceIdString,
   isPniString,
   type AciString,
   type ServiceIdString,
@@ -38,7 +39,6 @@ import type {
   ConversationAttributesType,
   MessageAttributesType,
   QuotedAttachmentType,
-  QuotedMessageType,
 } from '../../model-types.d';
 import { drop } from '../../util/drop';
 import { isNotNil } from '../../util/isNotNil';
@@ -204,6 +204,18 @@ type NonBubbleResultType = Readonly<
     }
 >;
 
+export type StatsType = {
+  adHocCalls: number;
+  callLinks: number;
+  conversations: number;
+  chats: number;
+  distributionLists: number;
+  messages: number;
+  skippedMessages: number;
+  stickerPacks: number;
+  fixedDirectMessages: number;
+};
+
 export class BackupExportStream extends Readable {
   // Shared between all methods for consistency.
   #now = Date.now();
@@ -213,7 +225,7 @@ export class BackupExportStream extends Readable {
   readonly #serviceIdToRecipientId = new Map<string, number>();
   readonly #e164ToRecipientId = new Map<string, number>();
   readonly #roomIdToRecipientId = new Map<string, number>();
-  readonly #stats = {
+  readonly #stats: StatsType = {
     adHocCalls: 0,
     callLinks: 0,
     conversations: 0,
@@ -268,6 +280,10 @@ export class BackupExportStream extends Readable {
         }
       })()
     );
+  }
+
+  public getStats(): Readonly<StatsType> {
+    return this.#stats;
   }
 
   async #unsafeRun(backupLevel: BackupLevel): Promise<void> {
@@ -849,10 +865,10 @@ export class BackupExportStream extends Readable {
 
       res.contact = {
         aci:
-          convo.serviceId && convo.serviceId !== convo.pni
+          isServiceIdString(convo.serviceId) && convo.serviceId !== convo.pni
             ? Aci.parseFromServiceIdString(convo.serviceId).getRawUuidBytes()
             : null,
-        pni: convo.pni
+        pni: isServiceIdString(convo.pni)
           ? Pni.parseFromServiceIdString(convo.pni).getRawUuidBytes()
           : null,
         username: convo.username,
@@ -2179,14 +2195,13 @@ export class BackupExportStream extends Readable {
   }
 
   async #toQuote({
-    quote,
+    message,
     backupLevel,
-    messageReceivedAt,
   }: {
-    quote?: QuotedMessageType;
+    message: Pick<MessageAttributesType, 'quote' | 'received_at' | 'body'>;
     backupLevel: BackupLevel;
-    messageReceivedAt: number;
   }): Promise<Backups.IQuote | null> {
+    const { quote } = message;
     if (!quote) {
       return null;
     }
@@ -2243,7 +2258,7 @@ export class BackupExportStream extends Readable {
                 ? await this.#processMessageAttachment({
                     attachment: attachment.thumbnail,
                     backupLevel,
-                    messageReceivedAt,
+                    message,
                   })
                 : undefined,
             };
@@ -2271,11 +2286,17 @@ export class BackupExportStream extends Readable {
   }
 
   #getMessageAttachmentFlag(
+    message: Pick<MessageAttributesType, 'body'>,
     attachment: AttachmentType
   ): Backups.MessageAttachment.Flag {
     const flag = SignalService.AttachmentPointer.Flags.VOICE_MESSAGE;
     // eslint-disable-next-line no-bitwise
     if (((attachment.flags || 0) & flag) === flag) {
+      // Legacy data support for iOS
+      if (message.body) {
+        return Backups.MessageAttachment.Flag.NONE;
+      }
+
       return Backups.MessageAttachment.Flag.VOICE_MESSAGE;
     }
     if (isGIF([attachment])) {
@@ -2295,22 +2316,22 @@ export class BackupExportStream extends Readable {
   async #processMessageAttachment({
     attachment,
     backupLevel,
-    messageReceivedAt,
+    message,
   }: {
     attachment: AttachmentType;
     backupLevel: BackupLevel;
-    messageReceivedAt: number;
+    message: Pick<MessageAttributesType, 'quote' | 'received_at' | 'body'>;
   }): Promise<Backups.MessageAttachment> {
     const { clientUuid } = attachment;
     const filePointer = await this.#processAttachment({
       attachment,
       backupLevel,
-      messageReceivedAt,
+      messageReceivedAt: message.received_at,
     });
 
     return new Backups.MessageAttachment({
       pointer: filePointer,
-      flag: this.#getMessageAttachmentFlag(attachment),
+      flag: this.#getMessageAttachmentFlag(message, attachment),
       wasDownloaded: isDownloaded(attachment),
       clientUuid: clientUuid ? uuidToBytes(clientUuid) : undefined,
     });
@@ -2534,9 +2555,8 @@ export class BackupExportStream extends Readable {
   }): Promise<Backups.IStandardMessage> {
     return {
       quote: await this.#toQuote({
-        quote: message.quote,
+        message,
         backupLevel,
-        messageReceivedAt: message.received_at,
       }),
       attachments: message.attachments?.length
         ? await Promise.all(
@@ -2544,7 +2564,7 @@ export class BackupExportStream extends Readable {
               return this.#processMessageAttachment({
                 attachment,
                 backupLevel,
-                messageReceivedAt: message.received_at,
+                message,
               });
             })
           )
@@ -2651,7 +2671,7 @@ export class BackupExportStream extends Readable {
           : await this.#processMessageAttachment({
               attachment,
               backupLevel,
-              messageReceivedAt: message.received_at,
+              message,
             }),
       reactions: this.#getMessageReactions(message),
     };

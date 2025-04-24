@@ -107,6 +107,10 @@
     "messageformat": "Unknown contact",
     "description": "Shown as the name of a contact if we don't have any displayable information about them"
   },
+  "icu:unknownContactShort": {
+    "messageformat": "Unknown",
+    "description": "Shown as the shortened name of a contact if we don't have any displayable information about them"
+  },
   "icu:unknownGroup": {
     "messageformat": "Unknown group",
     "description": "Shown as the name of a group if we don't have any information about it"
@@ -3084,9 +3088,17 @@
     "messageformat": "No emoji found",
     "description": "FunPicker > Emojis Panel > Search Results > No Results Found (emoji plural)"
   },
+  "icu:FunPanelEmojis__SkinTonePicker__SelectSkinToneForSelectedEmoji": {
+    "messageformat": "Select skin tone for {emojiName}",
+    "description": "FunPicker > Emojis Panel > Skin Tone Picker > Select skin tone for the selected emoji"
+  },
   "icu:FunPanelEmojis__ChangeSkinToneButtonLabel": {
     "messageformat": "Change Skin Tone Preference",
     "description": "FunPicker > Emojis Panel > Change Skin Tone Button Label"
+  },
+  "icu:FunPanelEmojis__SkinTonePicker__LongPressAccessibilityDescription": {
+    "messageformat": "Long press to select skin tone",
+    "description": "FunPicker > Emojis Panel > Skin Tone Picker > Long press accessibility description"
   },
   "icu:FunPanelEmojis__SkinTonePicker__ChooseDefaultLabel": {
     "messageformat": "Choose your default skintone",
@@ -3250,7 +3262,7 @@
   },
   "icu:FunSkinTones__ListItem--None": {
     "messageformat": "None",
-    "description": "(Deleted 2025/03/27) FunPicker > Emojis Panel > Skin Tone Picker > Skin Tone Option: None > Accessibility label"
+    "description": "FunPicker > Emojis Panel > Skin Tone Picker > Skin Tone Option: None > Accessibility label"
   },
   "icu:FunSkinTones__ListItem--Light": {
     "messageformat": "Light skin tone",
@@ -3907,6 +3919,46 @@
   "icu:ConversationHero--members": {
     "messageformat": "{count, plural, one {# member} other {# members}}",
     "description": "Specifies the number of members in a group conversation"
+  },
+  "icu:ConversationHero--member-list-and-invited": {
+    "messageformat": "{memberList} (+{invitesCount, plural, one {# invited} other {# invited}})",
+    "description": "Text for a group with members and additional invited members"
+  },
+  "icu:ConversationHero--group-members-zero": {
+    "messageformat": "No group members",
+    "description": "Text for an empty group"
+  },
+  "icu:ConversationHero--group-members-only-you": {
+    "messageformat": "No other group members yet",
+    "description": "Text for group when you are the only member"
+  },
+  "icu:ConversationHero--group-members-one": {
+    "messageformat": "{member}",
+    "description": "Text for a group with one member (not you)"
+  },
+  "icu:ConversationHero--group-members-one-and-you": {
+    "messageformat": "{member} and you",
+    "description": "Text for a 2 member group where you are one of the members"
+  },
+  "icu:ConversationHero--group-members-two": {
+    "messageformat": "{member1} and {member2}",
+    "description": "Text for a 2 member group you are not in"
+  },
+  "icu:ConversationHero--group-members-two-and-you": {
+    "messageformat": "{member1}, {member2}, and you",
+    "description": "Text for a 3 member group where you are one of the members"
+  },
+  "icu:ConversationHero--group-members-three": {
+    "messageformat": "{member1}, {member2}, and {member3}",
+    "description": "Text for a 3 member group you are not in"
+  },
+  "icu:ConversationHero--group-members-other": {
+    "messageformat": "{member1}, {member2}, {member3}, and <clickable>{remainingCount, plural, one {# other} other {# others}}</clickable>",
+    "description": "Text for a group with more than 3 members that you are not in"
+  },
+  "icu:ConversationHero--group-members-other-and-you": {
+    "messageformat": "{member1}, {member2}, {member3}, and <clickable>{remainingCount, plural, one {# other} other {# others}}</clickable>",
+    "description": "Text for a group with more than 4 members where you are one of the members"
   },
   "icu:ConversationHero--review-carefully": {
     "messageformat": "Review carefully",
@@ -5284,6 +5336,14 @@
     "messageformat": "Media will continue to download in the background",
     "description": "Description text when attachment download is idle, and will continue in the background"
   },
+  "icu:BackupMediaDownloadProgress__title-offline": {
+    "messageformat": "Restoring media paused",
+    "description": "Label indicating media (attachment) download progress when the computer is offline"
+  },
+  "icu:BackupMediaDownloadProgress__description-offline": {
+    "messageformat": "Waiting for Internet connection...",
+    "description": "Description text when attachment download in progress but offline"
+  },
   "icu:BackupMediaDownloadProgress__button-pause": {
     "messageformat": "Pause transfer",
     "description": "Text for button to pause media (attachment) download after backup impor"
@@ -5331,6 +5391,14 @@
   "icu:CriticalIdlePrimaryDeviceModal__description": {
     "messageformat": "You must open Signal on your phone to continue using this account. If you do not open Signal on your phone, your account will be deleted soon. <learnMoreLink>Learn more</learnMoreLink>",
     "description": "Description for modal shown when a user must use their idle primary device to retain their account. Learn more link will link to a support page"
+  },
+  "icu:LowDiskSpaceBackupImportModal__title": {
+    "messageformat": "Can't restore media",
+    "description": "Title for modal shown when there is insufficient disk space to download media from backup"
+  },
+  "icu:LowDiskSpaceBackupImportModal__description": {
+    "messageformat": "Your device does not have enough free space. Free up {diskSpaceAmount} of space to restore your media.",
+    "description": "Description for modal shown when there is insufficient disk space to download media from backup. Example {diskSpaceAmount}: '1.23 GB', '512 MB'"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Expand",
@@ -6583,6 +6651,18 @@
   "icu:Preferences__button--backups": {
     "messageformat": "Backups",
     "description": "Button to switch the settings view to control message & media backups"
+  },
+  "icu:Preferences__button--internal": {
+    "messageformat": "Internal",
+    "description": "Button to switch the settings view to control internal configuration"
+  },
+  "icu:Preferences__internal__validate-backup--description": {
+    "messageformat": "Export encrypted backup to memory and run validation suite on it",
+    "description": "Description of the internal backup validation tool"
+  },
+  "icu:Preferences__internal__validate-backup": {
+    "messageformat": "Validate",
+    "description": "Button to run internal backup validation tool"
   },
   "icu:Preferences--lastSynced": {
     "messageformat": "Last import at {date} {time}",
@@ -8337,28 +8417,12 @@
     "description": "Release notes for releases that only include bug fixes",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.47--0": {
-    "messageformat": "Now you can expand your local video preview during a call to get a better look at yourself or reflect on who you are.",
-    "description": "(Deleted 2025/03/19) Release notes for version 7.47"
-  },
-  "icu:WhatsNew__v7.48--0": {
-    "messageformat": "We added a convenient shortcut to quickly lower your hand after you start speaking during a Signal group call. It's hands down our favorite feature in this release.",
-    "description": "(Deleted 2025/03/27) Release notes for version 7.48"
-  },
-  "icu:WhatsNew__v7.49--0": {
-    "messageformat": "If you link a new Desktop on Signal Android and choose to transfer your message history, now you can also selectively transfer old attachments from your primary device too. Bring the past into the present by scrolling back in time and clicking on the download icon. As always, the transfer process is end-to-end encrypted and secure.",
-    "description": "(Deleted 2025/04/02) Release notes for version 7.49"
-  },
-  "icu:WhatsNew__v7.50--0": {
-    "messageformat": "If you link a new Desktop on Signal Android and choose to transfer your message history, now you can also selectively transfer old attachments from your primary device too. Bring the past into the present by scrolling back in time and clicking on the download icon. As always, the transfer process is end-to-end encrypted and secure.",
-    "description": "(Deleted 2025/04/09) Release notes for version 7.49"
-  },
   "icu:WhatsNew__v7.51--0": {
     "messageformat": "Fire, the wheel, and electricity were all great developments, but they were merely necessary steps along the path that created the conditions for animated GIF search to exist. Now you can experience the pinnacle of human technological advancement in Signal Desktop with a brand-new selection interface that makes it easy to quickly find an emoji, sticker, or animated GIF that's perfect for the moment.",
-    "description": "Release notes for version 7.51"
+    "description": "(Deleted 2025/04/17) Release notes for version 7.51"
   },
   "icu:WhatsNew__v7.51--1": {
     "messageformat": "We also resized the picture-in-picture window and added convenient new shortcuts to mute/unmute your microphone or turn the camera on/off while a call is minimized.",
-    "description": "Release notes for version 7.51"
+    "description": "(Deleted 2025/04/17) Release notes for version 7.51"
   }
 }
