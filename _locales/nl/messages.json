@@ -83,9 +83,6 @@
   "icu:databaseError": {
     "messageformat": "Databasefout"
   },
-  "icu:databaseError__detail": {
-    "messageformat": "Er is een databasefout opgetreden. Je kunt de foutmelding kopiëren en contact opnemen met Signal Support om het probleem op te lossen. Heb je Signal direct nodig? Dan kun je je gegevens wissen en Signal opnieuw opstarten.\n\nGa naar {link} voor contact met support"
-  },
   "icu:deleteAndRestart": {
     "messageformat": "Gegevens wissen en opnieuw opstarten"
   },
@@ -1673,9 +1670,6 @@
   "icu:notificationSenderInGroup": {
     "messageformat": "{sender} in {group}"
   },
-  "icu:notificationReaction": {
-    "messageformat": "{sender} reageerde met {emoji} op je bericht"
-  },
   "icu:notificationReactionMessage": {
     "messageformat": "{sender} reageerde met {emoji} op: {message}"
   },
@@ -1831,12 +1825,6 @@
   },
   "icu:ConversationDetails--support-center": {
     "messageformat": "Ondersteuningscentrum"
-  },
-  "icu:ConversationDetails--contact-us": {
-    "messageformat": "Neem contact met ons op"
-  },
-  "icu:ConversationDetails--donate": {
-    "messageformat": "Aan Signal doneren"
   },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "Veiligheidsnummer weergeven"
@@ -2600,6 +2588,9 @@
   "icu:Keyboard--open-sticker-chooser": {
     "messageformat": "Sticker-keuzemenu openen"
   },
+  "icu:Keyboard--open-gif-chooser": {
+    "messageformat": "GIF-keuzemenu openen"
+  },
   "icu:Keyboard--begin-recording-voice-note": {
     "messageformat": "Opname spraakbericht beginnen"
   },
@@ -3146,6 +3137,18 @@
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "Microfoon aan"
   },
+  "icu:CallControls__MutedBySomeoneToast": {
+    "messageformat": "{otherName} muted you."
+  },
+  "icu:CallControls__SomeoneMutedSomeoneToast": {
+    "messageformat": "{name} muted {otherName}."
+  },
+  "icu:CallControls__YouMutedSomeoneToast": {
+    "messageformat": "You muted {otherName}."
+  },
+  "icu:CallControls__YouMutedYourselfToast": {
+    "messageformat": "You muted yourself from another device."
+  },
   "icu:CallControls__LowerHandSuggestionToast": {
     "messageformat": "Hand omlaag doen?"
   },
@@ -3238,9 +3241,6 @@
   },
   "icu:calling__view_mode--updated": {
     "messageformat": "Weergave bijgewerkt"
-  },
-  "icu:calling__hangup": {
-    "messageformat": "Oproep verlaten"
   },
   "icu:calling__SelectPresentingSourcesModal--title": {
     "messageformat": "Je scherm delen"
@@ -4059,10 +4059,10 @@
     "messageformat": "Open Signal op je telefoon om dit account te kunnen blijven gebruiken. Als je Signal niet opent op je telefoon wordt je account binnenkort verwijderd. <learnMoreLink>Meer informatie</learnMoreLink>"
   },
   "icu:LowDiskSpaceBackupImportModal__title": {
-    "messageformat": "Can't restore media"
+    "messageformat": "Kan media niet herstellen"
   },
   "icu:LowDiskSpaceBackupImportModal__description": {
-    "messageformat": "Your device does not have enough free space. Free up {diskSpaceAmount} of space to restore your media."
+    "messageformat": "Je apparaat heeft niet genoeg vrije ruimte. Maak {diskSpaceAmount} ruimte vrij om je media te herstellen."
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Vergroten"
@@ -4084,9 +4084,6 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "Bewerkt bericht versturen"
-  },
-  "icu:CompositionArea__FunButtonLabel": {
-    "messageformat": "Een emoji, sticker of GIF toevoegen"
   },
   "icu:CompositionArea__ConfirmGifSelection__Title": {
     "messageformat": "Bijlage vervangen?"
@@ -4522,12 +4519,6 @@
   },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "Veiligheidstips"
-  },
-  "icu:MessageRequestWarning__dialog__details": {
-    "messageformat": "Je hebt geen gemeenschappelijke groep met deze persoon. Overweeg zorgvuldig of je dit gespreksverzoek wilt accepteren om ongewenste berichten te vermijden."
-  },
-  "icu:MessageRequestWarning__dialog__learn-even-more": {
-    "messageformat": "Over gespreksverzoeken"
   },
   "icu:ContactSpoofing__same-name--link": {
     "messageformat": "Beoordeel verzoeken zorgvuldig. Signal heeft een ander contact gevonden met dezelfde naam. <reviewRequestLink>Personen vergelijken</reviewRequestLink>"
@@ -5006,6 +4997,21 @@
   "icu:Preferences__button--internal": {
     "messageformat": "Intern"
   },
+  "icu:Preferences__internal__local-backups": {
+    "messageformat": "Lokale back-ups"
+  },
+  "icu:Preferences__internal__export-local-backup": {
+    "messageformat": "Exporteren…"
+  },
+  "icu:Preferences__internal__export-local-backup--description": {
+    "messageformat": "Versleutelde lokale back-up exporteren naar een map en valideren"
+  },
+  "icu:Preferences__internal__import-local-backup": {
+    "messageformat": "Importeren…"
+  },
+  "icu:Preferences__internal__import-local-backup--description": {
+    "messageformat": "Versleutelde lokale back-up maken voor het importeren via een link"
+  },
   "icu:Preferences__internal__validate-backup--description": {
     "messageformat": "Versleutelde back-up exporteren naar geheugen en de validatiesuite erop uitvoeren"
   },
@@ -5071,9 +5077,6 @@
   },
   "icu:Preferences--backup-messages-plan__note": {
     "messageformat": "Signal back-ups kun je beheren of upgraden op je telefoon."
-  },
-  "icu:Preferences--backup-plan__not-found": {
-    "messageformat": "Je abonnement is niet gevonden. Vernieuw je Signal back-upabonnement om Signal back-ups te blijven gebruiken."
   },
   "icu:Preferences--backup-plan__not-found__note": {
     "messageformat": "Je Signal back-upabonnement kun je beheren of verlengen op je telefoon."
@@ -5203,6 +5206,24 @@
   },
   "icu:Preferences__LanguageModal__Restart__Button": {
     "messageformat": "Opnieuw opstarten"
+  },
+  "icu:Preferences__Privacy__Application": {
+    "messageformat": "Applicatie"
+  },
+  "icu:Preferences__content-protection--label": {
+    "messageformat": "Schermbeveiliging"
+  },
+  "icu:Preferences__content-protection--description": {
+    "messageformat": "Voorkom schermafbeeldingen van Signal op deze computer voor extra privacy."
+  },
+  "icu:Preferences__content-protection__modal--title": {
+    "messageformat": "Schermbeveiliging uitschakelen?"
+  },
+  "icu:Preferences__content-protection__modal--body": {
+    "messageformat": "Als schermbeveiliging is uitgeschakeld, kan Microsoft Windows mogelijk schermafbeeldingen van Signal maken en deze gebruiken voor functies die mogelijk niet privé zijn."
+  },
+  "icu:Preferences__content-protection__modal--disable": {
+    "messageformat": "Uitschakelen"
   },
   "icu:DialogUpdate--version-available": {
     "messageformat": "Nieuwe versie {version} is beschikbaar"
@@ -6331,10 +6352,16 @@
     "messageformat": "Kleine aanpassingen, bugfixes en prestatieverbeteringen. Bedankt dat je Signal gebruikt!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.51--0": {
-    "messageformat": "Je kunt nu ook in Signal Desktop geanimeerde GIF's zoeken. Met een gloednieuwe selectie-interface vind je snel een emoji, sticker of geanimeerde GIF die perfect past bij het moment."
+  "icu:WhatsNew__v7.54--0": {
+    "messageformat": "Een glimlach is in elke taal hetzelfde, maar nu de emoji-snelkoppelingen in Signal Desktop volledig zijn vertaald, kun je ook <code>:glimlachen:</code> of <code>:sourire:</code> of <code>:微笑:</code> in elke ondersteunde taal."
   },
-  "icu:WhatsNew__v7.51--1": {
-    "messageformat": "Bovendien hebben we het formaat van het beeld-in-beeld-venster aangepast en handige nieuwe snelkoppelingen toegevoegd om de microfoon of camera aan/uit te zetten als een oproep is geminimaliseerd."
+  "icu:WhatsNew__v7.55--0": {
+    "messageformat": "Sneltoetsen voor emoji's en stickers zijn terug! Deze sneltoetsen besparen nu nog meer tijd, omdat je niet meer hoeft te melden dat ze kapot zijn."
+  },
+  "icu:WhatsNew__v7.55--1": {
+    "messageformat": "We hebben ook een crash opgelost op Linux-distributies die GTK4 nog niet ondersteunen."
+  },
+  "icu:WhatsNew__v7.56--0": {
+    "messageformat": "Sometimes a powerful story can really move you, so we fixed a bug that made it difficult to move the Signal window while viewing content in the Stories tab."
   }
 }

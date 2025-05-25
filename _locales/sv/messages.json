@@ -83,9 +83,6 @@
   "icu:databaseError": {
     "messageformat": "Databasfel"
   },
-  "icu:databaseError__detail": {
-    "messageformat": "Ett databasfel inträffade. Du kan kopiera felet och kontakta Signal-supporten för att hjälpa till att åtgärda problemet. Om du behöver använda Signal på en gång kan du radera dina data och starta om.\n\nKontakta supporten genom att besöka: {link}"
-  },
   "icu:deleteAndRestart": {
     "messageformat": "Ta bort data och starta om"
   },
@@ -1673,9 +1670,6 @@
   "icu:notificationSenderInGroup": {
     "messageformat": "{sender} i {group}"
   },
-  "icu:notificationReaction": {
-    "messageformat": "{sender} reagerade {emoji} på ditt meddelande"
-  },
   "icu:notificationReactionMessage": {
     "messageformat": "{sender} reagerade {emoji} på: {message}"
   },
@@ -1831,12 +1825,6 @@
   },
   "icu:ConversationDetails--support-center": {
     "messageformat": "Supportcenter"
-  },
-  "icu:ConversationDetails--contact-us": {
-    "messageformat": "Kontakta oss"
-  },
-  "icu:ConversationDetails--donate": {
-    "messageformat": "Donera till Signal"
   },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "Visa säkerhetsnummer"
@@ -2600,6 +2588,9 @@
   "icu:Keyboard--open-sticker-chooser": {
     "messageformat": "Öppna klistermärkesväljare"
   },
+  "icu:Keyboard--open-gif-chooser": {
+    "messageformat": "Öppna GIF-väljaren"
+  },
   "icu:Keyboard--begin-recording-voice-note": {
     "messageformat": "Börja spela in röstanteckning"
   },
@@ -3146,6 +3137,18 @@
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "Mikrofon på"
   },
+  "icu:CallControls__MutedBySomeoneToast": {
+    "messageformat": "{otherName} muted you."
+  },
+  "icu:CallControls__SomeoneMutedSomeoneToast": {
+    "messageformat": "{name} muted {otherName}."
+  },
+  "icu:CallControls__YouMutedSomeoneToast": {
+    "messageformat": "You muted {otherName}."
+  },
+  "icu:CallControls__YouMutedYourselfToast": {
+    "messageformat": "You muted yourself from another device."
+  },
   "icu:CallControls__LowerHandSuggestionToast": {
     "messageformat": "Ta ner handen?"
   },
@@ -3238,9 +3241,6 @@
   },
   "icu:calling__view_mode--updated": {
     "messageformat": "Vy uppdaterad"
-  },
-  "icu:calling__hangup": {
-    "messageformat": "Lämna samtalet"
   },
   "icu:calling__SelectPresentingSourcesModal--title": {
     "messageformat": "Dela din skärm"
@@ -4059,10 +4059,10 @@
     "messageformat": "Du måste öppna Signal på din telefon för att fortsätta använda det här kontot. Om du inte öppnar Signal på din telefon kommer ditt konto att tas bort snart. <learnMoreLink>Läs mer</learnMoreLink>"
   },
   "icu:LowDiskSpaceBackupImportModal__title": {
-    "messageformat": "Can't restore media"
+    "messageformat": "Det går inte att återställa media"
   },
   "icu:LowDiskSpaceBackupImportModal__description": {
-    "messageformat": "Your device does not have enough free space. Free up {diskSpaceAmount} of space to restore your media."
+    "messageformat": "Din enhet har inte tillräckligt med ledigt utrymme. Frigör {diskSpaceAmount} utrymme för att återställa dina media."
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Fäll ut"
@@ -4084,9 +4084,6 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "Skicka redigerat meddelande"
-  },
-  "icu:CompositionArea__FunButtonLabel": {
-    "messageformat": "Lägg till emoji, klistermärke eller GIF"
   },
   "icu:CompositionArea__ConfirmGifSelection__Title": {
     "messageformat": "Ersätt bilagan?"
@@ -4522,12 +4519,6 @@
   },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "Säkerhetstips"
-  },
-  "icu:MessageRequestWarning__dialog__details": {
-    "messageformat": "Du har inga grupper gemensamt med den här personen. Granska förfrågningar noga innan du accepterar för att undvika oönskade meddelanden."
-  },
-  "icu:MessageRequestWarning__dialog__learn-even-more": {
-    "messageformat": "Om meddelandeförfrågningar"
   },
   "icu:ContactSpoofing__same-name--link": {
     "messageformat": "Granska förfrågningar noggrant. Signal hittade en annan kontakt med samma namn. <reviewRequestLink>Granska förfrågan</reviewRequestLink>"
@@ -5006,6 +4997,21 @@
   "icu:Preferences__button--internal": {
     "messageformat": "Internt"
   },
+  "icu:Preferences__internal__local-backups": {
+    "messageformat": "Lokala säkerhetskopior"
+  },
+  "icu:Preferences__internal__export-local-backup": {
+    "messageformat": "Exportera …"
+  },
+  "icu:Preferences__internal__export-local-backup--description": {
+    "messageformat": "Exportera lokal krypterad säkerhetskopia till en mapp och validera den"
+  },
+  "icu:Preferences__internal__import-local-backup": {
+    "messageformat": "Importera …"
+  },
+  "icu:Preferences__internal__import-local-backup--description": {
+    "messageformat": "Skapa en lokal krypterad säkerhetskopia för import på länk"
+  },
   "icu:Preferences__internal__validate-backup--description": {
     "messageformat": "Exportera krypterad säkerhetskopia till minnet och kör valideringssvit på den"
   },
@@ -5071,9 +5077,6 @@
   },
   "icu:Preferences--backup-messages-plan__note": {
     "messageformat": "Du kan hantera eller uppgradera ditt Säkerhetskopiering av Signal på din telefon."
-  },
-  "icu:Preferences--backup-plan__not-found": {
-    "messageformat": "Ditt abonnemang hittades inte. Förnya för att fortsätta använda Säkerhetskopiering av Signal."
   },
   "icu:Preferences--backup-plan__not-found__note": {
     "messageformat": "Du kan hantera eller förnya ditt Säkerhetskopiering av Signal-abonnemang på din telefon."
@@ -5203,6 +5206,24 @@
   },
   "icu:Preferences__LanguageModal__Restart__Button": {
     "messageformat": "Starta om"
+  },
+  "icu:Preferences__Privacy__Application": {
+    "messageformat": "Applikation"
+  },
+  "icu:Preferences__content-protection--label": {
+    "messageformat": "Skärmsäkerhet"
+  },
+  "icu:Preferences__content-protection--description": {
+    "messageformat": "Förhindra skärmdumpar av Signal på den här datorn för ökad integritet."
+  },
+  "icu:Preferences__content-protection__modal--title": {
+    "messageformat": "Inaktivera skärmsäkerhet?"
+  },
+  "icu:Preferences__content-protection__modal--body": {
+    "messageformat": "Om detta är inaktiverat kan Microsoft Windows ta skärmdumpar av Signal och använda dem för funktioner som kanske inte är privata."
+  },
+  "icu:Preferences__content-protection__modal--disable": {
+    "messageformat": "Inaktivera"
   },
   "icu:DialogUpdate--version-available": {
     "messageformat": "Uppdatering till version {version} tillgänglig"
@@ -6331,10 +6352,16 @@
     "messageformat": "Små justeringer, buggfixar och prestandaförbättringar. Tack för att du använder Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.51--0": {
-    "messageformat": "Nu kan du söka efter animerade GIF-filer i Signal Desktop också."
+  "icu:WhatsNew__v7.54--0": {
+    "messageformat": "Vi har lagt till stöd för emoji-genvägar på fler språk."
   },
-  "icu:WhatsNew__v7.51--1": {
-    "messageformat": "Vi har också ändrat storleken på bild-i-bild-fönstret och lagt till nya praktiska genvägar när ett samtal är minimerat."
+  "icu:WhatsNew__v7.55--0": {
+    "messageformat": "Den här uppdateringen återaktiverar kortkommandon för emojier och klistermärken."
+  },
+  "icu:WhatsNew__v7.55--1": {
+    "messageformat": "Vi har också åtgärdat en sällsynt krasch på vissa Linux-distributioner."
+  },
+  "icu:WhatsNew__v7.56--0": {
+    "messageformat": "Sometimes a powerful story can really move you, so we fixed a bug that made it difficult to move the Signal window while viewing content in the Stories tab."
   }
 }

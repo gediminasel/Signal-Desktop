@@ -23,9 +23,9 @@ import type {
   BackupStatusType,
 } from './backups';
 import type { ServiceIdString } from './ServiceId';
-
 import type { RegisteredChallengeType } from '../challenge';
 import type { ServerAlertsType } from '../util/handleServerAlerts';
+import type { NotificationProfileOverride } from './NotificationProfile';
 
 export type AutoDownloadAttachmentType = {
   photos: boolean;
@@ -122,7 +122,7 @@ export type StorageAccessType = {
   signedKeyUpdateTime: number;
   signedKeyUpdateTimePNI: number;
   storageKey: string;
-  synced_at: number;
+  synced_at: number | undefined;
   userAgent: string;
   uuid_id: string;
   useRingrtcAdm: boolean;
@@ -148,9 +148,9 @@ export type StorageAccessType = {
   'storage-service-error-records': ReadonlyArray<UnknownRecord>;
   'storage-service-unknown-records': ReadonlyArray<UnknownRecord>;
   'storage-service-pending-deletes': ReadonlyArray<ExtendedStorageID>;
-  'preferred-video-input-device': string;
-  'preferred-audio-input-device': AudioDevice;
-  'preferred-audio-output-device': AudioDevice;
+  'preferred-video-input-device': string | undefined;
+  'preferred-audio-input-device': AudioDevice | undefined;
+  'preferred-audio-output-device': AudioDevice | undefined;
   remoteConfig: RemoteConfigType;
   serverTimeSkew: number;
   unidentifiedDeliveryIndicators: boolean;
@@ -163,7 +163,7 @@ export type StorageAccessType = {
   backupMediaDownloadCompletedBytes: number;
   backupMediaDownloadPaused: boolean;
   backupMediaDownloadBannerDismissed: boolean;
-  backupMediaDownloadIdle: boolean;
+  attachmentDownloadManagerIdled: boolean;
   messageInsertTriggersDisabled: boolean;
   setBackupMessagesSignatureKey: boolean;
   setBackupMediaSignatureKey: boolean;
@@ -201,6 +201,7 @@ export type StorageAccessType = {
   };
   serverAlerts: ServerAlertsType;
   needOrphanedAttachmentCheck: boolean;
+  notificationProfileOverride: NotificationProfileOverride | undefined;
   observedCapabilities: {
     deleteSync?: true;
     ssre2?: true;
@@ -258,6 +259,7 @@ export type StorageAccessType = {
   masterKeyLastRequestTime: never;
   versionedExpirationTimer: never;
   primarySendsSms: never;
+  backupMediaDownloadIdle: never;
 };
 
 export type StorageInterface = {

@@ -83,9 +83,6 @@
   "icu:databaseError": {
     "messageformat": "ಡೇಟಾಬೇಸಿನಲ್ಲಿ ದೋಷ"
   },
-  "icu:databaseError__detail": {
-    "messageformat": "ಡೇಟಾಬೇಸ್ ದೋಷ ಸಂಭವಿಸಿದೆ. ನೀವು ದೋಷವನ್ನು ನಕಲಿಸಬಹುದು ಮತ್ತು ಈ ಸಮಸ್ಯೆಯನ್ನು ಸರಿಪಡಿಸಲು ನೆರವಾಗಲು Signal ಬೆಂಬಲವನ್ನು ಸಂಪರ್ಕಿಸಬಹುದು. ನೀವು Signal ಅನ್ನು ಈಗಲೇ ಬಳಸಬೇಕಿದ್ದಲ್ಲಿ, ನಿಮ್ಮ ಡೇಟಾವನ್ನು ಅಳಿಸಿ ಮರುಪ್ರಾರಂಭಿಸಬಹುದು.\n\nಇಲ್ಲಿಗೆ ಭೇಟಿ ನೀಡುವ ಮೂಲಕ ಬೆಂಬಲವನ್ನು ಸಂಪರ್ಕಿಸಿ: {link}"
-  },
   "icu:deleteAndRestart": {
     "messageformat": "ಡೇಟಾವನ್ನು ಅಳಿಸಿ ಮತ್ತು ಮರುಪ್ರಾರಂಭಿಸಿ"
   },
@@ -1673,9 +1670,6 @@
   "icu:notificationSenderInGroup": {
     "messageformat": "{group} ನಲ್ಲಿ {sender}"
   },
-  "icu:notificationReaction": {
-    "messageformat": "{sender} ಅವರು ನಿಮ್ಮ ಮೆಸೇಜ್‌ಗೆ {emoji} ಪ್ರತಿಕ್ರಿಯಿಸಿದ್ದಾರೆ"
-  },
   "icu:notificationReactionMessage": {
     "messageformat": "ಇದಕ್ಕೆ {sender} ಅವರು {emoji} ಪ್ರತಿಕ್ರಿಯಿಸಿದ್ದಾರೆ: {message}"
   },
@@ -1831,12 +1825,6 @@
   },
   "icu:ConversationDetails--support-center": {
     "messageformat": "ಬೆಂಬಲ ಕೇಂದ್ರ"
-  },
-  "icu:ConversationDetails--contact-us": {
-    "messageformat": "ನಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸಿ"
-  },
-  "icu:ConversationDetails--donate": {
-    "messageformat": "Signal ಗೆ ದಾನ ಮಾಡಿ"
   },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "ಸುರಕ್ಷತಾ ಸಂಖ್ಯೆ ವೀಕ್ಷಿಸಿ"
@@ -2600,6 +2588,9 @@
   "icu:Keyboard--open-sticker-chooser": {
     "messageformat": "ಸ್ಟಿಕ್ಕರ್ ಆಯ್ಕೆಗಾರ ತೆರೆಯಿರಿ"
   },
+  "icu:Keyboard--open-gif-chooser": {
+    "messageformat": "GIF ಚೂಸರ್ ಅನ್ನು ತೆರೆಯಿರಿ"
+  },
   "icu:Keyboard--begin-recording-voice-note": {
     "messageformat": "ವಾಯ್ಸ್ ನೋಟ್ ರೆಕಾರ್ಡಿಂಗ್ ಆರಂಭಿಸಿ"
   },
@@ -3146,6 +3137,18 @@
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "ಮೈಕ್ ಆನ್ ಆಗಿದೆ"
   },
+  "icu:CallControls__MutedBySomeoneToast": {
+    "messageformat": "{otherName} muted you."
+  },
+  "icu:CallControls__SomeoneMutedSomeoneToast": {
+    "messageformat": "{name} muted {otherName}."
+  },
+  "icu:CallControls__YouMutedSomeoneToast": {
+    "messageformat": "You muted {otherName}."
+  },
+  "icu:CallControls__YouMutedYourselfToast": {
+    "messageformat": "You muted yourself from another device."
+  },
   "icu:CallControls__LowerHandSuggestionToast": {
     "messageformat": "ನಿಮ್ಮ ಕೈಯನ್ನು ಕೆಳಗಿಳಿಸಬೇಕೇ?"
   },
@@ -3238,9 +3241,6 @@
   },
   "icu:calling__view_mode--updated": {
     "messageformat": "ವೀಕ್ಷಣೆ ನವೀಕರಣಗೊಂಡಿದೆ"
-  },
-  "icu:calling__hangup": {
-    "messageformat": "ಕರೆ ಬಿಡಿ"
   },
   "icu:calling__SelectPresentingSourcesModal--title": {
     "messageformat": "ನಿಮ್ಮ ಸ್ಕ್ರೀನ್ ಹಂಚಿಕೊಳ್ಳಿ"
@@ -4059,10 +4059,10 @@
     "messageformat": "ಈ ಖಾತೆ ಬಳಸುವುದನ್ನು ಮುಂದುವರಿಸಲು ನಿಮ್ಮ ಫೋನ್‌ನಲ್ಲಿ ನೀವು Signal ಅನ್ನು ತೆರೆಯಬೇಕು. ನಿಮ್ಮ ಫೋನ್‌ನಲ್ಲಿ ನೀವು Signal ಅನ್ನು ತೆರೆಯದಿದ್ದರೆ, ನಿಮ್ಮ ಖಾತೆಯನ್ನು ಶೀಘ್ರದಲ್ಲೇ ಅಳಿಸಲಾಗುವುದು. <learnMoreLink>ಇನ್ನಷ್ಟು ತಿಳಿಯಿರಿ</learnMoreLink>"
   },
   "icu:LowDiskSpaceBackupImportModal__title": {
-    "messageformat": "Can't restore media"
+    "messageformat": "ಮೀಡಿಯಾವನ್ನು ರಿಸ್ಟೋರ್ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ"
   },
   "icu:LowDiskSpaceBackupImportModal__description": {
-    "messageformat": "Your device does not have enough free space. Free up {diskSpaceAmount} of space to restore your media."
+    "messageformat": "ನಿಮ್ಮ ಸಾಧನವು ಸಾಕಷ್ಟು ಮುಕ್ತ ಸ್ಥಳಾವಕಾಶವನ್ನು ಹೊಂದಿಲ್ಲ. ನಿಮ್ಮ ಮೀಡಿಯಾವನ್ನು ರಿಸ್ಟೋರ್ ಮಾಡಲು {diskSpaceAmount} ಸ್ಥಳಾವಕಾಶವನ್ನು ಮುಕ್ತಗೊಳಿಸಿ.\n\n"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "ವಿಸ್ತರಿಸಿ"
@@ -4084,9 +4084,6 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "ಎಡಿಟ್ ಮಾಡಿದ ಮೆಸೇಜ್ ಕಳುಹಿಸಿ"
-  },
-  "icu:CompositionArea__FunButtonLabel": {
-    "messageformat": "ಎಮೋಜಿ, ಸ್ಟಿಕ್ಕರ್ ಅಥವಾ GIF ಅನ್ನು ಸೇರಿಸಿ"
   },
   "icu:CompositionArea__ConfirmGifSelection__Title": {
     "messageformat": "ಅಟ್ಯಾಚ್‌ಮೆಂಟ್ ಅನ್ನು ಬದಲಾಯಿಸಬೇಕೇ?"
@@ -4522,12 +4519,6 @@
   },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "ಸುರಕ್ಷತಾ ಸಲಹೆಗಳು"
-  },
-  "icu:MessageRequestWarning__dialog__details": {
-    "messageformat": "ಈ ವ್ಯಕ್ತಿಯ ಜೊತೆಗೆ ನೀವು ಯಾವುದೇ ಗ್ರೂಪ್‌ನಲ್ಲಿಲ್ಲ. ಅನಗತ್ಯ ಮೆಸೇಜ್‌ಗಳನ್ನು ದೂರವಿಡಲು ಸಮ್ಮತಿಸುವುದಕ್ಕೂ ಮೊದಲು ಗಮನವಿಟ್ಟು ವಿನಂತಿಗಳನ್ನು ಪರಿಶೀಲಿಸಿ."
-  },
-  "icu:MessageRequestWarning__dialog__learn-even-more": {
-    "messageformat": "ಸಂದೇಶ ವಿನಂತಿಗಳ ಬಗ್ಗೆ"
   },
   "icu:ContactSpoofing__same-name--link": {
     "messageformat": "ವಿನಂತಿಗಳನ್ನು ಎಚ್ಚರಿಕೆಯಿಂದ ಪರಿಶೀಲಿಸಿ. ಅದೇ ಹೆಸರಿನ ಇನ್ನೊಂದು ಸಂಪರ್ಕವು Signal ಗೆ ಕಂಡುಬಂದಿದೆ. <reviewRequestLink>ವಿನಂತಿಯನ್ನು ಪರಿಶೀಲಿಸಿ</reviewRequestLink>"
@@ -5006,6 +4997,21 @@
   "icu:Preferences__button--internal": {
     "messageformat": "ಆಂತರಿಕ"
   },
+  "icu:Preferences__internal__local-backups": {
+    "messageformat": "ಸ್ಥಳೀಯ ಬ್ಯಾಕಪ್‌ಗಳು"
+  },
+  "icu:Preferences__internal__export-local-backup": {
+    "messageformat": "ಎಕ್ಸ್‌ಪೋರ್ಟ್ ಮಾಡಿ…"
+  },
+  "icu:Preferences__internal__export-local-backup--description": {
+    "messageformat": "ಸ್ಥಳೀಯ ಎನ್ಕ್ರಿಪ್ಟ್ ಆಗಿರುವ ಬ್ಯಾಕಪ್ ಅನ್ನು ಫೋಲ್ಡರ್‌ಗೆ ಎಕ್ಸ್‌ಪೋರ್ಟ್ ಮಾಡಿ ಮತ್ತು ಅದನ್ನು ಮೌಲ್ಯೀಕರಿಸಿ"
+  },
+  "icu:Preferences__internal__import-local-backup": {
+    "messageformat": "ಇಂಪೋರ್ಟ್ ಮಾಡಿ…"
+  },
+  "icu:Preferences__internal__import-local-backup--description": {
+    "messageformat": "ಲಿಂಕ್‌ನಲ್ಲಿ ಇಂಪೋರ್ಟ್ ಮಾಡಿಕೊಳ್ಳಲು ಸ್ಥಳೀಯ ಎನ್ಕ್ರಿಪ್ಟ್ ಆಗಿರುವ ಬ್ಯಾಕಪ್ ಅನ್ನು ವ್ಯವಸ್ಥೆಗೊಳಿಸಿ"
+  },
   "icu:Preferences__internal__validate-backup--description": {
     "messageformat": "ಎನ್ಕ್ರಿಪ್ಟ್ ಆಗಿರುವ ಬ್ಯಾಕಪ್ ಅನ್ನು ಮೆಮೊರಿಗೆ ಎಕ್ಸ್‌ಪೋರ್ಟ್ ಮಾಡಿ ಮತ್ತು ಅದರ ಮೇಲೆ ವ್ಯಾಲಿಡೇಶನ್ ಸೂಟ್ ಅನ್ನು ರನ್ ಮಾಡಿ"
   },
@@ -5071,9 +5077,6 @@
   },
   "icu:Preferences--backup-messages-plan__note": {
     "messageformat": "ನಿಮ್ಮ ಫೋನ್‌ನಲ್ಲಿ ನೀವು Signal ಬ್ಯಾಕಪ್‌ಗಳನ್ನು ನಿರ್ವಹಿಸಬಹುದು ಅಥವಾ ಅಪ್‌ಗ್ರೇಡ್ ಮಾಡಬಹುದು."
-  },
-  "icu:Preferences--backup-plan__not-found": {
-    "messageformat": "ನಿಮ್ಮ ಚಂದಾದಾರಿಕೆ ಕಂಡುಬಂದಿಲ್ಲ. Signal ಬ್ಯಾಕಪ್‌ಗಳನ್ನು ಬಳಸುವುದನ್ನು ಮುಂದುವರಿಸಲು ನವೀಕರಿಸಿ."
   },
   "icu:Preferences--backup-plan__not-found__note": {
     "messageformat": "ನಿಮ್ಮ ಫೋನ್‌ನಲ್ಲಿ ನಿಮ್ಮ Signal ಬ್ಯಾಕಪ್‌ಗಳ ಚಂದಾದಾರಿಕೆಯನ್ನು ನೀವು ನಿರ್ವಹಿಸಬಹುದು ಅಥವಾ ನವೀಕರಿಸಬಹುದು."
@@ -5203,6 +5206,24 @@
   },
   "icu:Preferences__LanguageModal__Restart__Button": {
     "messageformat": "ಮರುಪ್ರಾರಂಭಿಸಿ"
+  },
+  "icu:Preferences__Privacy__Application": {
+    "messageformat": "ಅಪ್ಲಿಕೇಶನ್"
+  },
+  "icu:Preferences__content-protection--label": {
+    "messageformat": "ಸ್ಕ್ರೀನ್ ಸುರಕ್ಷತೆ"
+  },
+  "icu:Preferences__content-protection--description": {
+    "messageformat": "ಹೆಚ್ಚಿನ ಗೌಪ್ಯತೆಗಾಗಿ ಈ ಕಂಪ್ಯೂಟರ್‌ನಲ್ಲಿ Signal ನ ಸ್ಕ್ರೀನ್‌ಶಾಟ್‌ಗಳನ್ನು ತಡೆಯಿರಿ."
+  },
+  "icu:Preferences__content-protection__modal--title": {
+    "messageformat": "ಸ್ಕ್ರೀನ್ ಭದ್ರತೆಯನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಬೇಕೇ?"
+  },
+  "icu:Preferences__content-protection__modal--body": {
+    "messageformat": "ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿದರೆ, ಇದು Microsoft Windows ಗೆ Signal ನ ಸ್ಕ್ರೀನ್‌ಶಾಟ್‌ಗಳನ್ನು ಕ್ಯಾಪ್ಚರ್ ಮಾಡಲು ಮತ್ತು ಖಾಸಗಿಯಾಗಿಲ್ಲದ ಫೀಚರ್‌ಗಳಿಗೆ ಅವುಗಳನ್ನು ಬಳಸಲು ಅನುಮತಿಸುತ್ತದೆ."
+  },
+  "icu:Preferences__content-protection__modal--disable": {
+    "messageformat": "ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ"
   },
   "icu:DialogUpdate--version-available": {
     "messageformat": "ಲಭ್ಯವಿರುವ ಆವೃತ್ತಿ {version} ಕ್ಕೆ ಅಪ್‌ಡೇಟ್ ಮಾಡಿ"
@@ -6331,10 +6352,16 @@
     "messageformat": "ಸಣ್ಣ ಟ್ವೀಕ್‌ಗಳು, ಬಗ್ ಫಿಕ್ಸ್‌ಗಳು ಮತ್ತು ಕಾರ್ಯಕ್ಷಮತೆ ವರ್ಧನೆಗಳು. Signal ಬಳಸುತ್ತಿರುವುದಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.51--0": {
-    "messageformat": "ಬೆಂಕಿ, ಚಕ್ರ ಮತ್ತು ವಿದ್ಯುತ್ ಎಲ್ಲವೂ ಉತ್ತಮ ಬೆಳವಣಿಗೆಗಳಾಗಿದ್ದವು, ಆದರೆ ಅವು ಅನಿಮೇಟೆಡ್ GIF ಹುಡುಕಾಟವು ಅಸ್ತಿತ್ವದಲ್ಲಿರಲು ಪರಿಸ್ಥಿತಿಗಳನ್ನು ಸೃಷ್ಟಿಸುವ ಹಾದಿಯಲ್ಲಿ ಕೇವಲ ಅಗತ್ಯವಾದ ಹೆಜ್ಜೆಗಳಾಗಿದ್ದವು. ಈಗ ನೀವು Signal ಡೆಸ್ಕ್‌ಟಾಪ್‌ನಲ್ಲಿ ಮಾನವನ ತಾಂತ್ರಿಕ ಪ್ರಗತಿಯ ಪರಾಕಾಷ್ಠೆಯನ್ನು ಹೊಚ್ಚಹೊಸ ಆಯ್ಕೆ ಇಂಟರ್ಫೇಸ್‌ನೊಂದಿಗೆ ಅನುಭವಿಸಬಹುದು, ಅದು ಆ ಕ್ಷಣಕ್ಕೆ ಸೂಕ್ತವಾದ ಎಮೋಜಿ, ಸ್ಟಿಕ್ಕರ್ ಅಥವಾ ಅನಿಮೇಟೆಡ್ GIF ಅನ್ನು ತ್ವರಿತವಾಗಿ ಹುಡುಕುವುದನ್ನು ಸುಲಭಗೊಳಿಸುತ್ತದೆ."
+  "icu:WhatsNew__v7.54--0": {
+    "messageformat": "ಯಾವುದೇ ಭಾಷೆಯಲ್ಲಿಯೇ ಆಗಲಿ ನಗು ಒಂದೇ ಆಗಿರುತ್ತದೆ, ಆದರೆ ಈಗ ಸಿಗ್ನಲ್ ಡೆಸ್ಕ್‌ಟಾಪ್‌ನಲ್ಲಿರುವ ಎಮೋಜಿ ಶಾರ್ಟ್‌ಕಟ್‌ಗಳನ್ನು ಸಂಪೂರ್ಣವಾಗಿ ಅನುವಾದಿಸಲಾಗಿರುವುದರಿಂದ ನೀವು ಯಾವುದೇ ಬೆಂಬಲಿತ ಭಾಷೆಯಲ್ಲಿಯೂ ಸಹ <code>:smile:</code> ಅಥವಾ <code>:sourire:</code> ಅಥವಾ <code>:微笑:</code> ಸಹ ಅನುವಾದಿಸಬಹುದು."
   },
-  "icu:WhatsNew__v7.51--1": {
-    "messageformat": "ನಾವು ಪಿಕ್ಚರ್-ಇನ್-ಪಿಕ್ಚರ್ ವಿಂಡೋವನ್ನು ಮರುಗಾತ್ರಗೊಳಿಸಿದ್ದೇವೆ ಮತ್ತು ಕರೆಯನ್ನು ಮಿನಿಮೈಸ್ ಮಾಡುವಾಗ ನಿಮ್ಮ ಮೈಕ್ರೊಫೋನ್ ಅನ್ನು ಮ್ಯೂಟ್/ಅನ್‌ಮ್ಯೂಟ್ ಮಾಡಲು ಅಥವಾ ಕ್ಯಾಮೆರಾವನ್ನು ಆನ್/ಆಫ್ ಮಾಡಲು ಅನುಕೂಲಕರವಾದ ಹೊಸ ಶಾರ್ಟ್‌ಕಟ್‌ಗಳನ್ನು ಸೇರಿಸಿದ್ದೇವೆ."
+  "icu:WhatsNew__v7.55--0": {
+    "messageformat": "ಎಮೋಜಿ ಮತ್ತು ಸ್ಟಿಕ್ಕರ್‌ಗಳಿಗಾಗಿ ಕೀಬೋರ್ಡ್ ಶಾರ್ಟ್‌ಕಟ್‌ಗಳು ಮರಳಿ ಬಂದಿವೆ! ಈ ಶಾರ್ಟ್‌ಕಟ್‌ಗಳು ಇನ್ನೂ ಹೆಚ್ಚಿನ ಸಮಯವನ್ನು ಉಳಿಸುತ್ತವೆ ಏಕೆಂದರೆ ಈಗ ನೀವು ಅವು ಮುರಿದುಹೋಗಿವೆ ಎಂದು ನಮಗೆ ಬರೆದು ಹೇಳುವ ಅಗತ್ಯವಿಲ್ಲ."
+  },
+  "icu:WhatsNew__v7.55--1": {
+    "messageformat": "GTK4 ಅನ್ನು ಇನ್ನೂ ಬೆಂಬಲಿಸದ Linux ವಿತರಣೆಗಳಲ್ಲಿನ ಕ್ರ್ಯಾಶ್ ಅನ್ನು ಸಹ ನಾವು ಸರಿಪಡಿಸಿದ್ದೇವೆ."
+  },
+  "icu:WhatsNew__v7.56--0": {
+    "messageformat": "Sometimes a powerful story can really move you, so we fixed a bug that made it difficult to move the Signal window while viewing content in the Stories tab."
   }
 }

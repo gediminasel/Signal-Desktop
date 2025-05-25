@@ -83,9 +83,6 @@
   "icu:databaseError": {
     "messageformat": "Veritabanı hatası"
   },
-  "icu:databaseError__detail": {
-    "messageformat": "Bir veri tabanı hatası oluştu. Hatayı kopyalayıp sorunun giderilmesine yardımcı olmak için Signal destekle iletişime geçebilirsin. Signal'i hemen kullanman gerekiyorsa, verilerini silebilir ve yeniden başlatabilirsin.\n\nŞu adresi ziyaret ederek destekle iletişime geçebilirsin: {link}"
-  },
   "icu:deleteAndRestart": {
     "messageformat": "Verileri sil ve yeniden başlat"
   },
@@ -1673,9 +1670,6 @@
   "icu:notificationSenderInGroup": {
     "messageformat": "{group} grubunda {sender}"
   },
-  "icu:notificationReaction": {
-    "messageformat": "{sender} mesajına {emoji} tepkisi verdi"
-  },
   "icu:notificationReactionMessage": {
     "messageformat": "{sender}, ' {message}' iletisine {emoji} tepkisi verdi"
   },
@@ -1831,12 +1825,6 @@
   },
   "icu:ConversationDetails--support-center": {
     "messageformat": "Destek Merkezi"
-  },
-  "icu:ConversationDetails--contact-us": {
-    "messageformat": "Bizimle iletişime geçin"
-  },
-  "icu:ConversationDetails--donate": {
-    "messageformat": "Signal'e Bağış Yap"
   },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "Güvenlik Numarasını görüntüle"
@@ -2600,6 +2588,9 @@
   "icu:Keyboard--open-sticker-chooser": {
     "messageformat": "Çıkartma seçicisini aç"
   },
+  "icu:Keyboard--open-gif-chooser": {
+    "messageformat": "GIF seçicisini aç"
+  },
   "icu:Keyboard--begin-recording-voice-note": {
     "messageformat": "Sesli not kaydına başla"
   },
@@ -3146,6 +3137,18 @@
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "Mikrofon açık"
   },
+  "icu:CallControls__MutedBySomeoneToast": {
+    "messageformat": "{otherName} muted you."
+  },
+  "icu:CallControls__SomeoneMutedSomeoneToast": {
+    "messageformat": "{name} muted {otherName}."
+  },
+  "icu:CallControls__YouMutedSomeoneToast": {
+    "messageformat": "You muted {otherName}."
+  },
+  "icu:CallControls__YouMutedYourselfToast": {
+    "messageformat": "You muted yourself from another device."
+  },
   "icu:CallControls__LowerHandSuggestionToast": {
     "messageformat": "Elin insin mi?"
   },
@@ -3238,9 +3241,6 @@
   },
   "icu:calling__view_mode--updated": {
     "messageformat": "Görünüm güncellendi"
-  },
-  "icu:calling__hangup": {
-    "messageformat": "Aramadan ayrıl"
   },
   "icu:calling__SelectPresentingSourcesModal--title": {
     "messageformat": "Ekran paylaş"
@@ -4059,10 +4059,10 @@
     "messageformat": "Bu hesabı kullanmaya devam etmek için telefonunda Signal'ı açman gerekiyor. Telefonunda Signal'ı açmazsan, hesabın kısa süre içinde silinecektir. <learnMoreLink>Dahasını öğren</learnMoreLink>"
   },
   "icu:LowDiskSpaceBackupImportModal__title": {
-    "messageformat": "Can't restore media"
+    "messageformat": "Medya geri yüklenemiyor"
   },
   "icu:LowDiskSpaceBackupImportModal__description": {
-    "messageformat": "Your device does not have enough free space. Free up {diskSpaceAmount} of space to restore your media."
+    "messageformat": "Cihazında yeterli boş alan yok. Medyanı geri yüklemek için {diskSpaceAmount} alan boşalt."
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Genişlet"
@@ -4084,9 +4084,6 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "Düzenlenen mesajı gönder"
-  },
-  "icu:CompositionArea__FunButtonLabel": {
-    "messageformat": "Emoji, Çıkartma veya GIF Ekle"
   },
   "icu:CompositionArea__ConfirmGifSelection__Title": {
     "messageformat": "Eklenti değiştirilsin mi?"
@@ -4522,12 +4519,6 @@
   },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "Güvenlik İpuçları"
-  },
-  "icu:MessageRequestWarning__dialog__details": {
-    "messageformat": "Bu kişiyle ortak bir grubunuz yok. İstenmeyen iletileri önlemek için kabul etmeden önce istekleri dikkatlice gözden geçirin."
-  },
-  "icu:MessageRequestWarning__dialog__learn-even-more": {
-    "messageformat": "İleti İstekleri Hakkında"
   },
   "icu:ContactSpoofing__same-name--link": {
     "messageformat": "İstekleri dikkatlice incele. Signal aynı ada sahip başka bir kişi buldu. <reviewRequestLink>İsteği incele</reviewRequestLink>"
@@ -5006,6 +4997,21 @@
   "icu:Preferences__button--internal": {
     "messageformat": "Dahili"
   },
+  "icu:Preferences__internal__local-backups": {
+    "messageformat": "Yerel yedeklemeler"
+  },
+  "icu:Preferences__internal__export-local-backup": {
+    "messageformat": "Dışa aktar…"
+  },
+  "icu:Preferences__internal__export-local-backup--description": {
+    "messageformat": "Yerel şifreli yedeklemeyi bir klasöre aktar ve doğrula"
+  },
+  "icu:Preferences__internal__import-local-backup": {
+    "messageformat": "İçe aktar…"
+  },
+  "icu:Preferences__internal__import-local-backup--description": {
+    "messageformat": "Bağlantıda içe aktarma için yerel şifreli bir yedekleme hazırla"
+  },
   "icu:Preferences__internal__validate-backup--description": {
     "messageformat": "Şifreli yedeklemeyi belleğe aktar ve üzerinde doğrulama paketini çalıştır"
   },
@@ -5071,9 +5077,6 @@
   },
   "icu:Preferences--backup-messages-plan__note": {
     "messageformat": "Signal Yedeklemelerini telefonunda yönetebilir veya yükseltebilirsin."
-  },
-  "icu:Preferences--backup-plan__not-found": {
-    "messageformat": "Aboneliğin bulunamadı. Signal Yedeklemelerini kullanmaya devam etmek için yenile."
   },
   "icu:Preferences--backup-plan__not-found__note": {
     "messageformat": "Signal Yedeklemeleri aboneliğini telefonunda yönetebilir veya yenileyebilirsin."
@@ -5203,6 +5206,24 @@
   },
   "icu:Preferences__LanguageModal__Restart__Button": {
     "messageformat": "Yeniden başlat"
+  },
+  "icu:Preferences__Privacy__Application": {
+    "messageformat": "Uygulama"
+  },
+  "icu:Preferences__content-protection--label": {
+    "messageformat": "Ekran güvenliği"
+  },
+  "icu:Preferences__content-protection--description": {
+    "messageformat": "Ek gizlilik için bu bilgisayarda Signal'ın ekran görüntülerini engelle."
+  },
+  "icu:Preferences__content-protection__modal--title": {
+    "messageformat": "Ekran güvenliği devre dışı bırakılsın mı?"
+  },
+  "icu:Preferences__content-protection__modal--body": {
+    "messageformat": "Devre dışı bırakılırsa, Microsoft Windows Signal'ın ekran görüntülerini yakalayabilir ve gizliliği olmayabilecek özellikler için kullanabilir."
+  },
+  "icu:Preferences__content-protection__modal--disable": {
+    "messageformat": "Devre dışı bırak"
   },
   "icu:DialogUpdate--version-available": {
     "messageformat": "{version} sürümüne güncelleme mevcut"
@@ -6331,10 +6352,16 @@
     "messageformat": "Küçük ince ayarlar, hata düzeltmeleri ve performans geliştirmeleri yaptık. Signal'i kullandığın için teşekkürler!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.51--0": {
-    "messageformat": "Bundan böyle Signal Desktop'ta animasyonlu GIF'ler de arayabilirsin. Böylece Signal Desktop'ta o ana özgü mükemmel bir emoji, çıkartma veya animasyonlu GIF'i hızla bulmanı kolaylaştıran yepyeni bir seçim arayüzü ile insanoğlunun teknolojik ilerlemesinin zirvesini deneyimleyebilirsin."
+  "icu:WhatsNew__v7.54--0": {
+    "messageformat": "Emoji kısayolları için, birçok yeni dilde destek ekledik."
   },
-  "icu:WhatsNew__v7.51--1": {
-    "messageformat": "Resim içinde resim penceresini de yeniden boyutlandırdık ve arama simge durumuna küçültüldüğünde kullanışlı yeni kısayollar ekledik."
+  "icu:WhatsNew__v7.55--0": {
+    "messageformat": "Bu güncellemeyle emoji ve çıkartmalar için klavye kısayolları yeniden etkinleştiriliyor. Böylece istediğin emojilere ve çıkartmalara ışık hızıyla ulaşabileceksin!"
+  },
+  "icu:WhatsNew__v7.55--1": {
+    "messageformat": "Bazı Linux dağıtımlarında nadir rastlanan bir çökme sorununu da düzelttik."
+  },
+  "icu:WhatsNew__v7.56--0": {
+    "messageformat": "Sometimes a powerful story can really move you, so we fixed a bug that made it difficult to move the Signal window while viewing content in the Stories tab."
   }
 }

@@ -83,9 +83,6 @@
   "icu:databaseError": {
     "messageformat": "データベースのエラー"
   },
-  "icu:databaseError__detail": {
-    "messageformat": "データベースエラーが発生しました。エラーをコピーしてSignalサポートへ連絡すると、問題の解決に役立てることができます。すぐにSignalを使用する必要がある場合は、データを消去して再起動することができます。\n\nサポートへのお問い合わせは{link}までお願いします。"
-  },
   "icu:deleteAndRestart": {
     "messageformat": "すべてのデータを消去して再起動する"
   },
@@ -1673,9 +1670,6 @@
   "icu:notificationSenderInGroup": {
     "messageformat": "{group} の {sender}"
   },
-  "icu:notificationReaction": {
-    "messageformat": "{sender}さんがあなたのメッセージに {emoji}のリアクションをしました"
-  },
   "icu:notificationReactionMessage": {
     "messageformat": "{sender}さんが「{message}」に {emoji}のリアクションをしました"
   },
@@ -1831,12 +1825,6 @@
   },
   "icu:ConversationDetails--support-center": {
     "messageformat": "サポートセンター"
-  },
-  "icu:ConversationDetails--contact-us": {
-    "messageformat": "お問い合わせ"
-  },
-  "icu:ConversationDetails--donate": {
-    "messageformat": "Signalへの寄付"
   },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "安全番号の検証"
@@ -2600,6 +2588,9 @@
   "icu:Keyboard--open-sticker-chooser": {
     "messageformat": "ステッカー選択画面を開く"
   },
+  "icu:Keyboard--open-gif-chooser": {
+    "messageformat": "GIF選択画面を開く"
+  },
   "icu:Keyboard--begin-recording-voice-note": {
     "messageformat": "音声メモの録音を開始する"
   },
@@ -3146,6 +3137,18 @@
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "マイクオン"
   },
+  "icu:CallControls__MutedBySomeoneToast": {
+    "messageformat": "{otherName} muted you."
+  },
+  "icu:CallControls__SomeoneMutedSomeoneToast": {
+    "messageformat": "{name} muted {otherName}."
+  },
+  "icu:CallControls__YouMutedSomeoneToast": {
+    "messageformat": "You muted {otherName}."
+  },
+  "icu:CallControls__YouMutedYourselfToast": {
+    "messageformat": "You muted yourself from another device."
+  },
   "icu:CallControls__LowerHandSuggestionToast": {
     "messageformat": "手をおろしますか？"
   },
@@ -3238,9 +3241,6 @@
   },
   "icu:calling__view_mode--updated": {
     "messageformat": "ビューが更新されました"
-  },
-  "icu:calling__hangup": {
-    "messageformat": "通話終了"
   },
   "icu:calling__SelectPresentingSourcesModal--title": {
     "messageformat": "あなたの画面を共有"
@@ -4059,10 +4059,10 @@
     "messageformat": "このアカウントの使用を継続するには、お使いのスマートフォンでSignalを開く必要があります。この操作を行わないと、アカウントは間もなく消去されます。<learnMoreLink>さらに詳しく</learnMoreLink>"
   },
   "icu:LowDiskSpaceBackupImportModal__title": {
-    "messageformat": "Can't restore media"
+    "messageformat": "メディアを復元できません"
   },
   "icu:LowDiskSpaceBackupImportModal__description": {
-    "messageformat": "Your device does not have enough free space. Free up {diskSpaceAmount} of space to restore your media."
+    "messageformat": "ご利用の端末には十分な空き容量がありません。メディアを復元するために{diskSpaceAmount}の空き容量を確保してください。"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "大きく"
@@ -4084,9 +4084,6 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "編集したメッセージを送信する"
-  },
-  "icu:CompositionArea__FunButtonLabel": {
-    "messageformat": "絵文字、ステッカー、GIFを追加する"
   },
   "icu:CompositionArea__ConfirmGifSelection__Title": {
     "messageformat": "添付ファイルを置き換えますか？"
@@ -4522,12 +4519,6 @@
   },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "安全な使い方のヒント"
-  },
-  "icu:MessageRequestWarning__dialog__details": {
-    "messageformat": "この人と共通のグループがありません。望まないメッセージを避けるため、申請は慎重に確認してください。"
-  },
-  "icu:MessageRequestWarning__dialog__learn-even-more": {
-    "messageformat": "メッセージ申請について"
   },
   "icu:ContactSpoofing__same-name--link": {
     "messageformat": "慎重に申請を確認してください。Signal は同じ名前で別の連絡先を見つけました。<reviewRequestLink>申請を確認する</reviewRequestLink>"
@@ -5006,6 +4997,21 @@
   "icu:Preferences__button--internal": {
     "messageformat": "内部設定"
   },
+  "icu:Preferences__internal__local-backups": {
+    "messageformat": "ローカルバックアップ"
+  },
+  "icu:Preferences__internal__export-local-backup": {
+    "messageformat": "エクスポートする"
+  },
+  "icu:Preferences__internal__export-local-backup--description": {
+    "messageformat": "ローカル内の暗号化されたバックアップをフォルダにエクスポートして検証します"
+  },
+  "icu:Preferences__internal__import-local-backup": {
+    "messageformat": "インポートする"
+  },
+  "icu:Preferences__internal__import-local-backup--description": {
+    "messageformat": "ローカル内に暗号化されたバックアップを作成して、リンク時にインポートできるようにします"
+  },
   "icu:Preferences__internal__validate-backup--description": {
     "messageformat": "暗号化されたバックアップをメモリにエクスポートし、検証処理を実行します"
   },
@@ -5071,9 +5077,6 @@
   },
   "icu:Preferences--backup-messages-plan__note": {
     "messageformat": "お使いのスマートフォンからSignalバックアップを管理またはアップグレードできます。"
-  },
-  "icu:Preferences--backup-plan__not-found": {
-    "messageformat": "ご利用のサブスクリプションは確認できませんでした。Signalバックアップを引き続き使用するには、更新手続きをしてください。"
   },
   "icu:Preferences--backup-plan__not-found__note": {
     "messageformat": "Signalバックアップのサブスクリプションは、お使いのスマートフォンから管理または更新手続きが行えます。"
@@ -5203,6 +5206,24 @@
   },
   "icu:Preferences__LanguageModal__Restart__Button": {
     "messageformat": "再起動"
+  },
+  "icu:Preferences__Privacy__Application": {
+    "messageformat": "アプリ"
+  },
+  "icu:Preferences__content-protection--label": {
+    "messageformat": "画面のセキュリティ"
+  },
+  "icu:Preferences__content-protection--description": {
+    "messageformat": "プライバシーをさらに強化するため、このコンピューター上でSignalのスクリーンショットを撮影できないようにします。"
+  },
+  "icu:Preferences__content-protection__modal--title": {
+    "messageformat": "スクリーンセキュリティを無効にしますか？"
+  },
+  "icu:Preferences__content-protection__modal--body": {
+    "messageformat": "無効にすると、Microsoft WindowsがSignalのスクリーンショットを撮影して、プライベートではない機能に使用される可能性があります。"
+  },
+  "icu:Preferences__content-protection__modal--disable": {
+    "messageformat": "無効"
   },
   "icu:DialogUpdate--version-available": {
     "messageformat": "バージョン{version}へのアップデートがあります"
@@ -6331,10 +6352,16 @@
     "messageformat": "細かな微調整、バグ修正、パフォーマンスの向上。 Signalをご利用いただきありがとうございます。",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.51--0": {
-    "messageformat": "Signal DesktopでもGIFアニメーションを検索できるようになりました。"
+  "icu:WhatsNew__v7.54--0": {
+    "messageformat": "より多くの言語で絵文字のショートカットが使えるようになりました。 <code></code><code></code><code></code>"
   },
-  "icu:WhatsNew__v7.51--1": {
-    "messageformat": "また、ピクチャーインピクチャーウィンドウのサイズ変更を可能にし、通話画面が最小化されている時に使える新しいショートカット機能の追加も行いました。"
+  "icu:WhatsNew__v7.55--0": {
+    "messageformat": "このアップデートにより、絵文字とステッカーのキーボードショートカットが再び有効となります。"
+  },
+  "icu:WhatsNew__v7.55--1": {
+    "messageformat": "一部のLinuxディストリビューションで発生する稀なクラッシュも修正しました。"
+  },
+  "icu:WhatsNew__v7.56--0": {
+    "messageformat": "Sometimes a powerful story can really move you, so we fixed a bug that made it difficult to move the Signal window while viewing content in the Stories tab."
   }
 }

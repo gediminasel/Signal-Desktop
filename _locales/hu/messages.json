@@ -83,9 +83,6 @@
   "icu:databaseError": {
     "messageformat": "Adatbázishiba"
   },
-  "icu:databaseError__detail": {
-    "messageformat": "Adatbázishiba történt. Kimásolhatod a hibát, és kapcsolatba léphetsz a Signal ügyfélszolgálatával a probléma megoldásához. Ha azonnal használnod kell a Signalt, törölheted az adataid, és újraindíthatod.\n\nLépj kapcsolatba az ügyfélszolgálattal a következő címen: {link}"
-  },
   "icu:deleteAndRestart": {
     "messageformat": "Adatok törlése és újraindítás"
   },
@@ -1673,9 +1670,6 @@
   "icu:notificationSenderInGroup": {
     "messageformat": "{sender} a {group} csoportban"
   },
-  "icu:notificationReaction": {
-    "messageformat": "{sender} {emoji} reakciót küldött az üzenetedre"
-  },
   "icu:notificationReactionMessage": {
     "messageformat": "{sender} {emoji} reakciót küldött erre: {message}"
   },
@@ -1831,12 +1825,6 @@
   },
   "icu:ConversationDetails--support-center": {
     "messageformat": "Támogatási Központ"
-  },
-  "icu:ConversationDetails--contact-us": {
-    "messageformat": "Kapcsolat"
-  },
-  "icu:ConversationDetails--donate": {
-    "messageformat": "Adomány a Signal számára"
   },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "Biztonsági szám megjelenítése"
@@ -2600,6 +2588,9 @@
   "icu:Keyboard--open-sticker-chooser": {
     "messageformat": "Matricaválasztó megnyitása"
   },
+  "icu:Keyboard--open-gif-chooser": {
+    "messageformat": "GIF-választó megnyitása"
+  },
   "icu:Keyboard--begin-recording-voice-note": {
     "messageformat": "Hangjegyzet rögzítésének megkezdése"
   },
@@ -3146,6 +3137,18 @@
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "Mikrofon be"
   },
+  "icu:CallControls__MutedBySomeoneToast": {
+    "messageformat": "{otherName} muted you."
+  },
+  "icu:CallControls__SomeoneMutedSomeoneToast": {
+    "messageformat": "{name} muted {otherName}."
+  },
+  "icu:CallControls__YouMutedSomeoneToast": {
+    "messageformat": "You muted {otherName}."
+  },
+  "icu:CallControls__YouMutedYourselfToast": {
+    "messageformat": "You muted yourself from another device."
+  },
   "icu:CallControls__LowerHandSuggestionToast": {
     "messageformat": "Leteszed a kezed?"
   },
@@ -3238,9 +3241,6 @@
   },
   "icu:calling__view_mode--updated": {
     "messageformat": "Nézet frissítve"
-  },
-  "icu:calling__hangup": {
-    "messageformat": "Kilépés a hívásból"
   },
   "icu:calling__SelectPresentingSourcesModal--title": {
     "messageformat": "Képernyő megosztása"
@@ -4059,10 +4059,10 @@
     "messageformat": "A fiók használatának folytatásához meg kell nyitnod a Signalt a telefonodon. Ha nem nyitod meg a Signalt a telefonodon, a fiókod hamarosan törlődik. <learnMoreLink>Tudj meg többet!</learnMoreLink>"
   },
   "icu:LowDiskSpaceBackupImportModal__title": {
-    "messageformat": "Can't restore media"
+    "messageformat": "Nem lehet visszaállítani a médiafájlt"
   },
   "icu:LowDiskSpaceBackupImportModal__description": {
-    "messageformat": "Your device does not have enough free space. Free up {diskSpaceAmount} of space to restore your media."
+    "messageformat": "Az eszközödön nincs elég szabad hely. Szabadíts fel {diskSpaceAmount} helyet a médiafájlok visszaállításához."
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Bővítés"
@@ -4084,9 +4084,6 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "Szerkesztett üzenet küldése"
-  },
-  "icu:CompositionArea__FunButtonLabel": {
-    "messageformat": "Adj hozzá hangulatjelet, matricát vagy GIF-et"
   },
   "icu:CompositionArea__ConfirmGifSelection__Title": {
     "messageformat": "Kicseréled a mellékletet?"
@@ -4522,12 +4519,6 @@
   },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "Biztonsági tippek"
-  },
-  "icu:MessageRequestWarning__dialog__details": {
-    "messageformat": "Nincsenek közös csoportjaid ezzel a személlyel. Ellenőrizd a kérelmeket figyelmesen elfogadás előtt, hogy elkerüld a nem kívánt üzeneteket."
-  },
-  "icu:MessageRequestWarning__dialog__learn-even-more": {
-    "messageformat": "A csevegési felkérésekről"
   },
   "icu:ContactSpoofing__same-name--link": {
     "messageformat": "Gondosan nézd át a felkéréseket. A Signal talált egy másik, azonos nevű névjegyet. <reviewRequestLink>Felkérés áttekintése</reviewRequestLink>"
@@ -5006,6 +4997,21 @@
   "icu:Preferences__button--internal": {
     "messageformat": "Belső"
   },
+  "icu:Preferences__internal__local-backups": {
+    "messageformat": "Helyi biztonsági mentések"
+  },
+  "icu:Preferences__internal__export-local-backup": {
+    "messageformat": "Exportálás…"
+  },
+  "icu:Preferences__internal__export-local-backup--description": {
+    "messageformat": "Helyi titkosított biztonsági mentés exportálása egy mappába és annak hitelesítése"
+  },
+  "icu:Preferences__internal__import-local-backup": {
+    "messageformat": "Importálás…"
+  },
+  "icu:Preferences__internal__import-local-backup--description": {
+    "messageformat": "Helyi titkosított biztonsági mentés előkészítése importáláshoz hivatkozás esetén"
+  },
   "icu:Preferences__internal__validate-backup--description": {
     "messageformat": "Titkosított biztonsági mentés exportálása a memóriába és a validációs csomag futtatása"
   },
@@ -5071,9 +5077,6 @@
   },
   "icu:Preferences--backup-messages-plan__note": {
     "messageformat": "A Signal biztonsági mentéseire vonatkozó előfizetésed kezelheted és frissítheted a telefonodon."
-  },
-  "icu:Preferences--backup-plan__not-found": {
-    "messageformat": "Az előfizetés nem található Annak érdekében, hogy tovább használhasd a Signal biztonsági mentéseit, újítsd meg."
   },
   "icu:Preferences--backup-plan__not-found__note": {
     "messageformat": "A Signal biztonsági mentéseire vonatkozó előfizetésed kezelheted és megújíthatod a telefonodon."
@@ -5203,6 +5206,24 @@
   },
   "icu:Preferences__LanguageModal__Restart__Button": {
     "messageformat": "Újraindítás"
+  },
+  "icu:Preferences__Privacy__Application": {
+    "messageformat": "Alkalmazás"
+  },
+  "icu:Preferences__content-protection--label": {
+    "messageformat": "Képernyőbiztonság"
+  },
+  "icu:Preferences__content-protection--description": {
+    "messageformat": "A fokozott adatvédelem érdekében tiltsd le a Signal képernyőképeit ezen a számítógépen."
+  },
+  "icu:Preferences__content-protection__modal--title": {
+    "messageformat": "Kikapcsolod a képernyőbiztonságot?"
+  },
+  "icu:Preferences__content-protection__modal--body": {
+    "messageformat": "Ha le van tiltva, ez lehetővé teheti a Microsoft Windows számára, hogy képernyőképeket készítsen a Signalról, és azokat olyan funkciókhoz használja, amelyek nem feltétlenül privátak."
+  },
+  "icu:Preferences__content-protection__modal--disable": {
+    "messageformat": "Letiltás"
   },
   "icu:DialogUpdate--version-available": {
     "messageformat": "Elérhető frissítés a {version} verzióra"
@@ -6331,10 +6352,16 @@
     "messageformat": "Apró finomítások, hibajavítások és teljesítménynövelések. Köszönjük, hogy a Signalt használod!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.51--0": {
-    "messageformat": "Mostantól a Signal Desktopban is kereshetsz animált GIF-eket."
+  "icu:WhatsNew__v7.54--0": {
+    "messageformat": "További nyelveken is támogatást nyújtottuk az emoji-parancsikonokhoz."
   },
-  "icu:WhatsNew__v7.51--1": {
-    "messageformat": "A kép a képben ablakot is átméreteztük, és kényelmes, új parancsikonokat adtunk hozzá, miközben a hívásablak minimálisra csökkent."
+  "icu:WhatsNew__v7.55--0": {
+    "messageformat": "Ezzel a frissítéssel visszatértek a billentyűparancsok a hangulatjelekhez és matricákhoz!"
+  },
+  "icu:WhatsNew__v7.55--1": {
+    "messageformat": "Egy ritka összeomlást is kijavítottunk néhány Linux disztribúción."
+  },
+  "icu:WhatsNew__v7.56--0": {
+    "messageformat": "Sometimes a powerful story can really move you, so we fixed a bug that made it difficult to move the Signal window while viewing content in the Stories tab."
   }
 }

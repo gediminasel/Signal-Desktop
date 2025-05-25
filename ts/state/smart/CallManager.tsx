@@ -13,12 +13,6 @@ import { isConversationTooBigToRing as getIsConversationTooBigToRing } from '../
 import * as log from '../../logging/log';
 import { calling as callingService } from '../../services/calling';
 import {
-  FALLBACK_NOTIFICATION_TITLE,
-  NotificationSetting,
-  NotificationType,
-  notificationService,
-} from '../../services/notifications';
-import {
   bounceAppIconStart,
   bounceAppIconStop,
 } from '../../shims/bounceAppIcon';
@@ -35,7 +29,6 @@ import type {
 import { CallState } from '../../types/Calling';
 import { CallMode } from '../../types/CallDisposition';
 import type { AciString } from '../../types/ServiceId';
-import { strictAssert } from '../../util/assert';
 import { callLinkToConversation } from '../../util/callLinks';
 import { callingTones } from '../../util/callingTones';
 import { missingCaseError } from '../../util/missingCaseError';
@@ -58,6 +51,7 @@ import { renderReactionPicker } from './renderReactionPicker';
 import { isSharingPhoneNumberWithEverybody as getIsSharingPhoneNumberWithEverybody } from '../../util/phoneNumberSharingMode';
 import { useGlobalModalActions } from '../ducks/globalModals';
 import { isLonelyGroup } from '../ducks/callingHelpers';
+import { getActiveProfile } from '../selectors/notificationProfiles';
 
 function renderDeviceSelection(): JSX.Element {
   return <SmartCallingDeviceSelection />;
@@ -66,55 +60,7 @@ function renderDeviceSelection(): JSX.Element {
 const getGroupCallVideoFrameSource =
   callingService.getGroupCallVideoFrameSource.bind(callingService);
 
-async function notifyForCall(
-  conversationId: string,
-  title: string,
-  isVideoCall: boolean
-): Promise<void> {
-  const shouldNotify =
-    !window.SignalContext.activeWindowService.isActive() &&
-    window.Events.getCallSystemNotification();
-  if (!shouldNotify) {
-    return;
-  }
-
-  let notificationTitle: string;
-
-  const notificationSetting = notificationService.getNotificationSetting();
-  switch (notificationSetting) {
-    case NotificationSetting.Off:
-    case NotificationSetting.NoNameOrMessage:
-      notificationTitle = FALLBACK_NOTIFICATION_TITLE;
-      break;
-    case NotificationSetting.NameOnly:
-    case NotificationSetting.NameAndMessage:
-      notificationTitle = title;
-      break;
-    default:
-      log.error(missingCaseError(notificationSetting));
-      notificationTitle = FALLBACK_NOTIFICATION_TITLE;
-      break;
-  }
-
-  const conversation = window.ConversationController.get(conversationId);
-  strictAssert(conversation, 'notifyForCall: conversation not found');
-
-  const { url, absolutePath } = await conversation.getAvatarOrIdenticon();
-
-  notificationService.notify({
-    conversationId,
-    title: notificationTitle,
-    iconPath: absolutePath,
-    iconUrl: url,
-    message: isVideoCall
-      ? window.i18n('icu:incomingVideoCall')
-      : window.i18n('icu:incomingAudioCall'),
-    sentAt: 0,
-    // The ringtone plays so we don't need sound for the notification
-    silent: true,
-    type: NotificationType.IncomingCall,
-  });
-}
+const notifyForCall = callingService.notifyForCall.bind(callingService);
 
 function setLocalPreviewContainer(container: HTMLDivElement | null): void {
   callingService.setLocalPreviewContainer(container);
@@ -338,6 +284,8 @@ const mapStateToActiveCallProp = (
         remoteParticipants,
         remoteAudioLevels: call.remoteAudioLevels || new Map<number, number>(),
         suggestLowerHand: Boolean(activeCallState.suggestLowerHand),
+        mutedBy: activeCallState.mutedBy,
+        observedRemoteMute: activeCallState.observedRemoteMute,
       } satisfies ActiveGroupCallType;
     }
     default:
@@ -437,6 +385,7 @@ export const SmartCallManager = memo(function SmartCallManager() {
   const availableCameras = useSelector(getAvailableCameras);
   const hasInitialLoadCompleted = useSelector(getHasInitialLoadCompleted);
   const me = useSelector(getMe);
+  const activeNotificationProfile = useSelector(getActiveProfile);
 
   const {
     approveUser,
@@ -460,6 +409,7 @@ export const SmartCallManager = memo(function SmartCallManager() {
     setGroupCallVideoRequest,
     setIsCallActive,
     setLocalAudio,
+    setLocalAudioRemoteMuted,
     setLocalVideo,
     setOutgoingRing,
     setRendererCanvas,
@@ -482,6 +432,7 @@ export const SmartCallManager = memo(function SmartCallManager() {
     <CallManager
       acceptCall={acceptCall}
       activeCall={activeCall}
+      activeNotificationProfile={activeNotificationProfile}
       approveUser={approveUser}
       availableCameras={availableCameras}
       batchUserAction={batchUserAction}
@@ -519,6 +470,7 @@ export const SmartCallManager = memo(function SmartCallManager() {
       setGroupCallVideoRequest={setGroupCallVideoRequest}
       setIsCallActive={setIsCallActive}
       setLocalAudio={setLocalAudio}
+      setLocalAudioRemoteMuted={setLocalAudioRemoteMuted}
       setLocalPreviewContainer={setLocalPreviewContainer}
       setLocalVideo={setLocalVideo}
       setOutgoingRing={setOutgoingRing}

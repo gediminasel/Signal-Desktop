@@ -81,14 +81,22 @@ export function _getSegmentRanges(
   return segmentRanges;
 }
 
+function assertExpected<T>(actual: T, expected: T, message: string) {
+  strictAssert(
+    Object.is(actual, expected),
+    `${message}: ${actual} (expected: ${expected})`
+  );
+}
+
 async function fetchSegment(
   url: string,
   segmentRange: _SegmentRange,
+  contentLength: number,
   signal?: AbortSignal
 ): Promise<ArrayBufferView> {
   const { messaging } = window.textsecure;
   strictAssert(messaging, 'Missing window.textsecure.messaging');
-  const { data } = await messaging.server.fetchBytesViaProxy({
+  const { data, response } = await messaging.server.fetchBytesViaProxy({
     method: 'GET',
     url,
     signal,
@@ -97,21 +105,35 @@ async function fetchSegment(
     },
   });
 
-  strictAssert(
-    data.buffer.byteLength === segmentRange.segmentSize,
-    'Response buffer should be exact length of segment range'
+  assertExpected(
+    response.headers.get('Content-Length'),
+    `${segmentRange.segmentSize}`,
+    'Unexpected Content-Length header'
+  );
+
+  assertExpected(
+    response.headers.get('Content-Range'),
+    `bytes ${segmentRange.startIndex}-${segmentRange.endIndexInclusive}/${contentLength}`,
+    'Unexpected Content-Range header'
+  );
+
+  assertExpected(
+    data.byteLength,
+    segmentRange.segmentSize,
+    'Unexpected response buffer byte length'
   );
 
   let slice: ArrayBufferView;
   // Trim duplicate bytes from start of last segment
   if (segmentRange.sliceStart > 0) {
-    slice = new Uint8Array(data.buffer.slice(segmentRange.sliceStart));
+    slice = data.slice(segmentRange.sliceStart);
   } else {
     slice = data;
   }
-  strictAssert(
-    slice.byteLength === segmentRange.sliceSize,
-    'Slice buffer should be exact length of segment range slice'
+  assertExpected(
+    slice.byteLength,
+    segmentRange.sliceSize,
+    'Unexpected slice byte length'
   );
   return slice;
 }
@@ -125,7 +147,7 @@ export async function fetchInSegments(
   const segmentRanges = _getSegmentRanges(contentLength, segmentSize);
   const segmentBuffers = await Promise.all(
     segmentRanges.map(segmentRange => {
-      return fetchSegment(url, segmentRange, signal);
+      return fetchSegment(url, segmentRange, contentLength, signal);
     })
   );
   return new Blob(segmentBuffers);

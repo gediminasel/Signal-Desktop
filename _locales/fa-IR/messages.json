@@ -83,9 +83,6 @@
   "icu:databaseError": {
     "messageformat": "خطای پایگاه داده"
   },
-  "icu:databaseError__detail": {
-    "messageformat": "یک خطای پایگاه داده رخ داد. می‌توانید خطا را کپی کنید و برای کمک به رفع مشکل با پشتیبانی سیگنال تماس بگیرید. اگر فوراً نیاز به استفاده از سیگنال دارید، می‌توانید داده‌هایتان را پاک کنید و سیگنال را دوباره راه‌اندازی کنید.\n\nتماس با پشتیبانی از طریق مراجعه به: {link}"
-  },
   "icu:deleteAndRestart": {
     "messageformat": "حذف داده‌ها و راه‌اندازی مجدد"
   },
@@ -1673,9 +1670,6 @@
   "icu:notificationSenderInGroup": {
     "messageformat": "{sender} در {group}"
   },
-  "icu:notificationReaction": {
-    "messageformat": "{sender} با {emoji} به پیام شما واکنش نشان داد"
-  },
   "icu:notificationReactionMessage": {
     "messageformat": "{sender} با {emoji} به {message} واکنش نشان داد"
   },
@@ -1831,12 +1825,6 @@
   },
   "icu:ConversationDetails--support-center": {
     "messageformat": "مرکز پشتیبانی"
-  },
-  "icu:ConversationDetails--contact-us": {
-    "messageformat": "تماس با ما"
-  },
-  "icu:ConversationDetails--donate": {
-    "messageformat": "حمایت از سیگنال"
   },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "دیدن شمارهٔ ایمنی"
@@ -2600,6 +2588,9 @@
   "icu:Keyboard--open-sticker-chooser": {
     "messageformat": "گزینشگر استیکر را باز کن"
   },
+  "icu:Keyboard--open-gif-chooser": {
+    "messageformat": "بازکردن انتخابگر GIF"
+  },
   "icu:Keyboard--begin-recording-voice-note": {
     "messageformat": "آغاز ضبط کردن پیام صوتی"
   },
@@ -3146,6 +3137,18 @@
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "میکروفون روشن است"
   },
+  "icu:CallControls__MutedBySomeoneToast": {
+    "messageformat": "{otherName} muted you."
+  },
+  "icu:CallControls__SomeoneMutedSomeoneToast": {
+    "messageformat": "{name} muted {otherName}."
+  },
+  "icu:CallControls__YouMutedSomeoneToast": {
+    "messageformat": "You muted {otherName}."
+  },
+  "icu:CallControls__YouMutedYourselfToast": {
+    "messageformat": "You muted yourself from another device."
+  },
   "icu:CallControls__LowerHandSuggestionToast": {
     "messageformat": "دستتان را پایین می‌آورید؟"
   },
@@ -3238,9 +3241,6 @@
   },
   "icu:calling__view_mode--updated": {
     "messageformat": "نما به‌روزرسانی شد"
-  },
-  "icu:calling__hangup": {
-    "messageformat": "ترک کردن تماس"
   },
   "icu:calling__SelectPresentingSourcesModal--title": {
     "messageformat": "صفحهٔ خود را به اشتراک بگذارید"
@@ -4059,10 +4059,10 @@
     "messageformat": "برای ادامه استفاده از این حساب، باید سیگنال را در تلفن خود باز کنید. اگر سیگنال را در تلفن خود باز نکنید، حساب شما به زودی حذف خواهد شد. <learnMoreLink>اطلاعات بیشتر</learnMoreLink>"
   },
   "icu:LowDiskSpaceBackupImportModal__title": {
-    "messageformat": "Can't restore media"
+    "messageformat": "رسانه بازیابی نشد"
   },
   "icu:LowDiskSpaceBackupImportModal__description": {
-    "messageformat": "Your device does not have enough free space. Free up {diskSpaceAmount} of space to restore your media."
+    "messageformat": "دستگاه شما فضای خالی کافی ندارد. برای بازیابی رسانه خود، {diskSpaceAmount} فضا آزاد کنید."
   },
   "icu:CompositionArea--expand": {
     "messageformat": "گسترش"
@@ -4084,9 +4084,6 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "ارسال پیام ویرایش‌شده"
-  },
-  "icu:CompositionArea__FunButtonLabel": {
-    "messageformat": "افزودن ایموجی، استیکر یا گیف"
   },
   "icu:CompositionArea__ConfirmGifSelection__Title": {
     "messageformat": "پیوست جایگزین شود؟"
@@ -4522,12 +4519,6 @@
   },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "نکات ایمنی"
-  },
-  "icu:MessageRequestWarning__dialog__details": {
-    "messageformat": "شما هیچ گروه مشترکی با این فرد ندارید. پرای جلوگیری از پیام‌های ناخواسته، پیش از قبول درخواست‌ها، آن‌ها را با دقت بررسی کنید."
-  },
-  "icu:MessageRequestWarning__dialog__learn-even-more": {
-    "messageformat": "درباره درخواست‌های تبادل پیام"
   },
   "icu:ContactSpoofing__same-name--link": {
     "messageformat": "درخواست‌ها را با دقت بررسی کنید. سیگنال مخاطب دیگری با همین نام پیدا کرد. <reviewRequestLink>درخواست بررسی</reviewRequestLink>"
@@ -5006,6 +4997,21 @@
   "icu:Preferences__button--internal": {
     "messageformat": "داخلی"
   },
+  "icu:Preferences__internal__local-backups": {
+    "messageformat": "پشتیبان‌های محلی"
+  },
+  "icu:Preferences__internal__export-local-backup": {
+    "messageformat": "صادر کردن…"
+  },
+  "icu:Preferences__internal__export-local-backup--description": {
+    "messageformat": "نسخه پشتیبان رمزگذاری‌شده محلی را به یک پوشه صادر کنید و آن را اعتبارسنجی کنید"
+  },
+  "icu:Preferences__internal__import-local-backup": {
+    "messageformat": "وارد کردن…"
+  },
+  "icu:Preferences__internal__import-local-backup--description": {
+    "messageformat": "یک نسخه پشتیبان رمزگذاری‌شده محلی را برای وارد کردن در لینک آماده کنید"
+  },
   "icu:Preferences__internal__validate-backup--description": {
     "messageformat": "نسخه پشتیبان رمزگذاری‌شده را به حافظه صادر کنید و مجموعه اعتبارسنجی را روی آن اجرا کنید"
   },
@@ -5071,9 +5077,6 @@
   },
   "icu:Preferences--backup-messages-plan__note": {
     "messageformat": "می‌توانید «پشتیبان‌های سیگنال» را در تلفن خود مدیریت کنید یا ارتقا دهید."
-  },
-  "icu:Preferences--backup-plan__not-found": {
-    "messageformat": "اشتراک شما یافت نشد. برای ادامه استفاده از «پشتیبان‌های سیگنال»، تمدید کنید."
   },
   "icu:Preferences--backup-plan__not-found__note": {
     "messageformat": "می‌توانید اشتراک پشتیبان‌های سیگنال خود را در تلفنتان مدیریت یا تمدید کنید."
@@ -5203,6 +5206,24 @@
   },
   "icu:Preferences__LanguageModal__Restart__Button": {
     "messageformat": "بازراه‌اندازی"
+  },
+  "icu:Preferences__Privacy__Application": {
+    "messageformat": "برنامه"
+  },
+  "icu:Preferences__content-protection--label": {
+    "messageformat": "امنیت صفحه"
+  },
+  "icu:Preferences__content-protection--description": {
+    "messageformat": "برای افزایش حریم خصوصی، از گرفتن اسکرین‌شات از سیگنال در این رایانه جلوگیری می‌کند."
+  },
+  "icu:Preferences__content-protection__modal--title": {
+    "messageformat": "امنیت صفحه‌نمایش غیرفعال شود؟"
+  },
+  "icu:Preferences__content-protection__modal--body": {
+    "messageformat": "اگر غیرفعال شود، ممکن است «مایکروسافت ویندوز» بتواند از سیگنال اسکرین‌شات بگیرد و از آن برای قابلیت‌هایی استفاده کند که ممکن است خصوصی نباشند."
+  },
+  "icu:Preferences__content-protection__modal--disable": {
+    "messageformat": "غیرفعال کردن"
   },
   "icu:DialogUpdate--version-available": {
     "messageformat": "به‌روزرسانی به نسخهٔ {version} موجود است"
@@ -6331,10 +6352,16 @@
     "messageformat": "تغییرات کوچک، رفع اشکالات و بهبود عملکرد. بابت استفاده از سیگنال سپاسگزاریم!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.51--0": {
-    "messageformat": "اکنون می‌توانید گیف‌های متحرک را در سیگنال دسک‌تاپ نیزجستجو کنید."
+  "icu:WhatsNew__v7.54--0": {
+    "messageformat": "پشتیبانی از میان‌برهای ایموجی به زبان‌های دیگر را اضافه کرده‌ایم."
   },
-  "icu:WhatsNew__v7.51--1": {
-    "messageformat": "همچنین اندازه پنجره تصویر در تصویر را تغییر دادیم و میان‌برهای جدید و راحتی را هنگام کوچک‌کردن تماس اضافه کردیم."
+  "icu:WhatsNew__v7.55--0": {
+    "messageformat": "این به‌روزرسانی، میانبرهای صفحه‌کلید را برای ایموجی‌ها و استیکرها دوباره فعال می‌کند."
+  },
+  "icu:WhatsNew__v7.55--1": {
+    "messageformat": "همچنین مشکل ازکارافتادگی برنامه را در برخی از توزیع‌های لینوکس را برطرف کردیم."
+  },
+  "icu:WhatsNew__v7.56--0": {
+    "messageformat": "Sometimes a powerful story can really move you, so we fixed a bug that made it difficult to move the Signal window while viewing content in the Stories tab."
   }
 }

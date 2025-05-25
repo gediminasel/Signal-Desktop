@@ -132,6 +132,7 @@ export type EphemeralBackupType = Readonly<
 export type LinkOptionsType = Readonly<{
   extraConfig?: Partial<RendererConfigType>;
   ephemeralBackup?: EphemeralBackupType;
+  localBackup?: string;
 }>;
 
 type BootstrapInternalOptions = BootstrapOptions &
@@ -175,6 +176,7 @@ const DEFAULT_REMOTE_CONFIG = [
   ['desktop.internalUser', { enabled: true }],
   ['desktop.releaseNotes', { enabled: true }],
   ['desktop.senderKey.retry', { enabled: true }],
+  ['global.backups.mediaTierFallbackCdnNumber', { enabled: true, value: '3' }],
   ['global.groupsv2.groupSizeHardLimit', { enabled: true, value: '64' }],
   ['global.groupsv2.maxGroupSize', { enabled: true, value: '32' }],
 ] as const;
@@ -376,12 +378,17 @@ export class Bootstrap {
   public async link({
     extraConfig,
     ephemeralBackup,
+    localBackup,
   }: LinkOptionsType = {}): Promise<App> {
     debug('linking');
 
     const app = await this.startApp(extraConfig);
 
     const window = await app.getWindow();
+
+    if (localBackup != null) {
+      await app.stageLocalBackupForImport(localBackup);
+    }
 
     debug('looking for QR code or relink button');
     const qrCode = window.locator(

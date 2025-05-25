@@ -53,6 +53,7 @@ import type { PropsPreloadType as PreferencesPropsType } from './components/Pref
 import type { WindowsNotificationData } from './services/notifications';
 import type { QueryStatsOptions } from './sql/main';
 import type { SocketStatuses } from './textsecure/SocketManager';
+import type { BeforeNavigateService } from './services/BeforeNavigate';
 
 export { Long } from 'long';
 
@@ -66,7 +67,7 @@ export type IPCType = {
     erase: () => Promise<void>;
   };
   drawAttention: () => void;
-  getAutoLaunch: () => Promise<boolean>;
+  getAutoLaunch: () => Promise<boolean | undefined>;
   getMediaAccessStatus: (
     mediaType: 'screen' | 'microphone' | 'camera'
   ) => Promise<ReturnType<SystemPreferences['getMediaAccessStatus']>>;
@@ -74,13 +75,16 @@ export type IPCType = {
   openSystemMediaPermissions: (
     mediaType: 'microphone' | 'camera' | 'screenCapture'
   ) => Promise<void>;
-  getMediaPermissions: () => Promise<boolean>;
+  getMediaPermissions: () => Promise<boolean | undefined>;
+  whenWindowVisible: () => Promise<void>;
   logAppLoadedEvent?: (options: { processedCount?: number }) => void;
   readyForUpdates: () => void;
   removeSetupMenuItems: () => unknown;
   setAutoHideMenuBar: (value: boolean) => void;
   setAutoLaunch: (value: boolean) => Promise<void>;
   setBadge: (badge: number | 'marked-unread') => void;
+  setMediaPermissions: (value: boolean) => Promise<void>;
+  setMediaCameraPermissions: (value: boolean) => Promise<void>;
   setMenuBarVisibility: (value: boolean) => void;
   showDebugLog: () => void;
   showPermissionsPopup: (
@@ -148,16 +152,17 @@ export type SignalCoreType = {
   RemoteConfig: typeof RemoteConfig;
   ScreenShareWindowProps?: ScreenShareWindowPropsType;
   Services: {
-    calling: CallingClass;
     backups: BackupsService;
+    beforeNavigate: BeforeNavigateService;
+    calling: CallingClass;
     initializeGroupCredentialFetcher: () => Promise<void>;
     initializeNetworkObserver: (
       network: ReduxActions['network'],
       getAuthSocketStatus: () => SocketStatus
     ) => void;
     initializeUpdateListener: (updates: ReduxActions['updates']) => void;
-    retryPlaceholders?: RetryPlaceholders;
     lightSessionResetQueue?: PQueue;
+    retryPlaceholders?: RetryPlaceholders;
     storage: typeof StorageService;
   };
   SettingsWindowProps?: SettingsWindowPropsType;

@@ -17,6 +17,7 @@ import type { CallLinkType } from '../types/CallLink';
 import type { RecentEmojiObjectType } from '../util/loadRecentEmojis';
 import type { StickersStateType } from './ducks/stickers';
 import type { GifsStateType } from './ducks/gifs';
+import type { NotificationProfileType } from '../types/NotificationProfile';
 
 export type ReduxInitData = {
   badgesState: BadgesStateType;
@@ -26,6 +27,7 @@ export type ReduxInitData = {
   gifs: GifsStateType;
   mainWindowStats: MainWindowStatsType;
   menuOptions: MenuOptionsType;
+  notificationProfiles: ReadonlyArray<NotificationProfileType>;
   recentEmoji: RecentEmojiObjectType;
   stickers: StickersStateType;
   stories: Array<StoryDataType>;
@@ -80,7 +82,12 @@ export function initializeRedux(data: ReduxInitData): void {
       actionCreators.mediaGallery,
       store.dispatch
     ),
+    nav: bindActionCreators(actionCreators.nav, store.dispatch),
     network: bindActionCreators(actionCreators.network, store.dispatch),
+    notificationProfiles: bindActionCreators(
+      actionCreators.notificationProfiles,
+      store.dispatch
+    ),
     safetyNumber: bindActionCreators(
       actionCreators.safetyNumber,
       store.dispatch

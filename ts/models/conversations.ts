@@ -193,6 +193,8 @@ import { cleanupMessages } from '../util/cleanup';
 import { MessageModel } from './messages';
 import { applyNewAvatar } from '../groups';
 import { safeSetTimeout } from '../util/timeout';
+import { getTypingIndicatorSetting } from '../types/Util';
+import { INITIAL_EXPIRE_TIMER_VERSION } from '../util/expirationTimer';
 
 /* eslint-disable more/no-then */
 window.Whisper = window.Whisper || {};
@@ -286,6 +288,8 @@ export class ConversationModel extends window.Backbone
 
   throttledUpdateVerified?: () => void;
 
+  throttledUpdateUnread: () => void;
+
   typingRefreshTimer?: NodeJS.Timeout | null;
 
   typingPauseTimer?: NodeJS.Timeout | null;
@@ -313,7 +317,7 @@ export class ConversationModel extends window.Backbone
       verified: window.textsecure.storage.protocol.VerifiedStatus.DEFAULT,
       messageCount: 0,
       sentMessageCount: 0,
-      expireTimerVersion: 1,
+      expireTimerVersion: INITIAL_EXPIRE_TIMER_VERSION,
     };
   }
 
@@ -441,6 +445,7 @@ export class ConversationModel extends window.Backbone
     this.isFetchingUUID = this.isSMSOnly();
 
     this.throttledBumpTyping = throttle(this.bumpTyping, 300);
+    this.throttledUpdateUnread = throttle(this.#updateUnread, 300);
     this.throttledUpdateSharedGroups = throttle(
       this.updateSharedGroups.bind(this),
       FIVE_MINUTES
@@ -1121,7 +1126,7 @@ export class ConversationModel extends window.Backbone
 
   bumpTyping(): void {
     // We don't send typing messages if the setting is disabled
-    if (!window.Events.getTypingIndicatorSetting()) {
+    if (!getTypingIndicatorSetting()) {
       return;
     }
 
@@ -3145,7 +3150,7 @@ export class ConversationModel extends window.Backbone
     window.MessageCache.register(message);
 
     drop(this.onNewMessage(message));
-    drop(this.updateUnread());
+    this.throttledUpdateUnread();
   }
 
   async addDeliveryIssue({
@@ -3189,7 +3194,7 @@ export class ConversationModel extends window.Backbone
     window.MessageCache.register(message);
 
     drop(this.onNewMessage(message));
-    drop(this.updateUnread());
+    this.throttledUpdateUnread();
 
     await this.notify(message.attributes);
   }
@@ -3344,16 +3349,14 @@ export class ConversationModel extends window.Backbone
       return;
     }
 
-    const lastMessage = this.get('timestamp') || Date.now();
-
+    const timestamp = Date.now();
     log.info(
       'adding verified change advisory for',
       this.idForLogging(),
       verifiedChangeId,
-      lastMessage
+      timestamp
     );
 
-    const timestamp = Date.now();
     const message = new MessageModel({
       ...generateMessageId(incrementMessageCounter()),
       conversationId: this.id,
@@ -3361,7 +3364,7 @@ export class ConversationModel extends window.Backbone
       readStatus: ReadStatus.Read,
       received_at_ms: timestamp,
       seenStatus: options.local ? SeenStatus.Seen : SeenStatus.Unseen,
-      sent_at: lastMessage,
+      sent_at: timestamp,
       timestamp,
       type: 'verified-change',
       verified,
@@ -3372,7 +3375,7 @@ export class ConversationModel extends window.Backbone
     window.MessageCache.register(message);
 
     drop(this.onNewMessage(message));
-    drop(this.updateUnread());
+    this.throttledUpdateUnread();
 
     const serviceId = this.getServiceId();
     if (isDirectConversation(this.attributes) && serviceId) {
@@ -4667,6 +4670,21 @@ export class ConversationModel extends window.Backbone
       );
     }
 
+    // If this is the initial sync, we want to use the provided expire timer & version and
+    // disregard our local version. We might be re-linking after the primary has
+    // re-registered and their expireTimerVersion may have been reset, but we don't want
+    // to ignore it; our local version is out of date.
+    if (
+      isInitialSync &&
+      this.get('expireTimerVersion') !== INITIAL_EXPIRE_TIMER_VERSION
+    ) {
+      log.warn(
+        'updateExpirationTimer: Resetting expireTimerVersion since this is initialSync'
+      );
+      // This is reset after unlink, but we do it here as well to recover from errors
+      this.set('expireTimerVersion', INITIAL_EXPIRE_TIMER_VERSION);
+    }
+
     let expireTimer: DurationInSeconds | undefined = providedExpireTimer;
     let source = providedSource;
     if (this.get('left')) {
@@ -4687,7 +4705,7 @@ export class ConversationModel extends window.Backbone
       `updateExpirationTimer(${this.idForLogging()}, ` +
       `${expireTimer || 'disabled'}, version=${version || 0}) ` +
       `source=${source ?? '?'} localValue=${this.get('expireTimer')} ` +
-      `localVersion=${localVersion}, reason=${reason}`;
+      `localVersion=${localVersion}, reason=${reason}, isInitialSync=${isInitialSync}`;
 
     if (isSetByOther) {
       if (version) {
@@ -4785,7 +4803,7 @@ export class ConversationModel extends window.Backbone
     window.MessageCache.register(message);
 
     void this.addSingleMessage(message.attributes);
-    void this.updateUnread();
+    this.throttledUpdateUnread();
 
     log.info(
       `${logId}: added a notification received_at=${message.get('received_at')}`
@@ -4820,11 +4838,11 @@ export class ConversationModel extends window.Backbone
     }
   ): Promise<void> {
     await markConversationRead(this.attributes, newestUnreadAt, options);
-    await this.updateUnread();
+    this.throttledUpdateUnread();
     window.reduxActions.callHistory.updateCallHistoryUnreadCount();
   }
 
-  async updateUnread(): Promise<void> {
+  async #updateUnread(): Promise<void> {
     const options = {
       storyId: undefined,
       includeStoryReplies: !isGroup(this.attributes),

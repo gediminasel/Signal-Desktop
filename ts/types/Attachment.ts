@@ -37,6 +37,7 @@ import { getMessageQueueTime } from '../util/getMessageQueueTime';
 import { getLocalAttachmentUrl } from '../util/getLocalAttachmentUrl';
 import type { ReencryptionInfo } from '../AttachmentCrypto';
 import { redactGenericText } from '../util/privacy';
+import { missingCaseError } from '../util/missingCaseError';
 
 const MAX_WIDTH = 300;
 const MAX_HEIGHT = MAX_WIDTH * 1.5;
@@ -109,6 +110,7 @@ export type AttachmentType = {
     mediaName: string;
     cdnNumber?: number;
   };
+  localBackupPath?: string;
 
   // See app/attachment_channel.ts
   version?: 1 | 2;
@@ -1099,17 +1101,31 @@ export const getSuggestedFilename = ({
   attachment,
   timestamp,
   index,
+  scenario = 'saving-locally',
 }: {
-  attachment: AttachmentType;
+  attachment: Pick<AttachmentType, 'fileName' | 'contentType'>;
   timestamp?: number | Date;
   index?: number;
+  scenario?: 'sending' | 'saving-locally';
 }): string => {
   const { fileName } = attachment;
   if (fileName) {
     return fileName;
   }
 
-  const prefix = 'signal';
+  let prefix: string;
+  switch (scenario) {
+    case 'sending':
+      // when sending, we prefer a generic 'signal-less' name
+      prefix = 'image';
+      break;
+    case 'saving-locally':
+      prefix = 'signal';
+      break;
+    default:
+      throw missingCaseError(scenario);
+  }
+
   const suffix = timestamp
     ? moment(timestamp).format('-YYYY-MM-DD-HHmmss')
     : '';
@@ -1124,7 +1140,7 @@ export const getSuggestedFilename = ({
 };
 
 export const getFileExtension = (
-  attachment: AttachmentType
+  attachment: Pick<AttachmentType, 'contentType'>
 ): string | undefined => {
   if (!attachment.contentType) {
     return undefined;
@@ -1279,6 +1295,12 @@ export function mightBeOnBackupTier(
   attachment: Pick<AttachmentType, 'backupLocator'>
 ): boolean {
   return Boolean(attachment.backupLocator?.mediaName);
+}
+
+export function mightBeInLocalBackup(
+  attachment: Pick<AttachmentType, 'localBackupPath' | 'localKey'>
+): boolean {
+  return Boolean(attachment.localBackupPath && attachment.localKey);
 }
 
 export function isDownloadableFromTransitTier(

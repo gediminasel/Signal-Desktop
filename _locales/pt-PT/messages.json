@@ -83,9 +83,6 @@
   "icu:databaseError": {
     "messageformat": "Erro na base de dados"
   },
-  "icu:databaseError__detail": {
-    "messageformat": "Ocorreu um erro na base de dados. Pode copiar o erro e entrar em contacto com o suporte do Signal para ajudar a corrigir o problema. Se precisar de usar o Signal imediatamente, pode apagar os seus dados e reiniciar.\n\nEntre em contacto com o suporte visitando: {link}"
-  },
   "icu:deleteAndRestart": {
     "messageformat": "Eliminar dados e reiniciar"
   },
@@ -1673,9 +1670,6 @@
   "icu:notificationSenderInGroup": {
     "messageformat": "{sender} em {group}"
   },
-  "icu:notificationReaction": {
-    "messageformat": "{sender} reagiu {emoji} à sua mensagem"
-  },
   "icu:notificationReactionMessage": {
     "messageformat": "{sender} reagiu {emoji} a: {message}"
   },
@@ -1831,12 +1825,6 @@
   },
   "icu:ConversationDetails--support-center": {
     "messageformat": "Centro de suporte"
-  },
-  "icu:ConversationDetails--contact-us": {
-    "messageformat": "Contacte-nos"
-  },
-  "icu:ConversationDetails--donate": {
-    "messageformat": "Doar ao Signal"
   },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "Ver número de segurança"
@@ -2600,6 +2588,9 @@
   "icu:Keyboard--open-sticker-chooser": {
     "messageformat": "Abrir selecionador de etiquetas"
   },
+  "icu:Keyboard--open-gif-chooser": {
+    "messageformat": "Abrir selecionador de GIFs"
+  },
   "icu:Keyboard--begin-recording-voice-note": {
     "messageformat": "Começar a gravar uma nota de voz"
   },
@@ -3146,6 +3137,18 @@
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "Microfone ligado"
   },
+  "icu:CallControls__MutedBySomeoneToast": {
+    "messageformat": "{otherName} muted you."
+  },
+  "icu:CallControls__SomeoneMutedSomeoneToast": {
+    "messageformat": "{name} muted {otherName}."
+  },
+  "icu:CallControls__YouMutedSomeoneToast": {
+    "messageformat": "You muted {otherName}."
+  },
+  "icu:CallControls__YouMutedYourselfToast": {
+    "messageformat": "You muted yourself from another device."
+  },
   "icu:CallControls__LowerHandSuggestionToast": {
     "messageformat": "Baixar a mão?"
   },
@@ -3238,9 +3241,6 @@
   },
   "icu:calling__view_mode--updated": {
     "messageformat": "Vista atualizada"
-  },
-  "icu:calling__hangup": {
-    "messageformat": "Abandonar chamada"
   },
   "icu:calling__SelectPresentingSourcesModal--title": {
     "messageformat": "Partilhar o seu ecrã"
@@ -4059,10 +4059,10 @@
     "messageformat": "Tem de abrir o Signal no seu telemóvel para continuar a usar esta conta. Se não abrir o Signal no seu telemóvel, a sua conta será eliminada em breve. <learnMoreLink>Saiba mais</learnMoreLink>"
   },
   "icu:LowDiskSpaceBackupImportModal__title": {
-    "messageformat": "Can't restore media"
+    "messageformat": "Não é possível restaurar os ficheiros"
   },
   "icu:LowDiskSpaceBackupImportModal__description": {
-    "messageformat": "Your device does not have enough free space. Free up {diskSpaceAmount} of space to restore your media."
+    "messageformat": "O seu dispositivo não tem espaço livre suficiente. Liberte até {diskSpaceAmount} de espaço para restaurar os seus ficheiros."
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Expandir"
@@ -4084,9 +4084,6 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "Enviar mensagem editada"
-  },
-  "icu:CompositionArea__FunButtonLabel": {
-    "messageformat": "Adicionar um emoji, autocolante ou GIF"
   },
   "icu:CompositionArea__ConfirmGifSelection__Title": {
     "messageformat": "Substituir anexo?"
@@ -4522,12 +4519,6 @@
   },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "Dicas de segurança"
-  },
-  "icu:MessageRequestWarning__dialog__details": {
-    "messageformat": "Não tem grupos em comum com esta pessoa. Reveja os pedidos com cuidado antes de aceitar para evitar mensagens indesejadas."
-  },
-  "icu:MessageRequestWarning__dialog__learn-even-more": {
-    "messageformat": "Acerca dos pedidos de mensagem"
   },
   "icu:ContactSpoofing__same-name--link": {
     "messageformat": "Verifique os pedidos com cuidado. O Signal encontrou outro contacto com o mesmo nome. <reviewRequestLink>Verifique o pedido</reviewRequestLink>"
@@ -5006,6 +4997,21 @@
   "icu:Preferences__button--internal": {
     "messageformat": "Interno"
   },
+  "icu:Preferences__internal__local-backups": {
+    "messageformat": "Cópias de segurança locais"
+  },
+  "icu:Preferences__internal__export-local-backup": {
+    "messageformat": "Exportar…"
+  },
+  "icu:Preferences__internal__export-local-backup--description": {
+    "messageformat": "Exporta uma cópia de segurança local encriptada para uma pasta e valida-a"
+  },
+  "icu:Preferences__internal__import-local-backup": {
+    "messageformat": "Importar…"
+  },
+  "icu:Preferences__internal__import-local-backup--description": {
+    "messageformat": "Prepara uma cópia de segurança local encriptada para importação por link"
+  },
   "icu:Preferences__internal__validate-backup--description": {
     "messageformat": "Exportar a cópia de segurança encriptada para a memória e executar o conjunto de validação"
   },
@@ -5071,9 +5077,6 @@
   },
   "icu:Preferences--backup-messages-plan__note": {
     "messageformat": "Pode gerir ou atualizar as cópias de segurança do Signal no seu telemóvel."
-  },
-  "icu:Preferences--backup-plan__not-found": {
-    "messageformat": "A sua subscrição não foi encontrada. Renove-a para continuar a usar as cópias de segurança do Signal."
   },
   "icu:Preferences--backup-plan__not-found__note": {
     "messageformat": "Pode gerir ou renovar a sua subscrição das cópias de segurança do Signal no seu telemóvel."
@@ -5203,6 +5206,24 @@
   },
   "icu:Preferences__LanguageModal__Restart__Button": {
     "messageformat": "Reiniciar"
+  },
+  "icu:Preferences__Privacy__Application": {
+    "messageformat": "Aplicação"
+  },
+  "icu:Preferences__content-protection--label": {
+    "messageformat": "Segurança de ecrã"
+  },
+  "icu:Preferences__content-protection--description": {
+    "messageformat": "Impede capturas de ecrã do Signal neste computador para maior privacidade."
+  },
+  "icu:Preferences__content-protection__modal--title": {
+    "messageformat": "Desativar segurança de ecrã?"
+  },
+  "icu:Preferences__content-protection__modal--body": {
+    "messageformat": "Se desativada, isto pode permitir ao Microsoft Windows capturar imagens de ecrã do Signal e usá-las para funcionalidades que podem não ser privadas."
+  },
+  "icu:Preferences__content-protection__modal--disable": {
+    "messageformat": "Desativar"
   },
   "icu:DialogUpdate--version-available": {
     "messageformat": "Está disponível uma atualização para a versão {version}"
@@ -6331,10 +6352,16 @@
     "messageformat": "Pequenos ajustes adicionais, correções de bugs e melhorias de desempenho. Obrigado por usar o Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.51--0": {
-    "messageformat": "Agora pode procurar GIF animados também no Signal Desktop."
+  "icu:WhatsNew__v7.54--0": {
+    "messageformat": "Adicionámos suporte para atalhos de emojis em mais línguas."
   },
-  "icu:WhatsNew__v7.51--1": {
-    "messageformat": "Também redimensionámos a janela picture-in-picture e adicionámos novos atalhos convenientes enquanto uma chamada está minimizada."
+  "icu:WhatsNew__v7.55--0": {
+    "messageformat": "Esta atualização volta a ativar os atalhos para emojis e autocolantes."
+  },
+  "icu:WhatsNew__v7.55--1": {
+    "messageformat": "Também corrigimos um crash em distribuições Linux que ainda não suportam GTK4."
+  },
+  "icu:WhatsNew__v7.56--0": {
+    "messageformat": "Sometimes a powerful story can really move you, so we fixed a bug that made it difficult to move the Signal window while viewing content in the Stories tab."
   }
 }

@@ -17,6 +17,7 @@ import {
   AttachmentVariant,
   AttachmentPermanentlyUndownloadableError,
 } from '../../types/Attachment';
+import { updateRemoteConfig } from '../../test-both/helpers/RemoteConfigStub';
 
 describe('utils/downloadAttachment', () => {
   const baseAttachment = {
@@ -50,6 +51,7 @@ describe('utils/downloadAttachment', () => {
         abortSignal: abortController.signal,
       },
       dependencies: {
+        downloadAttachmentFromLocalBackup: stubDownload,
         downloadAttachmentFromServer: stubDownload,
       },
     });
@@ -86,6 +88,7 @@ describe('utils/downloadAttachment', () => {
           abortSignal: abortController.signal,
         },
         dependencies: {
+          downloadAttachmentFromLocalBackup: stubDownload,
           downloadAttachmentFromServer: stubDownload,
         },
       }),
@@ -123,6 +126,7 @@ describe('utils/downloadAttachment', () => {
         abortSignal: abortController.signal,
       },
       dependencies: {
+        downloadAttachmentFromLocalBackup: stubDownload,
         downloadAttachmentFromServer: stubDownload,
       },
     });
@@ -161,6 +165,7 @@ describe('utils/downloadAttachment', () => {
         abortSignal: abortController.signal,
       },
       dependencies: {
+        downloadAttachmentFromLocalBackup: stubDownload,
         downloadAttachmentFromServer: stubDownload,
       },
     });
@@ -210,6 +215,7 @@ describe('utils/downloadAttachment', () => {
         abortSignal: abortController.signal,
       },
       dependencies: {
+        downloadAttachmentFromLocalBackup: stubDownload,
         downloadAttachmentFromServer: stubDownload,
       },
     });
@@ -260,6 +266,7 @@ describe('utils/downloadAttachment', () => {
           abortSignal: abortController.signal,
         },
         dependencies: {
+          downloadAttachmentFromLocalBackup: stubDownload,
           downloadAttachmentFromServer: stubDownload,
         },
       }),
@@ -294,7 +301,8 @@ describe('utils/downloadAttachment', () => {
 describe('getCdnNumberForBackupTier', () => {
   let sandbox: sinon.SinonSandbox;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    await DataWriter.removeAll();
     sandbox = sinon.createSandbox();
     sandbox.stub(window.storage, 'get').callsFake(key => {
       if (key === 'masterKey') {
@@ -305,11 +313,19 @@ describe('getCdnNumberForBackupTier', () => {
       }
       return undefined;
     });
+    await updateRemoteConfig([
+      {
+        name: 'global.backups.mediaTierFallbackCdnNumber',
+        enabled: true,
+        value: '42',
+      },
+    ]);
   });
 
   afterEach(async () => {
     await DataWriter.clearAllBackupCdnObjectMetadata();
     sandbox.restore();
+    await updateRemoteConfig([]);
   });
 
   const baseAttachment = {
@@ -328,7 +344,7 @@ describe('getCdnNumberForBackupTier', () => {
       ...baseAttachment,
       backupLocator: { mediaName: 'mediaName' },
     });
-    assert.equal(result, 3);
+    assert.equal(result, 42);
   });
   it('uses cdn number in DB if none on attachment', async () => {
     await DataWriter.saveBackupCdnObjectMetadata([

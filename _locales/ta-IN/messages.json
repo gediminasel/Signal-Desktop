@@ -83,9 +83,6 @@
   "icu:databaseError": {
     "messageformat": "தரவுத் தளம் பிழை"
   },
-  "icu:databaseError__detail": {
-    "messageformat": "ஒரு தரவுத்தளப் பிழை ஏற்பட்டது. நீங்கள் பிழையை நகலெடுத்து, சிக்கலைச் சரிசெய்ய சிக்னல் ஆதரவைத் தொடர்புகொள்ளலாம். நீங்கள் உடனடியாக சிக்னலைப் பயன்படுத்த வேண்டுமென்றால், உங்கள் தரவை நீக்கிவிட்டு மீண்டும் தொடங்கவும்.\n\nஇங்கு செல்வதன் மூலம் ஆதரவைத் தொடர்புகொள்ளவும்: {link}"
-  },
   "icu:deleteAndRestart": {
     "messageformat": "தரவை நீக்கி மீண்டும் தொடங்கவும்"
   },
@@ -1673,9 +1670,6 @@
   "icu:notificationSenderInGroup": {
     "messageformat": "{sender} in {group}"
   },
-  "icu:notificationReaction": {
-    "messageformat": "{sender} உங்கள் செய்திக்கு {emoji} என்று எதிர்வினையாற்றினார்"
-  },
   "icu:notificationReactionMessage": {
     "messageformat": "{sender} {emoji} என்று எதிர்வினையாற்றினார்: {message}"
   },
@@ -1831,12 +1825,6 @@
   },
   "icu:ConversationDetails--support-center": {
     "messageformat": "ஆதரவு மையம்"
-  },
-  "icu:ConversationDetails--contact-us": {
-    "messageformat": "எங்களை தொடர்பு கொள்ள"
-  },
-  "icu:ConversationDetails--donate": {
-    "messageformat": "Signal-க்கு நன்கொடை அளி"
   },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "பாதுகாப்பு எண்ணைக் காட்டு"
@@ -2600,6 +2588,9 @@
   "icu:Keyboard--open-sticker-chooser": {
     "messageformat": "ஓட்டி தேர்வி திறக்கவும்"
   },
+  "icu:Keyboard--open-gif-chooser": {
+    "messageformat": "GIF தேர்வியைத் திறக்கவும்"
+  },
   "icu:Keyboard--begin-recording-voice-note": {
     "messageformat": "குரல் குறிப்பைப் பதிவுசெய்யத் தொடங்குங்கள்"
   },
@@ -3146,6 +3137,18 @@
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "மைக் ஆன்"
   },
+  "icu:CallControls__MutedBySomeoneToast": {
+    "messageformat": "{otherName} muted you."
+  },
+  "icu:CallControls__SomeoneMutedSomeoneToast": {
+    "messageformat": "{name} muted {otherName}."
+  },
+  "icu:CallControls__YouMutedSomeoneToast": {
+    "messageformat": "You muted {otherName}."
+  },
+  "icu:CallControls__YouMutedYourselfToast": {
+    "messageformat": "You muted yourself from another device."
+  },
   "icu:CallControls__LowerHandSuggestionToast": {
     "messageformat": "உங்கள் கையைத் தாழ்த்துகிறீர்களா?"
   },
@@ -3238,9 +3241,6 @@
   },
   "icu:calling__view_mode--updated": {
     "messageformat": "வ்யூ புதுப்பிக்கப்பட்டது"
-  },
-  "icu:calling__hangup": {
-    "messageformat": "அழைப்பை விடுங்கள்"
   },
   "icu:calling__SelectPresentingSourcesModal--title": {
     "messageformat": "பகிர் உங்கள் திரை"
@@ -4059,10 +4059,10 @@
     "messageformat": "இந்தக் கணக்கைத் தொடர்ந்து பயன்படுத்த உங்கள் ஃபோனில் சிக்னலைத் திறக்க வேண்டும். உங்கள் ஃபோனில் நீங்கள் சிக்னலைத் திறக்கவில்லை எனில், உங்கள் கணக்கு விரைவில் அழிக்கப்படும். <learnMoreLink>மேலும் அறிக</learnMoreLink>"
   },
   "icu:LowDiskSpaceBackupImportModal__title": {
-    "messageformat": "Can't restore media"
+    "messageformat": "மீடியாவை மீட்டமைக்க முடியவில்லை"
   },
   "icu:LowDiskSpaceBackupImportModal__description": {
-    "messageformat": "Your device does not have enough free space. Free up {diskSpaceAmount} of space to restore your media."
+    "messageformat": "உங்கள் டிவைஸில் போதுமான இடம் இல்லை. உங்கள் மீடியாவை மீட்டமைக்க {diskSpaceAmount} இடத்தைக் காலியக்கவும்."
   },
   "icu:CompositionArea--expand": {
     "messageformat": "விரிவாக்கு"
@@ -4084,9 +4084,6 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "திருத்தப்பட்ட மெசேஜை அனுப்பும்"
-  },
-  "icu:CompositionArea__FunButtonLabel": {
-    "messageformat": "எமோஜி, ஸ்டிக்கர், அல்லது GIFஐச் சேர்க்கவும்"
   },
   "icu:CompositionArea__ConfirmGifSelection__Title": {
     "messageformat": "இணைப்பை மாற்ற வேண்டுமா?"
@@ -4522,12 +4519,6 @@
   },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "பாதுகாப்பு உதவிக்குறிப்புகள்"
-  },
-  "icu:MessageRequestWarning__dialog__details": {
-    "messageformat": "உங்களிடம் உள்ளது இல்லை குழுக்கள்இந்த நபருடன் பொதுவானது. தேவையற்ற செய்திகளைத் தவிர்ப்பதற்கு ஏற்றுக்கொள்வதற்கு முன் கோரிக்கைகளை கவனமாக மதிப்பாய்வு செய்யவும்.\n "
-  },
-  "icu:MessageRequestWarning__dialog__learn-even-more": {
-    "messageformat": "பற்றி செய்தி கோரிக்கைகள்"
   },
   "icu:ContactSpoofing__same-name--link": {
     "messageformat": "கோரிக்கைகளை கவனமாக மதிப்பாய்வு செய்க. அதே பெயருடன் மற்றொரு தொடர்பை Signal கண்டறிந்தது. <reviewRequestLink>மதிப்பாய்வு கோரிக்கை</reviewRequestLink>"
@@ -5006,6 +4997,21 @@
   "icu:Preferences__button--internal": {
     "messageformat": "உள்ளகம்"
   },
+  "icu:Preferences__internal__local-backups": {
+    "messageformat": "உள்ளகக் காப்புப்பிரதிகள்"
+  },
+  "icu:Preferences__internal__export-local-backup": {
+    "messageformat": "ஏற்றுமதி செய்க…"
+  },
+  "icu:Preferences__internal__export-local-backup--description": {
+    "messageformat": "உள்ளகக் குறியாக்கம் செய்யப்பட்ட காப்புப்பிரதியை ஒரு கோப்புறையில் ஏற்றுமதி செய்து சரிபார்க்கவும்"
+  },
+  "icu:Preferences__internal__import-local-backup": {
+    "messageformat": "இறக்குமதி செய்க…"
+  },
+  "icu:Preferences__internal__import-local-backup--description": {
+    "messageformat": "இணைப்பில் இறக்குமதி செய்ய உள்ளகக் குறியாக்கம் செய்யப்பட்ட காப்புப்பிரதியை நிலைநிறுத்தவும்"
+  },
   "icu:Preferences__internal__validate-backup--description": {
     "messageformat": "குறியாக்கப்பட்ட காப்புப்பிரதியை நினைவகத்திற்கு ஏற்றுமதி செய்து, அதில் சரிபார்ப்புத் தொகுப்பை இயக்குங்கள்"
   },
@@ -5071,9 +5077,6 @@
   },
   "icu:Preferences--backup-messages-plan__note": {
     "messageformat": "உங்கள் ஃபோனில் உங்கள் சிக்னல் காப்புப்பிரதிகளை நிர்வகிக்கலாம் அல்லது புதுப்பிக்கலாம்."
-  },
-  "icu:Preferences--backup-plan__not-found": {
-    "messageformat": "உங்கள் சந்தா கிடைக்கப்பெறவில்லை. தொடர்ந்து சிக்னல் காப்புப்பிரதிகளைப் பயன்படுத்த, புதுப்பிக்கவும்."
   },
   "icu:Preferences--backup-plan__not-found__note": {
     "messageformat": "உங்கள் ஃபோனில் உங்கள் சிக்னல் காப்புப்பிரதி சந்தாவை நிர்வகிக்கலாம் அல்லது புதுப்பிக்கலாம்."
@@ -5203,6 +5206,24 @@
   },
   "icu:Preferences__LanguageModal__Restart__Button": {
     "messageformat": "ரீஸ்டார்ட்"
+  },
+  "icu:Preferences__Privacy__Application": {
+    "messageformat": "செயலி"
+  },
+  "icu:Preferences__content-protection--label": {
+    "messageformat": "திரை பாதுகாப்பு"
+  },
+  "icu:Preferences__content-protection--description": {
+    "messageformat": "கூடுதல் தனியுரிமைக்காக இந்தக் கணினியில் சிக்னலின் ஸ்கிரீன் ஷாட்களைத் தடுக்கவும்."
+  },
+  "icu:Preferences__content-protection__modal--title": {
+    "messageformat": "திரைப் பாதுகாப்பை முடக்கவா?"
+  },
+  "icu:Preferences__content-protection__modal--body": {
+    "messageformat": "முடக்கப்பட்டால், இது மைக்ரோசாப்ட் வின்டோசில் சிக்னலின் ஸ்கிரீன் ஷாட்களை எடுக்க அனுமதிக்கும் மேலும் தனிப்பட்டதாக இல்லாத அம்சங்களுக்கு அவற்றைப் பயன்படுத்தலாம்."
+  },
+  "icu:Preferences__content-protection__modal--disable": {
+    "messageformat": "முடக்கு"
   },
   "icu:DialogUpdate--version-available": {
     "messageformat": "பதிப்புக்குப் புதுப்பிக்கவும் {version} கிடைக்கிறது"
@@ -6331,10 +6352,16 @@
     "messageformat": "சிறு மாற்றங்கள், பிழை திருத்தங்கள் மற்றும் செயல்திறன் மேம்பாடுகள். சிக்னலைப் பயன்படுத்தியதற்கு நன்றி!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.51--0": {
-    "messageformat": "இப்போது நீங்கள் சிக்னல் டெஸ்க்டாப்பிலும் அனிமேஷன் செய்யப்பட்ட GIFகளைத் தேடலாம். இப்போது நீங்கள் சிக்னல் டெஸ்க்டாப்பிலும் எமோஜி, ஸ்டிக்கர் அல்லது அனிமேஷன் செய்யப்பட்ட GIFகளைத் தேடலாம்."
+  "icu:WhatsNew__v7.54--0": {
+    "messageformat": "எந்த மொழியிலும் புன்னகை ஒன்றுதான், ஆனால் இப்போது சிக்னல் டெஸ்க்டாப்பில் உள்ள எமோஜி ஷார்ட்கட்கள் முழுமையாக மொழிபெயர்க்கப்பட்டுவிட்டதால், நீங்கள்<code>:smile:</code> அல்லது <code>:sourire:</code> அல்லது <code>:微笑:</code> ஆகியவற்றை ஆதரிக்கப்படும் எந்த மொழியிலும் மொழிபெயர்க்கலாம். எமோஜி ஷார்ட்கட்களுக்கான ஆதரவைக் கூடுதல் மொழிகளில் சேர்த்துள்ளோம்."
   },
-  "icu:WhatsNew__v7.51--1": {
-    "messageformat": "பிக்சர்-இன்-பிக்சர் சாளரத்தின் அளவையும் மாற்றியுள்ளோம் மற்றும் அழைப்புத் திரை சிறியதாக்கப்படும் போது வசதியான புதிய குறுக்குவழிகளைச் சேர்த்துள்ளோம்."
+  "icu:WhatsNew__v7.55--0": {
+    "messageformat": "இந்தப் புதுப்பிப்பு எமோஜி மற்றும் ஸ்டிக்கர்களுக்கான விசைப்பலகை குறுக்குவழிகள் மீண்டும் வந்துவிட்டன! இந்தக் குறுக்குவழிகள் அதிக நேரத்தை மிச்சப்படுத்துகின்றன, ஏனெனில் இப்போது அவை உடைந்துவிட்டன என்று எழுதி எங்களிடம் சொல்ல வேண்டியதில்லை."
+  },
+  "icu:WhatsNew__v7.55--1": {
+    "messageformat": "GTK4 ஐ இன்னும் ஆதரிக்காத லினக்ஸ் விநியோகங்களில் ஏற்பட்ட செயலிழப்பையும் நாங்கள் சரிசெய்துள்ளோம்."
+  },
+  "icu:WhatsNew__v7.56--0": {
+    "messageformat": "Sometimes a powerful story can really move you, so we fixed a bug that made it difficult to move the Signal window while viewing content in the Stories tab."
   }
 }

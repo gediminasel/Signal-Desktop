@@ -5,6 +5,7 @@ import React, { useState, useCallback } from 'react';
 import type { LocalizerType } from '../types/I18N';
 import { toLogFormat } from '../types/errors';
 import { formatFileSize } from '../util/formatFileSize';
+import { SECOND } from '../util/durations';
 import type { ValidationResultType as BackupValidationResultType } from '../services/backups';
 import { SettingsRow, SettingsControl } from './PreferencesUtil';
 import { Button, ButtonVariant } from './Button';
@@ -12,11 +13,18 @@ import { Spinner } from './Spinner';
 
 export function PreferencesInternal({
   i18n,
+  exportLocalBackup: doExportLocalBackup,
   validateBackup: doValidateBackup,
 }: {
   i18n: LocalizerType;
+  exportLocalBackup: () => Promise<BackupValidationResultType>;
   validateBackup: () => Promise<BackupValidationResultType>;
 }): JSX.Element {
+  const [isExportPending, setIsExportPending] = useState(false);
+  const [exportResult, setExportResult] = useState<
+    BackupValidationResultType | undefined
+  >();
+
   const [isValidationPending, setIsValidationPending] = useState(false);
   const [validationResult, setValidationResult] = useState<
     BackupValidationResultType | undefined
@@ -34,42 +42,70 @@ export function PreferencesInternal({
     }
   }, [doValidateBackup]);
 
-  let validationElem: JSX.Element | undefined;
-  if (validationResult != null) {
-    if ('result' in validationResult) {
-      const {
-        result: { totalBytes, stats },
-      } = validationResult;
+  const renderValidationResult = useCallback(
+    (
+      backupResult: BackupValidationResultType | undefined
+    ): JSX.Element | undefined => {
+      if (backupResult == null) {
+        return;
+      }
 
-      validationElem = (
-        <div className="Preferences--internal--validate-backup--result">
-          <p>File size: {formatFileSize(totalBytes)}</p>
-          <pre>
-            <code>{JSON.stringify(stats, null, 2)}</code>
-          </pre>
-        </div>
-      );
-    } else {
-      const { error } = validationResult;
+      if ('result' in backupResult) {
+        const {
+          result: { totalBytes, stats, duration },
+        } = backupResult;
 
-      validationElem = (
+        let snapshotDirEl: JSX.Element | undefined;
+        if ('snapshotDir' in backupResult.result) {
+          snapshotDirEl = (
+            <p>
+              Backup path:
+              <pre>
+                <code>{backupResult.result.snapshotDir}</code>
+              </pre>
+            </p>
+          );
+        }
+
+        return (
+          <div className="Preferences--internal--validate-backup--result">
+            {snapshotDirEl}
+            <p>Main file size: {formatFileSize(totalBytes)}</p>
+            <p>Duration: {Math.round(duration / SECOND)}s</p>
+            <pre>
+              <code>{JSON.stringify(stats, null, 2)}</code>
+            </pre>
+          </div>
+        );
+      }
+
+      const { error } = backupResult;
+
+      return (
         <div className="Preferences--internal--validate-backup--error">
           <pre>
             <code>{error}</code>
           </pre>
         </div>
       );
+    },
+    []
+  );
+
+  const exportLocalBackup = useCallback(async () => {
+    setIsExportPending(true);
+    setExportResult(undefined);
+    try {
+      setExportResult(await doExportLocalBackup());
+    } catch (error) {
+      setExportResult({ error: toLogFormat(error) });
+    } finally {
+      setIsExportPending(false);
     }
-  }
+  }, [doExportLocalBackup]);
 
   return (
     <>
-      <div className="Preferences__title Preferences__title--internal">
-        <div className="Preferences__title--header">
-          {i18n('icu:Preferences__button--internal')}
-        </div>
-      </div>
-
       <SettingsRow
         className="Preferences--internal--backups"
         title={i18n('icu:Preferences__button--backups')}
@@ -91,7 +127,33 @@ export function PreferencesInternal({
           }
         />
 
-        {validationElem}
+        {renderValidationResult(validationResult)}
+      </SettingsRow>
+
+      <SettingsRow
+        className="Preferences--internal--backups"
+        title={i18n('icu:Preferences__internal__local-backups')}
+      >
+        <SettingsControl
+          left={i18n(
+            'icu:Preferences__internal__export-local-backup--description'
+          )}
+          right={
+            <Button
+              variant={ButtonVariant.Secondary}
+              onClick={exportLocalBackup}
+              disabled={isExportPending}
+            >
+              {isExportPending ? (
+                <Spinner size="22px" svgSize="small" />
+              ) : (
+                i18n('icu:Preferences__internal__export-local-backup')
+              )}
+            </Button>
+          }
+        />
+
+        {renderValidationResult(exportResult)}
       </SettingsRow>
     </>
   );

@@ -2702,7 +2702,10 @@ export function cancelConversationVerification(
         activeCall.conversationId === conversationId &&
         activeCall.callMode === CallMode.Direct
       ) {
-        calling.hangup(conversationId, 'canceled conversation verification');
+        calling.hangup({
+          conversationId,
+          reason: 'canceled conversation verification',
+        });
       }
       conversationJobQueue.resolveVerificationWaiter(conversationId);
     });
@@ -4087,7 +4090,7 @@ const showSaveMultiDialog = (): Promise<{
   canceled: boolean;
   dirPath?: string;
 }> => {
-  return ipcRenderer.invoke('show-save-multi-dialog');
+  return ipcRenderer.invoke('show-open-folder-dialog', { useMainWindow: true });
 };
 
 export type SaveAttachmentsActionCreatorType = ReadonlyDeep<
@@ -4766,7 +4769,7 @@ function onConversationOpened(
         Promise.all([
           conversation.loadNewestMessages(undefined, undefined),
           conversation.updateLastMessage(),
-          conversation.updateUnread(),
+          conversation.throttledUpdateUnread(),
         ])
       );
     };

@@ -3,7 +3,7 @@
 
 import '../ts/window.d.ts';
 
-import React from 'react';
+import React, { StrictMode } from 'react';
 
 import 'sanitize.css';
 import '../stylesheets/manifest.scss';
@@ -152,6 +152,25 @@ window.ConversationController = window.ConversationController || {};
 window.ConversationController.isSignalConversationId = () => false;
 window.ConversationController.onConvoMessageMount = noop;
 window.reduxStore = mockStore;
+window.Signal = {
+  Services: {
+    beforeNavigate: {
+      registerCallback: () => undefined,
+      unregisterCallback: () => undefined,
+      shouldCancelNavigation: () => {
+        throw new Error('Not implemented');
+      },
+    },
+  },
+};
+
+function withStrictMode(Story, context) {
+  return (
+    <StrictMode>
+      <Story {...context} />
+    </StrictMode>
+  );
+}
 
 const withGlobalTypesProvider = (Story, context) => {
   const theme =
@@ -234,6 +253,7 @@ function withFunProvider(Story, context) {
 }
 
 export const decorators = [
+  withStrictMode,
   withGlobalTypesProvider,
   withMockStoreProvider,
   withScrollLockProvider,

@@ -89,6 +89,7 @@ import {
 import {
   getDefaultSystemTraySetting,
   isSystemTraySupported,
+  isContentProtectionEnabledByDefault,
 } from '../ts/types/Settings';
 import * as ephemeralConfig from './ephemeral_config';
 import * as logging from '../ts/logging/main_process_logging';
@@ -99,7 +100,7 @@ import type { CreateTemplateOptionsType } from './menu';
 import { createTemplate } from './menu';
 import { installFileHandler, installWebHandler } from './protocol_filter';
 import OS from '../ts/util/os/osMain';
-import { isProduction } from '../ts/util/version';
+import { isNightly, isProduction } from '../ts/util/version';
 import { clearTimeoutIfNecessary } from '../ts/util/clearTimeoutIfNecessary';
 import { toggleMaximizedBrowserWindow } from '../ts/util/toggleMaximizedBrowserWindow';
 import { ChallengeMainHandler } from '../ts/main/challengeMain';
@@ -202,11 +203,6 @@ const defaultWebPrefs = {
     getEnvironment() !== Environment.PackagedApp ||
     !isProduction(app.getVersion()),
   spellcheck: false,
-  // https://chromium.googlesource.com/chromium/src/+/main/third_party/blink/renderer/platform/runtime_enabled_features.json5
-  enableBlinkFeatures: [
-    'CSSPseudoDir', // status=experimental, needed for RTL (ex: :dir(rtl))
-    'CSSLogical', // status=experimental, needed for RTL (ex: margin-inline-start)
-  ].join(','),
   enablePreferredSizeMode: true,
 };
 
@@ -576,6 +572,18 @@ async function handleCommonWindowEvents(window: BrowserWindow) {
   const focusInterval = setInterval(setWindowFocus, 10000);
   window.on('closed', () => clearInterval(focusInterval));
 
+  const contentProtection = ephemeralConfig.get('contentProtection');
+  // Apply content protection by default on Windows, unless explicitly disabled
+  // by user in settings.
+  if (
+    contentProtection ??
+    isContentProtectionEnabledByDefault(OS, os.release())
+  ) {
+    window.once('ready-to-show', async () => {
+      window.setContentProtection(true);
+    });
+  }
+
   await zoomFactorService.syncWindow(window);
 
   nativeThemeNotifier.addWindow(window);
@@ -690,6 +698,21 @@ async function createWindow() {
     ? Math.min(windowConfig.height, maxHeight)
     : DEFAULT_HEIGHT;
 
+  const [systemTraySetting, backgroundColor, spellcheck] = await Promise.all([
+    systemTraySettingCache.get(),
+    isTestEnvironment(getEnvironment())
+      ? '#ffffff' // Tests should always be rendered on a white background
+      : getBackgroundColor({ signalColors: true }),
+    getSpellCheckSetting(),
+  ]);
+
+  const startInTray =
+    isTestEnvironment(getEnvironment()) ||
+    systemTraySetting === SystemTraySetting.MinimizeToAndStartInSystemTray;
+
+  const shouldShowWindow =
+    !app.getLoginItemSettings().wasOpenedAsHidden && !startInTray;
+
   const windowOptions: Electron.BrowserWindowConstructorOptions = {
     show: false,
     width,
@@ -698,9 +721,7 @@ async function createWindow() {
     minHeight: MIN_HEIGHT,
     autoHideMenuBar: false,
     titleBarStyle: mainTitleBarStyle,
-    backgroundColor: isTestEnvironment(getEnvironment())
-      ? '#ffffff' // Tests should always be rendered on a white background
-      : await getBackgroundColor({ signalColors: true }),
+    backgroundColor,
     webPreferences: {
       ...defaultWebPrefs,
       nodeIntegration: false,
@@ -713,9 +734,8 @@ async function createWindow() {
           ? '../preload.wrapper.js'
           : '../ts/windows/main/preload.js'
       ),
-      spellcheck: await getSpellCheckSetting(),
+      spellcheck,
       backgroundThrottling: true,
-      disableBlinkFeatures: 'Accelerated2dCanvas,AcceleratedSmallCanvases',
     },
     icon: windowIcon,
     ...pick(windowConfig, ['autoHideMenuBar', 'x', 'y']),
@@ -730,11 +750,6 @@ async function createWindow() {
   if (!isBoolean(windowOptions.autoHideMenuBar)) {
     delete windowOptions.autoHideMenuBar;
   }
-
-  const startInTray =
-    isTestEnvironment(getEnvironment()) ||
-    (await systemTraySettingCache.get()) ===
-      SystemTraySetting.MinimizeToAndStartInSystemTray;
 
   const haveFullWindowsBounds =
     isNumber(windowOptions.x) &&
@@ -993,8 +1008,15 @@ async function createWindow() {
 
   mainWindow.on('show', () => {
     if (mainWindow) {
+      mainWindow.webContents.send('activate');
       mainWindow.webContents.send('set-media-playback-disabled', false);
     }
+  });
+
+  mainWindow.webContents.on('devtools-reload-page', () => {
+    mainWindow?.webContents.on('dom-ready', () => {
+      mainWindow?.webContents.send('activate');
+    });
   });
 
   mainWindow.once('ready-to-show', async () => {
@@ -1008,9 +1030,6 @@ async function createWindow() {
     }
 
     mainWindow.webContents.send('ci:event', 'db-initialized', {});
-
-    const shouldShowWindow =
-      !app.getLoginItemSettings().wasOpenedAsHidden && !startInTray;
 
     if (shouldShowWindow) {
       getLogger().info('showing main window');
@@ -1154,9 +1173,6 @@ async function readyForUpdates() {
       'SettingsChannel must be initialized'
     );
     await updater.start({
-      settingsChannel,
-      logger: getLogger(),
-      getMainWindow,
       canRunSilently: () => {
         return (
           systemTrayService?.isVisible() === true &&
@@ -1164,6 +1180,9 @@ async function readyForUpdates() {
           mainWindow?.webContents?.getBackgroundThrottling() !== false
         );
       },
+      getMainWindow,
+      logger: getLogger(),
+      sql,
     });
   } catch (error) {
     getLogger().error(
@@ -1237,6 +1256,12 @@ function setupAsNewDevice() {
 function setupAsStandalone() {
   if (mainWindow) {
     mainWindow.webContents.send('set-up-as-standalone');
+  }
+}
+
+function stageLocalBackupForImport() {
+  if (mainWindow) {
+    mainWindow.webContents.send('stage-local-backup-for-import');
   }
 }
 
@@ -1402,57 +1427,6 @@ async function showAbout() {
   await safeLoadURL(
     aboutWindow,
     await prepareFileUrl([__dirname, '../about.html'])
-  );
-}
-
-let settingsWindow: BrowserWindow | undefined;
-async function showSettingsWindow() {
-  if (settingsWindow) {
-    settingsWindow.show();
-    return;
-  }
-
-  const options = {
-    width: 700,
-    height: 700,
-    frame: true,
-    resizable: false,
-    title: getResolvedMessagesLocale().i18n('icu:signalDesktopPreferences'),
-    titleBarStyle: mainTitleBarStyle,
-    autoHideMenuBar: true,
-    backgroundColor: await getBackgroundColor(),
-    show: false,
-    webPreferences: {
-      ...defaultWebPrefs,
-      nodeIntegration: false,
-      nodeIntegrationInWorker: false,
-      sandbox: true,
-      contextIsolation: true,
-      preload: join(__dirname, '../bundles/settings/preload.js'),
-      nativeWindowOpen: true,
-    },
-  };
-
-  settingsWindow = new BrowserWindow(options);
-
-  await handleCommonWindowEvents(settingsWindow);
-
-  settingsWindow.on('closed', () => {
-    settingsWindow = undefined;
-  });
-
-  ipc.once('settings-done-rendering', () => {
-    if (!settingsWindow) {
-      getLogger().warn('settings-done-rendering: no settingsWindow available!');
-      return;
-    }
-
-    settingsWindow.show();
-  });
-
-  await safeLoadURL(
-    settingsWindow,
-    await prepareFileUrl([__dirname, '../settings.html'])
   );
 }
 
@@ -1980,6 +1954,11 @@ const featuresToDisable = `HardwareMediaKeyHandling,${app.commandLine.getSwitchV
 )}`;
 app.commandLine.appendSwitch('disable-features', featuresToDisable);
 
+if (OS.isLinux()) {
+  // https://github.com/electron/electron/issues/46538#issuecomment-2808806722
+  app.commandLine.appendSwitch('gtk-version', '3');
+}
+
 // <canvas/> rendering is often utterly broken on Linux when using GPU
 // acceleration.
 if (DISABLE_GPU) {
@@ -2121,6 +2100,7 @@ app.on('ready', async () => {
     'ephemeral-setting-changed',
     sendPreferencesChangedEventToWindows
   );
+  settingsChannel.on('ephemeral-setting-changed', onEphemeralSettingChanged);
 
   // We use this event only a single time to log the startup time of the app
   // from when it's first ready until the loading screen disappears.
@@ -2285,6 +2265,8 @@ app.on('ready', async () => {
     },
   });
 
+  appStartInitialSpellcheckSetting = await getSpellCheckSetting();
+
   // Run window preloading in parallel with database initialization.
   await createWindow();
 
@@ -2296,8 +2278,6 @@ app.on('ready', async () => {
 
     return;
   }
-
-  appStartInitialSpellcheckSetting = await getSpellCheckSetting();
 
   try {
     const IDB_KEY = 'indexeddb-delete-needed';
@@ -2335,12 +2315,14 @@ app.on('ready', async () => {
 
 function setupMenu(options?: Partial<CreateTemplateOptionsType>) {
   const { platform } = process;
+  const version = app.getVersion();
   menuOptions = {
     // options
     development,
     devTools: defaultWebPrefs.devTools,
     includeSetup: false,
-    isProduction: isProduction(app.getVersion()),
+    isNightly: isNightly(version),
+    isProduction: isProduction(version),
     platform,
 
     // actions
@@ -2353,11 +2335,20 @@ function setupMenu(options?: Partial<CreateTemplateOptionsType>) {
     openSupportPage,
     setupAsNewDevice,
     setupAsStandalone,
+    stageLocalBackupForImport,
     showAbout,
     showDebugLog: showDebugLogWindow,
     showCallingDevTools: showCallingDevToolsWindow,
     showKeyboardShortcuts,
-    showSettings: showSettingsWindow,
+    showSettings: () => {
+      if (!settingsChannel) {
+        getLogger().warn(
+          'showSettings: No settings channel; cannot open settings tab.'
+        );
+        return;
+      }
+      settingsChannel.openSettingsTab();
+    },
     showWindow,
     zoomIn,
     zoomOut,
@@ -2377,6 +2368,7 @@ function setupMenu(options?: Partial<CreateTemplateOptionsType>) {
     development: menuOptions.development,
     devTools: menuOptions.devTools,
     includeSetup: menuOptions.includeSetup,
+    isNightly: menuOptions.isNightly,
     isProduction: menuOptions.isProduction,
     platform: menuOptions.platform,
   });
@@ -2725,17 +2717,6 @@ function removeDarkOverlay() {
   }
 }
 
-ipc.on('show-settings', showSettingsWindow);
-
-ipc.on('delete-all-data', () => {
-  if (settingsWindow) {
-    settingsWindow.close();
-  }
-  if (mainWindow && mainWindow.webContents) {
-    mainWindow.webContents.send('delete-all-data');
-  }
-});
-
 ipc.on('get-config', async event => {
   const theme = await getResolvedThemeSetting();
 
@@ -2890,6 +2871,20 @@ const sendPreferencesChangedEventToWindows = () => {
   }
 };
 ipc.on('preferences-changed', sendPreferencesChangedEventToWindows);
+
+const onEphemeralSettingChanged = (name: string) => {
+  if (name !== 'contentProtection') {
+    return;
+  }
+
+  const contentProtection = ephemeralConfig.get('contentProtection');
+
+  for (const window of activeWindows) {
+    if (typeof contentProtection === 'boolean') {
+      window.setContentProtection(contentProtection);
+    }
+  }
+};
 
 function maybeGetIncomingSignalRoute(argv: Array<string>) {
   for (const arg of argv) {
@@ -3099,31 +3094,50 @@ ipc.handle('show-save-dialog', async (_event, { defaultPath }) => {
   return { canceled: false, filePath: finalFilePath };
 });
 
-ipc.handle('show-save-multi-dialog', async _event => {
-  if (!mainWindow) {
-    getLogger().warn('show-save-multi-dialog: no main window');
+ipc.handle(
+  'show-open-folder-dialog',
+  async (
+    _event,
+    { useMainWindow }: { useMainWindow: boolean } = { useMainWindow: false }
+  ) => {
+    let canceled: boolean;
+    let selectedDirPaths: ReadonlyArray<string>;
 
-    return { canceled: true };
-  }
-  const { canceled, filePaths: selectedDirPaths } = await dialog.showOpenDialog(
-    mainWindow,
-    {
-      defaultPath: app.getPath('downloads'),
-      properties: ['openDirectory', 'createDirectory'],
+    if (useMainWindow) {
+      if (!mainWindow) {
+        getLogger().warn('show-open-folder-dialog: no main window');
+        return { canceled: true };
+      }
+
+      ({ canceled, filePaths: selectedDirPaths } = await dialog.showOpenDialog(
+        mainWindow,
+        {
+          defaultPath: app.getPath('downloads'),
+          properties: ['openDirectory', 'createDirectory'],
+        }
+      ));
+    } else {
+      ({ canceled, filePaths: selectedDirPaths } = await dialog.showOpenDialog({
+        defaultPath: app.getPath('downloads'),
+        properties: ['openDirectory', 'createDirectory'],
+      }));
     }
-  );
-  if (canceled || selectedDirPaths.length === 0) {
-    return { canceled: true };
+
+    if (canceled || selectedDirPaths.length === 0) {
+      return { canceled: true };
+    }
+
+    if (selectedDirPaths.length > 1) {
+      getLogger().warn(
+        'show-open-folder-dialog: multiple directories selected'
+      );
+
+      return { canceled: true };
+    }
+
+    return { canceled: false, dirPath: selectedDirPaths[0] };
   }
-
-  if (selectedDirPaths.length > 1) {
-    getLogger().warn('show-save-multi-dialog: multiple directories selected');
-
-    return { canceled: true };
-  }
-
-  return { canceled: false, dirPath: selectedDirPaths[0] };
-});
+);
 
 ipc.handle('executeMenuRole', async ({ sender }, untypedRole) => {
   const role = untypedRole as MenuItemConstructorOptions['role'];
@@ -3194,6 +3208,7 @@ ipc.handle('getMenuOptions', async () => {
     development: menuOptions?.development ?? false,
     devTools: menuOptions?.devTools ?? false,
     includeSetup: menuOptions?.includeSetup ?? false,
+    isNightly: menuOptions?.isNightly ?? false,
     isProduction: menuOptions?.isProduction ?? true,
     platform: menuOptions?.platform ?? 'unknown',
   };

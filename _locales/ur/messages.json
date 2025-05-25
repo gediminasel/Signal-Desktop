@@ -83,9 +83,6 @@
   "icu:databaseError": {
     "messageformat": "ڈیٹا بیس ایرر"
   },
-  "icu:databaseError__detail": {
-    "messageformat": "ڈیٹا بیس میں نقص واقع ہوا ہے۔ آپ نقص کو کاپی کر سکتے اور مسئلے کو ٹھیک کرنے میں مدد کے لیے Signal سپورٹ سے رابطہ کر سکتے ہیں۔ اگر آپ کو فوری طور پر Signal استعمال کرنا ہے، تو آپ اپنا ڈیٹا حذف کر سکتے ہیں اور ری اسٹارٹ کر سکتے ہیں۔\n\nسپورٹ سے رابطہ کرنے کے لیے ملاحظہ کریں: {link}"
-  },
   "icu:deleteAndRestart": {
     "messageformat": "ڈیٹا حذف کریں اور ری اسٹارٹ کریں"
   },
@@ -1673,9 +1670,6 @@
   "icu:notificationSenderInGroup": {
     "messageformat": "{sender} میں {group}"
   },
-  "icu:notificationReaction": {
-    "messageformat": "{sender} نے آپ کے میسج پر {emoji} ری ایکٹ کیا"
-  },
   "icu:notificationReactionMessage": {
     "messageformat": "{sender} نے {emoji} ری ایکٹ کیا: {message} پر"
   },
@@ -1831,12 +1825,6 @@
   },
   "icu:ConversationDetails--support-center": {
     "messageformat": "مدداور تعاون کا مرکز"
-  },
-  "icu:ConversationDetails--contact-us": {
-    "messageformat": "ہم سے رابطہ کریں"
-  },
-  "icu:ConversationDetails--donate": {
-    "messageformat": "Signal کے لئے عطیہ کریں"
   },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "حفاظتی نمبر دیکھیں"
@@ -2600,6 +2588,9 @@
   "icu:Keyboard--open-sticker-chooser": {
     "messageformat": "اسٹیکر کا انتخاب کنندہ کھولیں"
   },
+  "icu:Keyboard--open-gif-chooser": {
+    "messageformat": "GIF منتخب کرنے والا کھولیں"
+  },
   "icu:Keyboard--begin-recording-voice-note": {
     "messageformat": "آڈیو نوٹ ریکارڈ کرنا شروع کریں"
   },
@@ -3146,6 +3137,18 @@
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "مائیک آن"
   },
+  "icu:CallControls__MutedBySomeoneToast": {
+    "messageformat": "{otherName} muted you."
+  },
+  "icu:CallControls__SomeoneMutedSomeoneToast": {
+    "messageformat": "{name} muted {otherName}."
+  },
+  "icu:CallControls__YouMutedSomeoneToast": {
+    "messageformat": "You muted {otherName}."
+  },
+  "icu:CallControls__YouMutedYourselfToast": {
+    "messageformat": "You muted yourself from another device."
+  },
   "icu:CallControls__LowerHandSuggestionToast": {
     "messageformat": "اپنا ہاتھ نیچے کریں؟"
   },
@@ -3238,9 +3241,6 @@
   },
   "icu:calling__view_mode--updated": {
     "messageformat": "ویو اپ ڈیٹ ہو گیا"
-  },
-  "icu:calling__hangup": {
-    "messageformat": "کال چھوڑو"
   },
   "icu:calling__SelectPresentingSourcesModal--title": {
     "messageformat": "اپنی اسکرین کا اشتراک کریں"
@@ -4059,10 +4059,10 @@
     "messageformat": "آپ کو اس اکاؤنٹ کا استعمال جاری رکھنے کے لیے اپنے فون پر Signal کھولنا ہو گا۔ اگر آپ اپنے فون پر Signal نہیں کھولتے، تو جلد ہی آپ کا اکاؤنٹ حذف کر دیا جائے گا۔ <learnMoreLink>مزید جانیں</learnMoreLink>"
   },
   "icu:LowDiskSpaceBackupImportModal__title": {
-    "messageformat": "Can't restore media"
+    "messageformat": "میڈیا بحال نہیں ہو سکتا"
   },
   "icu:LowDiskSpaceBackupImportModal__description": {
-    "messageformat": "Your device does not have enough free space. Free up {diskSpaceAmount} of space to restore your media."
+    "messageformat": "آپ کی ڈیوائس میں کافی جگہ خالی نہیں ہے۔ اپنے میڈیا کو بحال کرنے کے لیے {diskSpaceAmount} جگہ خالی کریں۔"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "پھیلائیں"
@@ -4084,9 +4084,6 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "ترمیم کردہ میسج بھیجیں"
-  },
-  "icu:CompositionArea__FunButtonLabel": {
-    "messageformat": "کوئی ایموجی، اسٹیکر، یا GIF شامل کریں"
   },
   "icu:CompositionArea__ConfirmGifSelection__Title": {
     "messageformat": "منسلکہ بدلیں؟"
@@ -4522,12 +4519,6 @@
   },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "حفاظتی تجاویز"
-  },
-  "icu:MessageRequestWarning__dialog__details": {
-    "messageformat": "اس شخص کے ساتھ آپ کے کوئی گروپ مشترک نہیں ہیں۔ ناپسندیدہ پیغامات سے بچنے کے لئے قبول کرنے سے پہلے درخواستوں کا بغور جائزہ لیں۔"
-  },
-  "icu:MessageRequestWarning__dialog__learn-even-more": {
-    "messageformat": "پیغام کی درخواستوں کے بارے میں"
   },
   "icu:ContactSpoofing__same-name--link": {
     "messageformat": "درخواستوں کا بغور جائزہ لیں۔ Signal کو یکساں نام کا حامل ایک دوسرا رابطہ ملا ہے۔ <reviewRequestLink>جائزے کی درخواست</reviewRequestLink>"
@@ -5006,6 +4997,21 @@
   "icu:Preferences__button--internal": {
     "messageformat": "اندرونی"
   },
+  "icu:Preferences__internal__local-backups": {
+    "messageformat": "مقامی بیک اپس"
+  },
+  "icu:Preferences__internal__export-local-backup": {
+    "messageformat": "برآمد کریں…"
+  },
+  "icu:Preferences__internal__export-local-backup--description": {
+    "messageformat": "مقامی انکرپٹ کردہ بیک اپ کو فولڈر میں برآمد کریں اور اس کی توثیق کریں"
+  },
+  "icu:Preferences__internal__import-local-backup": {
+    "messageformat": "درآمد کریں…"
+  },
+  "icu:Preferences__internal__import-local-backup--description": {
+    "messageformat": "مقامی انکرپٹ کردہ بیک اپ کو لنک پر درآمد کے لیے تیار کریں"
+  },
   "icu:Preferences__internal__validate-backup--description": {
     "messageformat": "انکرپٹ کردہ بیک اپ کو میموری میں ایکسپورٹ کریں اور اس پر تصدیقی سوئٹ چلائیں"
   },
@@ -5071,9 +5077,6 @@
   },
   "icu:Preferences--backup-messages-plan__note": {
     "messageformat": "آپ Signal بیک اپس کو اپنے فون پر منظم کر سکتے یا اپ گریڈ کر سکتے ہیں۔"
-  },
-  "icu:Preferences--backup-plan__not-found": {
-    "messageformat": "آپ کی سبسکرپشن نہیں ملی۔ Signal بیک اپس کا استعمال کرنا جاری رکھنے کے لیے تجدید کریں۔"
   },
   "icu:Preferences--backup-plan__not-found__note": {
     "messageformat": "آپ Signal بیک اپس کی سبسکرپشن کو اپنے فون پر منظم کر سکتے ہیں یا تجدید کر سکتے ہیں۔"
@@ -5203,6 +5206,24 @@
   },
   "icu:Preferences__LanguageModal__Restart__Button": {
     "messageformat": "ری اسٹاٹ کریں"
+  },
+  "icu:Preferences__Privacy__Application": {
+    "messageformat": "ایپلیکیشن"
+  },
+  "icu:Preferences__content-protection--label": {
+    "messageformat": "سکرین سیکیورٹی"
+  },
+  "icu:Preferences__content-protection--description": {
+    "messageformat": "اس کمپیوٹر پر Signal کے اسکرین شاٹس کو روکیں تاکہ اضافی پرائیویسی حاصل ہو۔"
+  },
+  "icu:Preferences__content-protection__modal--title": {
+    "messageformat": "اسکرین سیکیورٹی کو غیر فعال کریں؟"
+  },
+  "icu:Preferences__content-protection__modal--body": {
+    "messageformat": "اگر غیر فعال کیا گیا، تو یہ Microsoft Windows کو Signal کے اسکرین شاٹس لینے اور انہیں ایسے فیچرز میں استعمال کرنے کی اجازت دے سکتا ہے جو نجی نہ ہوں۔"
+  },
+  "icu:Preferences__content-protection__modal--disable": {
+    "messageformat": "معطل کریں"
   },
   "icu:DialogUpdate--version-available": {
     "messageformat": "ورژن {version} پر اپ ڈیٹ دستیاب ہے"
@@ -6331,10 +6352,16 @@
     "messageformat": "معمولی تبدیلیاں کی گئیں، بگ ٹھیک کیے گئے، اور کارکردگی اور بھی بہتر بنائی گئی ہے۔ Signal استعمال کرنے کے لیے شکریہ!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.51--0": {
-    "messageformat": "اب آپ Signal ڈیسک ٹاپ میں بھی اینیمیٹڈ GIFs تلاش کر سکتے ہیں۔"
+  "icu:WhatsNew__v7.54--0": {
+    "messageformat": "مسکراہٹ ہر زبان میں ایک جیسی ہے، لیکن اب Signal ڈیسک ٹاپ میں ایموجی شارٹ کٹ پوری طرح ترجمہ کر دئیے گئے ہیں تو آپ کسی بھی زبان میں <code>:smile:</code> یا <code>:sourire:</code> یا <code>:微笑:</code> کر سکتے ہیں۔"
   },
-  "icu:WhatsNew__v7.51--1": {
-    "messageformat": "ہم نے تصویر در تصویر والی ونڈو کا سائز بھی تبدیل کر دیا ہے اور کال کو چھوٹا کر کے مائیکروفون کا میوٹ/ان میوٹ یا کیمرے کو آن/آف کرنے کے نئے آسان شارٹ کٹس شامل کیے ہیں۔"
+  "icu:WhatsNew__v7.55--0": {
+    "messageformat": "یہ اپ ڈیٹ ایموجی اور اسٹیکرز کے لیے کیی بورڈ شارٹ کٹس کو دوبارہ فعال کرتی ہے۔"
+  },
+  "icu:WhatsNew__v7.55--1": {
+    "messageformat": "ہم نے Linux ڈسٹریبیوشنز میں غیر معمولی کریش کو ٹھیک کر دیا ہے جو GTK4 کو سپورٹ نہیں کرتا۔"
+  },
+  "icu:WhatsNew__v7.56--0": {
+    "messageformat": "Sometimes a powerful story can really move you, so we fixed a bug that made it difficult to move the Signal window while viewing content in the Stories tab."
   }
 }

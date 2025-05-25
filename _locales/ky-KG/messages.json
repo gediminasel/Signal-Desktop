@@ -83,9 +83,6 @@
   "icu:databaseError": {
     "messageformat": "Маалыматтар базасынын катасы"
   },
-  "icu:databaseError__detail": {
-    "messageformat": "Маалыматтар базасында ката кетти. Катаны көчүрүп, маселени чечүү үчүн Signal'дын кардарларды тейлеген бөлүмүнө кайрылыңыз. Эгер Signal'ды азыр колдонгуңуз келсе, андагы нерселерди өчүрүп, кайра иштетиңиз.\n\nКардарларды тейлеген кызматка өтүңүз: {link}"
-  },
   "icu:deleteAndRestart": {
     "messageformat": "Маалыматтарды өчүрүп, кайра иштетүү"
   },
@@ -1673,9 +1670,6 @@
   "icu:notificationSenderInGroup": {
     "messageformat": "{group} ичинде {sender}"
   },
-  "icu:notificationReaction": {
-    "messageformat": "{sender} билдирүүңүзгө {emoji} деген сезимин билдирди"
-  },
   "icu:notificationReactionMessage": {
     "messageformat": "{sender} {message} үчүн {emoji} деген сезимин билдирди"
   },
@@ -1831,12 +1825,6 @@
   },
   "icu:ConversationDetails--support-center": {
     "messageformat": "Кардарларды колдоо борбору"
-  },
-  "icu:ConversationDetails--contact-us": {
-    "messageformat": "Биз менен байланышыңыз"
-  },
-  "icu:ConversationDetails--donate": {
-    "messageformat": "Signal'га колдоо көрсөтүү"
   },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "Коопсуздук кодун көрүү"
@@ -2600,6 +2588,9 @@
   "icu:Keyboard--open-sticker-chooser": {
     "messageformat": "Стикер тандагычты ачуу"
   },
+  "icu:Keyboard--open-gif-chooser": {
+    "messageformat": "GIF тандагычты ачуу"
+  },
   "icu:Keyboard--begin-recording-voice-note": {
     "messageformat": "Үн билдирүүсүн жаздырып баштоо"
   },
@@ -3146,6 +3137,18 @@
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "Микрофон күйүк"
   },
+  "icu:CallControls__MutedBySomeoneToast": {
+    "messageformat": "{otherName} muted you."
+  },
+  "icu:CallControls__SomeoneMutedSomeoneToast": {
+    "messageformat": "{name} muted {otherName}."
+  },
+  "icu:CallControls__YouMutedSomeoneToast": {
+    "messageformat": "You muted {otherName}."
+  },
+  "icu:CallControls__YouMutedYourselfToast": {
+    "messageformat": "You muted yourself from another device."
+  },
   "icu:CallControls__LowerHandSuggestionToast": {
     "messageformat": "Колуңузду түшүрөсүзбү?"
   },
@@ -3238,9 +3241,6 @@
   },
   "icu:calling__view_mode--updated": {
     "messageformat": "Көрүнүш жаңырды"
-  },
-  "icu:calling__hangup": {
-    "messageformat": "Чалуудан чыгуу"
   },
   "icu:calling__SelectPresentingSourcesModal--title": {
     "messageformat": "Экраныңыз менен бөлүшүңүз"
@@ -4059,10 +4059,10 @@
     "messageformat": "Бул аккаунтту колдоно берүү үчүн телефонуңуздан Signal'ды ачышыңыз керек. Ачпасаңыз, аккаунтуңуз жакында өчүп калат. <learnMoreLink>Кененирээк маалымат</learnMoreLink>"
   },
   "icu:LowDiskSpaceBackupImportModal__title": {
-    "messageformat": "Can't restore media"
+    "messageformat": "Медиа файлдар калыбына келген жок"
   },
   "icu:LowDiskSpaceBackupImportModal__description": {
-    "messageformat": "Your device does not have enough free space. Free up {diskSpaceAmount} of space to restore your media."
+    "messageformat": "Түзмөгүңүздө бош орун калбай калды. Медиа файлдарыңызды калыбына келтирүү үчүн сактоо мейкиндигинен {diskSpaceAmount} орун бошотуңуз."
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Кеңейтүү"
@@ -4084,9 +4084,6 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "Оңдолгон билдирүүнү жөнөтүү"
-  },
-  "icu:CompositionArea__FunButtonLabel": {
-    "messageformat": "Быйтыкча, стикер же GIF кошуу"
   },
   "icu:CompositionArea__ConfirmGifSelection__Title": {
     "messageformat": "Тиркемени алмаштырасызбы?"
@@ -4522,12 +4519,6 @@
   },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "Коопсуздук кеңештери"
-  },
-  "icu:MessageRequestWarning__dialog__details": {
-    "messageformat": "Бул адам менен жалпы топторуңуз жок. Каалабаган билдирүүлөрдү албаш үчүн кабыл алуудан мурун өтүнүчтөрдү кылдаттык менен карап чыгыңыз."
-  },
-  "icu:MessageRequestWarning__dialog__learn-even-more": {
-    "messageformat": "Билдирүү өтүнүчтөрү жөнүндө"
   },
   "icu:ContactSpoofing__same-name--link": {
     "messageformat": "Кимдир бирөө сизге жазганда этият болуңуз. Signal'да ысымы сиздикине окшош дагы бир адам табылды. <reviewRequestLink>Карап көрүү</reviewRequestLink>"
@@ -5006,6 +4997,21 @@
   "icu:Preferences__button--internal": {
     "messageformat": "Ички"
   },
+  "icu:Preferences__internal__local-backups": {
+    "messageformat": "Түзмөктөгү камдык көчүрмөлөр"
+  },
+  "icu:Preferences__internal__export-local-backup": {
+    "messageformat": "Экспортоо…"
+  },
+  "icu:Preferences__internal__export-local-backup--description": {
+    "messageformat": "Түзмөктөгү шифрленген камдык көчүрмөлөрдү папкага өткөрүп, текшересиз"
+  },
+  "icu:Preferences__internal__import-local-backup": {
+    "messageformat": "Импорттоо…"
+  },
+  "icu:Preferences__internal__import-local-backup--description": {
+    "messageformat": "Шилтеме аркылуу импорттоло турган түзмөктөгү шифрленген камдык көчүрмөнү даярдайсыз"
+  },
   "icu:Preferences__internal__validate-backup--description": {
     "messageformat": "Шифрленген камдык көчүрмөнү эстутумга экспорттоо жана анда текшерүү топтомун иштетүү"
   },
@@ -5071,9 +5077,6 @@
   },
   "icu:Preferences--backup-messages-plan__note": {
     "messageformat": "Signal'дын камдык көчүрмөлөрүн телефонуңуздан өзгөртүп же жазылууну узарта аласыз."
-  },
-  "icu:Preferences--backup-plan__not-found": {
-    "messageformat": "Жазылууңуз табылган жок. Signal'дын камдык көчүрмөлөрүн колдоно берүү үчүн жазылууну жаңыртыңыз."
   },
   "icu:Preferences--backup-plan__not-found__note": {
     "messageformat": "Signal'дын камдык көчүрмөлөрүнө телефонуңуздан жазылып же жазылууңузду узарта аласыз."
@@ -5203,6 +5206,24 @@
   },
   "icu:Preferences__LanguageModal__Restart__Button": {
     "messageformat": "Өчүрүп күйгүзүү"
+  },
+  "icu:Preferences__Privacy__Application": {
+    "messageformat": "Колдонмо"
+  },
+  "icu:Preferences__content-protection--label": {
+    "messageformat": "Экранды коргоо"
+  },
+  "icu:Preferences__content-protection--description": {
+    "messageformat": "Купуялык максатында бул компьютерде Signal скриншотторун кылганга болбойт."
+  },
+  "icu:Preferences__content-protection__modal--title": {
+    "messageformat": "Экранды коргоону өчүрөсүзбү?"
+  },
+  "icu:Preferences__content-protection__modal--body": {
+    "messageformat": "Өчүрсөңүз, Microsoft Windows Signal'дын скриншотторун алып, кооптуу функцияларга колдонушу мүмкүн."
+  },
+  "icu:Preferences__content-protection__modal--disable": {
+    "messageformat": "Өчүрүү"
   },
   "icu:DialogUpdate--version-available": {
     "messageformat": "{version} версиясына жаңыртуу жеткиликтүү"
@@ -6331,10 +6352,16 @@
     "messageformat": "Майда-барат өзгөрүүлөрдү киргизип, мүчүлүштүктөрдү оңдоп, колдонмонун иштешин жакшыртып жатабыз. Signal'ды колдонгонуңуз үчүн чоң рахмат!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.51--0": {
-    "messageformat": "Адамдын колунан жаралган от, дөңгөлөк жана электр кубаты сыяктуу чоң нерселер анимацияланган GIF'тер үчүн жагымдуу шарттарды түзүп берген жөнөкөй кадамдар болгон. Эми компьютерге арналган Signal'дын жапжаңы интерфейси менен быйтыкчаларды, стикерлерди же анимацияланган GIF'терди оңой таба аласыз."
+  "icu:WhatsNew__v7.54--0": {
+    "messageformat": "Баарыбыз бир тилде жылмаябыз, бирок эми компьютердеги Signal'дын быйтыкчалары толук которулуп, каалаган тилде <code>:smile:</code> же <code>:sourire:</code> же <code>:微笑:</code> аласыз."
   },
-  "icu:WhatsNew__v7.51--1": {
-    "messageformat": "Эми сүрөттөгү-сүрөт терезесинин өлчөмүн өзгөртүп, чалууну кичирейтип, микрофондун үнүн басып/үнүн чыгарган же камераны күйгүзүп/өчүргөн баскычтардын жаңы айкалышын иштеп чыктык."
+  "icu:WhatsNew__v7.55--0": {
+    "messageformat": "Быйтыкчалар менен стикерлердин ыкчам баскычтары кайтып келди! Бул ыкчам баскычтар мурункудан да тезирээк иштеп, көп убактыңызды үнөмдөйт."
+  },
+  "icu:WhatsNew__v7.55--1": {
+    "messageformat": "Ошондой эле азырынча GTK4 графикалык китепканасында иштей элек Linux дистрибутивдерин оңдодук."
+  },
+  "icu:WhatsNew__v7.56--0": {
+    "messageformat": "Sometimes a powerful story can really move you, so we fixed a bug that made it difficult to move the Signal window while viewing content in the Stories tab."
   }
 }

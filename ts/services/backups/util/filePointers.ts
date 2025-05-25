@@ -3,6 +3,7 @@
 import Long from 'long';
 import { BackupLevel } from '@signalapp/libsignal-client/zkgroup';
 import { omit } from 'lodash';
+import { existsSync } from 'node:fs';
 
 import {
   APPLICATION_OCTET_STREAM,
@@ -25,7 +26,10 @@ import { Backups, SignalService } from '../../../protobuf';
 import * as Bytes from '../../../Bytes';
 import { getTimestampFromLong } from '../../../util/timestampLongUtils';
 import { strictAssert } from '../../../util/assert';
-import type { CoreAttachmentBackupJobType } from '../../../types/AttachmentBackup';
+import type {
+  CoreAttachmentBackupJobType,
+  PartialAttachmentLocalBackupJobType,
+} from '../../../types/AttachmentBackup';
 import {
   type GetBackupCdnInfoType,
   getMediaIdFromMediaName,
@@ -40,12 +44,17 @@ import { bytesToUuid } from '../../../util/uuidToBytes';
 import { createName } from '../../../util/attachmentPath';
 import { ensureAttachmentIsReencryptable } from '../../../util/ensureAttachmentIsReencryptable';
 import type { ReencryptionInfo } from '../../../AttachmentCrypto';
-import { dropZero } from '../../../util/dropZero';
+import { getAttachmentLocalBackupPathFromSnapshotDir } from './localBackup';
+
+type ConvertFilePointerToAttachmentOptions = {
+  // Only for testing
+  _createName: (suffix?: string) => string;
+  localBackupSnapshotDir: string | undefined;
+};
 
 export function convertFilePointerToAttachment(
   filePointer: Backups.FilePointer,
-  // Only for testing
-  { _createName: doCreateName = createName } = {}
+  options: Partial<ConvertFilePointerToAttachmentOptions> = {}
 ): AttachmentType {
   const {
     contentType,
@@ -59,7 +68,9 @@ export function convertFilePointerToAttachment(
     attachmentLocator,
     backupLocator,
     invalidAttachmentLocator,
+    localLocator,
   } = filePointer;
+  const doCreateName = options._createName ?? createName;
 
   const commonProps: Omit<AttachmentType, 'size'> = {
     contentType: contentType
@@ -70,12 +81,15 @@ export function convertFilePointerToAttachment(
     fileName: fileName ?? undefined,
     caption: caption ?? undefined,
     blurHash: blurHash ?? undefined,
-    incrementalMac: incrementalMac?.length
-      ? Bytes.toBase64(incrementalMac)
-      : undefined,
-    chunkSize: dropZero(incrementalMacChunkSize),
+    incrementalMac: undefined,
+    chunkSize: undefined,
     downloadPath: doCreateName(),
   };
+
+  if (incrementalMac?.length && incrementalMacChunkSize) {
+    commonProps.incrementalMac = Bytes.toBase64(incrementalMac);
+    commonProps.chunkSize = incrementalMacChunkSize;
+  }
 
   if (attachmentLocator) {
     const { cdnKey, cdnNumber, key, digest, uploadTimestamp, size } =
@@ -120,6 +134,57 @@ export function convertFilePointerToAttachment(
     };
   }
 
+  if (localLocator) {
+    const {
+      mediaName,
+      localKey,
+      backupCdnNumber,
+      remoteKey: key,
+      remoteDigest: digest,
+      size,
+      transitCdnKey,
+      transitCdnNumber,
+    } = localLocator;
+
+    const { localBackupSnapshotDir } = options;
+    strictAssert(
+      localBackupSnapshotDir,
+      'localBackupSnapshotDir is required for filePointer.localLocator'
+    );
+
+    if (mediaName == null) {
+      log.error(
+        'convertFilePointerToAttachment: filePointer.localLocator missing mediaName!'
+      );
+      return {
+        ...omit(commonProps, 'downloadPath'),
+        error: true,
+        size: 0,
+      };
+    }
+    const localBackupPath = getAttachmentLocalBackupPathFromSnapshotDir(
+      mediaName,
+      localBackupSnapshotDir
+    );
+
+    return {
+      ...commonProps,
+      cdnKey: transitCdnKey ?? undefined,
+      cdnNumber: transitCdnNumber ?? undefined,
+      key: key?.length ? Bytes.toBase64(key) : undefined,
+      digest: digest?.length ? Bytes.toBase64(digest) : undefined,
+      size: size ?? 0,
+      localBackupPath,
+      localKey: localKey?.length ? Bytes.toBase64(localKey) : undefined,
+      backupLocator: backupCdnNumber
+        ? {
+            mediaName,
+            cdnNumber: backupCdnNumber,
+          }
+        : undefined,
+    };
+  }
+
   if (!invalidAttachmentLocator) {
     log.error('convertFilePointerToAttachment: filePointer had no locator');
   }
@@ -132,7 +197,8 @@ export function convertFilePointerToAttachment(
 }
 
 export function convertBackupMessageAttachmentToAttachment(
-  messageAttachment: Backups.IMessageAttachment
+  messageAttachment: Backups.IMessageAttachment,
+  options: Partial<ConvertFilePointerToAttachmentOptions> = {}
 ): AttachmentType | null {
   const { clientUuid } = messageAttachment;
 
@@ -140,7 +206,7 @@ export function convertBackupMessageAttachmentToAttachment(
     return null;
   }
   const result = {
-    ...convertFilePointerToAttachment(messageAttachment.pointer),
+    ...convertFilePointerToAttachment(messageAttachment.pointer, options),
     clientUuid: clientUuid ? bytesToUuid(clientUuid) : undefined,
   };
 
@@ -180,17 +246,22 @@ export async function getFilePointerForAttachment({
 }> {
   const filePointerRootProps = new Backups.FilePointer({
     contentType: attachment.contentType,
-    // Resilience to invalid data in the database from internal testing
-    incrementalMac:
-      typeof attachment.incrementalMac === 'string'
-        ? Bytes.fromBase64(attachment.incrementalMac)
-        : undefined,
-    incrementalMacChunkSize: dropZero(attachment.chunkSize),
     fileName: attachment.fileName,
     width: attachment.width,
     height: attachment.height,
     caption: attachment.caption,
     blurHash: attachment.blurHash,
+
+    // Resilience to invalid data in the database from internal testing
+    ...(typeof attachment.incrementalMac === 'string' && attachment.chunkSize
+      ? {
+          incrementalMac: Bytes.fromBase64(attachment.incrementalMac),
+          incrementalMacChunkSize: attachment.chunkSize,
+        }
+      : {
+          incrementalMac: undefined,
+          incrementalMacChunkSize: undefined,
+        }),
   });
   const logId = `getFilePointerForAttachment(${redactGenericText(
     attachment.digest ?? ''
@@ -365,6 +436,102 @@ export async function getFilePointerForAttachment({
   };
 }
 
+// Given a remote backup FilePointer, return a FilePointer referencing a local backup
+export async function getLocalBackupFilePointerForAttachment({
+  attachment,
+  backupLevel,
+  getBackupCdnInfo,
+}: {
+  attachment: Readonly<AttachmentType>;
+  backupLevel: BackupLevel;
+  getBackupCdnInfo: GetBackupCdnInfoType;
+}): Promise<{
+  filePointer: Backups.FilePointer;
+  updatedAttachment?: AttachmentType;
+}> {
+  const { filePointer: remoteFilePointer, updatedAttachment } =
+    await getFilePointerForAttachment({
+      attachment,
+      backupLevel,
+      getBackupCdnInfo,
+    });
+
+  // If a file disappeared locally (maybe we downloaded it and it disappeared)
+  // or localKey is missing, then we can't export to a local backup.
+  // Fallback to the filePointer which would have been generated for a remote backup.
+  const isAttachmentMissingLocally =
+    attachment.path == null ||
+    !existsSync(
+      window.Signal.Migrations.getAbsoluteAttachmentPath(attachment.path)
+    );
+  if (isAttachmentMissingLocally || attachment.localKey == null) {
+    return { filePointer: remoteFilePointer, updatedAttachment };
+  }
+
+  if (remoteFilePointer.backupLocator) {
+    const { backupLocator } = remoteFilePointer;
+    const { mediaName } = backupLocator;
+    strictAssert(
+      mediaName,
+      'getLocalBackupFilePointerForAttachment: BackupLocator must have mediaName'
+    );
+
+    const localLocator = new Backups.FilePointer.LocalLocator({
+      mediaName,
+      localKey: Bytes.fromBase64(attachment.localKey),
+      remoteKey: backupLocator.key,
+      remoteDigest: backupLocator.digest,
+      size: backupLocator.size,
+      backupCdnNumber: backupLocator.cdnNumber,
+      transitCdnKey: backupLocator.transitCdnKey,
+      transitCdnNumber: backupLocator.transitCdnNumber,
+    });
+
+    return {
+      filePointer: {
+        ...omit(remoteFilePointer, 'backupLocator'),
+        localLocator,
+      },
+      updatedAttachment,
+    };
+  }
+
+  if (remoteFilePointer.attachmentLocator) {
+    const { attachmentLocator } = remoteFilePointer;
+    const { digest } = attachmentLocator;
+    strictAssert(
+      digest,
+      'getLocalBackupFilePointerForAttachment: AttachmentLocator must have digest'
+    );
+    const mediaName = getMediaNameFromDigest(Bytes.toBase64(digest));
+    strictAssert(
+      mediaName,
+      'getLocalBackupFilePointerForAttachment: mediaName must be derivable from AttachmentLocator'
+    );
+
+    const localLocator = new Backups.FilePointer.LocalLocator({
+      mediaName,
+      localKey: Bytes.fromBase64(attachment.localKey),
+      remoteKey: attachmentLocator.key,
+      remoteDigest: attachmentLocator.digest,
+      size: attachmentLocator.size,
+      backupCdnNumber: undefined,
+      transitCdnKey: attachmentLocator.cdnKey,
+      transitCdnNumber: attachmentLocator.cdnNumber,
+    });
+
+    return {
+      filePointer: {
+        ...omit(remoteFilePointer, 'attachmentLocator'),
+        localLocator,
+      },
+      updatedAttachment,
+    };
+  }
+
+  return { filePointer: remoteFilePointer, updatedAttachment };
+}
+
 function getAttachmentLocator(
   attachment: AttachmentDownloadableFromTransitTier
 ) {
@@ -483,6 +650,44 @@ export async function maybeGetBackupJobForAttachmentAndFilePointer({
               uploadTimestamp,
             }
           : undefined,
+    },
+  };
+}
+
+export async function maybeGetLocalBackupJobForAttachmentAndFilePointer({
+  attachment,
+  filePointer,
+}: {
+  attachment: AttachmentType;
+  filePointer: Backups.FilePointer;
+}): Promise<PartialAttachmentLocalBackupJobType | null> {
+  if (!filePointer.localLocator) {
+    return null;
+  }
+
+  strictAssert(
+    isAttachmentLocallySaved(attachment),
+    'Attachment must be saved locally for it to be backed up'
+  );
+
+  const { path, size } = attachment;
+
+  // TODO: For local backups we don't want to double back up the same file, so
+  // we could check for the same file here and if it's found then return early.
+
+  const { localLocator } = filePointer;
+
+  const { localKey: localKeyBytes, mediaName } = localLocator;
+  strictAssert(mediaName, 'mediaName must exist on localLocator');
+  strictAssert(localKeyBytes, 'localKey must exist');
+
+  return {
+    type: 'local',
+    mediaName,
+    data: {
+      path,
+      size,
+      localKey: Bytes.toBase64(localKeyBytes),
     },
   };
 }

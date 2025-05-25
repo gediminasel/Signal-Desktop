@@ -21,7 +21,9 @@ import { actions as items } from './ducks/items';
 import { actions as lightbox } from './ducks/lightbox';
 import { actions as linkPreviews } from './ducks/linkPreviews';
 import { actions as mediaGallery } from './ducks/mediaGallery';
+import { actions as nav } from './ducks/nav';
 import { actions as network } from './ducks/network';
+import { actions as notificationProfiles } from './ducks/notificationProfiles';
 import { actions as safetyNumber } from './ducks/safetyNumber';
 import { actions as search } from './ducks/search';
 import { actions as stickers } from './ducks/stickers';
@@ -54,7 +56,9 @@ export const actionCreators: ReduxActions = {
   lightbox,
   linkPreviews,
   mediaGallery,
+  nav,
   network,
+  notificationProfiles,
   safetyNumber,
   search,
   stickers,

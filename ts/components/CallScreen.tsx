@@ -15,6 +15,7 @@ import type {
   SetLocalAudioType,
   SetLocalVideoType,
   SetRendererCanvasType,
+  SetMutedByType,
 } from '../state/ducks/calling';
 import { Avatar, AvatarSize } from './Avatar';
 import { CallingHeader, getCallViewIconClassname } from './CallingHeader';
@@ -96,6 +97,7 @@ import {
   isEmojiVariantValue,
 } from './fun/data/emojis';
 import { useFunEmojiLocalizer } from './fun/useFunEmojiLocalizer';
+import { BeforeNavigateResponse } from '../services/BeforeNavigate';
 
 export type PropsType = {
   activeCall: ActiveCallType;
@@ -135,6 +137,7 @@ export type PropsType = {
   toggleSelfViewExpanded: () => void;
   toggleSettings: () => void;
   changeCallView: (mode: CallViewMode) => void;
+  setLocalAudioRemoteMuted: SetMutedByType;
 } & Pick<ReactionPickerProps, 'renderEmojiPicker'>;
 
 export const isInSpeakerView = (
@@ -224,6 +227,7 @@ export function CallScreen({
   toggleScreenRecordingPermissionsDialog,
   toggleSelfViewExpanded,
   toggleSettings,
+  setLocalAudioRemoteMuted,
 }: PropsType): JSX.Element {
   const {
     conversation,
@@ -311,6 +315,23 @@ export function CallScreen({
     }, 5000);
     return clearTimeout.bind(null, timer);
   }, [showControls, showReactionPicker, stickyControls, controlsHover]);
+  useEffect(() => {
+    const name = 'CallScreen';
+    const callback = async () => {
+      togglePip();
+      return BeforeNavigateResponse.MadeChanges;
+    };
+    window.Signal.Services.beforeNavigate.registerCallback({
+      callback,
+      name,
+    });
+    return () => {
+      window.Signal.Services.beforeNavigate.unregisterCallback({
+        callback,
+        name,
+      });
+    };
+  }, [togglePip]);
 
   const [selfViewHover, setSelfViewHover] = useState(false);
   const onSelfViewMouseEnter = useCallback(() => {
@@ -980,7 +1001,17 @@ export function CallScreen({
             : false
         }
         isHandRaised={localHandRaised}
+        mutedBy={
+          isGroupOrAdhocActiveCall(activeCall) ? activeCall.mutedBy : undefined
+        }
+        observedRemoteMute={
+          isGroupOrAdhocActiveCall(activeCall)
+            ? activeCall.observedRemoteMute
+            : undefined
+        }
+        conversationsByDemuxId={conversationsByDemuxId}
         i18n={i18n}
+        setLocalAudioRemoteMuted={setLocalAudioRemoteMuted}
       />
       {isCallLinkAdmin ? (
         <CallingPendingParticipants
@@ -1271,7 +1302,7 @@ function useReactionsToast(props: UseReactionsToastType): void {
           <span className="CallingReactionsToasts__reaction">
             <FunStaticEmoji
               role="img"
-              aria-label={emojiLocalizer(emojiVariantKey)}
+              aria-label={emojiLocalizer.getLocaleShortName(emojiVariantKey)}
               size={28}
               emoji={emojiVariant}
             />

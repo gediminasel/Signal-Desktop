@@ -83,9 +83,6 @@
   "icu:databaseError": {
     "messageformat": "ฐานข้อมูลผิดพลาด"
   },
-  "icu:databaseError__detail": {
-    "messageformat": "เกิดข้อผิดพลาดด้านฐานข้อมูล คุณสามารถคัดลอกข้อมูลความผิดพลาดนี้แล้วติดต่อฝ่ายสนับสนุนของ Signal ให้ช่วยแก้ไขปัญหาดังกล่าว ในกรณีที่คุณต้องการใช้ Signal ทันที คุณสามารถลบข้อมูลและรีสตาร์ทได้\n\nติดต่อฝ่ายสนับสนุนโดยไปที่: {link}"
-  },
   "icu:deleteAndRestart": {
     "messageformat": "ลบข้อมูลและรีสตาร์ท"
   },
@@ -1673,9 +1670,6 @@
   "icu:notificationSenderInGroup": {
     "messageformat": "{sender} ใน {group}"
   },
-  "icu:notificationReaction": {
-    "messageformat": "{sender} แสดงความรู้สึก {emoji} ต่อข้อความของคุณ"
-  },
   "icu:notificationReactionMessage": {
     "messageformat": "{sender} แสดงความรู้สึก {emoji} ต่อ: {message}"
   },
@@ -1831,12 +1825,6 @@
   },
   "icu:ConversationDetails--support-center": {
     "messageformat": "ศูนย์ความช่วยเหลือ"
-  },
-  "icu:ConversationDetails--contact-us": {
-    "messageformat": "ติดต่อเรา"
-  },
-  "icu:ConversationDetails--donate": {
-    "messageformat": "บริจาคให้ Signal"
   },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "ดูหมายเลขความปลอดภัย"
@@ -2600,6 +2588,9 @@
   "icu:Keyboard--open-sticker-chooser": {
     "messageformat": "เปิดตัวเลือกสติกเกอร์"
   },
+  "icu:Keyboard--open-gif-chooser": {
+    "messageformat": "เปิดตัวเลือก GIF"
+  },
   "icu:Keyboard--begin-recording-voice-note": {
     "messageformat": "เริ่มการอัดบันทึกแบบเสียง"
   },
@@ -3146,6 +3137,18 @@
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "ไมค์เปิดอยู่"
   },
+  "icu:CallControls__MutedBySomeoneToast": {
+    "messageformat": "{otherName} muted you."
+  },
+  "icu:CallControls__SomeoneMutedSomeoneToast": {
+    "messageformat": "{name} muted {otherName}."
+  },
+  "icu:CallControls__YouMutedSomeoneToast": {
+    "messageformat": "You muted {otherName}."
+  },
+  "icu:CallControls__YouMutedYourselfToast": {
+    "messageformat": "You muted yourself from another device."
+  },
   "icu:CallControls__LowerHandSuggestionToast": {
     "messageformat": "เอามือลงหรือไม่"
   },
@@ -3238,9 +3241,6 @@
   },
   "icu:calling__view_mode--updated": {
     "messageformat": "เปลี่ยนมุมมองแล้ว"
-  },
-  "icu:calling__hangup": {
-    "messageformat": "ออกจากสาย"
   },
   "icu:calling__SelectPresentingSourcesModal--title": {
     "messageformat": "แบ่งปันหน้าจอของคุณ"
@@ -4059,10 +4059,10 @@
     "messageformat": "คุณต้องเปิด Signal บนโทรศัพท์เพื่อใช้งานบัญชีนี้ต่อไป โดยบัญชีของคุณจะถูกลบในไม่ช้าหากไม่ดำเนินการ <learnMoreLink>เรียนรู้เพิ่มเติม</learnMoreLink>"
   },
   "icu:LowDiskSpaceBackupImportModal__title": {
-    "messageformat": "Can't restore media"
+    "messageformat": "ไม่สามารถกู้คืนไฟล์สื่อได้"
   },
   "icu:LowDiskSpaceBackupImportModal__description": {
-    "messageformat": "Your device does not have enough free space. Free up {diskSpaceAmount} of space to restore your media."
+    "messageformat": "อุปกรณ์ของคุณมีพื้นที่จัดเก็บไม่เพียงพอ โปรดเพิ่มพื้นที่จัดเก็บ {diskSpaceAmount} เพื่อกู้คืนไฟล์สื่อของคุณ"
   },
   "icu:CompositionArea--expand": {
     "messageformat": "ขยาย"
@@ -4084,9 +4084,6 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "ส่งข้อความที่แก้ไข"
-  },
-  "icu:CompositionArea__FunButtonLabel": {
-    "messageformat": "เพิ่มอีโมจิ สติกเกอร์ หรือไฟล์ GIF"
   },
   "icu:CompositionArea__ConfirmGifSelection__Title": {
     "messageformat": "แทนที่ไฟล์แนบใช่หรือไม่"
@@ -4522,12 +4519,6 @@
   },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "คำแนะนำเพื่อความปลอดภัย"
-  },
-  "icu:MessageRequestWarning__dialog__details": {
-    "messageformat": "คุณไม่ได้อยู่ในกลุ่มใดที่เหมือนกับบุคคลนี้เลย โปรดพิจารณาคำขออย่างถี่ถ้วน ก่อนจะยอมรับ เพื่อเลี่ยงข้อความไม่พึงประสงค์"
-  },
-  "icu:MessageRequestWarning__dialog__learn-even-more": {
-    "messageformat": "เกี่ยวกับคำขอส่งข้อความ"
   },
   "icu:ContactSpoofing__same-name--link": {
     "messageformat": "โปรดตรวจสอบคำขออย่างถี่ถ้วน Signal พบผู้ติดต่ออีกคนที่ใช้ชื่อเหมือนกัน <reviewRequestLink>ตรวจสอบคำขอ</reviewRequestLink>"
@@ -5006,6 +4997,21 @@
   "icu:Preferences__button--internal": {
     "messageformat": "ภายใน"
   },
+  "icu:Preferences__internal__local-backups": {
+    "messageformat": "ข้อมูลสำรองในเครื่อง"
+  },
+  "icu:Preferences__internal__export-local-backup": {
+    "messageformat": "ส่งออก…"
+  },
+  "icu:Preferences__internal__export-local-backup--description": {
+    "messageformat": "ส่งออกข้อมูลสำรองที่เข้ารหัสในเครื่องไปยังโฟลเดอร์และตรวจสอบความถูกต้อง"
+  },
+  "icu:Preferences__internal__import-local-backup": {
+    "messageformat": "นำเข้า…"
+  },
+  "icu:Preferences__internal__import-local-backup--description": {
+    "messageformat": "จัดเตรียมข้อมูลสำรองที่เข้ารหัสในเครื่องเพื่อนำเข้าผ่านลิงก์"
+  },
   "icu:Preferences__internal__validate-backup--description": {
     "messageformat": "ส่งออกข้อมูลสำรองที่เข้ารหัสไปยังหน่วยความจำและดำเนินการตรวจสอบความถูกต้อง"
   },
@@ -5071,9 +5077,6 @@
   },
   "icu:Preferences--backup-messages-plan__note": {
     "messageformat": "คุณสามารถจัดการหรืออัปเกรดแพ็กเกจสำรองข้อมูลของ Signal ได้บนโทรศัพท์"
-  },
-  "icu:Preferences--backup-plan__not-found": {
-    "messageformat": "ไม่พบการสมัครแพ็กเกจของคุณ โปรดต่ออายุเพื่อการใช้งานแพ็กเกจสำรองข้อมูลของ Signal อย่างต่อเนื่อง"
   },
   "icu:Preferences--backup-plan__not-found__note": {
     "messageformat": "คุณสามารถจัดการหรือต่ออายุการสมัครแพ็กเกจสำรองข้อมูลของ Signal ได้บนโทรศัพท์"
@@ -5203,6 +5206,24 @@
   },
   "icu:Preferences__LanguageModal__Restart__Button": {
     "messageformat": "รีสตาร์ท"
+  },
+  "icu:Preferences__Privacy__Application": {
+    "messageformat": "แอปพลิเคชัน"
+  },
+  "icu:Preferences__content-protection--label": {
+    "messageformat": "ความปลอดภัยหน้าจอ"
+  },
+  "icu:Preferences__content-protection--description": {
+    "messageformat": "ป้องกันไม่ให้มีการบันทึกภาพหน้าจอของ Signal บนคอมพิวเตอร์เครื่องนี้เพื่อรักษาความเป็นส่วนตัวยิ่งขึ้น"
+  },
+  "icu:Preferences__content-protection__modal--title": {
+    "messageformat": "ปิดใช้งานการรักษาความปลอดภัยของหน้าจอใช่หรือไม่"
+  },
+  "icu:Preferences__content-protection__modal--body": {
+    "messageformat": "การปิดใช้งานตัวเลือกนี้อาจทำให้ Microsoft Windows สามารถบันทึกภาพหน้าจอของ Signal และนำไปใช้กับฟีเจอร์ที่อาจไม่เป็นส่วนตัว"
+  },
+  "icu:Preferences__content-protection__modal--disable": {
+    "messageformat": "ปิดใช้งาน"
   },
   "icu:DialogUpdate--version-available": {
     "messageformat": "ปรับรุ่นเป็น {version}"
@@ -6331,10 +6352,16 @@
     "messageformat": "มีการปรับเปลี่ยนเล็กน้อย พร้อมแก้ไขบั๊ก และการพัฒนาประสิทธิภาพให้ดียิ่งขึ้น ขอขอบคุณที่เลือกใช้ Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.51--0": {
-    "messageformat": "เพิ่มความสามารถของ Signal เดสก์ท็อปให้ค้นหาไฟล์ GIF แบบเคลื่อนไหวได้แล้ว"
+  "icu:WhatsNew__v7.54--0": {
+    "messageformat": "เพิ่มการรองรับตัวเลือกอีโมจิในภาษาอื่นๆ ให้ครอบคลุมยิ่งขึ้น"
   },
-  "icu:WhatsNew__v7.51--1": {
-    "messageformat": "นอกจากนี้ เรายังปรับขนาดของหน้าต่างโหมดจอเล็ก (Picture-in-Picture) พร้อมเพิ่มปุ่มทางลัดใหม่ๆ เพื่อความสะดวกในการย่อหน้าต่างการโทร"
+  "icu:WhatsNew__v7.55--0": {
+    "messageformat": "รุ่นอัปเดตนี้นำฟีเจอร์ปุ่มลัดบนแป้นพิมพ์หรับอีโมจิและสติกเกอร์กลับมาให้คุณเลือกได้สะดวกเหมือนเคย"
+  },
+  "icu:WhatsNew__v7.55--1": {
+    "messageformat": "เรายังแก้ไขปัญหาแอปหยุดทำงานซึ่งผู้ใช้ระบบปฏิบัติการ Linux น้อยคนอาจจะเคยเจอ"
+  },
+  "icu:WhatsNew__v7.56--0": {
+    "messageformat": "Sometimes a powerful story can really move you, so we fixed a bug that made it difficult to move the Signal window while viewing content in the Stories tab."
   }
 }

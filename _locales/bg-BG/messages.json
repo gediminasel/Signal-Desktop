@@ -83,9 +83,6 @@
   "icu:databaseError": {
     "messageformat": "Проблем с базата данни"
   },
-  "icu:databaseError__detail": {
-    "messageformat": "Възникна грешка с базата данни. Можете да копирате грешката и да се свържете с поддръжката на Signal, за да ви помогнат с отстраняването на проблема. Ако се налага да използвате Signal веднага, можете да изтриете данните си и да рестартирате.\n\nСвържете се с поддръжката, като посетите: {link}"
-  },
   "icu:deleteAndRestart": {
     "messageformat": "Изтриване на данни и рестартиране"
   },
@@ -1673,9 +1670,6 @@
   "icu:notificationSenderInGroup": {
     "messageformat": "{sender} в {group}"
   },
-  "icu:notificationReaction": {
-    "messageformat": "{sender} реагира с {emoji} на съобщението ви"
-  },
   "icu:notificationReactionMessage": {
     "messageformat": "{sender} реагира с {emoji} на: {message}"
   },
@@ -1831,12 +1825,6 @@
   },
   "icu:ConversationDetails--support-center": {
     "messageformat": "Център за поддръжка"
-  },
-  "icu:ConversationDetails--contact-us": {
-    "messageformat": "Свържете се с нас"
-  },
-  "icu:ConversationDetails--donate": {
-    "messageformat": "Дарете на Signal"
   },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "Вижте номера за сигурност"
@@ -2600,6 +2588,9 @@
   "icu:Keyboard--open-sticker-chooser": {
     "messageformat": "Отвори избирането на стикери"
   },
+  "icu:Keyboard--open-gif-chooser": {
+    "messageformat": "Отваряне на избирането на GIF"
+  },
   "icu:Keyboard--begin-recording-voice-note": {
     "messageformat": "Започва записването на гласова бележка"
   },
@@ -3146,6 +3137,18 @@
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "Микрофонът е включен"
   },
+  "icu:CallControls__MutedBySomeoneToast": {
+    "messageformat": "{otherName} muted you."
+  },
+  "icu:CallControls__SomeoneMutedSomeoneToast": {
+    "messageformat": "{name} muted {otherName}."
+  },
+  "icu:CallControls__YouMutedSomeoneToast": {
+    "messageformat": "You muted {otherName}."
+  },
+  "icu:CallControls__YouMutedYourselfToast": {
+    "messageformat": "You muted yourself from another device."
+  },
   "icu:CallControls__LowerHandSuggestionToast": {
     "messageformat": "Свалете ръка?"
   },
@@ -3238,9 +3241,6 @@
   },
   "icu:calling__view_mode--updated": {
     "messageformat": "Изгледът е актуализиран"
-  },
-  "icu:calling__hangup": {
-    "messageformat": "Напусни повикването"
   },
   "icu:calling__SelectPresentingSourcesModal--title": {
     "messageformat": "Споделяне на екрана"
@@ -4059,10 +4059,10 @@
     "messageformat": "За да продължите да използвате този акаунт, трябва да отворите Signal на телефона си. Ако не отворите Signal на телефона си, вашият акаунт скоро ще бъде изтрит. <learnMoreLink>Научете повече</learnMoreLink>"
   },
   "icu:LowDiskSpaceBackupImportModal__title": {
-    "messageformat": "Can't restore media"
+    "messageformat": "Не може да се възстанови мултимедията"
   },
   "icu:LowDiskSpaceBackupImportModal__description": {
-    "messageformat": "Your device does not have enough free space. Free up {diskSpaceAmount} of space to restore your media."
+    "messageformat": "Устройството ви няма достатъчно свободно място. Освободете {diskSpaceAmount} място, за да възстановите мултимедията."
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Разшири"
@@ -4084,9 +4084,6 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "Изпращане на редактирано съобщение"
-  },
-  "icu:CompositionArea__FunButtonLabel": {
-    "messageformat": "Добавяне на емоджи, стикер или GIF"
   },
   "icu:CompositionArea__ConfirmGifSelection__Title": {
     "messageformat": "Заменяне на прикачения файл?"
@@ -4522,12 +4519,6 @@
   },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "Съвети за безопасност"
-  },
-  "icu:MessageRequestWarning__dialog__details": {
-    "messageformat": "Нямате общи групи с това лице. Преглеждайте заявките внимателно преди да приемате, за да избегнете нежелани съобщения."
-  },
-  "icu:MessageRequestWarning__dialog__learn-even-more": {
-    "messageformat": "Относно заявките за съобщения"
   },
   "icu:ContactSpoofing__same-name--link": {
     "messageformat": "Прегледайте внимателно заявките. Signal откри друг контакт със същото име. <reviewRequestLink>Преглед на заявката</reviewRequestLink>"
@@ -5006,6 +4997,21 @@
   "icu:Preferences__button--internal": {
     "messageformat": "Вътрешни"
   },
+  "icu:Preferences__internal__local-backups": {
+    "messageformat": "Локални резервни копия"
+  },
+  "icu:Preferences__internal__export-local-backup": {
+    "messageformat": "Експортиране…"
+  },
+  "icu:Preferences__internal__export-local-backup--description": {
+    "messageformat": "Експортирайте локално криптирано резервно копие в папка и го валидирайте"
+  },
+  "icu:Preferences__internal__import-local-backup": {
+    "messageformat": "Импортиране…"
+  },
+  "icu:Preferences__internal__import-local-backup--description": {
+    "messageformat": "Подгответе локално криптирано резервно копие за импортиране при свързване"
+  },
   "icu:Preferences__internal__validate-backup--description": {
     "messageformat": "Експортиране на криптирано резервно копие в паметта и стартиране на пакета за валидиране за него"
   },
@@ -5071,9 +5077,6 @@
   },
   "icu:Preferences--backup-messages-plan__note": {
     "messageformat": "Можете да управлявате или да надградите „Резервни копия на Signal“ на телефона си."
-  },
-  "icu:Preferences--backup-plan__not-found": {
-    "messageformat": "Абонаментът ви не беше открит. Подновете го сега, за да продължите да използвате „Резервни копия на Signal“."
   },
   "icu:Preferences--backup-plan__not-found__note": {
     "messageformat": "Можете да управлявате или да подновите своя абонамент за „Резервни копия на Signal“ на телефона си."
@@ -5203,6 +5206,24 @@
   },
   "icu:Preferences__LanguageModal__Restart__Button": {
     "messageformat": "Рестартиране"
+  },
+  "icu:Preferences__Privacy__Application": {
+    "messageformat": "Приложение"
+  },
+  "icu:Preferences__content-protection--label": {
+    "messageformat": "Сигурност на екрана"
+  },
+  "icu:Preferences__content-protection--description": {
+    "messageformat": "Предотвратете скрийншотите на Signal на този компютър за повече поверителност."
+  },
+  "icu:Preferences__content-protection__modal--title": {
+    "messageformat": "Деактивиране на сигурността на екрана?"
+  },
+  "icu:Preferences__content-protection__modal--body": {
+    "messageformat": "Ако е деактивирано, това може да позволи на Microsoft Windows да заснема скрийншоти на Signal и да ги използва за функции, които може да не са поверителни."
+  },
+  "icu:Preferences__content-protection__modal--disable": {
+    "messageformat": "Изключване"
   },
   "icu:DialogUpdate--version-available": {
     "messageformat": "Налична е актуализация до версия {version}"
@@ -6331,10 +6352,16 @@
     "messageformat": "Дребни корекции, поправки на бъгове и подобрения на работата. Благодарим ви, че използвате Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.51--0": {
-    "messageformat": "Сега можете да търсите анимирани GIF-ове и в Signal Desktop."
+  "icu:WhatsNew__v7.54--0": {
+    "messageformat": "Добавихме поддръжка на бързи клавиши за емотикони на допълнителни езици."
   },
-  "icu:WhatsNew__v7.51--1": {
-    "messageformat": "Също така променихме размера на прозореца „картина в картината“ и добавихме нови удобни бързи клавиши, докато повикването е минимизирано."
+  "icu:WhatsNew__v7.55--0": {
+    "messageformat": "С тази актуализация отново се активират клавишните комбинации за емотикони и стикери."
+  },
+  "icu:WhatsNew__v7.55--1": {
+    "messageformat": "Също така поправихме рядък срив при някои дистрибуции на Linux."
+  },
+  "icu:WhatsNew__v7.56--0": {
+    "messageformat": "Sometimes a powerful story can really move you, so we fixed a bug that made it difficult to move the Signal window while viewing content in the Stories tab."
   }
 }

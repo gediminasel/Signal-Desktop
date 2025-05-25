@@ -83,9 +83,6 @@
   "icu:databaseError": {
     "messageformat": "Ошибка базы данных"
   },
-  "icu:databaseError__detail": {
-    "messageformat": "Произошла ошибка базы данных. Вы можете создать копию ошибки и обратиться в службу поддержки Signal для решения проблемы. Если вы хотите использовать Signal немедленно, вы можете удалить данные и перезагрузиться.\n\nСвязаться с поддержкой можно по адресу: {link}"
-  },
   "icu:deleteAndRestart": {
     "messageformat": "Удалить данные и перезапустить"
   },
@@ -1673,9 +1670,6 @@
   "icu:notificationSenderInGroup": {
     "messageformat": "{sender} в {group}"
   },
-  "icu:notificationReaction": {
-    "messageformat": "{sender} отреагировал(-а) {emoji} на ваше сообщение"
-  },
   "icu:notificationReactionMessage": {
     "messageformat": "{sender} отреагировал(-а) {emoji} на: {message}"
   },
@@ -1831,12 +1825,6 @@
   },
   "icu:ConversationDetails--support-center": {
     "messageformat": "Центр поддержки"
-  },
-  "icu:ConversationDetails--contact-us": {
-    "messageformat": "Связаться с нами"
-  },
-  "icu:ConversationDetails--donate": {
-    "messageformat": "Поддержать Signal"
   },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "Посмотреть код безопасности"
@@ -2600,6 +2588,9 @@
   "icu:Keyboard--open-sticker-chooser": {
     "messageformat": "Открыть панель стикеров"
   },
+  "icu:Keyboard--open-gif-chooser": {
+    "messageformat": "Открыть панель GIF"
+  },
   "icu:Keyboard--begin-recording-voice-note": {
     "messageformat": "Начать запись аудиосообщения"
   },
@@ -3146,6 +3137,18 @@
   "icu:CallControls__MutedToast--unmuted": {
     "messageformat": "Микрофон включён"
   },
+  "icu:CallControls__MutedBySomeoneToast": {
+    "messageformat": "{otherName} muted you."
+  },
+  "icu:CallControls__SomeoneMutedSomeoneToast": {
+    "messageformat": "{name} muted {otherName}."
+  },
+  "icu:CallControls__YouMutedSomeoneToast": {
+    "messageformat": "You muted {otherName}."
+  },
+  "icu:CallControls__YouMutedYourselfToast": {
+    "messageformat": "You muted yourself from another device."
+  },
   "icu:CallControls__LowerHandSuggestionToast": {
     "messageformat": "Опустить руку?"
   },
@@ -3238,9 +3241,6 @@
   },
   "icu:calling__view_mode--updated": {
     "messageformat": "Вид обновлён"
-  },
-  "icu:calling__hangup": {
-    "messageformat": "Покинуть звонок"
   },
   "icu:calling__SelectPresentingSourcesModal--title": {
     "messageformat": "Показать ваш экран"
@@ -4059,10 +4059,10 @@
     "messageformat": "Чтобы продолжить использование этой учётной записи, необходимо открыть Signal на телефоне. Если вы не откроете Signal на телефоне, ваша учётная запись будет вскоре удалена. <learnMoreLink>Узнать больше</learnMoreLink>"
   },
   "icu:LowDiskSpaceBackupImportModal__title": {
-    "messageformat": "Can't restore media"
+    "messageformat": "Не удается восстановить медиафайлы"
   },
   "icu:LowDiskSpaceBackupImportModal__description": {
-    "messageformat": "Your device does not have enough free space. Free up {diskSpaceAmount} of space to restore your media."
+    "messageformat": "На вашем устройстве недостаточно места на диске. Освободите {diskSpaceAmount} места для восстановления медиафайлов."
   },
   "icu:CompositionArea--expand": {
     "messageformat": "Развернуть"
@@ -4084,9 +4084,6 @@
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "Отправить изменённое сообщение"
-  },
-  "icu:CompositionArea__FunButtonLabel": {
-    "messageformat": "Добавить эмодзи, стикер или GIF-файл"
   },
   "icu:CompositionArea__ConfirmGifSelection__Title": {
     "messageformat": "Заменить вложение?"
@@ -4522,12 +4519,6 @@
   },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "Советы по безопасности"
-  },
-  "icu:MessageRequestWarning__dialog__details": {
-    "messageformat": "У вас нет общих групп с этим человеком. Внимательно проверяйте запросы перед тем, как принимать их, чтобы избежать нежелательных сообщений."
-  },
-  "icu:MessageRequestWarning__dialog__learn-even-more": {
-    "messageformat": "О запросах на общение"
   },
   "icu:ContactSpoofing__same-name--link": {
     "messageformat": "Внимательно проверяйте запросы. Signal нашёл другой контакт с тем же именем. <reviewRequestLink>Проверить запрос</reviewRequestLink>"
@@ -5006,6 +4997,21 @@
   "icu:Preferences__button--internal": {
     "messageformat": "Внутренние"
   },
+  "icu:Preferences__internal__local-backups": {
+    "messageformat": "Локальные резервные копии"
+  },
+  "icu:Preferences__internal__export-local-backup": {
+    "messageformat": "Экспорт…"
+  },
+  "icu:Preferences__internal__export-local-backup--description": {
+    "messageformat": "Экспортируйте зашифрованную резервную копию в папку и проверьте её"
+  },
+  "icu:Preferences__internal__import-local-backup": {
+    "messageformat": "Импорт…"
+  },
+  "icu:Preferences__internal__import-local-backup--description": {
+    "messageformat": "Проиндексируйте локальные зашифрованные резервные копии для импорта по ссылке"
+  },
   "icu:Preferences__internal__validate-backup--description": {
     "messageformat": "Экспортируйте зашифрованную резервную копию в память и запустите для нее набор проверок"
   },
@@ -5071,9 +5077,6 @@
   },
   "icu:Preferences--backup-messages-plan__note": {
     "messageformat": "Вы можете управлять резервным копированием Signal или продлевать подписку на своём телефоне."
-  },
-  "icu:Preferences--backup-plan__not-found": {
-    "messageformat": "Ваша подписка не найдена. Продлите подписку, чтобы и дальше использовать резервное копирование Signal."
   },
   "icu:Preferences--backup-plan__not-found__note": {
     "messageformat": "Вы можете управлять подпиской на резервное копирование Signal или продлевать её на своём телефоне."
@@ -5203,6 +5206,24 @@
   },
   "icu:Preferences__LanguageModal__Restart__Button": {
     "messageformat": "Перезапустить"
+  },
+  "icu:Preferences__Privacy__Application": {
+    "messageformat": "Приложение"
+  },
+  "icu:Preferences__content-protection--label": {
+    "messageformat": "Защита экрана"
+  },
+  "icu:Preferences__content-protection--description": {
+    "messageformat": "Запретите делать снимки экрана Signal на этом компьютере для дополнительной конфиденциальности."
+  },
+  "icu:Preferences__content-protection__modal--title": {
+    "messageformat": "Отключить защиту экрана?"
+  },
+  "icu:Preferences__content-protection__modal--body": {
+    "messageformat": "Если защита отключена, это может позволить Microsoft Windows делать снимки экрана Signal и использовать их для функций, которые могут нарушать конфиденциальность."
+  },
+  "icu:Preferences__content-protection__modal--disable": {
+    "messageformat": "Отключить"
   },
   "icu:DialogUpdate--version-available": {
     "messageformat": "Доступно обновление до версии {version}"
@@ -6331,10 +6352,16 @@
     "messageformat": "Небольшие изменения, исправления ошибок и улучшения производительности. Спасибо за то, что пользуетесь Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.51--0": {
-    "messageformat": "Огонь, колесо и электричество — это грандиозные открытия были лишь этапами великого пути к анимированному поиску GIF. Теперь вы можете почувствовать себя на вершине технологического прогресса человечества в Signal Desktop с совершенно новым интерфейсом выбора, который позволяет легко найти эмодзи, стикер или анимированный GIF-файл, нужный именно в данный момент."
+  "icu:WhatsNew__v7.54--0": {
+    "messageformat": "Улыбка одинакова на всех языках, но теперь, когда ярлыки эмодзи в Signal Desktop полностью переведены, вы также можете <code>:smile:</code>, или <code>:sourire:</code>, или <code>:微笑:</code> на любом поддерживаемом языке."
   },
-  "icu:WhatsNew__v7.51--1": {
-    "messageformat": "Мы также изменили размеры окна «картинка в картинке» и добавили новые удобные сочетания клавиш для отключения/включения микрофона и камеры, когда звонок свёрнут."
+  "icu:WhatsNew__v7.55--0": {
+    "messageformat": "Сочетания клавиш для эмодзи и стикеров вернулись! Помимо прочего, эти сочетания экономят ещё больше времени, потому что теперь вам больше не нужно сообщать нам, что они не работают."
+  },
+  "icu:WhatsNew__v7.55--1": {
+    "messageformat": "Мы также исправили сбой на дистрибутивах Linux, которые ещё не поддерживают GTK4."
+  },
+  "icu:WhatsNew__v7.56--0": {
+    "messageformat": "Sometimes a powerful story can really move you, so we fixed a bug that made it difficult to move the Signal window while viewing content in the Stories tab."
   }
 }

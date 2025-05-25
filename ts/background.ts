@@ -47,6 +47,10 @@ import {
   initialize as initializeExpiringMessageService,
   update as updateExpiringMessagesService,
 } from './services/expiringMessagesDeletion';
+import {
+  initialize as initializeNotificationProfilesService,
+  update as updateNotificationProfileService,
+} from './services/notificationProfilesService';
 import { tapToViewMessagesDeletionService } from './services/tapToViewMessagesDeletionService';
 import { senderCertificateService } from './services/senderCertificate';
 import { GROUP_CREDENTIALS_KEY } from './services/groupCredentialFetcher';
@@ -210,6 +214,8 @@ import { MessageModel } from './models/messages';
 import { waitForEvent } from './shims/events';
 import { sendSyncRequests } from './textsecure/syncRequests';
 import { handleServerAlerts } from './util/handleServerAlerts';
+import { isLocalBackupsEnabled } from './util/isLocalBackupsEnabled';
+import { NavTab } from './state/ducks/nav';
 
 export function isOverHourIntoPast(timestamp: number): boolean {
   return isNumber(timestamp) && isOlderThan(timestamp, HOUR);
@@ -758,9 +764,10 @@ export async function startApp(): Promise<void> {
         flushMessageCounter();
 
         // Hangup active calls
-        window.Signal.Services.calling.hangupAllCalls(
-          'background/shutdown: shutdown requested'
-        );
+        window.Signal.Services.calling.hangupAllCalls({
+          excludeRinging: true,
+          reason: 'background/shutdown: shutdown requested',
+        });
 
         const attachmentDownloadStopPromise = AttachmentDownloadManager.stop();
         const attachmentBackupStopPromise = AttachmentBackupManager.stop();
@@ -991,6 +998,10 @@ export async function startApp(): Promise<void> {
 
       if (window.isBeforeVersion(lastVersion, 'v7.43.0-beta.1')) {
         await window.storage.remove('primarySendsSms');
+      }
+
+      if (window.isBeforeVersion(lastVersion, 'v7.56.0-beta.1')) {
+        await window.storage.remove('backupMediaDownloadIdle');
       }
     }
 
@@ -1350,6 +1361,44 @@ export async function startApp(): Promise<void> {
     window.reduxActions.app.openStandalone();
   });
 
+  let openingSettingsTab = false;
+  window.Whisper.events.on('openSettingsTab', async () => {
+    const logId = 'openSettingsTab';
+    try {
+      if (openingSettingsTab) {
+        log.info(
+          `${logId}: Already attempting to open settings tab, returning early`
+        );
+        return;
+      }
+
+      openingSettingsTab = true;
+
+      const newTab = NavTab.Settings;
+      const needToCancel =
+        await window.Signal.Services.beforeNavigate.shouldCancelNavigation({
+          context: logId,
+          newTab,
+        });
+
+      if (needToCancel) {
+        log.info(`${logId}: Cancelling navigation to the settings tab`);
+        return;
+      }
+
+      window.reduxActions.nav.changeNavTab(newTab);
+    } finally {
+      if (!openingSettingsTab) {
+        log.warn(`${logId}: openingSettingsTab was already false in finally!`);
+      }
+      openingSettingsTab = false;
+    }
+  });
+
+  window.Whisper.events.on('stageLocalBackupForImport', () => {
+    drop(backupsService._internalStageLocalBackupForImport());
+  });
+
   window.Whisper.events.on('powerMonitorSuspend', () => {
     log.info('powerMonitor: suspend');
     server?.cancelInflightRequests('powerMonitorSuspend');
@@ -1454,6 +1503,7 @@ export async function startApp(): Promise<void> {
     void badgeImageFileDownloader.checkForFilesToDownload();
 
     initializeExpiringMessageService();
+    initializeNotificationProfilesService();
 
     log.info('Blocked uuids cleanup: starting...');
     const blockedUuids = window.storage.get(BLOCKED_UUIDS_ID, []);
@@ -1525,10 +1575,12 @@ export async function startApp(): Promise<void> {
       window.Whisper.events.trigger('timetravel');
     });
 
-    void updateExpiringMessagesService();
+    updateExpiringMessagesService();
+    updateNotificationProfileService();
     tapToViewMessagesDeletionService.update();
     window.Whisper.events.on('timetravel', () => {
-      void updateExpiringMessagesService();
+      updateExpiringMessagesService();
+      updateNotificationProfileService();
       tapToViewMessagesDeletionService.update();
     });
 
@@ -1546,7 +1598,15 @@ export async function startApp(): Promise<void> {
       }
     } else {
       window.IPC.readyForUpdates();
-      window.reduxActions.installer.startInstaller();
+      drop(
+        (async () => {
+          try {
+            await window.IPC.whenWindowVisible();
+          } finally {
+            window.reduxActions.installer.startInstaller();
+          }
+        })()
+      );
     }
 
     const { activeWindowService } = window.SignalContext;
@@ -1742,7 +1802,7 @@ export async function startApp(): Promise<void> {
         hasSentSyncRequests = true;
       }
 
-      // 4. Download (or resume download) of link & sync backup
+      // 4. Download (or resume download) of link & sync backup or local backup
       const { wasBackupImported } = await maybeDownloadAndImportBackup();
       log.info(logId, {
         wasBackupImported,
@@ -1820,20 +1880,29 @@ export async function startApp(): Promise<void> {
     wasBackupImported: boolean;
   }> {
     const backupDownloadPath = window.storage.get('backupDownloadPath');
-    if (backupDownloadPath) {
+    const isLocalBackupAvailable =
+      backupsService.isLocalBackupStaged() && isLocalBackupsEnabled();
+
+    if (isLocalBackupAvailable || backupDownloadPath) {
       tapToViewMessagesDeletionService.pause();
 
       // Download backup before enabling request handler and storage service
       try {
-        const { wasBackupImported } = await backupsService.downloadAndImport({
-          onProgress: (backupStep, currentBytes, totalBytes) => {
-            window.reduxActions.installer.updateBackupImportProgress({
-              backupStep,
-              currentBytes,
-              totalBytes,
-            });
-          },
-        });
+        let wasBackupImported = false;
+        if (isLocalBackupAvailable) {
+          await backupsService.importLocalBackup();
+          wasBackupImported = true;
+        } else {
+          ({ wasBackupImported } = await backupsService.downloadAndImport({
+            onProgress: (backupStep, currentBytes, totalBytes) => {
+              window.reduxActions.installer.updateBackupImportProgress({
+                backupStep,
+                currentBytes,
+                totalBytes,
+              });
+            },
+          }));
+        }
 
         log.info('afterAppStart: backup download attempt completed, resolving');
         backupReady.resolve({ wasBackupImported });
