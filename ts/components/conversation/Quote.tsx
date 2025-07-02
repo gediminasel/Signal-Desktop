@@ -33,7 +33,10 @@ import type { QuotedAttachmentType } from '../../model-types';
 
 const EMPTY_OBJECT = Object.freeze(Object.create(null));
 
-export type QuotedAttachmentForUIType = QuotedAttachmentType &
+export type QuotedAttachmentForUIType = Pick<
+  QuotedAttachmentType,
+  'contentType' | 'thumbnail' | 'fileName'
+> &
   Pick<AttachmentType, 'isVoiceMessage' | 'fileName' | 'textAttachment'>;
 
 export type Props = {
@@ -102,7 +105,7 @@ function getUrl(thumbnail?: ThumbnailType): string | undefined {
     return;
   }
 
-  return thumbnail.objectUrl || thumbnail.url;
+  return thumbnail.url;
 }
 
 function getTypeLabel({
@@ -377,6 +380,7 @@ export function Quote(props: Props): JSX.Element | null {
             isSpoilerExpanded={EMPTY_OBJECT}
             renderLocation={RenderLocation.Quote}
             text={text}
+            originalText={text}
           />
         </div>
       );

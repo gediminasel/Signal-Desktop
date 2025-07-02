@@ -41,6 +41,9 @@
   "icu:Preferences__sent-media-quality__description": {
     "messageformat": "ઉચ્ચ ગુણવત્તાના મીડિયા મોકલવાથી વધુ ડેટા વપરાશે."
   },
+  "icu:Preferences__DonateTitle": {
+    "messageformat": "Signalને દાન આપો"
+  },
   "icu:sentMediaQualityStandard": {
     "messageformat": "સ્ટાન્ડર્ડ"
   },
@@ -202,6 +205,9 @@
   },
   "icu:menuSetupAsStandalone": {
     "messageformat": "સિંગલ ડિવાઇસ તરીકે સેટ કરો"
+  },
+  "icu:menuStageLocalBackupForImport": {
+    "messageformat": "Stage Local Backup for Import…"
   },
   "icu:messageContextMenuButton": {
     "messageformat": "વધુ પગલાં"
@@ -589,6 +595,9 @@
   },
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
+  },
+  "icu:Toast--SQLError": {
+    "messageformat": "ડેટાબેઝ એરર: કૃપા કરીને તમારા લૉગ શેર કરો."
   },
   "icu:Toast--InvalidStorageServiceHeaders": {
     "messageformat": "સ્ટોરેજ સેવા તરફથી અમાન્ય પ્રતિસાદ મળ્યો. કૃપા કરીને તમારા લૉગ શેર કરો."
@@ -1261,6 +1270,9 @@
   },
   "icu:Install__support-link": {
     "messageformat": "મદદ જોઈએ છે?"
+  },
+  "icu:Preferences--header": {
+    "messageformat": "સેટિંગ્સ"
   },
   "icu:Preferences--phone-number": {
     "messageformat": "ફોન નંબર"
@@ -2330,6 +2342,9 @@
   "icu:FunPanelEmojis__SectionTitle--SearchResults": {
     "messageformat": "શોધ પરિણામો"
   },
+  "icu:FunPanelEmojis__SectionTitle--ThisMessage": {
+    "messageformat": "આ મેસેજ"
+  },
   "icu:FunPanelEmojis__SectionTitle--Recents": {
     "messageformat": "તાજેતરમાં વપરાયેલ"
   },
@@ -3138,16 +3153,16 @@
     "messageformat": "માઇક ચાલુ"
   },
   "icu:CallControls__MutedBySomeoneToast": {
-    "messageformat": "{otherName} muted you."
+    "messageformat": "{otherName}એ તમને મ્યૂટ કર્યા."
   },
   "icu:CallControls__SomeoneMutedSomeoneToast": {
-    "messageformat": "{name} muted {otherName}."
+    "messageformat": "{name}એ {otherName}ને મ્યૂટ કર્યા."
   },
   "icu:CallControls__YouMutedSomeoneToast": {
-    "messageformat": "You muted {otherName}."
+    "messageformat": "તમે {otherName}ને મ્યૂટ કર્યા."
   },
   "icu:CallControls__YouMutedYourselfToast": {
-    "messageformat": "You muted yourself from another device."
+    "messageformat": "તમે બીજા ડિવાઇસ પરથી પોતાને મ્યૂટ કર્યા."
   },
   "icu:CallControls__LowerHandSuggestionToast": {
     "messageformat": "તમારો હાથ નીચો કરવો છે?"
@@ -3396,7 +3411,7 @@
     "messageformat": "ગ્રુપમાં જોડાઈ શકતા નથી"
   },
   "icu:GroupV2--join--link-forbidden": {
-    "messageformat": "તમે ગ્રુપ લિંક દ્વારા આ ગ્રુપમાં જોડાઈ શકતા નથી કારણ કે એક એડમિને તમને દૂર કર્યા."
+    "messageformat": "તમે ગ્રૂપ લિંક દ્વારા આ ગ્રૂપમાં જોડાઈ શકતા નથી કારણ કે એક એડમિને તમને દૂર કર્યા. ગ્રૂપમાં પાછા ઉમેરાવા માટે એડમિનનો સંપર્ક કરો."
   },
   "icu:GroupV2--join--prompt-with-approval": {
     "messageformat": "તમે આ ગ્રૂપમાં જોડાઈ શકો તે પહેલાં આ ગ્રૂપના એડમિને તમારી વિનંતી મંજૂર કરવી જોઈએ. જ્યારે તમે જોડાવાની વિતંતી કરો છો, ત્યારે તમારું નામ અને ફોટો તેના સભ્યો સાથે શેર કરવામાં આવશે."
@@ -3955,6 +3970,12 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "\"Signalમાં દાન કરો\" પર ટૅપ કરો અને સબ્સ્ક્રાઇબ કરો"
+  },
+  "icu:ProfileMovedModal__title": {
+    "messageformat": "તમારી પ્રોફાઇલ ખસેડવામાં આવી છે"
+  },
+  "icu:ProfileMovedModal__description": {
+    "messageformat": "તમારી પ્રોફાઇલ જોવા અને તેમાં ફેરફાર કરવા માટે સેટિંગ્સ ટેબ ખોલો."
   },
   "icu:BackupImportScreen__title": {
     "messageformat": "મેસેજ સિંક થઈ રહ્યાં છે"
@@ -4922,6 +4943,9 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "તમારી પ્રોફાઇલ અપડેટ કરી શકાઈ નથી. મેહરબાની કરીને ફરીથી પ્રયાસ કરો."
   },
+  "icu:ProfileEditorModal--sharing": {
+    "messageformat": "શેરિંગ"
+  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "એડમિનને મેસેજ કરો"
   },
@@ -4954,6 +4978,9 @@
   },
   "icu:Preferences__button--general": {
     "messageformat": "સામાન્ય"
+  },
+  "icu:Preferences__button--donate": {
+    "messageformat": "Signalને દાન આપો"
   },
   "icu:Preferences__button--appearance": {
     "messageformat": "દેખાવ"
@@ -4997,6 +5024,15 @@
   "icu:Preferences__button--internal": {
     "messageformat": "આંતરિક"
   },
+  "icu:Preferences__button--manage": {
+    "messageformat": "મેનેજ કરો"
+  },
+  "icu:Preferences__button--choose-folder": {
+    "messageformat": "ફોલ્ડર પસંદ કરો"
+  },
+  "icu:Preferences__button--set-up": {
+    "messageformat": "સેટ કરો"
+  },
   "icu:Preferences__internal__local-backups": {
     "messageformat": "સ્થાનિક બેકઅપ"
   },
@@ -5005,12 +5041,6 @@
   },
   "icu:Preferences__internal__export-local-backup--description": {
     "messageformat": "સ્થાનિક એન્ક્રિપ્ટેડ બેકઅપને ફોલ્ડરમાં એક્સપોર્ટ કરો અને તેને માન્ય કરો"
-  },
-  "icu:Preferences__internal__import-local-backup": {
-    "messageformat": "ઇમ્પોર્ટ કરો…"
-  },
-  "icu:Preferences__internal__import-local-backup--description": {
-    "messageformat": "લિંક પર ઇમ્પોર્ટ માટે સ્થાનિક એન્ક્રિપ્ટેડ બેકઅપ બનાવો"
   },
   "icu:Preferences__internal__validate-backup--description": {
     "messageformat": "એન્ક્રિપ્ટેડ બેકઅપને મેમરી પર નિકાસ કરો અને તેના પર વેલિડેશન સ્યુટ ચલાવો"
@@ -5047,6 +5077,15 @@
   },
   "icu:Preferences--blocked": {
     "messageformat": "બ્લૉક કર્યા"
+  },
+  "icu:Preferences--signal-backups": {
+    "messageformat": "Signal બેકઅપ"
+  },
+  "icu:Preferences--signal-backups-off-description": {
+    "messageformat": "Automatic backups with Signal’s secure, end-to-end encrypted storage service. Get started on your phone. <learnMoreLink>Learn more</learnMoreLink>."
+  },
+  "icu:Preferences--backup-section-description": {
+    "messageformat": "તમારી મેસેજ હિસ્ટ્રીનું બેકઅપ લો જેથી જ્યારે તમે નવો ફોન લો અથવા Signalને ફરીથી ઇન્સ્ટોલ કરો ત્યારે તમે ક્યારેય ડેટા ગુમાવશો નહીં."
   },
   "icu:Preferences--backup-details__header": {
     "messageformat": "બેકઅપની વિગતો"
@@ -5089,6 +5128,84 @@
   },
   "icu:Preferences--backup-size__label": {
     "messageformat": "બેકઅપની સાઇઝ"
+  },
+  "icu:Preferences__local-backups": {
+    "messageformat": "ડેસ્કટોપ બેકઅપ"
+  },
+  "icu:Preferences__local-backups-section__description": {
+    "messageformat": "બેકઅપને એક કી વડે એન્ક્રિપ્ટ કરવામાં આવે છે અને તમારા કમ્પ્યૂટર પર સ્ટોર કરવામાં આવે છે."
+  },
+  "icu:Preferences--local-backups-off-description": {
+    "messageformat": "એન્ડ-ટૂ-એન્ડ એન્ક્રિપ્ટેડ બેકઅપ બનાવો જેને તમે તમારા ફોન પર રિસ્ટોર કરી શકો. "
+  },
+  "icu:Preferences--local-backups-restore-info": {
+    "messageformat": "બેકઅપ રિસ્ટોર કરવા માટે, Signalની નવી કૉપી ઇન્સ્ટોલ કરો. ઍપ ખોલો અને &quot; બેકઅપ રિસ્ટોર કરો&quot; ટેપ કરો, પછી બેકઅપ ફાઇલ શોધો. <learnMoreLink>વધુ જાણો.</learnMoreLink>"
+  },
+  "icu:Preferences--local-backups-setup-folder": {
+    "messageformat": "ફોલ્ડર પસંદ કરો"
+  },
+  "icu:Preferences--local-backups-setup-folder-description": {
+    "messageformat": "તમારા કમ્પ્યૂટરના સ્ટોરેજમાં એક ફોલ્ડર પસંદ કરો જ્યાં તમારું એન્ડ-ટૂ-એન્ડ એન્ક્રિપ્ટેડ બેકઅપ સ્ટોર કરવામાં આવશે."
+  },
+  "icu:Preferences--local-backups-setup-next": {
+    "messageformat": "આગળ"
+  },
+  "icu:Preferences--local-backups-view-backup-key-done": {
+    "messageformat": "થઈ ગયું"
+  },
+  "icu:Preferences--local-backups-backup-key-text-box": {
+    "messageformat": "બેકઅપ કી ટેક્સ્ટ બોક્સ"
+  },
+  "icu:Preferences--local-backups-enter-backup-key": {
+    "messageformat": "કી દાખલ કરો"
+  },
+  "icu:Preferences--local-backups-record-backup-key": {
+    "messageformat": "તમારી બેકઅપ કીને રેકોર્ડ કરો"
+  },
+  "icu:Preferences--local-backups-record-backup-key-description": {
+    "messageformat": "તમારા એકાઉન્ટ અને ડેટાને રિકવર કરવા માટે આ કી જરૂરી છે. આ કીને કોઈ સુરક્ષિત જગ્યાએ સ્ટોર કરો. જો તમે તેને ગુમાવો છો, તો તમે તમારું એકાઉન્ટ રિકવર કરી શકશો નહીં. <learnMoreLink>વધુ જાણો.</learnMoreLink>"
+  },
+  "icu:Preferences--local-backups-confirm-backup-key": {
+    "messageformat": "તમારી બેકઅપ કી કન્ફર્મ કરો"
+  },
+  "icu:Preferences--local-backups-confirm-backup-key-description": {
+    "messageformat": "તમે હમણાં જ રેકોર્ડ કરેલી બેકઅપ કી દાખલ કરો"
+  },
+  "icu:Preferences__local-backups-confirm-key-modal-title": {
+    "messageformat": "તમારી કીને સુરક્ષિત રાખો"
+  },
+  "icu:Preferences__local-backups-confirm-key-modal-body": {
+    "messageformat": "જો તમે તમારી કી ગુમાવશો તો Signal તમારું બેકઅપ રિસ્ટોર કરવામાં તમારી મદદ કરી શકશે નહીં. તેને કોઈ સલામત અને સુરક્ષિત જગ્યાએ સંગ્રહિત કરો અને તેને અન્ય લોકો સાથે શેર કરશો નહીં."
+  },
+  "icu:Preferences__local-backups-confirm-key-modal-continue": {
+    "messageformat": "ચાલુ રાખો"
+  },
+  "icu:Preferences--local-backups-see-backup-key-again": {
+    "messageformat": "કી ફરીથી જુઓ"
+  },
+  "icu:Preferences__local-backups-folder": {
+    "messageformat": "બેકઅપ ફોલ્ડર"
+  },
+  "icu:Preferences__local-backups-folder__change": {
+    "messageformat": "બદલો"
+  },
+  "icu:Preferences__local-backups-copy-key": {
+    "messageformat": "ક્લિપબોર્ડ પર કૉપિ કરેલું"
+  },
+  "icu:Preferences__local-backups-copied-key": {
+    "messageformat": "બેકઅપ કી કૉપિ કરી"
+  },
+  "icu:Preferences__view-key": {
+    "messageformat": "કી જુઓ"
+  },
+  "icu:Preferences__backup-key": {
+    "messageformat": "બેકઅપ કી"
+  },
+  "icu:Preferences__backup-key-description": {
+    "messageformat": "તમારી બેકઅપ કી એ 64-અંકનો કોડ છે જેનો ઉપયોગ તમારા બેકઅપને રિસ્ટોર કરવા માટે થાય છે"
+  },
+  "icu:Preferences__backup-other-ways": {
+    "messageformat": "બેકઅપ લેવાની અન્ય રીતો"
   },
   "icu:Preferences--blocked-count": {
     "messageformat": "{num, plural, one {{num,number} સંપર્ક} other {{num,number} સંપર્કો}}"
@@ -6321,6 +6438,9 @@
   "icu:ProfileNameWarningModal__list--item3--group": {
     "messageformat": "તમે જાણતા ન હો તેવા લોકો સાથે વ્યક્તિગત માહિતી શેર કરશો નહીં"
   },
+  "icu:SaveMultiDialog__title": {
+    "messageformat": "એટેચમેન્ટ સેવ કરો"
+  },
   "icu:WhatsNew__modal-title": {
     "messageformat": "નવું શું છે"
   },
@@ -6352,16 +6472,10 @@
     "messageformat": "નાના ફેરફારો, ભૂલ સુધારા અને પ્રદર્શનમાં વધારો. Signalનો ઉપયોગ કરવા બદલ આભાર!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.54--0": {
-    "messageformat": "અમે વધારાની ભાષાઓમાં ઇમોજી શોર્ટકટ માટે સપોર્ટ ઉમેર્યો છે."
+  "icu:WhatsNew__v7.58--0": {
+    "messageformat": "મેસેજ પ્રતિક્રિયા સિલેક્ટરમાં એક નવો વિભાગ મેસેજને મળેલી બધી ઇમોજી પ્રતિક્રિયાઓને આપમેળે પ્રદર્શિત કરે છે."
   },
-  "icu:WhatsNew__v7.55--0": {
-    "messageformat": "આ અપડેટ ઇમોજી અને સ્ટીકર માટે કીબોર્ડ શોર્ટકટને ફરીથી સક્ષમ કરે છે."
-  },
-  "icu:WhatsNew__v7.55--1": {
-    "messageformat": "અમે કેટલાક Linux ડિસ્ટ્રિબ્યુશન પરના દુર્લભ ક્રેશને પણ ઠીક કર્યા છે."
-  },
-  "icu:WhatsNew__v7.56--0": {
-    "messageformat": "Sometimes a powerful story can really move you, so we fixed a bug that made it difficult to move the Signal window while viewing content in the Stories tab."
+  "icu:WhatsNew__v7.59--0": {
+    "messageformat": "Linux પ્રદર્શન સુધારણા."
   }
 }

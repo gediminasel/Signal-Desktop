@@ -78,6 +78,8 @@ function getToast(toastType: ToastType): AnyToast {
       };
     case ToastType.ConversationUnarchived:
       return { toastType: ToastType.ConversationUnarchived };
+    case ToastType.CopiedBackupKey:
+      return { toastType: ToastType.CopiedBackupKey };
     case ToastType.CopiedCallLink:
       return { toastType: ToastType.CopiedCallLink };
     case ToastType.CopiedUsername:
@@ -152,6 +154,8 @@ function getToast(toastType: ToastType): AnyToast {
       return { toastType: ToastType.ReportedSpam };
     case ToastType.ReportedSpamAndBlocked:
       return { toastType: ToastType.ReportedSpamAndBlocked };
+    case ToastType.SQLError:
+      return { toastType: ToastType.SQLError };
     case ToastType.StickerPackInstallFailed:
       return { toastType: ToastType.StickerPackInstallFailed };
     case ToastType.StoryMuted:

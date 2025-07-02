@@ -148,7 +148,7 @@ import {
 } from './types/ServiceId';
 import { isAciString } from './util/isAciString';
 import { normalizeAci } from './util/normalizeAci';
-import * as log from './logging/log';
+import { createLogger } from './logging/log';
 import { deleteAllLogs } from './util/deleteAllLogs';
 import { startInteractionMode } from './services/InteractionMode';
 import { ReactionSource } from './reactions/ReactionSource';
@@ -204,6 +204,7 @@ import { getParametersForRedux, loadAll } from './services/allLoaders';
 import { checkFirstEnvelope } from './util/checkFirstEnvelope';
 import { BLOCKED_UUIDS_ID } from './textsecure/storage/Blocked';
 import { ReleaseNotesFetcher } from './services/releaseNotesFetcher';
+import { BuildExpirationService } from './services/buildExpiration';
 import {
   maybeQueueDeviceNameFetch,
   onDeviceNameChangeSync,
@@ -216,6 +217,10 @@ import { sendSyncRequests } from './textsecure/syncRequests';
 import { handleServerAlerts } from './util/handleServerAlerts';
 import { isLocalBackupsEnabled } from './util/isLocalBackupsEnabled';
 import { NavTab } from './state/ducks/nav';
+import { Page } from './components/Preferences';
+import { EditState } from './components/ProfileEditor';
+
+const log = createLogger('background');
 
 export function isOverHourIntoPast(timestamp: number): boolean {
   return isNumber(timestamp) && isOlderThan(timestamp, HOUR);
@@ -368,7 +373,7 @@ export async function startApp(): Promise<void> {
 
   const { Message } = window.Signal.Types;
 
-  log.info('background page reloaded');
+  log.info('page reloaded');
   log.info('environment:', getEnvironment());
 
   let newVersion = false;
@@ -425,7 +430,7 @@ export async function startApp(): Promise<void> {
 
     accountManager = new window.textsecure.AccountManager(server);
     accountManager.addEventListener('startRegistration', () => {
-      pauseProcessing();
+      pauseProcessing('startRegistration');
       // We should already be logged out, but this ensures that the next time we connect
       // to the auth socket it is from newly-registered credentials
       drop(server?.logout());
@@ -520,9 +525,16 @@ export async function startApp(): Promise<void> {
 
     window.Whisper.events.on('firstEnvelope', checkFirstEnvelope);
 
+    const buildExpirationService = new BuildExpirationService();
+
     server = window.WebAPI.connect({
       ...window.textsecure.storage.user.getWebAPICredentials(),
+      hasBuildExpired: buildExpirationService.hasBuildExpired(),
       hasStoriesDisabled: window.storage.get('hasStoriesDisabled', false),
+    });
+
+    buildExpirationService.on('expired', () => {
+      drop(server?.onExpiration('build'));
     });
 
     window.textsecure.server = server;
@@ -587,25 +599,15 @@ export async function startApp(): Promise<void> {
     });
 
     function queuedEventListener<E extends Event>(
-      handler: (event: E) => Promise<void> | void,
-      track = true
+      handler: (event: E) => Promise<void> | void
     ): (event: E) => void {
       return (event: E): void => {
         drop(
           eventHandlerQueue.add(
-            createTaskWithTimeout(async () => {
-              try {
-                await handler(event);
-              } finally {
-                // message/sent: Message.handleDataMessage has its own queue and will
-                //   trigger this event itself when complete.
-                // error: Error processing (below) also has its own queue and
-                // self-trigger.
-                if (track) {
-                  window.Whisper.events.trigger('incrementProgress');
-                }
-              }
-            }, `queuedEventListener(${event.type}, ${event.timeStamp})`)
+            createTaskWithTimeout(
+              async () => handler(event),
+              `queuedEventListener(${event.type}, ${event.timeStamp})`
+            )
           )
         );
       };
@@ -613,15 +615,15 @@ export async function startApp(): Promise<void> {
 
     messageReceiver.addEventListener(
       'envelopeUnsealed',
-      queuedEventListener(onEnvelopeUnsealed, false)
+      queuedEventListener(onEnvelopeUnsealed)
     );
     messageReceiver.addEventListener(
       'envelopeQueued',
-      queuedEventListener(onEnvelopeQueued, false)
+      queuedEventListener(onEnvelopeQueued)
     );
     messageReceiver.addEventListener(
       'message',
-      queuedEventListener(onMessageReceived, false)
+      queuedEventListener(onMessageReceived)
     );
     messageReceiver.addEventListener(
       'delivery',
@@ -633,7 +635,7 @@ export async function startApp(): Promise<void> {
     );
     messageReceiver.addEventListener(
       'sent',
-      queuedEventListener(onSentMessage, false)
+      queuedEventListener(onSentMessage)
     );
     messageReceiver.addEventListener(
       'readSync',
@@ -651,10 +653,7 @@ export async function startApp(): Promise<void> {
       'view',
       queuedEventListener(onViewReceipt)
     );
-    messageReceiver.addEventListener(
-      'error',
-      queuedEventListener(onError, false)
-    );
+    messageReceiver.addEventListener('error', queuedEventListener(onError));
 
     messageReceiver.addEventListener(
       'successful-decrypt',
@@ -710,31 +709,31 @@ export async function startApp(): Promise<void> {
     messageReceiver.addEventListener('keys', queuedEventListener(onKeysSync));
     messageReceiver.addEventListener(
       'storyRecipientUpdate',
-      queuedEventListener(onStoryRecipientUpdate, false)
+      queuedEventListener(onStoryRecipientUpdate)
     );
     messageReceiver.addEventListener(
       'callEventSync',
-      queuedEventListener(onCallEventSync, false)
+      queuedEventListener(onCallEventSync)
     );
     messageReceiver.addEventListener(
       'callLinkUpdateSync',
-      queuedEventListener(onCallLinkUpdateSync, false)
+      queuedEventListener(onCallLinkUpdateSync)
     );
     messageReceiver.addEventListener(
       'callLogEventSync',
-      queuedEventListener(onCallLogEventSync, false)
+      queuedEventListener(onCallLogEventSync)
     );
     messageReceiver.addEventListener(
       'deleteForMeSync',
-      queuedEventListener(onDeleteForMeSync, false)
+      queuedEventListener(onDeleteForMeSync)
     );
     messageReceiver.addEventListener(
       'attachmentBackfillResponseSync',
-      queuedEventListener(onAttachmentBackfillResponseSync, false)
+      queuedEventListener(onAttachmentBackfillResponseSync)
     );
     messageReceiver.addEventListener(
       'deviceNameChangeSync',
-      queuedEventListener(onDeviceNameChangeSync, false)
+      queuedEventListener(onDeviceNameChangeSync)
     );
 
     if (!window.storage.get('defaultConversationColor')) {
@@ -759,7 +758,7 @@ export async function startApp(): Promise<void> {
     // These make key operations available to IPC handlers created in preload.js
     window.Events = createIPCEvents({
       shutdown: async () => {
-        log.info('background/shutdown');
+        log.info('shutdown');
 
         flushMessageCounter();
 
@@ -783,12 +782,12 @@ export async function startApp(): Promise<void> {
             server !== undefined,
             'WebAPI should be initialized together with MessageReceiver'
           );
-          log.info('background/shutdown: shutting down messageReceiver');
-          pauseProcessing();
+          log.info('shutdown: shutting down messageReceiver');
+          pauseProcessing('shutdown');
           await window.waitForAllBatchers();
         }
 
-        log.info('background/shutdown: flushing conversations');
+        log.info('shutdown: flushing conversations');
 
         // Flush debounced updates for conversations
         await Promise.all(
@@ -800,27 +799,27 @@ export async function startApp(): Promise<void> {
         sleeper.shutdown();
 
         const shutdownQueues = async () => {
-          log.info('background/shutdown: shutting down queues');
+          log.info('shutdown: shutting down queues');
           await Promise.allSettled([
             StartupQueue.shutdown(),
             shutdownAllJobQueues(),
           ]);
 
-          log.info('background/shutdown: shutting down conversation queues');
+          log.info('shutdown: shutting down conversation queues');
           await Promise.allSettled(
             window.ConversationController.getAll().map(async convo => {
               try {
                 await convo.shutdownJobQueue();
               } catch (err) {
                 log.error(
-                  `background/shutdown: error waiting for conversation ${convo.idForLogging} job queue shutdown`,
+                  `shutdown: error waiting for conversation ${convo.idForLogging} job queue shutdown`,
                   Errors.toLogFormat(err)
                 );
               }
             })
           );
 
-          log.info('background/shutdown: all queues shutdown');
+          log.info('shutdown: all queues shutdown');
         };
 
         // wait for at most 1 minutes for startup queue and job queues to drain
@@ -830,7 +829,7 @@ export async function startApp(): Promise<void> {
           new Promise<void>((resolve, _) => {
             timeout = setTimeout(() => {
               log.warn(
-                'background/shutdown - timed out waiting for StartupQueue/JobQueues, continuing with shutdown'
+                'shutdown - timed out waiting for StartupQueue/JobQueues, continuing with shutdown'
               );
               timeout = undefined;
               resolve();
@@ -841,7 +840,7 @@ export async function startApp(): Promise<void> {
           clearTimeout(timeout);
         }
 
-        log.info('background/shutdown: waiting for all batchers');
+        log.info('shutdown: waiting for all batchers');
 
         // A number of still-to-queue database queries might be waiting inside batchers.
         //   We wait for these to empty first, and then shut down the data interface.
@@ -851,14 +850,14 @@ export async function startApp(): Promise<void> {
         ]);
 
         log.info(
-          'background/shutdown: waiting for all attachment backups & downloads to finish'
+          'shutdown: waiting for all attachment backups & downloads to finish'
         );
         // Since we canceled the inflight requests earlier in shutdown, these should
         // resolve quickly
         await attachmentDownloadStopPromise;
         await attachmentBackupStopPromise;
 
-        log.info('background/shutdown: closing the database');
+        log.info('shutdown: closing the database');
 
         // Shut down the data interface cleanly
         await DataWriter.shutdown();
@@ -1003,6 +1002,13 @@ export async function startApp(): Promise<void> {
       if (window.isBeforeVersion(lastVersion, 'v7.56.0-beta.1')) {
         await window.storage.remove('backupMediaDownloadIdle');
       }
+
+      if (
+        window.isBeforeVersion(lastVersion, 'v7.57.0') &&
+        window.storage.get('needProfileMovedModal') === undefined
+      ) {
+        await window.storage.put('needProfileMovedModal', true);
+      }
     }
 
     setAppLoadingScreenMessage(
@@ -1032,7 +1038,7 @@ export async function startApp(): Promise<void> {
       `Starting background data migration. Target version: ${Message.CURRENT_SCHEMA_VERSION}`
     );
     idleDetector.on('idle', async () => {
-      const NUM_MESSAGES_PER_BATCH = 1000;
+      const NUM_MESSAGES_PER_BATCH = 250;
       const BATCH_DELAY = durations.SECOND / 4;
 
       if (isIdleTaskProcessing) {
@@ -1091,7 +1097,7 @@ export async function startApp(): Promise<void> {
         );
       } catch (error) {
         log.warn(
-          'background/setInterval: Failed to parse integer from desktop.retryRespondMaxAge feature flag',
+          'setInterval: Failed to parse integer from desktop.retryRespondMaxAge feature flag',
           Errors.toLogFormat(error)
         );
       }
@@ -1100,7 +1106,7 @@ export async function startApp(): Promise<void> {
         await DataWriter.deleteSentProtosOlderThan(now - sentProtoMaxAge);
       } catch (error) {
         log.error(
-          'background/onready/setInterval: Error deleting sent protos: ',
+          'onready/setInterval: Error deleting sent protos: ',
           Errors.toLogFormat(error)
         );
       }
@@ -1131,7 +1137,7 @@ export async function startApp(): Promise<void> {
         });
       } catch (error) {
         log.error(
-          'background/onready/setInterval: Error getting expired retry placeholders: ',
+          'onready/setInterval: Error getting expired retry placeholders: ',
           Errors.toLogFormat(error)
         );
       }
@@ -1158,7 +1164,7 @@ export async function startApp(): Promise<void> {
       await window.ConversationController.checkForConflicts();
     } catch (error) {
       log.error(
-        'background.js: ConversationController failed to load:',
+        'js: ConversationController failed to load:',
         Errors.toLogFormat(error)
       );
     } finally {
@@ -1195,14 +1201,14 @@ export async function startApp(): Promise<void> {
   log.info('Storage fetch');
   drop(window.storage.fetch());
 
-  function pauseProcessing() {
+  function pauseProcessing(reason: string) {
     strictAssert(server != null, 'WebAPI not initialized');
     strictAssert(
       messageReceiver != null,
       'messageReceiver must be initialized'
     );
 
-    StorageService.disableStorageService();
+    StorageService.disableStorageService(reason);
     server.unregisterRequestHandler(messageReceiver);
     messageReceiver.stopProcessing();
   }
@@ -1340,7 +1346,7 @@ export async function startApp(): Promise<void> {
       });
 
       if (reconnect) {
-        log.info('background: reconnecting websocket on user change');
+        log.info('reconnecting websocket on user change');
         enqueueReconnectToWebSocket();
       }
     });
@@ -1361,38 +1367,14 @@ export async function startApp(): Promise<void> {
     window.reduxActions.app.openStandalone();
   });
 
-  let openingSettingsTab = false;
   window.Whisper.events.on('openSettingsTab', async () => {
-    const logId = 'openSettingsTab';
-    try {
-      if (openingSettingsTab) {
-        log.info(
-          `${logId}: Already attempting to open settings tab, returning early`
-        );
-        return;
-      }
-
-      openingSettingsTab = true;
-
-      const newTab = NavTab.Settings;
-      const needToCancel =
-        await window.Signal.Services.beforeNavigate.shouldCancelNavigation({
-          context: logId,
-          newTab,
-        });
-
-      if (needToCancel) {
-        log.info(`${logId}: Cancelling navigation to the settings tab`);
-        return;
-      }
-
-      window.reduxActions.nav.changeNavTab(newTab);
-    } finally {
-      if (!openingSettingsTab) {
-        log.warn(`${logId}: openingSettingsTab was already false in finally!`);
-      }
-      openingSettingsTab = false;
-    }
+    window.reduxActions.nav.changeLocation({
+      tab: NavTab.Settings,
+      details: {
+        page: Page.Profile,
+        state: EditState.None,
+      },
+    });
   });
 
   window.Whisper.events.on('stageLocalBackupForImport', () => {
@@ -1454,19 +1436,24 @@ export async function startApp(): Promise<void> {
       return;
     }
 
-    log.error('background: remote expiration detected, disabling reconnects');
+    log.error('remote expiration detected, disabling reconnects');
     drop(window.storage.put('remoteBuildExpiration', Date.now()));
-    drop(server?.onRemoteExpiration());
+    drop(server?.onExpiration('remote'));
     remotelyExpired = true;
   });
 
-  async function runStorageService({ reason }: { reason: string }) {
+  async function enableStorageService({ andSync }: { andSync?: string } = {}) {
+    log.info('enableStorageService: waiting for backupReady');
     await backupReady.promise;
 
+    log.info('enableStorageService: enabling and running');
     StorageService.enableStorageService();
-    StorageService.runStorageServiceSyncJob({
-      reason: `runStorageService/${reason}`,
-    });
+
+    if (andSync != null) {
+      await StorageService.runStorageServiceSyncJob({
+        reason: andSync,
+      });
+    }
   }
 
   async function start() {
@@ -1661,7 +1648,7 @@ export async function startApp(): Promise<void> {
     strictAssert(server, 'server must be initialized');
 
     const onOnline = () => {
-      log.info('background: online');
+      log.info('online');
       drop(afterAuthSocketConnect());
     };
 
@@ -1673,7 +1660,7 @@ export async function startApp(): Promise<void> {
 
       const hasAppEverBeenRegistered = Registration.everDone();
 
-      log.info('background: offline', {
+      log.info('offline', {
         authSocketConnectCount,
         hasInitialLoadCompleted,
         appView,
@@ -1694,19 +1681,17 @@ export async function startApp(): Promise<void> {
         if (state.app.appView === AppViewType.Installer) {
           if (state.installer.step === InstallScreenStep.LinkInProgress) {
             log.info(
-              'background: offline, but app has been registered before; opening inbox'
+              'offline, but app has been registered before; opening inbox'
             );
             window.reduxActions.app.openInbox();
           } else if (state.installer.step === InstallScreenStep.BackupImport) {
-            log.warn('background: offline, but app has needs to import backup');
+            log.warn('offline, but app has needs to import backup');
             // TODO: DESKTOP-7584
           }
         }
 
         if (!hasInitialLoadCompleted) {
-          log.info(
-            'background: offline; initial load not completed; triggering onEmpty'
-          );
+          log.info('offline; initial load not completed; triggering onEmpty');
           drop(onEmpty({ isFromMessageReceiver: false })); // this ensures that the inbox loading progress bar is dismissed
         }
       }
@@ -1740,6 +1725,7 @@ export async function startApp(): Promise<void> {
 
     if (remotelyExpired) {
       log.info('afterAuthSocketConnect: remotely expired');
+      drop(onEmpty({ isFromMessageReceiver: false })); // this ensures that the inbox loading progress bar is dismissed
       return;
     }
 
@@ -1808,20 +1794,27 @@ export async function startApp(): Promise<void> {
         wasBackupImported,
       });
 
-      // 5. Kickoff storage service sync
+      // 5. Start processing messages from websocket and clear
+      // `messageReceiver.#isEmptied`.
+      log.info(`${logId}: enabling message processing`);
+      messageReceiver.startProcessingQueue();
+      server.registerRequestHandler(messageReceiver);
+
+      // 6. Kickoff storage service sync
       if (isFirstAuthSocketConnect || !postRegistrationSyncsComplete) {
         log.info(`${logId}: triggering storage service sync`);
 
         storageServiceSyncComplete = waitForEvent(
           'storageService:syncComplete'
         );
-        drop(runStorageService({ reason: 'afterFirstAuthSocketConnect' }));
+        drop(
+          enableStorageService({
+            andSync: 'afterFirstAuthSocketConnect',
+          })
+        );
+      } else {
+        drop(enableStorageService());
       }
-
-      // 6. Start processing messages from websocket
-      log.info(`${logId}: enabling message processing`);
-      messageReceiver.startProcessingQueue();
-      server.registerRequestHandler(messageReceiver);
 
       // 7. Wait for critical post-registration syncs before showing inbox
       if (!postRegistrationSyncsComplete) {
@@ -2026,13 +2019,13 @@ export async function startApp(): Promise<void> {
   }
 
   function onNavigatorOffline() {
-    log.info('background: navigator offline');
+    log.info('navigator offline');
 
     drop(server?.onNavigatorOffline());
   }
 
   function onNavigatorOnline() {
-    log.info('background: navigator online');
+    log.info('navigator online');
     drop(server?.onNavigatorOnline());
   }
 
@@ -2090,32 +2083,62 @@ export async function startApp(): Promise<void> {
       return;
     }
 
+    const waitStart = Date.now();
+
     if (!messageReceiver.hasEmptied()) {
       log.info(
         'waitForEmptyEventQueue: Waiting for MessageReceiver empty event...'
       );
       const { resolve, reject, promise } = explodePromise<void>();
 
-      const timeout = Timers.setTimeout(() => {
-        reject(new Error('Empty queue never fired'));
-      }, FIVE_MINUTES);
+      const cleanup = () => {
+        messageReceiver?.removeEventListener('empty', onEmptyOnce);
+        messageReceiver?.removeEventListener('envelopeQueued', onResetTimer);
 
-      const onEmptyOnce = () => {
-        if (messageReceiver) {
-          messageReceiver.removeEventListener('empty', onEmptyOnce);
-        }
-        Timers.clearTimeout(timeout);
-        if (resolve) {
-          resolve();
+        if (timeout !== undefined) {
+          Timers.clearTimeout(timeout);
+          timeout = undefined;
         }
       };
+
+      // Reject after 1 minutes of inactivity.
+      const onTimeout = () => {
+        cleanup();
+        reject(new Error('Empty queue never fired'));
+      };
+      let timeout: Timers.Timeout | undefined = Timers.setTimeout(
+        onTimeout,
+        durations.MINUTE
+      );
+
+      const onEmptyOnce = () => {
+        cleanup();
+        resolve();
+      };
       messageReceiver.addEventListener('empty', onEmptyOnce);
+
+      const onResetTimer = () => {
+        if (timeout !== undefined) {
+          Timers.clearTimeout(timeout);
+        }
+        timeout = Timers.setTimeout(onTimeout, durations.MINUTE);
+      };
+      messageReceiver.addEventListener('envelopeQueued', onResetTimer);
 
       await promise;
     }
 
-    log.info('waitForEmptyEventQueue: Waiting for event handler queue idle...');
-    await eventHandlerQueue.onIdle();
+    if (eventHandlerQueue.pending !== 0 || eventHandlerQueue.size !== 0) {
+      log.info(
+        'waitForEmptyEventQueue: Waiting for event handler queue idle...'
+      );
+      await eventHandlerQueue.onIdle();
+    }
+
+    const duration = Date.now() - waitStart;
+    if (duration > SECOND) {
+      log.info(`waitForEmptyEventQueue: resolving after ${duration}ms`);
+    }
   }
 
   window.waitForEmptyEventQueue = waitForEmptyEventQueue;
@@ -2204,21 +2227,6 @@ export async function startApp(): Promise<void> {
         })()
       );
     }
-  }
-
-  let initialStartupCount = 0;
-  window.Whisper.events.on('incrementProgress', incrementProgress);
-  function incrementProgress() {
-    initialStartupCount += 1;
-
-    // Only update progress every 10 items
-    if (initialStartupCount % 10 !== 0) {
-      return;
-    }
-
-    log.info(`incrementProgress: Message count is ${initialStartupCount}`);
-
-    window.Whisper.events.trigger('loadingProgress', initialStartupCount);
   }
 
   window.Whisper.events.on('manualConnect', manualConnect);
@@ -3142,7 +3150,7 @@ export async function startApp(): Promise<void> {
       log.info('unlinkAndDisconnect: logging out');
       strictAssert(server !== undefined, 'WebAPI not initialized');
 
-      pauseProcessing();
+      pauseProcessing('unlinkAndDisconnect');
 
       backupReady.reject(new Error('Aborted'));
       backupReady = explodePromise();
@@ -3239,7 +3247,7 @@ export async function startApp(): Promise<void> {
 
   function onError(ev: ErrorEvent): void {
     const { error } = ev;
-    log.error('background onError:', Errors.toLogFormat(error));
+    log.error('onError:', Errors.toLogFormat(error));
 
     if (
       error instanceof HTTPError &&
@@ -3249,7 +3257,7 @@ export async function startApp(): Promise<void> {
       return;
     }
 
-    log.warn('background onError: Doing nothing with incoming error');
+    log.warn('onError: Doing nothing with incoming error');
   }
 
   function onViewOnceOpenSync(ev: ViewOnceOpenSyncEvent): void {

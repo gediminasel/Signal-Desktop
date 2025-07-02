@@ -16,7 +16,7 @@ import { blobToArrayBuffer } from 'blob-util';
 
 import type { LinkPreviewForUIType } from './message/LinkPreviews';
 import type { LoggerType } from './Logging';
-import * as logging from '../logging/log';
+import { createLogger } from '../logging/log';
 import * as MIME from './MIME';
 import { toLogFormat } from './errors';
 import { SignalService } from '../protobuf';
@@ -24,20 +24,29 @@ import {
   isImageTypeSupported,
   isVideoTypeSupported,
 } from '../util/GoogleChrome';
-import type { LocalizerType, WithRequiredProperties } from './Util';
+import type {
+  LocalizerType,
+  WithOptionalProperties,
+  WithRequiredProperties,
+} from './Util';
 import { ThemeType } from './Util';
 import * as GoogleChrome from '../util/GoogleChrome';
 import { ReadStatus } from '../messages/MessageReadStatus';
 import type { MessageStatusType } from '../components/conversation/Message';
-import { strictAssert } from '../util/assert';
 import type { SignalService as Proto } from '../protobuf';
 import { isMoreRecentThan } from '../util/timestamp';
 import { DAY } from '../util/durations';
 import { getMessageQueueTime } from '../util/getMessageQueueTime';
 import { getLocalAttachmentUrl } from '../util/getLocalAttachmentUrl';
-import type { ReencryptionInfo } from '../AttachmentCrypto';
+import {
+  isValidAttachmentKey,
+  isValidDigest,
+  isValidPlaintextHash,
+} from './Crypto';
 import { redactGenericText } from '../util/privacy';
 import { missingCaseError } from '../util/missingCaseError';
+
+const logging = createLogger('Attachment');
 
 const MAX_WIDTH = 300;
 const MAX_HEIGHT = MAX_WIDTH * 1.5;
@@ -56,14 +65,51 @@ export class AttachmentPermanentlyUndownloadableError extends Error {
   }
 }
 
-type ScreenshotType = Omit<AttachmentType, 'size'> & {
-  height: number;
-  width: number;
-  path: string;
-  size?: number;
+export type ThumbnailType = EphemeralAttachmentFields & {
+  size: number;
+  contentType: MIME.MIMEType;
+  path?: string;
+  plaintextHash?: string;
+  width?: number;
+  height?: number;
+  version?: 1 | 2;
+  localKey?: string; // AES + MAC
 };
 
-export type AttachmentType = {
+export type ScreenshotType = WithOptionalProperties<ThumbnailType, 'size'>;
+export type BackupThumbnailType = WithOptionalProperties<ThumbnailType, 'size'>;
+
+// These fields do not get saved to the DB.
+export type EphemeralAttachmentFields = {
+  totalDownloaded?: number;
+  data?: Uint8Array;
+  /** Not included in protobuf, needs to be pulled from flags */
+  isVoiceMessage?: boolean;
+  /** For messages not already on disk, this will be a data url */
+  url?: string;
+  screenshotData?: Uint8Array;
+  /** @deprecated Legacy field */
+  screenshotPath?: string;
+
+  /** @deprecated Legacy field. Used only for downloading old attachment */
+  id?: number;
+  /** @deprecated Legacy field, used long ago for migrating attachments to disk. */
+  schemaVersion?: number;
+  /** @deprecated Legacy field, replaced by cdnKey */
+  cdnId?: string;
+  /** @deprecated Legacy fields, no longer needed */
+  iv?: never;
+  isReencryptableToSameDigest?: never;
+  reencryptionInfo?: never;
+};
+
+/**
+ * Adding a field to AttachmentType requires:
+ * 1) adding a column to message_attachments
+ * 2) updating MessageAttachmentDBReferenceType and MESSAGE_ATTACHMENT_COLUMNS
+ * 3) saving data to the proper column
+ */
+export type AttachmentType = EphemeralAttachmentFields & {
   error?: boolean;
   blurHash?: string;
   caption?: string;
@@ -73,67 +119,39 @@ export type AttachmentType = {
   fileName?: string;
   plaintextHash?: string;
   uploadTimestamp?: number;
-  /** Not included in protobuf, needs to be pulled from flags */
-  isVoiceMessage?: boolean;
-  /** For messages not already on disk, this will be a data url */
-  url?: string;
   size: number;
   pending?: boolean;
   width?: number;
   height?: number;
   path?: string;
   screenshot?: ScreenshotType;
-  screenshotData?: Uint8Array;
-  // Legacy Draft
-  screenshotPath?: string;
   flags?: number;
   thumbnail?: ThumbnailType;
   isCorrupted?: boolean;
   cdnNumber?: number;
-  cdnId?: string;
   cdnKey?: string;
   downloadPath?: string;
   key?: string;
-  iv?: string;
-  data?: Uint8Array;
+
   textAttachment?: TextAttachmentType;
   wasTooBig?: boolean;
 
   // If `true` backfill is unavailable
   backfillError?: boolean;
 
-  totalDownloaded?: number;
   incrementalMac?: string;
   chunkSize?: number;
-
-  backupLocator?: {
-    mediaName: string;
-    cdnNumber?: number;
-  };
+  backupCdnNumber?: number;
   localBackupPath?: string;
 
   // See app/attachment_channel.ts
   version?: 1 | 2;
   localKey?: string; // AES + MAC
-  thumbnailFromBackup?: Pick<
-    AttachmentType,
-    'path' | 'version' | 'plaintextHash'
-  >;
+  thumbnailFromBackup?: BackupThumbnailType;
 
-  /** Legacy field. Used only for downloading old attachments */
-  id?: number;
-
-  /** Legacy field, used long ago for migrating attachments to disk. */
-  schemaVersion?: number;
-} & (
-  | {
-      isReencryptableToSameDigest?: true;
-    }
-  | {
-      isReencryptableToSameDigest: false;
-      reencryptionInfo?: ReencryptionInfo;
-    }
-);
+  /** For quote attachments, if copied from the referenced attachment */
+  copied?: boolean;
+};
 
 export type LocalAttachmentV2Type = Readonly<{
   version: 2;
@@ -206,7 +224,7 @@ export type TextAttachmentType = {
 export type BaseAttachmentDraftType = {
   blurHash?: string;
   contentType: MIME.MIMEType;
-  screenshotContentType?: string;
+  screenshotContentType?: MIME.MIMEType;
   size: number;
   flags?: number;
 };
@@ -258,13 +276,6 @@ export type AttachmentDraftType =
       pending: true;
       size: number;
     };
-
-export type ThumbnailType = AttachmentType & {
-  // Only used when quote needed to make an in-memory thumbnail
-  objectUrl?: string;
-  // Whether the thumbnail has been copied from the original (quoted) message
-  copied?: boolean;
-};
 
 export enum AttachmentVariant {
   Default = 'Default',
@@ -1008,6 +1019,10 @@ export const isFile = (attachment: AttachmentType): boolean => {
     return false;
   }
 
+  if (MIME.isLongMessage(contentType)) {
+    return false;
+  }
+
   return true;
 };
 
@@ -1169,96 +1184,74 @@ export const canBeDownloaded = (
   return Boolean(attachment.digest && attachment.key && !attachment.wasTooBig);
 };
 
-export function getAttachmentSignature(attachment: AttachmentType): string {
-  strictAssert(attachment.digest, 'attachment missing digest');
-  return attachment.digest;
+export function doAttachmentsOnSameMessageMatch(
+  attachmentA: AttachmentType,
+  attachmentB: AttachmentType
+): boolean {
+  if (
+    isValidPlaintextHash(attachmentA.plaintextHash) &&
+    isValidPlaintextHash(attachmentB.plaintextHash)
+  ) {
+    return attachmentA.plaintextHash === attachmentB.plaintextHash;
+  }
+
+  if (isValidDigest(attachmentA.digest) && isValidDigest(attachmentB.digest)) {
+    return attachmentA.digest === attachmentB.digest;
+  }
+
+  return false;
 }
 
-export function getAttachmentSignatureSafe(
+// TODO: DESKTOP-8910
+// This "undownloaded" attachment signature can change once the file is downloaded; we may
+// start with only the digest or plaintextHash, but both will be filled in by the time
+// it's downloaded
+export function getUndownloadedAttachmentSignature(
   attachment: AttachmentType
-): string | undefined {
-  try {
-    return getAttachmentSignature(attachment);
-  } catch {
-    return undefined;
+): string {
+  return `${attachment.digest}.${attachment.plaintextHash}`;
+}
+
+export function cacheAttachmentBySignature(
+  attachmentMap: Map<string, AttachmentType>,
+  attachment: AttachmentType
+): void {
+  const { digest, plaintextHash } = attachment;
+  if (digest) {
+    attachmentMap.set(digest, attachment);
+  }
+  if (plaintextHash) {
+    attachmentMap.set(plaintextHash, attachment);
   }
 }
 
-type RequiredPropertiesForDecryption = 'key' | 'digest';
-type RequiredPropertiesForReencryption = 'path' | 'key' | 'digest' | 'iv';
-
-type DecryptableAttachment = WithRequiredProperties<
-  AttachmentType,
-  RequiredPropertiesForDecryption
->;
-
-export type AttachmentWithNewReencryptionInfoType = Omit<
-  AttachmentType,
-  'isReencryptableToSameDigest'
-> & {
-  isReencryptableToSameDigest: false;
-  reencryptionInfo: ReencryptionInfo;
-};
-type AttachmentReencryptableToExistingDigestType = Omit<
-  WithRequiredProperties<AttachmentType, RequiredPropertiesForReencryption>,
-  'isReencryptableToSameDigest'
-> & { isReencryptableToSameDigest: true };
-
-export type ReencryptableAttachment =
-  | AttachmentWithNewReencryptionInfoType
-  | AttachmentReencryptableToExistingDigestType;
+export function getCachedAttachmentBySignature<T>(
+  attachmentMap: Map<string, T>,
+  attachment: AttachmentType
+): T | undefined {
+  const { digest, plaintextHash } = attachment;
+  if (digest) {
+    if (attachmentMap.has(digest)) {
+      return attachmentMap.get(digest);
+    }
+  }
+  if (plaintextHash) {
+    if (attachmentMap.has(plaintextHash)) {
+      return attachmentMap.get(plaintextHash);
+    }
+  }
+  return undefined;
+}
 
 export type AttachmentDownloadableFromTransitTier = WithRequiredProperties<
-  DecryptableAttachment,
-  'cdnKey' | 'cdnNumber'
->;
-
-export type AttachmentDownloadableFromBackupTier = WithRequiredProperties<
-  DecryptableAttachment,
-  'backupLocator'
+  AttachmentType,
+  'key' | 'digest' | 'cdnKey' | 'cdnNumber'
 >;
 
 export type LocallySavedAttachment = WithRequiredProperties<
   AttachmentType,
   'path'
 >;
-
-export function isDecryptable(
-  attachment: AttachmentType
-): attachment is DecryptableAttachment {
-  return Boolean(attachment.key) && Boolean(attachment.digest);
-}
-
-export function hasAllOriginalEncryptionInfo(
-  attachment: AttachmentType
-): attachment is WithRequiredProperties<
-  AttachmentType,
-  'iv' | 'key' | 'digest'
-> {
-  return (
-    Boolean(attachment.iv) &&
-    Boolean(attachment.key) &&
-    Boolean(attachment.digest)
-  );
-}
-
-export function isReencryptableToSameDigest(
-  attachment: AttachmentType
-): attachment is AttachmentReencryptableToExistingDigestType {
-  return (
-    hasAllOriginalEncryptionInfo(attachment) &&
-    Boolean(attachment.isReencryptableToSameDigest)
-  );
-}
-
-export function isReencryptableWithNewEncryptionInfo(
-  attachment: AttachmentType
-): attachment is AttachmentWithNewReencryptionInfoType {
-  return (
-    attachment.isReencryptableToSameDigest === false &&
-    Boolean(attachment.reencryptionInfo)
-  );
-}
 
 // Extend range in case the attachment is actually still there (this function is meant to
 // be optimistic)
@@ -1291,46 +1284,75 @@ export function mightStillBeOnTransitTier(
   return false;
 }
 
-export function mightBeOnBackupTier(
-  attachment: Pick<AttachmentType, 'backupLocator'>
-): boolean {
-  return Boolean(attachment.backupLocator?.mediaName);
+export type BackupableAttachmentType = WithRequiredProperties<
+  AttachmentType,
+  'plaintextHash' | 'key'
+>;
+
+export function hasRequiredInformationForBackup(
+  attachment: AttachmentType
+): attachment is BackupableAttachmentType {
+  return (
+    isValidAttachmentKey(attachment.key) &&
+    isValidPlaintextHash(attachment.plaintextHash)
+  );
 }
 
-export function mightBeInLocalBackup(
-  attachment: Pick<AttachmentType, 'localBackupPath' | 'localKey'>
-): boolean {
-  return Boolean(attachment.localBackupPath && attachment.localKey);
+export function wasImportedFromLocalBackup(
+  attachment: AttachmentType
+): attachment is BackupableAttachmentType {
+  return (
+    hasRequiredInformationForBackup(attachment) &&
+    Boolean(attachment.localBackupPath) &&
+    isValidAttachmentKey(attachment.localKey)
+  );
 }
 
-export function isDownloadableFromTransitTier(
+export function canAttachmentHaveThumbnail({
+  contentType,
+}: Pick<AttachmentType, 'contentType'>): boolean {
+  return isVideoTypeSupported(contentType) || isImageTypeSupported(contentType);
+}
+
+export function hasRequiredInformationToDownloadFromTransitTier(
   attachment: AttachmentType
 ): attachment is AttachmentDownloadableFromTransitTier {
-  if (!isDecryptable(attachment)) {
+  const hasIntegrityCheck =
+    isValidDigest(attachment.digest) ||
+    isValidPlaintextHash(attachment.plaintextHash);
+  if (!hasIntegrityCheck) {
     return false;
   }
-  if (attachment.cdnKey && attachment.cdnNumber != null) {
-    return true;
+
+  if (!isValidAttachmentKey(attachment.key)) {
+    return false;
   }
-  return false;
+
+  if (!attachment.cdnKey || attachment.cdnNumber == null) {
+    return false;
+  }
+
+  return true;
 }
 
-export function isDownloadableFromBackupTier(
-  attachment: AttachmentType
-): attachment is AttachmentDownloadableFromBackupTier {
-  if (!attachment.key || !attachment.digest) {
-    return false;
-  }
-  if (attachment.backupLocator?.mediaName) {
-    return true;
-  }
-  return false;
+export function shouldAttachmentEndUpInRemoteBackup({
+  attachment,
+  hasMediaBackups,
+}: {
+  attachment: AttachmentType;
+  hasMediaBackups: boolean;
+}): boolean {
+  return hasMediaBackups && hasRequiredInformationForBackup(attachment);
 }
 
 export function isDownloadable(attachment: AttachmentType): boolean {
   return (
-    isDownloadableFromTransitTier(attachment) ||
-    isDownloadableFromBackupTier(attachment)
+    hasRequiredInformationToDownloadFromTransitTier(attachment) ||
+    shouldAttachmentEndUpInRemoteBackup({
+      attachment,
+      // TODO: DESKTOP-8905
+      hasMediaBackups: true,
+    })
   );
 }
 

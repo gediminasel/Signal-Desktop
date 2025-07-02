@@ -45,6 +45,7 @@ type Props = {
   i18n: LocalizerType;
   isSpoilerExpanded: Record<number, boolean>;
   messageText: string;
+  originalMessageText: string;
   onExpandSpoiler?: (data: Record<number, boolean>) => void;
   onMentionTrigger: (conversationId: string) => void;
   renderLocation: RenderLocation;
@@ -64,9 +65,12 @@ export function MessageTextRenderer({
   onMentionTrigger,
   renderLocation,
   textLength,
+  originalMessageText,
 }: Props): JSX.Element {
   const finalNodes = React.useMemo(() => {
-    const links = disableLinks ? [] : extractLinks(messageText);
+    const links = disableLinks
+      ? []
+      : extractLinks(messageText, originalMessageText);
 
     // We need mentions to come last; they can't have children for proper rendering
     const sortedRanges = messageText.startsWith('```')
@@ -111,7 +115,7 @@ export function MessageTextRenderer({
 
     // Group all contigusous spoilers to create one parent spoiler element in the DOM
     return groupContiguousSpoilers(nodes);
-  }, [bodyRanges, disableLinks, messageText, textLength]);
+  }, [bodyRanges, disableLinks, messageText, originalMessageText, textLength]);
 
   return (
     <>
@@ -451,7 +455,9 @@ function renderText({
 }
 
 export function extractLinks(
-  messageText: string
+  messageText: string,
+  // Full, untruncated message text
+  originalMessageText: string
 ): ReadonlyArray<BodyRange<{ url: string }>> {
   const goLinkAddress =
     window.localStorage && localStorage.getItem('realGoLinkAddress');
@@ -459,13 +465,26 @@ export function extractLinks(
   // to support emojis immediately before links
   // we replace emojis with a space for each byte
   const matches = linkify.match(
-    messageText.replace(EMOJI_REGEXP, s => ' '.repeat(s.length))
+    originalMessageText.replace(EMOJI_REGEXP, s => ' '.repeat(s.length))
   );
 
   let result: Array<{ start: number; length: number; url: string }> = [];
 
   if (matches != null) {
-    result = matches.map(match => {
+    // Only return matches present in the `messageText`
+    const currentMatches = matches.filter(({ index, lastIndex, url }) => {
+      if (index >= messageText.length) {
+        return false;
+      }
+
+      if (lastIndex > messageText.length) {
+        return false;
+      }
+
+      return messageText.slice(index, lastIndex) === url;
+    });
+
+    result = currentMatches.map(match => {
       return {
         start: match.index,
         length: match.lastIndex - match.index,
@@ -477,18 +496,36 @@ export function extractLinks(
   }
 
   if (goLinkAddress) {
-    // @ts-expect-error TS1501
-    for (const match of messageText.matchAll(/(\s|^)go\/(?<val>\S+)/dgmu)) {
+    for (const match of originalMessageText.matchAll(
+      // @ts-expect-error TS1501
+      /(\s|^)go\/(?<val>\S+)/dgmu
+    )) {
       const { indices } = match as unknown as {
         indices: Array<[number, number]>;
       };
       if (!indices || !match.groups) {
         continue;
       }
+      const index = indices[1][1];
+      const lastIndex = indices[2][1];
+      const url = goLinkAddress + match.groups.val;
+
+      if (index >= messageText.length) {
+        continue;
+      }
+
+      if (lastIndex > messageText.length) {
+        continue;
+      }
+
+      if (messageText.slice(index, lastIndex) !== match[0]) {
+        continue;
+      }
+
       result.push({
-        start: indices[1][1],
-        length: indices[2][1] - indices[1][1],
-        url: goLinkAddress + match.groups.val,
+        start: index,
+        length: lastIndex - index,
+        url,
       });
     }
   }

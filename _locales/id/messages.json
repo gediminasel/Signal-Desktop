@@ -41,6 +41,9 @@
   "icu:Preferences__sent-media-quality__description": {
     "messageformat": "Mengirim media berkualitas tinggi akan menggunakan lebih banyak data."
   },
+  "icu:Preferences__DonateTitle": {
+    "messageformat": "Donasi ke Signal"
+  },
   "icu:sentMediaQualityStandard": {
     "messageformat": "Standar"
   },
@@ -202,6 +205,9 @@
   },
   "icu:menuSetupAsStandalone": {
     "messageformat": "Siapkan untuk Perangkat Mandiri"
+  },
+  "icu:menuStageLocalBackupForImport": {
+    "messageformat": "Stage Local Backup for Import…"
   },
   "icu:messageContextMenuButton": {
     "messageformat": "Tindakan lainnya"
@@ -589,6 +595,9 @@
   },
   "icu:Toast--FailedToSendWithEndorsements": {
     "messageformat": "Failed to send message with endorsements"
+  },
+  "icu:Toast--SQLError": {
+    "messageformat": "Kesalahan basis data: harap bagikan log Anda."
   },
   "icu:Toast--InvalidStorageServiceHeaders": {
     "messageformat": "Menerima respons tidak valid dari layanan penyimpanan. Harap bagikan log Anda."
@@ -1261,6 +1270,9 @@
   },
   "icu:Install__support-link": {
     "messageformat": "Butuh bantuan?"
+  },
+  "icu:Preferences--header": {
+    "messageformat": "Pengaturan"
   },
   "icu:Preferences--phone-number": {
     "messageformat": "Nomor Telepon"
@@ -2330,6 +2342,9 @@
   "icu:FunPanelEmojis__SectionTitle--SearchResults": {
     "messageformat": "Hasil Pencarian"
   },
+  "icu:FunPanelEmojis__SectionTitle--ThisMessage": {
+    "messageformat": "Pesan Ini"
+  },
   "icu:FunPanelEmojis__SectionTitle--Recents": {
     "messageformat": "Terakhir Digunakan"
   },
@@ -3138,16 +3153,16 @@
     "messageformat": "Mik nyala"
   },
   "icu:CallControls__MutedBySomeoneToast": {
-    "messageformat": "{otherName} muted you."
+    "messageformat": "{otherName} membisukan Anda."
   },
   "icu:CallControls__SomeoneMutedSomeoneToast": {
-    "messageformat": "{name} muted {otherName}."
+    "messageformat": "{name} membisukan {otherName}."
   },
   "icu:CallControls__YouMutedSomeoneToast": {
-    "messageformat": "You muted {otherName}."
+    "messageformat": "Anda membisukan {otherName}."
   },
   "icu:CallControls__YouMutedYourselfToast": {
-    "messageformat": "You muted yourself from another device."
+    "messageformat": "Anda membisukan diri sendiri dari perangkat lain."
   },
   "icu:CallControls__LowerHandSuggestionToast": {
     "messageformat": "Turunkan tangan?"
@@ -3396,7 +3411,7 @@
     "messageformat": "Tidak Dapat Bergabung Grup"
   },
   "icu:GroupV2--join--link-forbidden": {
-    "messageformat": "Anda tidak dapat bergabung dengan grup ini melalui tautan grup karena seorang admin mengeluarkan Anda."
+    "messageformat": "Anda tidak dapat bergabung dengan grup ini melalui tautan grup karena sebelumnya Anda telah dikeluarkan oleh seorang admin. Hubungi admin agar dapat ditambahkan lagi ke dalam grup."
   },
   "icu:GroupV2--join--prompt-with-approval": {
     "messageformat": "Admin dari grup ini harus menerima permintaan Anda agar Anda bisa gabung ke grup ini. Saat Anda meminta untuk bergabung, nama dan foto Anda akan dibagikan dengan anggota grup."
@@ -3955,6 +3970,12 @@
   },
   "icu:BadgeSustainerInstructions__instructions__3": {
     "messageformat": "Ketuk \"Donasi ke Signal\" dan berlangganan"
+  },
+  "icu:ProfileMovedModal__title": {
+    "messageformat": "Lokasi profil sudah dipindahkan"
+  },
+  "icu:ProfileMovedModal__description": {
+    "messageformat": "Buka tab Pengaturan untuk melihat dan mengedit profil Anda."
   },
   "icu:BackupImportScreen__title": {
     "messageformat": "Menyinkronkan pesan"
@@ -4922,6 +4943,9 @@
   "icu:ProfileEditorModal--error": {
     "messageformat": "Profil Anda tidak dapat diperbarui. Mohon coba lagi."
   },
+  "icu:ProfileEditorModal--sharing": {
+    "messageformat": "Berbagi"
+  },
   "icu:AnnouncementsOnlyGroupBanner--modal": {
     "messageformat": "Kirimkan pesan ke admin"
   },
@@ -4954,6 +4978,9 @@
   },
   "icu:Preferences__button--general": {
     "messageformat": "Umum"
+  },
+  "icu:Preferences__button--donate": {
+    "messageformat": "Donasi ke Signal"
   },
   "icu:Preferences__button--appearance": {
     "messageformat": "Penampilan"
@@ -4997,6 +5024,15 @@
   "icu:Preferences__button--internal": {
     "messageformat": "Internal"
   },
+  "icu:Preferences__button--manage": {
+    "messageformat": "Kelola"
+  },
+  "icu:Preferences__button--choose-folder": {
+    "messageformat": "Pilih folder"
+  },
+  "icu:Preferences__button--set-up": {
+    "messageformat": "Siapkan"
+  },
   "icu:Preferences__internal__local-backups": {
     "messageformat": "Pencadangan lokal"
   },
@@ -5005,12 +5041,6 @@
   },
   "icu:Preferences__internal__export-local-backup--description": {
     "messageformat": "Ekspor cadangan terenkripsi lokal ke sebuah folder dan lakukan validasi"
-  },
-  "icu:Preferences__internal__import-local-backup": {
-    "messageformat": "Impor …"
-  },
-  "icu:Preferences__internal__import-local-backup--description": {
-    "messageformat": "Siapkan cadangan terenkripsi lokal untuk diimpor melalui tautan"
   },
   "icu:Preferences__internal__validate-backup--description": {
     "messageformat": "Ekspor cadangan terenkripsi ke memori perangkat dan jalankan rangkaian validasi pada cadangan tersebut"
@@ -5047,6 +5077,15 @@
   },
   "icu:Preferences--blocked": {
     "messageformat": "Diblokir"
+  },
+  "icu:Preferences--signal-backups": {
+    "messageformat": "Signal Backups"
+  },
+  "icu:Preferences--signal-backups-off-description": {
+    "messageformat": "Automatic backups with Signal’s secure, end-to-end encrypted storage service. Get started on your phone. <learnMoreLink>Learn more</learnMoreLink>."
+  },
+  "icu:Preferences--backup-section-description": {
+    "messageformat": "Cadangkan riwayat pesan sehingga data tidak akan hilang saat Anda memakai ponsel baru atau menginstal ulang Signal."
   },
   "icu:Preferences--backup-details__header": {
     "messageformat": "Detail pencadangan"
@@ -5089,6 +5128,84 @@
   },
   "icu:Preferences--backup-size__label": {
     "messageformat": "Ukuran cadangan"
+  },
+  "icu:Preferences__local-backups": {
+    "messageformat": "Pencadangan desktop"
+  },
+  "icu:Preferences__local-backups-section__description": {
+    "messageformat": "Cadangan dienkripsi dengan kunci dan disimpan di komputer Anda."
+  },
+  "icu:Preferences--local-backups-off-description": {
+    "messageformat": "Buat cadangan terenkripsi menyeluruh yang dapat dipulihkan di ponsel Anda. "
+  },
+  "icu:Preferences--local-backups-restore-info": {
+    "messageformat": "Silakan instal ulang Signal untuk memulihkan cadangan. Buka aplikasinya dan ketuk &quot;Pulihkan cadangan&quot;, lalu temukan folder cadangannya. <learnMoreLink>Pelajari selengkapnya.</learnMoreLink>"
+  },
+  "icu:Preferences--local-backups-setup-folder": {
+    "messageformat": "Pilih folder"
+  },
+  "icu:Preferences--local-backups-setup-folder-description": {
+    "messageformat": "Pilih folder di penyimpanan komputer tempat data cadangan Anda yang terenkripsi menyeluruh akan disimpan."
+  },
+  "icu:Preferences--local-backups-setup-next": {
+    "messageformat": "Berikutnya"
+  },
+  "icu:Preferences--local-backups-view-backup-key-done": {
+    "messageformat": "Selesai"
+  },
+  "icu:Preferences--local-backups-backup-key-text-box": {
+    "messageformat": "Kotak teks kunci cadangan"
+  },
+  "icu:Preferences--local-backups-enter-backup-key": {
+    "messageformat": "Masukkan kunci"
+  },
+  "icu:Preferences--local-backups-record-backup-key": {
+    "messageformat": "Catat kunci cadangan Anda"
+  },
+  "icu:Preferences--local-backups-record-backup-key-description": {
+    "messageformat": "Kunci ini diperlukan untuk memulihkan akun dan data Anda. Simpan kunci di tempat yang aman. Jika Anda kehilangan kunci, akun tidak dapat dipulihkan. <learnMoreLink>Pelajari selengkapnya.</learnMoreLink>"
+  },
+  "icu:Preferences--local-backups-confirm-backup-key": {
+    "messageformat": "Konfirmasi kunci cadangan Anda"
+  },
+  "icu:Preferences--local-backups-confirm-backup-key-description": {
+    "messageformat": "Masukkan kunci cadangan yang baru Anda catat"
+  },
+  "icu:Preferences__local-backups-confirm-key-modal-title": {
+    "messageformat": "Pastikan kunci Anda aman"
+  },
+  "icu:Preferences__local-backups-confirm-key-modal-body": {
+    "messageformat": "Signal tidak dapat membantu proses pemulihan data cadangan jika Anda kehilangan kunci. Simpan di tempat yang aman dan jangan bagikan dengan orang lain."
+  },
+  "icu:Preferences__local-backups-confirm-key-modal-continue": {
+    "messageformat": "Lanjutkan"
+  },
+  "icu:Preferences--local-backups-see-backup-key-again": {
+    "messageformat": "Lihat kunci lagi"
+  },
+  "icu:Preferences__local-backups-folder": {
+    "messageformat": "Folder cadangan"
+  },
+  "icu:Preferences__local-backups-folder__change": {
+    "messageformat": "Ubah"
+  },
+  "icu:Preferences__local-backups-copy-key": {
+    "messageformat": "Salin ke papan klip"
+  },
+  "icu:Preferences__local-backups-copied-key": {
+    "messageformat": "Kunci cadangan disalin"
+  },
+  "icu:Preferences__view-key": {
+    "messageformat": "Lihat kunci"
+  },
+  "icu:Preferences__backup-key": {
+    "messageformat": "Kunci cadangan"
+  },
+  "icu:Preferences__backup-key-description": {
+    "messageformat": "Kunci cadangan adalah kode 64 digit yang digunakan untuk memulihkan cadangan Anda"
+  },
+  "icu:Preferences__backup-other-ways": {
+    "messageformat": "Cara lain untuk mencadangkan"
   },
   "icu:Preferences--blocked-count": {
     "messageformat": "{num, plural, other {{num,number} kontak}}"
@@ -6321,6 +6438,9 @@
   "icu:ProfileNameWarningModal__list--item3--group": {
     "messageformat": "Jangan bagikan info pribadi dengan orang yang tidak dikenal"
   },
+  "icu:SaveMultiDialog__title": {
+    "messageformat": "Simpan lampiran"
+  },
   "icu:WhatsNew__modal-title": {
     "messageformat": "Yang Baru"
   },
@@ -6352,16 +6472,10 @@
     "messageformat": "Tambahan penyesuaian kecil, perbaikan bug, dan peningkatan performa. Terima kasih telah menggunakan Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.54--0": {
-    "messageformat": "Senyuman memang sama dalam bahasa apa pun, tapi karena sekarang pintasan emoji di Signal Desktop telah sepenuhnya diterjemahkan, jadi Anda juga bisa pakai <code>:smile:</code> atau <code>:sourire:</code> atau <code>:微笑:</code> dalam bahasa apa pun yang didukung."
+  "icu:WhatsNew__v7.58--0": {
+    "messageformat": "Bagian baru di pemilih tanggapan pesan otomatis akan menampilkan semua tanggapan emoji yang diterima suatu pesan. Kini Anda bisa langsung pakai emoji yang sama dengan yang diberikan orang lain atau bisa juga pilih emoji lain sesuai keinginan."
   },
-  "icu:WhatsNew__v7.55--0": {
-    "messageformat": "Tombol pintasan untuk emoji dan stiker kini tersedia kembali! Tak perlu lagi repot melapor bahwa pintasannya tidak berfungsi, jadi Anda bisa lebih hemat waktu."
-  },
-  "icu:WhatsNew__v7.55--1": {
-    "messageformat": "Kami juga memperbaiki crash pada distribusi Linux yang belum mendukung GTK4."
-  },
-  "icu:WhatsNew__v7.56--0": {
-    "messageformat": "Sometimes a powerful story can really move you, so we fixed a bug that made it difficult to move the Signal window while viewing content in the Stories tab."
+  "icu:WhatsNew__v7.59--0": {
+    "messageformat": "Pembaruan kali ini memungkinkan akselerasi GPU pada Linux agar kinerja lebih optimal dan pemutaran video lebih lancar di perangkat keras yang didukung."
   }
 }

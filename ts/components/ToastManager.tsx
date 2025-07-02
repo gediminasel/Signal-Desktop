@@ -225,6 +225,14 @@ export function renderToast({
     );
   }
 
+  if (toastType === ToastType.CopiedBackupKey) {
+    return (
+      <Toast onClose={hideToast} timeout={3 * SECOND}>
+        {i18n('icu:Preferences__local-backups-copied-key')}
+      </Toast>
+    );
+  }
+
   if (toastType === ToastType.CopiedCallLink) {
     return (
       <Toast onClose={hideToast} timeout={3 * SECOND}>
@@ -503,6 +511,20 @@ export function renderToast({
     return (
       <Toast onClose={hideToast}>
         {i18n('icu:stickers--toast--InstallFailed')}
+      </Toast>
+    );
+  }
+  if (toastType === ToastType.SQLError) {
+    return (
+      <Toast
+        onClose={hideToast}
+        toastAction={{
+          label: i18n('icu:Toast__ActionLabel--SubmitLog'),
+          onClick: onShowDebugLog,
+        }}
+        autoDismissDisabled
+      >
+        {i18n('icu:Toast--SQLError')}
       </Toast>
     );
   }
