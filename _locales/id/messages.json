@@ -305,9 +305,6 @@
   "icu:NavTabs__ItemLabel--Settings": {
     "messageformat": "Pengaturan"
   },
-  "icu:NavTabs__ItemLabel--Update": {
-    "messageformat": "Perbarui Signal"
-  },
   "icu:NavTabs__ItemLabel--Profile": {
     "messageformat": "Profil"
   },
@@ -605,6 +602,12 @@
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
+  "icu:Toast--ReceiptSaved": {
+    "messageformat": "Struk disimpan"
+  },
+  "icu:Toast--ReceiptSaveFailed": {
+    "messageformat": "Terjadi kesalahan saat menyimpan struk. Silakan coba lagi."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Anda tidak dapat memilih foto dan video disertai file."
   },
@@ -664,9 +667,6 @@
   },
   "icu:joinTheBeta": {
     "messageformat": "Ikuti uji coba versi beta"
-  },
-  "icu:signalDesktopPreferences": {
-    "messageformat": "Preferensi Signal Desktop"
   },
   "icu:signalDesktopStickerCreator": {
     "messageformat": "Pembuat Paket Stiker"
@@ -1285,6 +1285,168 @@
   },
   "icu:Preferences__EmojiSkinToneDefaultSetting__Label": {
     "messageformat": "Warna kulit emoji"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__Title": {
+    "messageformat": "Folder chat"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Title": {
+    "messageformat": "Tambahkan folder chat"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Description": {
+    "messageformat": "Atur chat ke dalam folder. Beralih antar-folder akan lebih mudah, karena semuanya ada di daftar chat."
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__EditFolder": {
+    "messageformat": "Edit folder"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__DeleteFolder": {
+    "messageformat": "Hapus"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__Title": {
+    "messageformat": "Hapus folder?"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__Description": {
+    "messageformat": "Ingin menghapus folder “{chatFolderTitle}”?"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__DeleteButton": {
+    "messageformat": "Hapus"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__CancelButton": {
+    "messageformat": "Batal"
+  },
+  "icu:Preferences__ChatFoldersPage__Title": {
+    "messageformat": "Folder chat"
+  },
+  "icu:Preferences__ChatFoldersPage__Description": {
+    "messageformat": "Atur chat ke dalam folder agar bisa lebih cepat beralih antar-folder di daftar chat"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__Title": {
+    "messageformat": "Folder"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__AllChatsFolder__Title": {
+    "messageformat": "Semua chat"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__CreateAFolderButton": {
+    "messageformat": "Buat folder"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__Title": {
+    "messageformat": "Folder yang disarankan"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton": {
+    "messageformat": "Tambahkan"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton__Toast": {
+    "messageformat": "Folder {chatFolderTitle} ditambahkan"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Title": {
+    "messageformat": "Belum dibaca"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Description": {
+    "messageformat": "Pesan yang belum dibaca dari semua chat"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__DirectChatsFolder__Title": {
+    "messageformat": "Chat pribadi"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__DirectChatsFolder__Description": {
+    "messageformat": "Hanya pesan dari chat langsung"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__GroupChatsFolder__Title": {
+    "messageformat": "Grup"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__GroupChatsFolder__Description": {
+    "messageformat": "Hanya pesan dari chat grup"
+  },
+  "icu:Preferences__EditChatFolderPage__Title": {
+    "messageformat": "Buat folder"
+  },
+  "icu:Preferences__EditChatFolderPage__FolderNameField__Label": {
+    "messageformat": "Nama folder"
+  },
+  "icu:Preferences__EditChatFolderPage__FolderNameField__Placeholder": {
+    "messageformat": "Nama folder (wajib)"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__Title": {
+    "messageformat": "Chat yang disertakan"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__Help": {
+    "messageformat": "Pilih chat yang ingin Anda tampilkan di folder ini"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__AddChatsButton": {
+    "messageformat": "Tambahkan chat"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog--IncludedChats__Title": {
+    "messageformat": "Chat yang disertakan"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog--ExcludedChats__Title": {
+    "messageformat": "Chat yang dikecualikan"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__Search__Placeholder": {
+    "messageformat": "Cari"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__Title": {
+    "messageformat": "Jenis chat"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__DirectChats": {
+    "messageformat": "Chat pribadi"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__GroupChats": {
+    "messageformat": "Grup"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__RecentChats__Title": {
+    "messageformat": "Chat terbaru"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__DoneButton": {
+    "messageformat": "Selesai"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__Title": {
+    "messageformat": "Pengecualian"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__Help": {
+    "messageformat": "Pilih chat yang tidak ingin Anda tampilkan di folder ini"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__ExcludeChatsButton": {
+    "messageformat": "Chat yang dikecualikan"
+  },
+  "icu:Preferences__EditChatFolderPage__OnlyShowUnreadChatsCheckbox__Label": {
+    "messageformat": "Hanya tampilkan chat yang belum dibaca"
+  },
+  "icu:Preferences__EditChatFolderPage__OnlyShowUnreadChatsCheckbox__Description": {
+    "messageformat": "Hanya chat dengan pesan belum dibaca yang akan ditampilkan di folder ini."
+  },
+  "icu:Preferences__EditChatFolderPage__IncludeMutedChatsCheckbox__Label": {
+    "messageformat": "Sertakan chat yang dibisukan"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteFolderButton": {
+    "messageformat": "Hapus folder"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__Title": {
+    "messageformat": "Hapus folder chat ini?"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__Description": {
+    "messageformat": "Folder ini akan dihapus dari daftar chat Anda."
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__DeleteButton": {
+    "messageformat": "Hapus"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__CancelButton": {
+    "messageformat": "Batal"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__Title": {
+    "messageformat": "Simpan perubahan?"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__Description": {
+    "messageformat": "Mau menyimpan perubahan pada folder chat ini?"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__SaveButton": {
+    "messageformat": "Simpan"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__DiscardButton": {
+    "messageformat": "Batalkan"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveButton": {
+    "messageformat": "Simpan"
+  },
+  "icu:Preferences__EditChatFolderPage__CancelButton": {
+    "messageformat": "Batal"
   },
   "icu:initialSync": {
     "messageformat": "Sinkronisasi dengan kontak dan grup"
@@ -3792,7 +3954,7 @@
     "messageformat": "Permintaan bergabung ke grup dari {joinerName} telah ditolak."
   },
   "icu:GroupV2--admin-approval-bounce--pluralized": {
-    "messageformat": "{numberOfRequests, plural, other {{joinerName} mengajukan dan membatalkan {numberOfRequests,number} permintaan untuk bergabung lewat tautan grup}}"
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} requested and canceled their request to join via the group link} other {{joinerName} requested and canceled {numberOfRequests,number} requests to join via the group link}}"
   },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Anda menyalakan tautan grup tanpa persetujuan admin."
@@ -4026,10 +4188,10 @@
     "messageformat": "Coba lagi"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
-    "messageformat": "Memulihkan media"
+    "messageformat": "Menyinkronkan media"
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
-    "messageformat": "Pemulihan dijeda"
+    "messageformat": "Sinkronisasi dijeda"
   },
   "icu:BackupMediaDownloadProgress__title-idle": {
     "messageformat": "{currentSize} dari {totalSize} dipulihkan"
@@ -4044,13 +4206,13 @@
     "messageformat": "Menunggu koneksi internet …"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
-    "messageformat": "Jeda transfer"
+    "messageformat": "Jeda"
   },
   "icu:BackupMediaDownloadProgress__button-resume": {
-    "messageformat": "Lanjutkan transfer"
+    "messageformat": "Lanjutkan"
   },
   "icu:BackupMediaDownloadProgress__button-cancel": {
-    "messageformat": "Batalkan transfer"
+    "messageformat": "Batalkan sinkronisasi"
   },
   "icu:BackupMediaDownloadProgress__button-more": {
     "messageformat": "Opsi lainnya"
@@ -4062,16 +4224,34 @@
     "messageformat": "{currentSize} dari {totalSize}"
   },
   "icu:BackupMediaDownloadCancelConfirmation__title": {
-    "messageformat": "Batalkan transfer media?"
+    "messageformat": "Batalkan sinkronisasi media?"
   },
   "icu:BackupMediaDownloadCancelConfirmation__description": {
-    "messageformat": "Pemulihan pesan dan media Anda belum selesai. Jika pilih untuk membatalkan, Anda dapat mentransfer lagi dari Pengaturan."
+    "messageformat": "Proses sinkronisasi media belum selesai. Jika Anda membatalkannya, proses sinkronisasi dapat diulangi dengan menautkan ulang perangkat ini. <learnMoreLink>Pelajari selengkapnya</learnMoreLink>."
   },
   "icu:BackupMediaDownloadCancelConfirmation__button-continue": {
-    "messageformat": "Lanjutkan transfer"
+    "messageformat": "Lanjutkan sinkronisasi"
   },
   "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
-    "messageformat": "Batalkan transfer"
+    "messageformat": "Batalkan sinkronisasi"
+  },
+  "icu:BackupMediaDownloadProgressSettings__paused--title": {
+    "messageformat": "Sinkronisasi dijeda"
+  },
+  "icu:BackupMediaDownloadProgressSettings__paused--description": {
+    "messageformat": "Klik “{resumeButtonText}” untuk melanjutkan sinkronisasi"
+  },
+  "icu:BackupMediaDownloadProgressSettings__button-resume": {
+    "messageformat": "Lanjutkan"
+  },
+  "icu:BackupMediaDownloadProgressSettings__button-pause": {
+    "messageformat": "Jeda"
+  },
+  "icu:BackupMediaDownloadProgressSettings__title-in-progress": {
+    "messageformat": "Menyinkronkan media"
+  },
+  "icu:BackupMediaDownloadProgressSettings__progressbar-hint": {
+    "messageformat": "{currentSize} dari {totalSize} ({fractionComplete,number,percent}) …"
   },
   "icu:CriticalIdlePrimaryDeviceModal__title": {
     "messageformat": "Wajib ambil tindakan untuk akun"
@@ -4811,6 +4991,12 @@
   "icu:ProfileEditor__username-link__error-icon": {
     "messageformat": "Tautan nama pengguna perlu direset"
   },
+  "icu:ProfileEditor__open": {
+    "messageformat": "Open username link screen"
+  },
+  "icu:ProfileEditor__username-link__open": {
+    "messageformat": "Open username link screen"
+  },
   "icu:ProfileEditor__username-link__tooltip__title": {
     "messageformat": "Bagikan Nama Pengguna Anda"
   },
@@ -5082,7 +5268,7 @@
     "messageformat": "Signal Backups"
   },
   "icu:Preferences--signal-backups-off-description": {
-    "messageformat": "Automatic backups with Signal’s secure, end-to-end encrypted storage service. Get started on your phone. <learnMoreLink>Learn more</learnMoreLink>."
+    "messageformat": "Pencadangan otomatis dengan layanan penyimpanan Signal yang aman dan terenkripsi total. Mulai pencadangan di ponsel Anda. <learnMoreLink>Info lengkap</learnMoreLink>."
   },
   "icu:Preferences--backup-section-description": {
     "messageformat": "Cadangkan riwayat pesan sehingga data tidak akan hilang saat Anda memakai ponsel baru atau menginstal ulang Signal."
@@ -5125,9 +5311,6 @@
   },
   "icu:Preferences--backup-created-by-phone": {
     "messageformat": "Ponsel Anda"
-  },
-  "icu:Preferences--backup-size__label": {
-    "messageformat": "Ukuran cadangan"
   },
   "icu:Preferences__local-backups": {
     "messageformat": "Pencadangan desktop"
@@ -6114,9 +6297,6 @@
   "icu:UsernameLinkModalBody__reset": {
     "messageformat": "Atur ulang"
   },
-  "icu:UsernameLinkModalBody__done": {
-    "messageformat": "Selesai"
-  },
   "icu:UsernameLinkModalBody__color__radio": {
     "messageformat": "Warna tautan nama pengguna, {index,number} dari {total,number}"
   },
@@ -6444,6 +6624,198 @@
   "icu:WhatsNew__modal-title": {
     "messageformat": "Yang Baru"
   },
+  "icu:PreferencesDonations__title": {
+    "messageformat": "Privasi Lebih Utama daripada Keuntungan"
+  },
+  "icu:PreferencesDonations__description": {
+    "messageformat": "Perpesanan privat, didanai oleh Anda. Tanpa iklan, tanpa pelacak, tanpa kompromi. Donasi sekarang untuk mendukung Signal. <readMoreLink>Baca selengkapnya</readMoreLink>"
+  },
+  "icu:PreferencesDonations__donate-button": {
+    "messageformat": "Donasi"
+  },
+  "icu:PreferencesDonations__my-support": {
+    "messageformat": "Dukungan Saya"
+  },
+  "icu:PreferencesDonations__donate-button-with-amount": {
+    "messageformat": "Donasi {formattedCurrencyAmount}"
+  },
+  "icu:PreferencesDonations__mobile-info": {
+    "messageformat": "Badge dan donasi bulanan dapat dikelola dari perangkat seluler Anda."
+  },
+  "icu:PreferencesDonations__privacy-modal-title": {
+    "messageformat": "Informasi Anda bersifat privat"
+  },
+  "icu:PreferencesDonations__privacy-modal-content": {
+    "messageformat": "<paragraph>Signal tidak mengumpulkan atau menyimpan informasi pribadi saat Anda memberikan donasi.</paragraph><paragraph>Kami menggunakan Stripe sebagai pemroses pembayaran donasi Anda. Kami tidak mengakses, menahan, atau menyimpan informasi apa pun yang Anda berikan kepada mereka.</paragraph><paragraph>Signal tidak (dan tidak dapat) menghubungkan donasi Anda ke akun Signal Anda.</paragraph><paragraph>Terima kasih atas dukungan Anda!</paragraph>"
+  },
+  "icu:PreferencesDonations__receipts": {
+    "messageformat": "Struk"
+  },
+  "icu:PreferencesDonations__faqs": {
+    "messageformat": "Pertanyaan Umum tentang Donasi"
+  },
+  "icu:PreferencesDonations--receiptList__info": {
+    "messageformat": "Struk tidak disinkronkan di semua perangkat. Struk dari donasi sebelumnya tidak akan tersedia jika Anda menginstal ulang Signal."
+  },
+  "icu:PreferencesDonations--receiptList__empty-title": {
+    "messageformat": "Tidak Ada Struk"
+  },
+  "icu:PreferencesDonations__ReceiptModal--title": {
+    "messageformat": "Detail"
+  },
+  "icu:PreferencesDonations__ReceiptModal--download": {
+    "messageformat": "Unduh struk"
+  },
+  "icu:PreferencesDonations__ReceiptModal--type-label": {
+    "messageformat": "Jenis"
+  },
+  "icu:PreferencesDonations__ReceiptModal--date-paid-label": {
+    "messageformat": "Tanggal dibayar"
+  },
+  "icu:DonateFlow__make-a-one-time-donation": {
+    "messageformat": "Berikan donasi satu kali"
+  },
+  "icu:DonateFlow__desktop-one-time-only-notice": {
+    "messageformat": "Hanya donasi satu kali yang tersedia di desktop. Donasi bulanan dapat diberikan melalui perangkat seluler."
+  },
+  "icu:DonateFlow__having-issues-contact-support": {
+    "messageformat": "Ada masalah? <contactSupportLink>Hubungi Tim Dukungan</contactSupportLink>"
+  },
+  "icu:DonateFlow__amount-picker-custom-amount-placeholder": {
+    "messageformat": "Enter Custom Amount"
+  },
+  "icu:DonateFlow__credit-or-debit-card": {
+    "messageformat": "Credit or Debit Card"
+  },
+  "icu:DonateFlow__card-form-instructions": {
+    "messageformat": "Enter your credit or debit card details. Signal does not collect or store your personal information. <learnMoreLink>Learn more</learnMoreLink>"
+  },
+  "icu:DonateFlow__card-form-card-number": {
+    "messageformat": "Card Number"
+  },
+  "icu:DonateFlow__card-form-expiration-date": {
+    "messageformat": "Expiration Date"
+  },
+  "icu:DonateFlow__card-form-title-donate-with-amount": {
+    "messageformat": "Donate {formattedCurrencyAmount} to Signal"
+  },
+  "icu:DonateFlow__card-form-error-invalid-card-number": {
+    "messageformat": "Invalid card number"
+  },
+  "icu:DonateFlow__card-form-error-expiration-expired": {
+    "messageformat": "Card has expired"
+  },
+  "icu:DonateFlow__card-form-error-year-missing": {
+    "messageformat": "Year required"
+  },
+  "icu:DonateFlow__card-form-error-invalid": {
+    "messageformat": "Invalid"
+  },
+  "icu:DonateFlow__card-form-error-cvc-too-short": {
+    "messageformat": "Code too short"
+  },
+  "icu:DonateFlow__one-time-donation-boost-badge-info": {
+    "messageformat": "Get the Signal Boost badge for 30 days"
+  },
+  "icu:DonationReceipt__title": {
+    "messageformat": "Struk donasi"
+  },
+  "icu:DonationReceipt__amount-label": {
+    "messageformat": "Jumlah"
+  },
+  "icu:DonationReceipt__type-label": {
+    "messageformat": "Jenis"
+  },
+  "icu:DonationReceipt__date-paid-label": {
+    "messageformat": "Tanggal dibayar"
+  },
+  "icu:DonationReceipt__type-value--one-time": {
+    "messageformat": "Sekali saja"
+  },
+  "icu:DonationReceipt__footer-text": {
+    "messageformat": "Terima kasih telah mendukung Signal. Kontribusi Anda membantu misi perlindungan terhadap kebebasan berekspresi dan mendukung teknologi privasi sumber terbuka yang memungkinkan komunikasi yang aman bagi jutaan pengguna di seluruh dunia. Jika Anda warga Amerika Serikat, harap simpan struk ini untuk pencatatan pajak. Signal Technology Foundation adalah organisasi nirlaba bebas pajak di Amerika Serikat menurut pasal 501c3 di Internal Revenue Code (IRC). ID Pajak Federal kami adalah 82-4506840."
+  },
+  "icu:Donations__Toast__Canceled": {
+    "messageformat": "Donation canceled"
+  },
+  "icu:Donations__Toast__Completed": {
+    "messageformat": "Donasi selesai"
+  },
+  "icu:Donations__Toast__Error": {
+    "messageformat": "Terjadi kesalahan saat memproses donasi"
+  },
+  "icu:Donations__Toast__Processing": {
+    "messageformat": "Memproses donasi"
+  },
+  "icu:Donations__Toast__VerificationFailed": {
+    "messageformat": "Verifikasi gagal"
+  },
+  "icu:Donations__Toast__VerificationNeeded": {
+    "messageformat": "Ada donasi yang sedang diproses yang memerlukan verifikasi tambahan."
+  },
+  "icu:Donations__Toast__ConfirmationNeeded": {
+    "messageformat": "You have a donation in progress that requires confirmation."
+  },
+  "icu:Donations__DonationInterrupted": {
+    "messageformat": "Donation interrupted"
+  },
+  "icu:Donations__DonationInterrupted__Description": {
+    "messageformat": "Your card was not charged. Do you want to retry the donation?"
+  },
+  "icu:Donations__DonationInterrupted__RetryButton": {
+    "messageformat": "Try again"
+  },
+  "icu:Donations__PaymentMethodDeclined": {
+    "messageformat": "Metode pembayaran ditolak"
+  },
+  "icu:Donations__PaymentMethodDeclined__Description": {
+    "messageformat": "Coba metode pembayaran lain atau hubungi bank Anda untuk informasi lebih lanjut."
+  },
+  "icu:Donations__Failed3dsValidation": {
+    "messageformat": "Verifikasi Gagal"
+  },
+  "icu:Donations__Failed3dsValidation__Description": {
+    "messageformat": "Langkah verifikasi tambahan gagal. Silakan coba lagi."
+  },
+  "icu:Donations__GenericError": {
+    "messageformat": "Terjadi kesalahan dalam proses donasi"
+  },
+  "icu:Donations__GenericError__Description": {
+    "messageformat": "Donasi Anda mungkin belum diproses. Klik “Donasi ke Signal”, lalu klik “Struk Donasi” untuk memeriksa struk dan mengonfirmasi."
+  },
+  "icu:Donations__Processing": {
+    "messageformat": "Memproses donasi …"
+  },
+  "icu:Donations__StillProcessing": {
+    "messageformat": "Masih memproses"
+  },
+  "icu:Donations__StillProcessing__Description": {
+    "messageformat": "Donasi Anda sedang diproses. Perlu waktu beberapa menit."
+  },
+  "icu:Donations__TimedOut": {
+    "messageformat": "Donation canceled"
+  },
+  "icu:Donations__TimedOut__Description": {
+    "messageformat": "It has been too long since you started your donation. Please start over."
+  },
+  "icu:Donations__3dsValidationNeeded": {
+    "messageformat": "Diperlukan verifikasi tambahan"
+  },
+  "icu:Donations__3dsValidationNeeded--waiting": {
+    "messageformat": "Menunggu verifikasi"
+  },
+  "icu:Donations__3dsValidationNeeded__Description": {
+    "messageformat": "Penerbit kartu kredit Anda mewajibkan langkah verifikasi tambahan di browser web."
+  },
+  "icu:Donations__3dsValidationNeeded__OpenBrowser": {
+    "messageformat": "Buka browser"
+  },
+  "icu:Donations__3dsValidationNeeded__OpenBrowser--opened": {
+    "messageformat": "Buka ulang browser"
+  },
+  "icu:Donations__3dsValidationNeeded__CancelDonation": {
+    "messageformat": "Batalkan donasi"
+  },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "Versi ini mengandung sejumlah perubahan kecil dan perbaikan bug agar Signal tetap berjalan lancar.",
     "ignoreUnused": true
@@ -6472,10 +6844,13 @@
     "messageformat": "Tambahan penyesuaian kecil, perbaikan bug, dan peningkatan performa. Terima kasih telah menggunakan Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.58--0": {
-    "messageformat": "Bagian baru di pemilih tanggapan pesan otomatis akan menampilkan semua tanggapan emoji yang diterima suatu pesan. Kini Anda bisa langsung pakai emoji yang sama dengan yang diberikan orang lain atau bisa juga pilih emoji lain sesuai keinginan."
+  "icu:WhatsNew__v7.64--0": {
+    "messageformat": "Kami meningkatkan pengalaman fitur pesan telah dibaca/belum dibaca saat Anda melakukan beberapa hal sekaligus. Kami juga memperbaiki bug yang kadang salah membuka penampil gambar yang diperbesar ketika Anda menekan spasi saat mencari emoji yang tepat. Anda masih bisa memperbesar gambar dengan mengkliknya atau bila Anda mengetiknya cukup cepat."
   },
-  "icu:WhatsNew__v7.59--0": {
-    "messageformat": "Pembaruan kali ini memungkinkan akselerasi GPU pada Linux agar kinerja lebih optimal dan pemutaran video lebih lancar di perangkat keras yang didukung."
+  "icu:WhatsNew__v7.65--0": {
+    "messageformat": "Menemukan emoji yang tepat bisa sangat sulit, kadang terjadi masalah setelah Anda menekan tombol escape di kotak pencarian. Tapi tenang, kami sudah memperbaiki bug ini."
+  },
+  "icu:WhatsNew__v7.66--0": {
+    "messageformat": "This update fixes a few small bugs, including one where emoji reactions weren't being grouped together correctly in some cases."
   }
 }

@@ -124,6 +124,7 @@ import {
   type AttachmentType,
   isGIF,
   isDownloaded,
+  hasRequiredInformationForBackup,
 } from '../../types/Attachment';
 import { getFilePointerForAttachment } from './util/filePointers';
 import { getBackupMediaRootKey } from './crypto';
@@ -133,7 +134,7 @@ import type {
 } from '../../types/AttachmentBackup';
 import { AttachmentBackupManager } from '../../jobs/AttachmentBackupManager';
 import { AttachmentLocalBackupManager } from '../../jobs/AttachmentLocalBackupManager';
-import { getBackupCdnInfo } from './util/mediaId';
+import { getBackupCdnInfo, getMediaNameForAttachment } from './util/mediaId';
 import { calculateExpirationTimestamp } from '../../util/expirationTimer';
 import { ReadStatus } from '../../messages/MessageReadStatus';
 import { CallLinkRestrictions } from '../../types/CallLink';
@@ -144,7 +145,7 @@ import {
 import { getRoomIdFromRootKey } from '../../util/callLinksRingrtc';
 import { SeenStatus } from '../../MessageSeenStatus';
 import { migrateAllMessages } from '../../messages/migrateMessageData';
-import { trimBody } from '../../util/longAttachment';
+import { isBodyTooLong, trimBody } from '../../util/longAttachment';
 import { generateBackupsSubscriberData } from '../../util/backupSubscriptionData';
 import {
   getEnvironment,
@@ -157,6 +158,7 @@ import { isValidE164 } from '../../util/isValidE164';
 import { toDayOfWeekArray } from '../../types/NotificationProfile';
 import { getLinkPreviewSetting } from '../../types/LinkPreview';
 import { getTypingIndicatorSetting } from '../../types/Util';
+import { KIBIBYTE } from '../../types/AttachmentSize';
 
 const log = createLogger('export');
 
@@ -169,6 +171,8 @@ const FLUSH_TIMEOUT = 30 * MINUTE;
 
 // Threshold for reporting slow flushes
 const REPORTING_THRESHOLD = SECOND;
+
+const BACKUP_LONG_ATTACHMENT_TEXT_LIMIT = 128 * KIBIBYTE;
 
 type GetRecipientIdOptionsType =
   | Readonly<{
@@ -242,7 +246,10 @@ export class BackupExportStream extends Readable {
   readonly #serviceIdToRecipientId = new Map<string, number>();
   readonly #e164ToRecipientId = new Map<string, number>();
   readonly #roomIdToRecipientId = new Map<string, number>();
-  readonly #mediaNamesToFilePointers = new Map<string, Backups.FilePointer>();
+  readonly #mediaNamesToLocatorInfos = new Map<
+    string,
+    Backups.FilePointer.ILocatorInfo
+  >();
   readonly #stats: StatsType = {
     adHocCalls: 0,
     callLinks: 0,
@@ -345,7 +352,7 @@ export class BackupExportStream extends Readable {
   }
 
   public getMediaNamesIterator(): MapIterator<string> {
-    return this.#mediaNamesToFilePointers.keys();
+    return this.#mediaNamesToLocatorInfos.keys();
   }
 
   public getStats(): Readonly<StatsType> {
@@ -2592,33 +2599,26 @@ export class BackupExportStream extends Readable {
       getBackupCdnInfo,
     });
 
-    // TODO: DESKTOP-8887
-    if (isLocalBackup && filePointer.localLocator) {
-      // Duplicate attachment check. Local backups can only contain 1 file per mediaName,
-      // so if we see a duplicate mediaName then we must reuse the previous FilePointer.
-      const { mediaName } = filePointer.localLocator;
-      strictAssert(
-        mediaName,
-        'FilePointer.LocalLocator must contain mediaName'
-      );
-      const existingFilePointer = this.#mediaNamesToFilePointers.get(mediaName);
-      if (existingFilePointer) {
-        strictAssert(
-          existingFilePointer.localLocator,
-          'Local backup existing mediaName FilePointer must contain LocalLocator'
-        );
-        strictAssert(
-          existingFilePointer.localLocator.size === attachment.size,
-          'Local backup existing mediaName FilePointer size must match attachment'
-        );
-        return existingFilePointer;
+    if (hasRequiredInformationForBackup(attachment)) {
+      const mediaName = getMediaNameForAttachment(attachment);
+
+      // Re-use existing locatorInfo and backup job if we've already seen this file
+      const existingLocatorInfo = this.#mediaNamesToLocatorInfos.get(mediaName);
+
+      if (existingLocatorInfo) {
+        filePointer.locatorInfo = existingLocatorInfo;
+      } else {
+        if (filePointer.locatorInfo) {
+          this.#mediaNamesToLocatorInfos.set(
+            mediaName,
+            filePointer.locatorInfo
+          );
+        }
+
+        if (backupJob) {
+          this.#attachmentBackupJobs.push(backupJob);
+        }
       }
-
-      this.#mediaNamesToFilePointers.set(mediaName, filePointer);
-    }
-
-    if (backupJob) {
-      this.#attachmentBackupJobs.push(backupJob);
     }
 
     return filePointer;
@@ -2799,10 +2799,18 @@ export class BackupExportStream extends Readable {
       | 'preview'
       | 'reactions'
       | 'received_at'
+      | 'timestamp'
     >;
     backupLevel: BackupLevel;
     isLocalBackup: boolean;
   }): Promise<Backups.IStandardMessage> {
+    if (
+      message.body &&
+      isBodyTooLong(message.body, BACKUP_LONG_ATTACHMENT_TEXT_LIMIT)
+    ) {
+      log.warn(`${message.timestamp}: Message body is too long; will truncate`);
+    }
+
     return {
       quote: await this.#toQuote({
         message,
@@ -2821,18 +2829,23 @@ export class BackupExportStream extends Readable {
             })
           )
         : undefined,
-      longText: message.bodyAttachment
-        ? await this.#processAttachment({
-            attachment: message.bodyAttachment,
-            backupLevel,
-            isLocalBackup,
-            messageReceivedAt: message.received_at,
-          })
-        : undefined,
+      longText:
+        // We only include the bodyAttachment if it's not downloaded; otherwise all text
+        // is inlined
+        message.bodyAttachment && !isDownloaded(message.bodyAttachment)
+          ? await this.#processAttachment({
+              attachment: message.bodyAttachment,
+              backupLevel,
+              isLocalBackup,
+              messageReceivedAt: message.received_at,
+            })
+          : undefined,
       text:
         message.body != null
           ? {
-              body: message.body ? trimBody(message.body) : undefined,
+              body: message.body
+                ? trimBody(message.body, BACKUP_LONG_ATTACHMENT_TEXT_LIMIT)
+                : undefined,
               bodyRanges: message.bodyRanges?.map(range =>
                 this.#toBodyRange(range)
               ),
@@ -2922,9 +2935,12 @@ export class BackupExportStream extends Readable {
     isLocalBackup: boolean;
   }): Promise<Backups.IViewOnceMessage> {
     const attachment = message.attachments?.at(0);
+    // Integration tests use the 'link-and-sync' version of export, which will include
+    // view-once attachments
+    const shouldIncludeAttachments = isTestOrMockEnvironment();
     return {
       attachment:
-        attachment == null
+        !shouldIncludeAttachments || attachment == null
           ? null
           : await this.#processMessageAttachment({
               attachment,

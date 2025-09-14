@@ -27,7 +27,6 @@ import {
   handleProfileKeyCredential,
 } from '../util/zkgroup';
 import { isMe } from '../util/whatTypeOfConversation';
-import { getUserLanguages } from '../util/userLanguages';
 import { parseBadgesFromServer } from '../badges/parseBadgesFromServer';
 import { strictAssert } from '../util/assert';
 import { drop } from '../util/drop';
@@ -44,6 +43,7 @@ import {
   maybeCreateGroupSendEndorsementState,
   onFailedToSendWithEndorsements,
 } from '../util/groupSendEndorsements';
+import { ProfileDecryptError } from '../types/errors';
 
 const log = createLogger('profiles');
 
@@ -135,17 +135,17 @@ export class ProfileService {
         await this.fetchProfile(conversation, groupId);
         resolve();
       } catch (error) {
-        log.error(
-          `ProfileServices.get: Error was thrown fetching ${conversation.idForLogging()}!`,
-          Errors.toLogFormat(error)
-        );
         resolve();
 
         if (this.#isPaused) {
           return;
         }
 
-        if (isRecord(error) && 'code' in error) {
+        if (error instanceof ProfileDecryptError) {
+          log.warn(
+            `ProfileServices.get: Failed to decrypt profile for ${conversation.idForLogging()}`
+          );
+        } else if (isRecord(error) && 'code' in error) {
           if (error.code === -1) {
             this.clearAll('Failed to connect to the server');
           } else if (error.code === 413 || error.code === 429) {
@@ -153,6 +153,11 @@ export class ProfileService {
             const time = findRetryAfterTimeFromError(error);
             void this.pause(time);
           }
+        } else {
+          log.error(
+            `ProfileServices.get: Error was thrown fetching ${conversation.idForLogging()}!`,
+            Errors.toLogFormat(error)
+          );
         }
       } finally {
         this.#jobsByConversationId.delete(conversationId);
@@ -195,9 +200,7 @@ export class ProfileService {
 
       this.#jobsByConversationId.forEach(job => {
         job.reject(
-          new Error(
-            `ProfileService.clearAll: job cancelled because '${reason}'`
-          )
+          new Error(`ProfileService.clearAll: job canceled because '${reason}'`)
         );
       });
 
@@ -236,11 +239,6 @@ export const profileService = new ProfileService();
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 namespace ProfileFetchOptions {
-  type Base = ReadonlyDeep<{
-    request: {
-      userLanguages: ReadonlyArray<string>;
-    };
-  }>;
   type WithVersioned = ReadonlyDeep<{
     profileKey: string;
     profileCredentialRequestContext: ProfileKeyCredentialRequestContext | null;
@@ -275,16 +273,16 @@ namespace ProfileFetchOptions {
 
   export type Unauth =
     // versioned (unauth)
-    | (Base & WithVersioned & WithUnauthAccessKey)
+    | (WithVersioned & WithUnauthAccessKey)
     // unversioned (unauth)
-    | (Base & WithUnversioned & WithUnauthAccessKey)
-    | (Base & WithUnversioned & WithUnauthGroupSendToken);
+    | (WithUnversioned & WithUnauthAccessKey)
+    | (WithUnversioned & WithUnauthGroupSendToken);
 
   export type Auth =
     // unversioned (auth) -- Using lastProfile
-    | (Base & WithVersioned & WithAuth)
+    | (WithVersioned & WithAuth)
     // unversioned (auth)
-    | (Base & WithUnversioned & WithAuth);
+    | (WithUnversioned & WithAuth);
 }
 
 export type ProfileFetchUnauthRequestOptions =
@@ -308,11 +306,6 @@ async function buildProfileFetchOptions({
 }): Promise<ProfileFetchOptions.Auth | ProfileFetchOptions.Unauth> {
   const logId = `buildGetProfileOptions(${conversation.idForLogging()})`;
 
-  const userLanguages = getUserLanguages(
-    window.SignalContext.getPreferredSystemLocales(),
-    window.SignalContext.getResolvedMessagesLocale()
-  );
-
   const profileKey = conversation.get('profileKey');
   const profileKeyVersion = conversation.deriveProfileKeyVersion();
   const accessKey = conversation.get('accessKey');
@@ -330,7 +323,6 @@ async function buildProfileFetchOptions({
         profileKey,
         profileCredentialRequestContext: null,
         request: {
-          userLanguages,
           accessKey,
           groupSendToken: null,
           profileKeyVersion,
@@ -350,7 +342,6 @@ async function buildProfileFetchOptions({
       profileKey,
       profileCredentialRequestContext: result.context,
       request: {
-        userLanguages,
         accessKey,
         groupSendToken: null,
         profileKeyVersion,
@@ -374,7 +365,6 @@ async function buildProfileFetchOptions({
       profileKey: lastProfile.profileKey,
       profileCredentialRequestContext: null,
       request: {
-        userLanguages,
         accessKey: null,
         groupSendToken: null,
         profileKeyVersion: lastProfile.profileKeyVersion,
@@ -403,7 +393,6 @@ async function buildProfileFetchOptions({
         profileKey: null,
         profileCredentialRequestContext: null,
         request: {
-          userLanguages,
           accessKey: null,
           groupSendToken,
           profileKeyVersion: null,
@@ -418,7 +407,6 @@ async function buildProfileFetchOptions({
     profileKey: null,
     profileCredentialRequestContext: null,
     request: {
-      userLanguages,
       accessKey: null,
       groupSendToken: null,
       profileKeyVersion: null,
@@ -562,6 +550,8 @@ async function doGetProfile(
             });
           }
         }
+
+        return;
       }
 
       // Not Found
@@ -574,9 +564,9 @@ async function doGetProfile(
           log.info(`${logId}: Marking conversation unregistered`);
           c.setUnregistered();
         }
-      }
 
-      return;
+        return;
+      }
     }
 
     // throw all unhandled errors

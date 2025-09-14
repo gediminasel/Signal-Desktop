@@ -19,7 +19,7 @@ import {
   AttachmentDownloadUrgency,
 } from '../../types/AttachmentDownload';
 import { DataReader, DataWriter } from '../../sql/Client';
-import { MINUTE } from '../../util/durations';
+import { DAY, MINUTE, MONTH } from '../../util/durations';
 import { type AttachmentType, AttachmentVariant } from '../../types/Attachment';
 import { strictAssert } from '../../util/assert';
 import type { downloadAttachment as downloadAttachmentUtil } from '../../util/downloadAttachment';
@@ -59,6 +59,7 @@ function composeJob({
     attempts: 0,
     retryAfter: null,
     lastAttemptTimestamp: null,
+    originalSource: jobOverrides?.source ?? AttachmentDownloadSource.STANDARD,
     source: AttachmentDownloadSource.STANDARD,
     attachment: {
       contentType,
@@ -77,6 +78,7 @@ describe('AttachmentDownloadManager/JobManager', () => {
   let runJob: sinon.SinonStub;
   let sandbox: sinon.SinonSandbox;
   let clock: sinon.SinonFakeTimers;
+  let hasMediaBackups: sinon.SinonStub;
   let isInCall: sinon.SinonStub;
   let onLowDiskSpaceBackupImport: sinon.SinonStub;
   let statfs: sinon.SinonStub;
@@ -88,6 +90,7 @@ describe('AttachmentDownloadManager/JobManager', () => {
     sandbox = sinon.createSandbox();
     clock = sandbox.useFakeTimers();
 
+    hasMediaBackups = sandbox.stub().returns(true);
     isInCall = sandbox.stub().returns(false);
     onLowDiskSpaceBackupImport = sandbox
       .stub()
@@ -122,6 +125,8 @@ describe('AttachmentDownloadManager/JobManager', () => {
         },
       }),
       onLowDiskSpaceBackupImport,
+      hasMediaBackups,
+      getMessageQueueTime: () => 45 * DAY,
       statfs,
     });
   });
@@ -161,7 +166,8 @@ describe('AttachmentDownloadManager/JobManager', () => {
     num: number,
     jobOverrides?:
       | Partial<AttachmentDownloadJobType>
-      | ((idx: number) => Partial<AttachmentDownloadJobType>)
+      | ((idx: number) => Partial<AttachmentDownloadJobType>),
+    attachmentOverrides?: Partial<AttachmentType>
   ): Promise<Array<AttachmentDownloadJobType>> {
     const jobs = new Array(num).fill(null).map((_, idx) =>
       composeJob({
@@ -169,6 +175,7 @@ describe('AttachmentDownloadManager/JobManager', () => {
         receivedAt: idx,
         jobOverrides:
           typeof jobOverrides === 'function' ? jobOverrides(idx) : jobOverrides,
+        attachmentOverrides,
       })
     );
     for (const job of jobs) {
@@ -495,6 +502,73 @@ describe('AttachmentDownloadManager/JobManager', () => {
       jobs[2],
     ]);
   });
+  describe('will drop jobs from non-media backup imports that are old', () => {
+    it('will not queue attachments older than 90 days (2 * message queue time)', async () => {
+      hasMediaBackups.returns(false);
+      await addJobs(
+        1,
+        {
+          source: AttachmentDownloadSource.BACKUP_IMPORT,
+        },
+        { uploadTimestamp: Date.now() - 4 * MONTH }
+      );
+
+      const savedJobs = await DataWriter.getNextAttachmentDownloadJobs({
+        limit: 100,
+      });
+      assert.strictEqual(savedJobs.length, 0);
+    });
+    it('will queue old attachments with media backups on', async () => {
+      hasMediaBackups.returns(true);
+      await addJobs(
+        1,
+        {
+          source: AttachmentDownloadSource.BACKUP_IMPORT,
+        },
+        { uploadTimestamp: Date.now() - 4 * MONTH }
+      );
+
+      const savedJobs = await DataWriter.getNextAttachmentDownloadJobs({
+        limit: 100,
+      });
+      assert.strictEqual(savedJobs.length, 1);
+    });
+    it('will queue old local backup attachments', async () => {
+      hasMediaBackups.returns(false);
+      await addJobs(
+        1,
+        {
+          source: AttachmentDownloadSource.BACKUP_IMPORT,
+        },
+        {
+          uploadTimestamp: Date.now() - 4 * MONTH,
+          localBackupPath: 'localBackupPath',
+          localKey: toBase64(generateAttachmentKeys()),
+        }
+      );
+
+      const savedJobs = await DataWriter.getNextAttachmentDownloadJobs({
+        limit: 100,
+      });
+      assert.strictEqual(savedJobs.length, 1);
+    });
+    it('will fallback to sentAt if uploadTimestamp is falsy', async () => {
+      hasMediaBackups.returns(false);
+      await addJobs(
+        1,
+        {
+          source: AttachmentDownloadSource.BACKUP_IMPORT,
+          sentAt: Date.now() - 4 * MONTH,
+        },
+        { uploadTimestamp: 0 }
+      );
+
+      const savedJobs = await DataWriter.getNextAttachmentDownloadJobs({
+        limit: 100,
+      });
+      assert.strictEqual(savedJobs.length, 0);
+    });
+  });
 });
 
 describe('AttachmentDownloadManager/runDownloadAttachmentJob', () => {
@@ -520,9 +594,6 @@ describe('AttachmentDownloadManager/runDownloadAttachmentJob', () => {
     downloadAttachment = sandbox
       .stub()
       .returns(Promise.resolve(downloadedAttachment));
-    sandbox
-      .stub(window.Signal.Services.backups, 'hasMediaBackups')
-      .returns(true);
 
     processNewAttachment = sandbox.stub().callsFake(attachment => attachment);
   });
@@ -543,6 +614,7 @@ describe('AttachmentDownloadManager/runDownloadAttachmentJob', () => {
       const result = await runDownloadAttachmentJobInner({
         job,
         isForCurrentlyVisibleMessage: true,
+        hasMediaBackups: true,
         abortSignal: abortController.signal,
         maxAttachmentSizeInKib: 100 * MEBIBYTE,
         maxTextAttachmentSizeInKib: 2 * MEBIBYTE,
@@ -572,6 +644,7 @@ describe('AttachmentDownloadManager/runDownloadAttachmentJob', () => {
       const result = await runDownloadAttachmentJobInner({
         job,
         isForCurrentlyVisibleMessage: true,
+        hasMediaBackups: true,
         abortSignal: abortController.signal,
         maxAttachmentSizeInKib: 100 * MEBIBYTE,
         maxTextAttachmentSizeInKib: 2 * MEBIBYTE,
@@ -619,6 +692,7 @@ describe('AttachmentDownloadManager/runDownloadAttachmentJob', () => {
       const result = await runDownloadAttachmentJobInner({
         job,
         isForCurrentlyVisibleMessage: true,
+        hasMediaBackups: true,
         abortSignal: abortController.signal,
         maxAttachmentSizeInKib: 100 * MEBIBYTE,
         maxTextAttachmentSizeInKib: 2 * MEBIBYTE,
@@ -653,6 +727,7 @@ describe('AttachmentDownloadManager/runDownloadAttachmentJob', () => {
         runDownloadAttachmentJobInner({
           job,
           isForCurrentlyVisibleMessage: true,
+          hasMediaBackups: true,
           abortSignal: abortController.signal,
           maxAttachmentSizeInKib: 100 * MEBIBYTE,
           maxTextAttachmentSizeInKib: 2 * MEBIBYTE,
@@ -691,6 +766,7 @@ describe('AttachmentDownloadManager/runDownloadAttachmentJob', () => {
       const result = await runDownloadAttachmentJobInner({
         job,
         isForCurrentlyVisibleMessage: false,
+        hasMediaBackups: true,
         abortSignal: abortController.signal,
         maxAttachmentSizeInKib: 100 * MEBIBYTE,
         maxTextAttachmentSizeInKib: 2 * MEBIBYTE,
@@ -726,6 +802,7 @@ describe('AttachmentDownloadManager/runDownloadAttachmentJob', () => {
       const result = await runDownloadAttachmentJobInner({
         job,
         isForCurrentlyVisibleMessage: false,
+        hasMediaBackups: true,
         abortSignal: abortController.signal,
         maxAttachmentSizeInKib: 100 * MEBIBYTE,
         maxTextAttachmentSizeInKib: 2 * MEBIBYTE,
@@ -780,6 +857,7 @@ describe('AttachmentDownloadManager/runDownloadAttachmentJob', () => {
         runDownloadAttachmentJobInner({
           job,
           isForCurrentlyVisibleMessage: false,
+          hasMediaBackups: true,
           abortSignal: abortController.signal,
           maxAttachmentSizeInKib: 100 * MEBIBYTE,
           maxTextAttachmentSizeInKib: 2 * MEBIBYTE,

@@ -305,9 +305,6 @@
   "icu:NavTabs__ItemLabel--Settings": {
     "messageformat": "Inställningar"
   },
-  "icu:NavTabs__ItemLabel--Update": {
-    "messageformat": "Uppdatera Signal"
-  },
   "icu:NavTabs__ItemLabel--Profile": {
     "messageformat": "Profil"
   },
@@ -605,6 +602,12 @@
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
+  "icu:Toast--ReceiptSaved": {
+    "messageformat": "Kvittot sparat"
+  },
+  "icu:Toast--ReceiptSaveFailed": {
+    "messageformat": "Fel vid sparande av kvitto. Försök igen."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Du kan inte välja foton och videor tillsammans med filer."
   },
@@ -664,9 +667,6 @@
   },
   "icu:joinTheBeta": {
     "messageformat": "Gå med i Beta"
-  },
-  "icu:signalDesktopPreferences": {
-    "messageformat": "Inställningar för Signal Desktop"
   },
   "icu:signalDesktopStickerCreator": {
     "messageformat": "Skapare av klistermärkepaket"
@@ -1285,6 +1285,168 @@
   },
   "icu:Preferences__EmojiSkinToneDefaultSetting__Label": {
     "messageformat": "Emoji-hudton"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__Title": {
+    "messageformat": "Chattmappar"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Title": {
+    "messageformat": "Lägg till en chattmapp"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Description": {
+    "messageformat": "Organisera dina chattar i mappar och växla snabbt mellan dem i din chattlista."
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__EditFolder": {
+    "messageformat": "Redigera mapp"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__DeleteFolder": {
+    "messageformat": "Ta bort"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__Title": {
+    "messageformat": "Ta bort mapp?"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__Description": {
+    "messageformat": "Vill du ta bort mappen {chatFolderTitle}?"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__DeleteButton": {
+    "messageformat": "Ta bort"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__CancelButton": {
+    "messageformat": "Avbryt"
+  },
+  "icu:Preferences__ChatFoldersPage__Title": {
+    "messageformat": "Chattmappar"
+  },
+  "icu:Preferences__ChatFoldersPage__Description": {
+    "messageformat": "Organisera dina chattar i mappar och växla snabbt mellan dem i din chattlista"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__Title": {
+    "messageformat": "Mappar"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__AllChatsFolder__Title": {
+    "messageformat": "Alla chattar"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__CreateAFolderButton": {
+    "messageformat": "Skapa en mapp"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__Title": {
+    "messageformat": "Föreslagna mappar"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton": {
+    "messageformat": "Lägg till"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton__Toast": {
+    "messageformat": "Mappen {chatFolderTitle} har lagts till"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Title": {
+    "messageformat": "Oläst"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Description": {
+    "messageformat": "Olästa meddelanden från alla chattar"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__DirectChatsFolder__Title": {
+    "messageformat": "1:1-chattar"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__DirectChatsFolder__Description": {
+    "messageformat": "Endast meddelanden från direktchattar"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__GroupChatsFolder__Title": {
+    "messageformat": "Grupper"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__GroupChatsFolder__Description": {
+    "messageformat": "Endast meddelanden från gruppchattar"
+  },
+  "icu:Preferences__EditChatFolderPage__Title": {
+    "messageformat": "Skapa en mapp"
+  },
+  "icu:Preferences__EditChatFolderPage__FolderNameField__Label": {
+    "messageformat": "Mappnamn"
+  },
+  "icu:Preferences__EditChatFolderPage__FolderNameField__Placeholder": {
+    "messageformat": "Mappnamn (krävs)"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__Title": {
+    "messageformat": "Inkluderade chattar"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__Help": {
+    "messageformat": "Välj chattar som du vill ska visas i den här mappen"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__AddChatsButton": {
+    "messageformat": "Lägg till chattar"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog--IncludedChats__Title": {
+    "messageformat": "Inkluderade chattar"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog--ExcludedChats__Title": {
+    "messageformat": "Exkluderade chattar"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__Search__Placeholder": {
+    "messageformat": "Sök"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__Title": {
+    "messageformat": "Chattyper"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__DirectChats": {
+    "messageformat": "1:1-chattar"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__GroupChats": {
+    "messageformat": "Grupper"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__RecentChats__Title": {
+    "messageformat": "Senaste chattar"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__DoneButton": {
+    "messageformat": "Klar"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__Title": {
+    "messageformat": "Undantag"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__Help": {
+    "messageformat": "Välj chattar som du inte vill ska visas i den här mappen"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__ExcludeChatsButton": {
+    "messageformat": "Exkludera chattar"
+  },
+  "icu:Preferences__EditChatFolderPage__OnlyShowUnreadChatsCheckbox__Label": {
+    "messageformat": "Visa bara olästa chattar"
+  },
+  "icu:Preferences__EditChatFolderPage__OnlyShowUnreadChatsCheckbox__Description": {
+    "messageformat": "Endast chattar med olästa meddelanden visas i den här mappen."
+  },
+  "icu:Preferences__EditChatFolderPage__IncludeMutedChatsCheckbox__Label": {
+    "messageformat": "Inkludera tystade chattar"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteFolderButton": {
+    "messageformat": "Ta bort mapp"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__Title": {
+    "messageformat": "Ta bort den här chattmappen?"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__Description": {
+    "messageformat": "Den här mappen kommer att tas bort från din chattlista."
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__DeleteButton": {
+    "messageformat": "Ta bort"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__CancelButton": {
+    "messageformat": "Avbryt"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__Title": {
+    "messageformat": "Spara ändringar?"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__Description": {
+    "messageformat": "Vill du spara ändringarna som du har gjort till denna chattmapp?"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__SaveButton": {
+    "messageformat": "Spara"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__DiscardButton": {
+    "messageformat": "Kassera"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveButton": {
+    "messageformat": "Spara"
+  },
+  "icu:Preferences__EditChatFolderPage__CancelButton": {
+    "messageformat": "Avbryt"
   },
   "icu:initialSync": {
     "messageformat": "Synkroniserar kontakter och grupper"
@@ -3792,7 +3954,7 @@
     "messageformat": "En förfrågan om att gå med i gruppen från {joinerName} avvisades."
   },
   "icu:GroupV2--admin-approval-bounce--pluralized": {
-    "messageformat": "{numberOfRequests, plural, one {{joinerName} begärde och avbröt sin begäran att gå med via grupplänken} other {{joinerName} begärde och avbröt {numberOfRequests,number} begäran att gå med via grupplänken}}"
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} requested and canceled their request to join via the group link} other {{joinerName} requested and canceled {numberOfRequests,number} requests to join via the group link}}"
   },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Du aktiverade grupplänken med administratörsgodkännande inaktiverat."
@@ -4026,10 +4188,10 @@
     "messageformat": "Försök igen"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
-    "messageformat": "Återställer media"
+    "messageformat": "Synkroniserar media"
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
-    "messageformat": "Återställning pausad"
+    "messageformat": "Synkronisering pausad"
   },
   "icu:BackupMediaDownloadProgress__title-idle": {
     "messageformat": "{currentSize} av {totalSize} har återställts"
@@ -4044,13 +4206,13 @@
     "messageformat": "Väntar på internetuppkoppling …"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
-    "messageformat": "Pausa överföringen"
+    "messageformat": "Pausa"
   },
   "icu:BackupMediaDownloadProgress__button-resume": {
-    "messageformat": "Återuppta överföringen"
+    "messageformat": "Återuppta"
   },
   "icu:BackupMediaDownloadProgress__button-cancel": {
-    "messageformat": "Avbryt överföringen"
+    "messageformat": "Avbryt synkronisering"
   },
   "icu:BackupMediaDownloadProgress__button-more": {
     "messageformat": "Fler alternativ"
@@ -4062,16 +4224,34 @@
     "messageformat": "{currentSize} av {totalSize}"
   },
   "icu:BackupMediaDownloadCancelConfirmation__title": {
-    "messageformat": "Vill du avbryta mediaöverföringen?"
+    "messageformat": "Vill du avbryta mediesynkronisering?"
   },
   "icu:BackupMediaDownloadCancelConfirmation__description": {
-    "messageformat": "Återställningen av dina meddelanden och media har inte slutförts. Om du väljer att avbryta kan du överföra igen från Inställningar."
+    "messageformat": "Synkroniseringen av dina medier har inte slutförts. Om du väljer att avbryta kan du synkronisera igen genom att länka enheten på nytt. <learnMoreLink>Läs mer</learnMoreLink>."
   },
   "icu:BackupMediaDownloadCancelConfirmation__button-continue": {
-    "messageformat": "Fortsätt överföringen"
+    "messageformat": "Fortsätt synkronisera"
   },
   "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
-    "messageformat": "Avbryt överföringen"
+    "messageformat": "Avbryt synkronisering"
+  },
+  "icu:BackupMediaDownloadProgressSettings__paused--title": {
+    "messageformat": "Synkronisering pausad"
+  },
+  "icu:BackupMediaDownloadProgressSettings__paused--description": {
+    "messageformat": "Klicka på {resumeButtonText} för att fortsätta synkronisera"
+  },
+  "icu:BackupMediaDownloadProgressSettings__button-resume": {
+    "messageformat": "Återuppta"
+  },
+  "icu:BackupMediaDownloadProgressSettings__button-pause": {
+    "messageformat": "Pausa"
+  },
+  "icu:BackupMediaDownloadProgressSettings__title-in-progress": {
+    "messageformat": "Synkroniserar media"
+  },
+  "icu:BackupMediaDownloadProgressSettings__progressbar-hint": {
+    "messageformat": "{currentSize} av {totalSize} ({fractionComplete,number,percent}) …"
   },
   "icu:CriticalIdlePrimaryDeviceModal__title": {
     "messageformat": "Kontoåtgärd krävs"
@@ -4811,6 +4991,12 @@
   "icu:ProfileEditor__username-link__error-icon": {
     "messageformat": "Användarnamnslänken behöver återställas"
   },
+  "icu:ProfileEditor__open": {
+    "messageformat": "Open username link screen"
+  },
+  "icu:ProfileEditor__username-link__open": {
+    "messageformat": "Open username link screen"
+  },
   "icu:ProfileEditor__username-link__tooltip__title": {
     "messageformat": "Dela ditt användarnamn"
   },
@@ -5082,7 +5268,7 @@
     "messageformat": "Säkerhetskopiering av Signal"
   },
   "icu:Preferences--signal-backups-off-description": {
-    "messageformat": "Automatic backups with Signal’s secure, end-to-end encrypted storage service. Get started on your phone. <learnMoreLink>Learn more</learnMoreLink>."
+    "messageformat": "Automatiska säkerhetskopieringar med Signals säkra totalsträckskrypterade lagringstjänst. Kom igång på din telefon. <learnMoreLink>Läs mer</learnMoreLink>."
   },
   "icu:Preferences--backup-section-description": {
     "messageformat": "Säkerhetskopiera din meddelandehistorik så att du aldrig förlorar data när du skaffar en ny telefon eller installerar om Signal."
@@ -5125,9 +5311,6 @@
   },
   "icu:Preferences--backup-created-by-phone": {
     "messageformat": "Din telefon"
-  },
-  "icu:Preferences--backup-size__label": {
-    "messageformat": "Storlek på säkerhetskopia"
   },
   "icu:Preferences__local-backups": {
     "messageformat": "Säkerhetskopiering av skrivbordet"
@@ -6114,9 +6297,6 @@
   "icu:UsernameLinkModalBody__reset": {
     "messageformat": "Återställ"
   },
-  "icu:UsernameLinkModalBody__done": {
-    "messageformat": "Klar"
-  },
   "icu:UsernameLinkModalBody__color__radio": {
     "messageformat": "Länkfärg för användarnamn, {index,number} av {total,number}"
   },
@@ -6444,6 +6624,198 @@
   "icu:WhatsNew__modal-title": {
     "messageformat": "Vad är nytt"
   },
+  "icu:PreferencesDonations__title": {
+    "messageformat": "Integritet före profit"
+  },
+  "icu:PreferencesDonations__description": {
+    "messageformat": "Privata meddelanden, finansierade av dig. Inga annonser, ingen spårning, ingen kompromiss. Donera nu för att stödja Signal. <readMoreLink>Läs mer</readMoreLink>"
+  },
+  "icu:PreferencesDonations__donate-button": {
+    "messageformat": "Donera"
+  },
+  "icu:PreferencesDonations__my-support": {
+    "messageformat": "Mitt stöd"
+  },
+  "icu:PreferencesDonations__donate-button-with-amount": {
+    "messageformat": "Donera {formattedCurrencyAmount}"
+  },
+  "icu:PreferencesDonations__mobile-info": {
+    "messageformat": "Märken och månatliga donationer kan hanteras på din mobila enhet."
+  },
+  "icu:PreferencesDonations__privacy-modal-title": {
+    "messageformat": "Dina uppgifter är privata"
+  },
+  "icu:PreferencesDonations__privacy-modal-content": {
+    "messageformat": "<paragraph>Signal samlar inte in eller lagrar någon av dina personuppgifter när du gör en donation.</paragraph><paragraph>Vi använder Stripe som vår betalningstjänst för att ta emot dina donationer. Vi kommer varken åt, lagrar eller sparar någon av de uppgifter du lämnar till dem.</paragraph><paragraph>Signal kopplar inte och kan inte koppla din donation till ditt Signal-konto.</paragraph><paragraph>Tack för ditt stöd!</paragraph>"
+  },
+  "icu:PreferencesDonations__receipts": {
+    "messageformat": "Kvitton"
+  },
+  "icu:PreferencesDonations__faqs": {
+    "messageformat": "Vanliga frågor om donationer"
+  },
+  "icu:PreferencesDonations--receiptList__info": {
+    "messageformat": "Kvitton synkroniseras inte mellan enheter. Om du har installerat om Signal kommer kvitton från tidigare donationer inte vara tillgängliga."
+  },
+  "icu:PreferencesDonations--receiptList__empty-title": {
+    "messageformat": "Inga kvitton"
+  },
+  "icu:PreferencesDonations__ReceiptModal--title": {
+    "messageformat": "Detaljer"
+  },
+  "icu:PreferencesDonations__ReceiptModal--download": {
+    "messageformat": "Ladda ner kvitto"
+  },
+  "icu:PreferencesDonations__ReceiptModal--type-label": {
+    "messageformat": "Typ"
+  },
+  "icu:PreferencesDonations__ReceiptModal--date-paid-label": {
+    "messageformat": "Betalningsdatum"
+  },
+  "icu:DonateFlow__make-a-one-time-donation": {
+    "messageformat": "Gör en engångsdonation"
+  },
+  "icu:DonateFlow__desktop-one-time-only-notice": {
+    "messageformat": "Endast engångsdonationer är tillgängliga på datorn. Månatliga donationer kan göras via din mobila enhet."
+  },
+  "icu:DonateFlow__having-issues-contact-support": {
+    "messageformat": "Har det uppstått problem? <contactSupportLink>Kontakta supporten</contactSupportLink>"
+  },
+  "icu:DonateFlow__amount-picker-custom-amount-placeholder": {
+    "messageformat": "Enter Custom Amount"
+  },
+  "icu:DonateFlow__credit-or-debit-card": {
+    "messageformat": "Credit or Debit Card"
+  },
+  "icu:DonateFlow__card-form-instructions": {
+    "messageformat": "Enter your credit or debit card details. Signal does not collect or store your personal information. <learnMoreLink>Learn more</learnMoreLink>"
+  },
+  "icu:DonateFlow__card-form-card-number": {
+    "messageformat": "Card Number"
+  },
+  "icu:DonateFlow__card-form-expiration-date": {
+    "messageformat": "Expiration Date"
+  },
+  "icu:DonateFlow__card-form-title-donate-with-amount": {
+    "messageformat": "Donate {formattedCurrencyAmount} to Signal"
+  },
+  "icu:DonateFlow__card-form-error-invalid-card-number": {
+    "messageformat": "Invalid card number"
+  },
+  "icu:DonateFlow__card-form-error-expiration-expired": {
+    "messageformat": "Card has expired"
+  },
+  "icu:DonateFlow__card-form-error-year-missing": {
+    "messageformat": "Year required"
+  },
+  "icu:DonateFlow__card-form-error-invalid": {
+    "messageformat": "Invalid"
+  },
+  "icu:DonateFlow__card-form-error-cvc-too-short": {
+    "messageformat": "Code too short"
+  },
+  "icu:DonateFlow__one-time-donation-boost-badge-info": {
+    "messageformat": "Get the Signal Boost badge for 30 days"
+  },
+  "icu:DonationReceipt__title": {
+    "messageformat": "Donationskvitto"
+  },
+  "icu:DonationReceipt__amount-label": {
+    "messageformat": "Belopp"
+  },
+  "icu:DonationReceipt__type-label": {
+    "messageformat": "Typ"
+  },
+  "icu:DonationReceipt__date-paid-label": {
+    "messageformat": "Betalningsdatum"
+  },
+  "icu:DonationReceipt__type-value--one-time": {
+    "messageformat": "En gång"
+  },
+  "icu:DonationReceipt__footer-text": {
+    "messageformat": "Tack för att du stöder Signal. Ditt bidrag hjälper till att främja uppdraget att skydda yttrandefriheten och möjliggöra säker global kommunikation för miljontals människor runt om i världen, genom öppen källkod för integritetsskydd. Spara detta kvitto för dina skatteuppgifter om du är bosatt i USA. Signal Technology Foundation är en skattebefriad ideell organisation i USA enligt avsnitt 501c3 i Internal Revenue Code. Vårt federala skatte-ID är 82-4506840."
+  },
+  "icu:Donations__Toast__Canceled": {
+    "messageformat": "Donation canceled"
+  },
+  "icu:Donations__Toast__Completed": {
+    "messageformat": "Donationen är slutförd"
+  },
+  "icu:Donations__Toast__Error": {
+    "messageformat": "Fel vid bearbetning av donation"
+  },
+  "icu:Donations__Toast__Processing": {
+    "messageformat": "Bearbetar donation"
+  },
+  "icu:Donations__Toast__VerificationFailed": {
+    "messageformat": "Verifiering misslyckades"
+  },
+  "icu:Donations__Toast__VerificationNeeded": {
+    "messageformat": "Du har en pågående donation som behöver ytterligare verifiering."
+  },
+  "icu:Donations__Toast__ConfirmationNeeded": {
+    "messageformat": "You have a donation in progress that requires confirmation."
+  },
+  "icu:Donations__DonationInterrupted": {
+    "messageformat": "Donation interrupted"
+  },
+  "icu:Donations__DonationInterrupted__Description": {
+    "messageformat": "Your card was not charged. Do you want to retry the donation?"
+  },
+  "icu:Donations__DonationInterrupted__RetryButton": {
+    "messageformat": "Try again"
+  },
+  "icu:Donations__PaymentMethodDeclined": {
+    "messageformat": "Betalningsmetod avvisad"
+  },
+  "icu:Donations__PaymentMethodDeclined__Description": {
+    "messageformat": "Försök med en annan betalningsmetod eller kontakta din bank för mer information."
+  },
+  "icu:Donations__Failed3dsValidation": {
+    "messageformat": "Verifiering misslyckades"
+  },
+  "icu:Donations__Failed3dsValidation__Description": {
+    "messageformat": "Ytterligare verifieringssteg misslyckades. Försök igen."
+  },
+  "icu:Donations__GenericError": {
+    "messageformat": "Ett fel uppstod med din donation"
+  },
+  "icu:Donations__GenericError__Description": {
+    "messageformat": "Din donation kanske inte har behandlats. Klicka på Donera till Signal och sedan på Donationskvitton för att kontrollera dina kvitton och bekräfta."
+  },
+  "icu:Donations__Processing": {
+    "messageformat": "Bearbetar donation …"
+  },
+  "icu:Donations__StillProcessing": {
+    "messageformat": "Bearbetar fortfarande"
+  },
+  "icu:Donations__StillProcessing__Description": {
+    "messageformat": "Din donation bearbetas fortfarande. Detta kan ta några minuter."
+  },
+  "icu:Donations__TimedOut": {
+    "messageformat": "Donation canceled"
+  },
+  "icu:Donations__TimedOut__Description": {
+    "messageformat": "It has been too long since you started your donation. Please start over."
+  },
+  "icu:Donations__3dsValidationNeeded": {
+    "messageformat": "Ytterligare verifiering krävs"
+  },
+  "icu:Donations__3dsValidationNeeded--waiting": {
+    "messageformat": "Väntar på verifiering"
+  },
+  "icu:Donations__3dsValidationNeeded__Description": {
+    "messageformat": "Din kreditkortsutgivare kräver ett ytterligare verifieringssteg i en webbläsare."
+  },
+  "icu:Donations__3dsValidationNeeded__OpenBrowser": {
+    "messageformat": "Öppna webbläsare"
+  },
+  "icu:Donations__3dsValidationNeeded__OpenBrowser--opened": {
+    "messageformat": "Öppna webbläsaren igen"
+  },
+  "icu:Donations__3dsValidationNeeded__CancelDonation": {
+    "messageformat": "Avbryt donation"
+  },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "Den här versionen innehåller ett antal små justeringar och felrättningar för att Signal ska fungera smidigt.",
     "ignoreUnused": true
@@ -6472,10 +6844,13 @@
     "messageformat": "Små justeringer, buggfixar och prestandaförbättringar. Tack för att du använder Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.58--0": {
-    "messageformat": "En ny sektion i väljaren för meddelande-reaktioner visar automatiskt alla emoji-reaktioner som ett meddelande har fått."
+  "icu:WhatsNew__v7.64--0": {
+    "messageformat": "Vi har förbättrat upplevelsen av lästa/olästa meddelanden vid multitasking."
   },
-  "icu:WhatsNew__v7.59--0": {
-    "messageformat": "Prestandaförbättringar för Linux."
+  "icu:WhatsNew__v7.65--0": {
+    "messageformat": "Vi har åtgärdat ett fel i emoji-sökrutan."
+  },
+  "icu:WhatsNew__v7.66--0": {
+    "messageformat": "This update fixes a few small bugs, including one where emoji reactions weren't being grouped together correctly in some cases."
   }
 }

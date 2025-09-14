@@ -305,9 +305,6 @@
   "icu:NavTabs__ItemLabel--Settings": {
     "messageformat": "Налаштування"
   },
-  "icu:NavTabs__ItemLabel--Update": {
-    "messageformat": "Оновити Signal"
-  },
   "icu:NavTabs__ItemLabel--Profile": {
     "messageformat": "Профіль"
   },
@@ -605,6 +602,12 @@
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
+  "icu:Toast--ReceiptSaved": {
+    "messageformat": "Підтвердження збережено"
+  },
+  "icu:Toast--ReceiptSaveFailed": {
+    "messageformat": "Під час збереження підтвердження сталася помилка. Будь ласка, спробуйте знову."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Неможливо вибрати фото і відео разом з файлами."
   },
@@ -664,9 +667,6 @@
   },
   "icu:joinTheBeta": {
     "messageformat": "Приєднатися до бета-тестування"
-  },
-  "icu:signalDesktopPreferences": {
-    "messageformat": "Налаштування Signal Desktop"
   },
   "icu:signalDesktopStickerCreator": {
     "messageformat": "Конструктор наборів стікерів"
@@ -1285,6 +1285,168 @@
   },
   "icu:Preferences__EmojiSkinToneDefaultSetting__Label": {
     "messageformat": "Колір шкіри для емоджі"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__Title": {
+    "messageformat": "Папки для чатів"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Title": {
+    "messageformat": "Додати папку для чатів"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Description": {
+    "messageformat": "Упорядкуйте чати в папки, щоб швидко перемикатися між потрібними розмовами."
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__EditFolder": {
+    "messageformat": "Змінити вміст папки"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__DeleteFolder": {
+    "messageformat": "Видалити"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__Title": {
+    "messageformat": "Видалити папку?"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__Description": {
+    "messageformat": "Видалити папку «{chatFolderTitle}»?"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__DeleteButton": {
+    "messageformat": "Видалити"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__CancelButton": {
+    "messageformat": "Закрити"
+  },
+  "icu:Preferences__ChatFoldersPage__Title": {
+    "messageformat": "Папки для чатів"
+  },
+  "icu:Preferences__ChatFoldersPage__Description": {
+    "messageformat": "Упорядкуйте чати в папки, щоб швидко перемикатися між потрібними розмовами"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__Title": {
+    "messageformat": "Папки"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__AllChatsFolder__Title": {
+    "messageformat": "Усі чати"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__CreateAFolderButton": {
+    "messageformat": "Створити папку"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__Title": {
+    "messageformat": "Зразки папок"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton": {
+    "messageformat": "Додати"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton__Toast": {
+    "messageformat": "Додано папку «{chatFolderTitle}»"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Title": {
+    "messageformat": "Непрочитані"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Description": {
+    "messageformat": "Непрочитані повідомлення з усіх чатів"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__DirectChatsFolder__Title": {
+    "messageformat": "Особисті чати"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__DirectChatsFolder__Description": {
+    "messageformat": "Тільки повідомлення з особистих чатів"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__GroupChatsFolder__Title": {
+    "messageformat": "Групи"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__GroupChatsFolder__Description": {
+    "messageformat": "Тільки повідомлення з групових чатів"
+  },
+  "icu:Preferences__EditChatFolderPage__Title": {
+    "messageformat": "Створити папку"
+  },
+  "icu:Preferences__EditChatFolderPage__FolderNameField__Label": {
+    "messageformat": "Назва папки"
+  },
+  "icu:Preferences__EditChatFolderPage__FolderNameField__Placeholder": {
+    "messageformat": "Назва папки (обов'язково)"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__Title": {
+    "messageformat": "Чати в цій папці"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__Help": {
+    "messageformat": "Виберіть чати, які ви хочете бачити в цій папці"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__AddChatsButton": {
+    "messageformat": "Додати чати"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog--IncludedChats__Title": {
+    "messageformat": "Чати в цій папці"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog--ExcludedChats__Title": {
+    "messageformat": "Не включені чати"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__Search__Placeholder": {
+    "messageformat": "Пошук"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__Title": {
+    "messageformat": "Типи чатів"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__DirectChats": {
+    "messageformat": "Особисті чати"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__GroupChats": {
+    "messageformat": "Групи"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__RecentChats__Title": {
+    "messageformat": "Недавні чати"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__DoneButton": {
+    "messageformat": "Закрити"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__Title": {
+    "messageformat": "Винятки"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__Help": {
+    "messageformat": "Виберіть чати, яких ви не хочете бачити в цій папці"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__ExcludeChatsButton": {
+    "messageformat": "Не включати чати"
+  },
+  "icu:Preferences__EditChatFolderPage__OnlyShowUnreadChatsCheckbox__Label": {
+    "messageformat": "Показувати лише непрочитані чати"
+  },
+  "icu:Preferences__EditChatFolderPage__OnlyShowUnreadChatsCheckbox__Description": {
+    "messageformat": "У цій папці будуть лише чати з непрочитаними повідомленнями."
+  },
+  "icu:Preferences__EditChatFolderPage__IncludeMutedChatsCheckbox__Label": {
+    "messageformat": "Включати чати з вимкненими сповіщеннями"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteFolderButton": {
+    "messageformat": "Видалити папку"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__Title": {
+    "messageformat": "Видалити цю папку для чатів?"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__Description": {
+    "messageformat": "Цю папку буде видалено зі списку чатів."
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__DeleteButton": {
+    "messageformat": "Видалити"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__CancelButton": {
+    "messageformat": "Закрити"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__Title": {
+    "messageformat": "Зберегти зміни?"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__Description": {
+    "messageformat": "Бажаєте зберегти свої зміни в цій папці для чатів?"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__SaveButton": {
+    "messageformat": "Зберегти"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__DiscardButton": {
+    "messageformat": "Відхилити"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveButton": {
+    "messageformat": "Зберегти"
+  },
+  "icu:Preferences__EditChatFolderPage__CancelButton": {
+    "messageformat": "Закрити"
   },
   "icu:initialSync": {
     "messageformat": "Синхронізація контактів і груп"
@@ -3792,7 +3954,7 @@
     "messageformat": "Користувачеві {joinerName} не дозволено приєднатися до групи."
   },
   "icu:GroupV2--admin-approval-bounce--pluralized": {
-    "messageformat": "{numberOfRequests, plural, one {Користувач {joinerName} надіслав і скасував запит на приєднання до групи за посиланням} few {Користувач {joinerName} надіслав і скасував {numberOfRequests,number} запити на приєднання до групи за посиланням} many {Користувач {joinerName} надіслав і скасував {numberOfRequests,number} запитів на приєднання до групи за посиланням} other {Користувач {joinerName} надіслав і скасував {numberOfRequests,number} запиту на приєднання до групи за посиланням}}"
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} requested and canceled their request to join via the group link} other {{joinerName} requested and canceled {numberOfRequests,number} requests to join via the group link}}"
   },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Ви активували посилання на групу без адміністраторського затвердження."
@@ -4026,10 +4188,10 @@
     "messageformat": "Перенести ще раз"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
-    "messageformat": "Відновлення медіафайлів"
+    "messageformat": "Синхронізація медіафайлів"
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
-    "messageformat": "Відновлення припинено"
+    "messageformat": "Синхронізацію зупинено"
   },
   "icu:BackupMediaDownloadProgress__title-idle": {
     "messageformat": "Відновлено {currentSize} з {totalSize}"
@@ -4044,13 +4206,13 @@
     "messageformat": "Очікування з'єднання з інтернетом…"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
-    "messageformat": "Припинити передачу даних"
+    "messageformat": "Пауза"
   },
   "icu:BackupMediaDownloadProgress__button-resume": {
-    "messageformat": "Продовжити передачу даних"
+    "messageformat": "Відновити"
   },
   "icu:BackupMediaDownloadProgress__button-cancel": {
-    "messageformat": "Скасувати передачу"
+    "messageformat": "Скасувати синхронізацію"
   },
   "icu:BackupMediaDownloadProgress__button-more": {
     "messageformat": "Доступні дії"
@@ -4062,16 +4224,34 @@
     "messageformat": "{currentSize} з {totalSize}"
   },
   "icu:BackupMediaDownloadCancelConfirmation__title": {
-    "messageformat": "Скасувати передачу медіафайлів?"
+    "messageformat": "Скасувати синхронізацію медіафайлів?"
   },
   "icu:BackupMediaDownloadCancelConfirmation__description": {
-    "messageformat": "Відновлення повідомлень і медіафайлів не завершено. У разі скасування ви зможете перенести дані пізніше, зайшовши в налаштування."
+    "messageformat": "Синхронізацію медіафайлів не завершено. Якщо зараз ви скасуєте синхронізацію даних, то зможете здійснити її пізніше, повторно зв'язавши цей пристрій. <learnMoreLink>Докладніше</learnMoreLink>."
   },
   "icu:BackupMediaDownloadCancelConfirmation__button-continue": {
-    "messageformat": "Продовжити передачу"
+    "messageformat": "Продовжити синхронізацію"
   },
   "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
-    "messageformat": "Скасувати передачу"
+    "messageformat": "Скасувати синхронізацію"
+  },
+  "icu:BackupMediaDownloadProgressSettings__paused--title": {
+    "messageformat": "Синхронізацію зупинено"
+  },
+  "icu:BackupMediaDownloadProgressSettings__paused--description": {
+    "messageformat": "Натисніть «{resumeButtonText}», щоб продовжити синхронізацію"
+  },
+  "icu:BackupMediaDownloadProgressSettings__button-resume": {
+    "messageformat": "Відновити"
+  },
+  "icu:BackupMediaDownloadProgressSettings__button-pause": {
+    "messageformat": "Пауза"
+  },
+  "icu:BackupMediaDownloadProgressSettings__title-in-progress": {
+    "messageformat": "Синхронізація медіафайлів"
+  },
+  "icu:BackupMediaDownloadProgressSettings__progressbar-hint": {
+    "messageformat": "{currentSize} з {totalSize} ({fractionComplete,number,percent})…"
   },
   "icu:CriticalIdlePrimaryDeviceModal__title": {
     "messageformat": "Необхідно ввійти в акаунт"
@@ -4811,6 +4991,12 @@
   "icu:ProfileEditor__username-link__error-icon": {
     "messageformat": "Посилання на ім'я користувача потрібно скинути"
   },
+  "icu:ProfileEditor__open": {
+    "messageformat": "Open username link screen"
+  },
+  "icu:ProfileEditor__username-link__open": {
+    "messageformat": "Open username link screen"
+  },
   "icu:ProfileEditor__username-link__tooltip__title": {
     "messageformat": "Повідомте своє ім'я користувача"
   },
@@ -5082,7 +5268,7 @@
     "messageformat": "Резервне копіювання від Signal"
   },
   "icu:Preferences--signal-backups-off-description": {
-    "messageformat": "Automatic backups with Signal’s secure, end-to-end encrypted storage service. Get started on your phone. <learnMoreLink>Learn more</learnMoreLink>."
+    "messageformat": "Автоматичне створення резервних копій у надійному сховищі даних Signal, захищеному наскрізним шифруванням. Налаштуйте з телефона. <learnMoreLink>Докладніше</learnMoreLink>."
   },
   "icu:Preferences--backup-section-description": {
     "messageformat": "Зберігайте історію повідомлень і не втрачайте дані в разі зміни телефона або перевстановлення Signal."
@@ -5125,9 +5311,6 @@
   },
   "icu:Preferences--backup-created-by-phone": {
     "messageformat": "Ваш телефон"
-  },
-  "icu:Preferences--backup-size__label": {
-    "messageformat": "Розмір резервної копії"
   },
   "icu:Preferences__local-backups": {
     "messageformat": "Резервна копія на комп'ютері"
@@ -6114,9 +6297,6 @@
   "icu:UsernameLinkModalBody__reset": {
     "messageformat": "Скинути"
   },
-  "icu:UsernameLinkModalBody__done": {
-    "messageformat": "Готово"
-  },
   "icu:UsernameLinkModalBody__color__radio": {
     "messageformat": "Колір посилання на ім'я користувача, {index,number} з {total,number}"
   },
@@ -6444,6 +6624,198 @@
   "icu:WhatsNew__modal-title": {
     "messageformat": "Що нового"
   },
+  "icu:PreferencesDonations__title": {
+    "messageformat": "Конфіденційність важливіша за прибуток"
+  },
+  "icu:PreferencesDonations__description": {
+    "messageformat": "Конфіденційний обмін повідомленнями можливий — завдяки вашим коштам. Без реклами, відстежування й поступок. Підтримайте Signal донатом. <readMoreLink>Докладніше</readMoreLink>"
+  },
+  "icu:PreferencesDonations__donate-button": {
+    "messageformat": "Задонатити"
+  },
+  "icu:PreferencesDonations__my-support": {
+    "messageformat": "Моя підтримка"
+  },
+  "icu:PreferencesDonations__donate-button-with-amount": {
+    "messageformat": "Задонатити {formattedCurrencyAmount}"
+  },
+  "icu:PreferencesDonations__mobile-info": {
+    "messageformat": "Змінити налаштування значків і щомісячних донатів можна з мобільного пристрою."
+  },
+  "icu:PreferencesDonations__privacy-modal-title": {
+    "messageformat": "Ваша інформація конфіденційна"
+  },
+  "icu:PreferencesDonations__privacy-modal-content": {
+    "messageformat": "<paragraph>Signal не збирає і не зберігає вашу особисту інформацію, коли ви робите донати.</paragraph><paragraph>Ми користуємося послугами компанії Stripe для опрацювання ваших донатів. Ми не зберігаємо інформацію, яку ви надаєте Stripe, і не маємо до неї доступу.</paragraph><paragraph>Signal не знає і не може дізнатися, що донат надійшов саме з вашого акаунту.</paragraph><paragraph>Дякуємо за підтримку!</paragraph>"
+  },
+  "icu:PreferencesDonations__receipts": {
+    "messageformat": "Підтвердження"
+  },
+  "icu:PreferencesDonations__faqs": {
+    "messageformat": "Відповіді на запитання про донати"
+  },
+  "icu:PreferencesDonations--receiptList__info": {
+    "messageformat": "Підтвердження з різних пристроїв не синхронізуються. Якщо ви перевстановлювали Signal, підтвердження попередніх донатів будуть недоступні."
+  },
+  "icu:PreferencesDonations--receiptList__empty-title": {
+    "messageformat": "Підтверджень немає"
+  },
+  "icu:PreferencesDonations__ReceiptModal--title": {
+    "messageformat": "Деталі"
+  },
+  "icu:PreferencesDonations__ReceiptModal--download": {
+    "messageformat": "Завантажити підтвердження"
+  },
+  "icu:PreferencesDonations__ReceiptModal--type-label": {
+    "messageformat": "Тип"
+  },
+  "icu:PreferencesDonations__ReceiptModal--date-paid-label": {
+    "messageformat": "Дата платежу"
+  },
+  "icu:DonateFlow__make-a-one-time-donation": {
+    "messageformat": "Разовий донат"
+  },
+  "icu:DonateFlow__desktop-one-time-only-notice": {
+    "messageformat": "На комп'ютері доступні лише разові донати. Щомісячний донат можна оформити з мобільного пристрою."
+  },
+  "icu:DonateFlow__having-issues-contact-support": {
+    "messageformat": "Виникли проблеми? <contactSupportLink>Зверніться до служби підтримки</contactSupportLink>"
+  },
+  "icu:DonateFlow__amount-picker-custom-amount-placeholder": {
+    "messageformat": "Enter Custom Amount"
+  },
+  "icu:DonateFlow__credit-or-debit-card": {
+    "messageformat": "Credit or Debit Card"
+  },
+  "icu:DonateFlow__card-form-instructions": {
+    "messageformat": "Enter your credit or debit card details. Signal does not collect or store your personal information. <learnMoreLink>Learn more</learnMoreLink>"
+  },
+  "icu:DonateFlow__card-form-card-number": {
+    "messageformat": "Card Number"
+  },
+  "icu:DonateFlow__card-form-expiration-date": {
+    "messageformat": "Expiration Date"
+  },
+  "icu:DonateFlow__card-form-title-donate-with-amount": {
+    "messageformat": "Donate {formattedCurrencyAmount} to Signal"
+  },
+  "icu:DonateFlow__card-form-error-invalid-card-number": {
+    "messageformat": "Invalid card number"
+  },
+  "icu:DonateFlow__card-form-error-expiration-expired": {
+    "messageformat": "Card has expired"
+  },
+  "icu:DonateFlow__card-form-error-year-missing": {
+    "messageformat": "Year required"
+  },
+  "icu:DonateFlow__card-form-error-invalid": {
+    "messageformat": "Invalid"
+  },
+  "icu:DonateFlow__card-form-error-cvc-too-short": {
+    "messageformat": "Code too short"
+  },
+  "icu:DonateFlow__one-time-donation-boost-badge-info": {
+    "messageformat": "Get the Signal Boost badge for 30 days"
+  },
+  "icu:DonationReceipt__title": {
+    "messageformat": "Підтвердження донату"
+  },
+  "icu:DonationReceipt__amount-label": {
+    "messageformat": "Сума"
+  },
+  "icu:DonationReceipt__type-label": {
+    "messageformat": "Тип"
+  },
+  "icu:DonationReceipt__date-paid-label": {
+    "messageformat": "Дата платежу"
+  },
+  "icu:DonationReceipt__type-value--one-time": {
+    "messageformat": "Один раз"
+  },
+  "icu:DonationReceipt__footer-text": {
+    "messageformat": "Дякуємо за підтримку Signal. Ваш внесок допомагає реалізувати нашу місію: захищати свободу слова і робити можливим безпечне спілкування для мільйонів людей у всьому світі за допомогою технології конфіденційності з відкритим кодом. Якщо ви резидент Сполучених Штатів Америки, збережіть цю квитанцію для звітування в податкові органи. Signal Technology Foundation — звільнена від оподаткування неприбуткова організація, створена відповідно до розділу 501c3 податкового кодексу США. Наш федеральний податковий номер: 82–4506840."
+  },
+  "icu:Donations__Toast__Canceled": {
+    "messageformat": "Donation canceled"
+  },
+  "icu:Donations__Toast__Completed": {
+    "messageformat": "Донат надіслано"
+  },
+  "icu:Donations__Toast__Error": {
+    "messageformat": "Помилка під час опрацювання донату"
+  },
+  "icu:Donations__Toast__Processing": {
+    "messageformat": "Опрацювання донату"
+  },
+  "icu:Donations__Toast__VerificationFailed": {
+    "messageformat": "Підтвердження не здійснено"
+  },
+  "icu:Donations__Toast__VerificationNeeded": {
+    "messageformat": "Ви оформлюєте донат, для якого потрібне додаткове підтвердження."
+  },
+  "icu:Donations__Toast__ConfirmationNeeded": {
+    "messageformat": "You have a donation in progress that requires confirmation."
+  },
+  "icu:Donations__DonationInterrupted": {
+    "messageformat": "Donation interrupted"
+  },
+  "icu:Donations__DonationInterrupted__Description": {
+    "messageformat": "Your card was not charged. Do you want to retry the donation?"
+  },
+  "icu:Donations__DonationInterrupted__RetryButton": {
+    "messageformat": "Try again"
+  },
+  "icu:Donations__PaymentMethodDeclined": {
+    "messageformat": "Платіжний засіб відхилено"
+  },
+  "icu:Donations__PaymentMethodDeclined__Description": {
+    "messageformat": "Використайте інший платіжний засіб або зв'яжіться зі своїм банком для додаткової інформації."
+  },
+  "icu:Donations__Failed3dsValidation": {
+    "messageformat": "Підтвердження не здійснено"
+  },
+  "icu:Donations__Failed3dsValidation__Description": {
+    "messageformat": "Не вдалося пройти додатковий етап перевірки. Будь ласка, спробуйте знову."
+  },
+  "icu:Donations__GenericError": {
+    "messageformat": "З вашим донатом сталася помилка"
+  },
+  "icu:Donations__GenericError__Description": {
+    "messageformat": "Можливо, ваш донат не вдалось опрацювати. Натисніть «Підтримати Signal», а потім «Підтвердження ваших донатів», щоб пересвідчитися."
+  },
+  "icu:Donations__Processing": {
+    "messageformat": "Триває опрацювання донату…"
+  },
+  "icu:Donations__StillProcessing": {
+    "messageformat": "Опрацювання триває"
+  },
+  "icu:Donations__StillProcessing__Description": {
+    "messageformat": "Опрацювання вашого донату ще триває. Воно займе кілька хвилин."
+  },
+  "icu:Donations__TimedOut": {
+    "messageformat": "Donation canceled"
+  },
+  "icu:Donations__TimedOut__Description": {
+    "messageformat": "It has been too long since you started your donation. Please start over."
+  },
+  "icu:Donations__3dsValidationNeeded": {
+    "messageformat": "Необхідна додаткова перевірка"
+  },
+  "icu:Donations__3dsValidationNeeded--waiting": {
+    "messageformat": "Очікування підтвердження"
+  },
+  "icu:Donations__3dsValidationNeeded__Description": {
+    "messageformat": "Емітент вашої кредитної картки вимагає додаткового етапу перевірки у веббраузері."
+  },
+  "icu:Donations__3dsValidationNeeded__OpenBrowser": {
+    "messageformat": "Відкрити браузер"
+  },
+  "icu:Donations__3dsValidationNeeded__OpenBrowser--opened": {
+    "messageformat": "Відкрити браузер"
+  },
+  "icu:Donations__3dsValidationNeeded__CancelDonation": {
+    "messageformat": "Скасувати донат"
+  },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "Ця версія містить ряд невеликих покращень і виправлень помилок для забезпечення безперебійної роботи Signal.",
     "ignoreUnused": true
@@ -6472,10 +6844,13 @@
     "messageformat": "Дрібні поліпшення, виправлення помилок і покращення роботи застосунку. Дякуємо, що ви з Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.58--0": {
-    "messageformat": "Ми оновили меню з вибором реакцій на повідомлення: тепер там автоматично з'являтимуться емоджі, які хтось уже поставив. А це значить, що ви зможете або піти за натовпом і відреагувати стандартним сердечком, або —за покликом серця й вибрати щось унікальне."
+  "icu:WhatsNew__v7.64--0": {
+    "messageformat": "Ми покращили функціонування відміток про читання повідомлень під час одночасного виконання кількох дій. А ще виправили помилку, через яку відкривався перегляд зображення, якщо ви натискали пробіл під час пошуку реакції. Збільшити зображення все ще можна, якщо на нього натиснути (або якщо вводити текст достатньо швидко)."
   },
-  "icu:WhatsNew__v7.59--0": {
-    "messageformat": "У цьому оновлені ми додали підтримку прискорення графічного процесора на Linux для кращої роботи й плавнішого відтворення відео на відповідних пристроях."
+  "icu:WhatsNew__v7.65--0": {
+    "messageformat": "Якщо ви помітили, що після натискання клавіші Escape у полі пошуку емоджі з'являлася помилка, не хвилюйтеся. Це була не агресивна агітація за використання емоджі, а просто помилка, яку ми вже виправили."
+  },
+  "icu:WhatsNew__v7.66--0": {
+    "messageformat": "This update fixes a few small bugs, including one where emoji reactions weren't being grouped together correctly in some cases."
   }
 }

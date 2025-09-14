@@ -120,11 +120,11 @@ export abstract class JobManager<CoreJobType> {
   }
 
   async waitForIdle(): Promise<void> {
-    if (this.#activeJobs.size === 0) {
-      return;
-    }
-
-    await new Promise<void>(resolve => this.#idleCallbacks.push(resolve));
+    const idledPromise = new Promise<void>(resolve =>
+      this.#idleCallbacks.push(resolve)
+    );
+    this.#tick();
+    return idledPromise;
   }
 
   #tick(): void {
@@ -192,11 +192,6 @@ export abstract class JobManager<CoreJobType> {
       if (runningJob) {
         log.info(`${logId}: already running; resetting attempts`);
         runningJob.attempts = 0;
-
-        await this.params.saveJob({
-          ...runningJob,
-          attempts: 0,
-        });
 
         return { isAlreadyRunning: true };
       }
@@ -419,7 +414,7 @@ export abstract class JobManager<CoreJobType> {
         abortController.abort();
 
         // First tell those waiting for the job that it's not happening
-        const rejectionError = new Error('Cancelled at JobManager.cancelJobs');
+        const rejectionError = new Error('Canceled at JobManager.cancelJobs');
         const idWithAttempts = this.#getJobIdIncludingAttempts(job);
         this.#jobCompletePromises.get(idWithAttempts)?.reject(rejectionError);
         this.#jobCompletePromises.delete(idWithAttempts);
@@ -443,7 +438,7 @@ export abstract class JobManager<CoreJobType> {
       })
     );
 
-    log.warn(`${logId}: Successfully cancelled ${jobs.length} jobs`);
+    log.warn(`${logId}: Successfully canceled ${jobs.length} jobs`);
   }
 
   #addRunningJob(

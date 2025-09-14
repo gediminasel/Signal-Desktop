@@ -305,9 +305,6 @@
   "icu:NavTabs__ItemLabel--Settings": {
     "messageformat": "Impostazioni"
   },
-  "icu:NavTabs__ItemLabel--Update": {
-    "messageformat": "Aggiorna Signal"
-  },
   "icu:NavTabs__ItemLabel--Profile": {
     "messageformat": "Profilo"
   },
@@ -605,6 +602,12 @@
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
+  "icu:Toast--ReceiptSaved": {
+    "messageformat": "Ricevuta salvata"
+  },
+  "icu:Toast--ReceiptSaveFailed": {
+    "messageformat": "Si è verificato un errore durante il salvataggio della ricevuta. Riprova."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Non puoi selezionare foto e video insieme ai file."
   },
@@ -664,9 +667,6 @@
   },
   "icu:joinTheBeta": {
     "messageformat": "Partecipa alla Beta"
-  },
-  "icu:signalDesktopPreferences": {
-    "messageformat": "Preferenze di Signal Desktop"
   },
   "icu:signalDesktopStickerCreator": {
     "messageformat": "Creatore di pacchetti di adesivi"
@@ -1086,10 +1086,10 @@
     "messageformat": "Problema di consegna"
   },
   "icu:DeliveryIssue--summary": {
-    "messageformat": "Non è stato possibile consegnarti un messaggio, uno sticker, una reazione o una conferma di lettura da parte di {sender}. Potrebbe aver provato a inviarti il contenuto in una chat singola o in un gruppo."
+    "messageformat": "Non è stato possibile consegnarti un messaggio, un adesivo, una reazione o una conferma di lettura da parte di {sender}. Potrebbe aver provato a inviarti il contenuto in una chat singola o in un gruppo."
   },
   "icu:DeliveryIssue--summary--group": {
-    "messageformat": "Non è stato possibile consegnarti un messaggio, uno sticker, una reazione, una conferma di lettura o un media da parte di {sender} in questa chat."
+    "messageformat": "Non è stato possibile consegnarti un messaggio, un adesivo, una reazione, una conferma di lettura o un media da parte di {sender} in questa chat."
   },
   "icu:ChangeNumber--notification": {
     "messageformat": "{sender} ha cambiato il suo numero di telefono"
@@ -1164,7 +1164,7 @@
     "messageformat": "Questo messaggio è incompleto"
   },
   "icu:attachmentNotAvailable__sticker": {
-    "messageformat": "Sticker non disponibile"
+    "messageformat": "Adesivo non disponibile"
   },
   "icu:attachmentNotAvailable__voice": {
     "messageformat": "Messaggio vocale non disponibile"
@@ -1185,7 +1185,7 @@
     "messageformat": "Media non disponibile"
   },
   "icu:AttachmentNotAvailableModal__title--sticker": {
-    "messageformat": "Sticker non disponibile"
+    "messageformat": "Adesivo non disponibile"
   },
   "icu:AttachmentNotAvailableModal__title--voice-message": {
     "messageformat": "Messaggio vocale non disponibile"
@@ -1200,7 +1200,7 @@
     "messageformat": "Questo media non è stato trasferito dal tuo telefono quando questo dispositivo è stato collegato. Non è possibile sincronizzare media più vecchi di 45 giorni al momento del collegamento del dispositivo."
   },
   "icu:AttachmentNotAvailableModal__body--sticker": {
-    "messageformat": "Questo sticker non è stato trasferito dal tuo telefono quando questo dispositivo è stato collegato. Non è possibile sincronizzare file e media più vecchi di 45 giorni al momento del collegamento del dispositivo."
+    "messageformat": "Questo adesivo non è stato trasferito dal tuo telefono quando questo dispositivo è stato collegato. Non è possibile sincronizzare file e media più vecchi di 45 giorni al momento del collegamento del dispositivo."
   },
   "icu:AttachmentNotAvailableModal__body--voice-message": {
     "messageformat": "Questo messaggio vocale non è stato trasferito dal tuo telefono quando questo dispositivo è stato collegato. Non è possibile sincronizzare file e media più vecchi di 45 giorni al momento del collegamento del dispositivo."
@@ -1285,6 +1285,168 @@
   },
   "icu:Preferences__EmojiSkinToneDefaultSetting__Label": {
     "messageformat": "Tonalità pelle per le emoji"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__Title": {
+    "messageformat": "Cartelle delle chat"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Title": {
+    "messageformat": "Aggiungi una cartella per le chat"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Description": {
+    "messageformat": "Suddividi le tue chat in più cartelle e passa al volo da una cartella all'altra nell'elenco delle chat."
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__EditFolder": {
+    "messageformat": "Modifica cartella"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__DeleteFolder": {
+    "messageformat": "Elimina"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__Title": {
+    "messageformat": "Eliminare la cartella?"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__Description": {
+    "messageformat": "Vuoi eliminare la cartella \"{chatFolderTitle}\"?"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__DeleteButton": {
+    "messageformat": "Elimina"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__CancelButton": {
+    "messageformat": "Annulla"
+  },
+  "icu:Preferences__ChatFoldersPage__Title": {
+    "messageformat": "Cartelle delle chat"
+  },
+  "icu:Preferences__ChatFoldersPage__Description": {
+    "messageformat": "Suddividi le tue chat in più cartelle e passa al volo da una cartella all'altra nell'elenco delle chat"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__Title": {
+    "messageformat": "Cartelle"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__AllChatsFolder__Title": {
+    "messageformat": "Tutte le chat"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__CreateAFolderButton": {
+    "messageformat": "Crea una cartella"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__Title": {
+    "messageformat": "Cartelle suggerite"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton": {
+    "messageformat": "Aggiungi"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton__Toast": {
+    "messageformat": "Cartella {chatFolderTitle} aggiunta"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Title": {
+    "messageformat": "Non lette"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Description": {
+    "messageformat": "Messaggi non letti da tutte le chat"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__DirectChatsFolder__Title": {
+    "messageformat": "Chat singole"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__DirectChatsFolder__Description": {
+    "messageformat": "Solo messaggi da chat singole"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__GroupChatsFolder__Title": {
+    "messageformat": "Gruppi"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__GroupChatsFolder__Description": {
+    "messageformat": "Solo messaggi da chat di gruppo"
+  },
+  "icu:Preferences__EditChatFolderPage__Title": {
+    "messageformat": "Crea una cartella"
+  },
+  "icu:Preferences__EditChatFolderPage__FolderNameField__Label": {
+    "messageformat": "Nome della cartella"
+  },
+  "icu:Preferences__EditChatFolderPage__FolderNameField__Placeholder": {
+    "messageformat": "Nome cartella (obbligatorio)"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__Title": {
+    "messageformat": "Chat incluse"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__Help": {
+    "messageformat": "Scegli le chat che vuoi vedere in questa cartella"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__AddChatsButton": {
+    "messageformat": "Aggiungi chat"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog--IncludedChats__Title": {
+    "messageformat": "Chat incluse"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog--ExcludedChats__Title": {
+    "messageformat": "Chat escluse"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__Search__Placeholder": {
+    "messageformat": "Cerca"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__Title": {
+    "messageformat": "Tipi di chat"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__DirectChats": {
+    "messageformat": "Chat singole"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__GroupChats": {
+    "messageformat": "Gruppi"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__RecentChats__Title": {
+    "messageformat": "Chat recenti"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__DoneButton": {
+    "messageformat": "Fatto"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__Title": {
+    "messageformat": "Eccezioni"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__Help": {
+    "messageformat": "Scegli le chat che non vuoi vedere in questa cartella"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__ExcludeChatsButton": {
+    "messageformat": "Escludi chat"
+  },
+  "icu:Preferences__EditChatFolderPage__OnlyShowUnreadChatsCheckbox__Label": {
+    "messageformat": "Mostra solo chat non lette"
+  },
+  "icu:Preferences__EditChatFolderPage__OnlyShowUnreadChatsCheckbox__Description": {
+    "messageformat": "In questa cartella vedrai solo chat con messaggi non letti."
+  },
+  "icu:Preferences__EditChatFolderPage__IncludeMutedChatsCheckbox__Label": {
+    "messageformat": "Includi chat silenziate"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteFolderButton": {
+    "messageformat": "Elimina cartella"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__Title": {
+    "messageformat": "Vuoi eliminare questa cartella per le chat?"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__Description": {
+    "messageformat": "Questa cartella verrà rimossa dal tuo elenco chat."
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__DeleteButton": {
+    "messageformat": "Elimina"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__CancelButton": {
+    "messageformat": "Annulla"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__Title": {
+    "messageformat": "Salvare modifiche?"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__Description": {
+    "messageformat": "Vuoi salvare le modifiche effettuate a questa cartella?"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__SaveButton": {
+    "messageformat": "Salva"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__DiscardButton": {
+    "messageformat": "Elimina"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveButton": {
+    "messageformat": "Salva"
+  },
+  "icu:Preferences__EditChatFolderPage__CancelButton": {
+    "messageformat": "Annulla"
   },
   "icu:initialSync": {
     "messageformat": "Sincronizzazione contatti e gruppi"
@@ -2211,7 +2373,7 @@
     "messageformat": "Alcuni adesivi non possono essere scaricati."
   },
   "icu:stickers--StickerPicker--DownloadPending": {
-    "messageformat": "Installazione pacchetto sticker…"
+    "messageformat": "Installazione pacchetto di adesivi…"
   },
   "icu:stickers--StickerPicker--Empty": {
     "messageformat": "Nessun adesivo trovato"
@@ -2283,7 +2445,7 @@
     "messageformat": "Emoji"
   },
   "icu:FunPicker__Tab--Stickers": {
-    "messageformat": "Sticker"
+    "messageformat": "Adesivo"
   },
   "icu:FunPicker__Tab--Gifs": {
     "messageformat": "GIF"
@@ -2376,13 +2538,13 @@
     "messageformat": "Personalizza le reazioni"
   },
   "icu:FunPanelStickers__SearchLabel": {
-    "messageformat": "Cerca sticker"
+    "messageformat": "Cerca adesivo"
   },
   "icu:FunPanelStickers__SearchPlaceholder": {
-    "messageformat": "Cerca sticker"
+    "messageformat": "Cerca adesivo"
   },
   "icu:FunPanelSticker__SubNavLabel": {
-    "messageformat": "Pacchetti di sticker"
+    "messageformat": "Pacchetti di adesivi"
   },
   "icu:FunPanelStickers__SubNavCategoryLabel--Recents": {
     "messageformat": "Usati di recente"
@@ -2397,10 +2559,10 @@
     "messageformat": "In evidenza"
   },
   "icu:FunPanelStickers__SearchResults__EmptyHeading": {
-    "messageformat": "Nessuno sticker trovato"
+    "messageformat": "Nessun adesivo trovato"
   },
   "icu:FunPanelStickers__LightboxDialog__Label": {
-    "messageformat": "Anteprima sticker"
+    "messageformat": "Anteprima adesivo"
   },
   "icu:FunPanelGifs__SearchLabel--Tenor": {
     "messageformat": "Cerca le GIF via Tenor"
@@ -2478,13 +2640,13 @@
     "messageformat": "Tonalità pelle nera scura"
   },
   "icu:FunButton__Label--FunPicker": {
-    "messageformat": "Aggiungi emoji, sticker o GIF"
+    "messageformat": "Aggiungi emoji, adesivi o GIF"
   },
   "icu:FunButton__Label--EmojiPicker": {
     "messageformat": "Aggiungi un'emoji"
   },
   "icu:FunButton__Label--StickerPicker": {
-    "messageformat": "Aggiungi uno sticker"
+    "messageformat": "Aggiungi un adesivo"
   },
   "icu:confirmation-dialog--Cancel": {
     "messageformat": "Annulla"
@@ -3510,7 +3672,7 @@
     "messageformat": "Hai cambiato chi può modificare le informazioni del gruppo in \"Solo gli amministratori.\""
   },
   "icu:GroupV2--access-attributes--admins--unknown": {
-    "messageformat": "Un amministratore ha cambiato chi può modificare le informazioni del gruppo in \"Solo gli amministratori.\""
+    "messageformat": "Un admin ha cambiato chi può modificare le informazioni del gruppo in \"Solo gli admin.\""
   },
   "icu:GroupV2--access-attributes--all--other": {
     "messageformat": "{adminName} ha cambiato chi può modificare le informazioni del gruppo in \"Tutti i membri.\""
@@ -3519,7 +3681,7 @@
     "messageformat": "Hai cambiato chi può modificare le informazioni del gruppo in \"Tutti i membri.\""
   },
   "icu:GroupV2--access-attributes--all--unknown": {
-    "messageformat": "Un amministratore ha cambiato chi può modificare le informazioni del gruppo in \"Tutti i membri.\""
+    "messageformat": "Un admin ha cambiato chi può modificare le informazioni del gruppo in \"Tutti i membri.\""
   },
   "icu:GroupV2--access-members--admins--other": {
     "messageformat": "{adminName} ha cambiato chi può modificare l'appartenenza al gruppo in \"Solo gli amministratori.\""
@@ -3528,7 +3690,7 @@
     "messageformat": "Hai cambiato chi può modificare l'appartenenza al gruppo in \"Solo gli amministratori.\""
   },
   "icu:GroupV2--access-members--admins--unknown": {
-    "messageformat": "Un amministratore ha cambiato chi può modificare l'appartenenza al gruppo in \"Solo gli amministratori.\""
+    "messageformat": "Un admin ha cambiato chi può modificare l'appartenenza al gruppo in \"Solo gli amministratori.\""
   },
   "icu:GroupV2--access-members--all--other": {
     "messageformat": "{adminName} ha cambiato chi può modificare l'appartenenza al gruppo in \"Tutti i membri.\""
@@ -3537,7 +3699,7 @@
     "messageformat": "Hai cambiato chi può modificare l'appartenenza al gruppo in \"Tutti i membri.\""
   },
   "icu:GroupV2--access-members--all--unknown": {
-    "messageformat": "Un amministratore ha cambiato chi può modificare l'appartenenza al gruppo in \"Tutti i membri.\""
+    "messageformat": "Un admin ha cambiato chi può modificare l'appartenenza al gruppo in \"Tutti i membri.\""
   },
   "icu:GroupV2--access-invite-link--disabled--you": {
     "messageformat": "Hai disabilitato l'approvazione degli amministratori per il link del gruppo."
@@ -3648,13 +3810,13 @@
     "messageformat": "Hai reso {memberName} un amministratore."
   },
   "icu:GroupV2--member-privilege--promote--other--unknown": {
-    "messageformat": "Un amministratore ha reso {memberName} un amministratore."
+    "messageformat": "Un admin ha reso {memberName} un admin."
   },
   "icu:GroupV2--member-privilege--promote--you--other": {
     "messageformat": "{adminName} ti ha reso un amministratore."
   },
   "icu:GroupV2--member-privilege--promote--you--unknown": {
-    "messageformat": "Un amministratore ti ha reso un amministratore."
+    "messageformat": "Un admin ti ha reso un admin."
   },
   "icu:GroupV2--member-privilege--demote--other--other": {
     "messageformat": "{adminName} ha revocato i privilegi di amministrazione da {memberName}."
@@ -3663,13 +3825,13 @@
     "messageformat": "Hai revocato i privilegi di amministrazione da {memberName}."
   },
   "icu:GroupV2--member-privilege--demote--other--unknown": {
-    "messageformat": "Un amministratore ha revocato i privilegi di amministrazione da {memberName}."
+    "messageformat": "Un admin ha revocato i privilegi di amministrazione da {memberName}."
   },
   "icu:GroupV2--member-privilege--demote--you--other": {
     "messageformat": "{adminName} ha revocato i tuoi privilegi di amministrazione."
   },
   "icu:GroupV2--member-privilege--demote--you--unknown": {
-    "messageformat": "Un amministratore ha revocato i tuoi privilegi di amministrazione."
+    "messageformat": "Un admin ha revocato i tuoi privilegi di amministrazione."
   },
   "icu:GroupV2--pending-add--one--other--other": {
     "messageformat": "{memberName} ha invitato 1 persona ad entrare nel gruppo."
@@ -3720,7 +3882,7 @@
     "messageformat": "{inviterName} ha revocato il suo invito a 1 persona."
   },
   "icu:GroupV2--pending-remove--revoke--one--unknown": {
-    "messageformat": "Un amministratore ha revocato un invito al gruppo per 1 persona."
+    "messageformat": "Un admin ha revocato un invito al gruppo per 1 persona."
   },
   "icu:GroupV2--pending-remove--revoke--many--other": {
     "messageformat": "{count, plural, one {{memberName} ha ritirato l'invito al gruppo per 1 persona.} other {{memberName} ha ritirato gli inviti al gruppo per {count,number} persone.}}"
@@ -3738,7 +3900,7 @@
     "messageformat": "Hai revocato un invito al gruppo per 1 persona invitata da {memberName}."
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--one--unknown": {
-    "messageformat": "Un amministratore ha revocato un invito al gruppo per 1 persona invitata da {memberName}."
+    "messageformat": "Un admin ha revocato un invito al gruppo per 1 persona invitata da {memberName}."
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--one--other": {
     "messageformat": "{adminName} ha revocato l'invito al gruppo che hai inviato a {inviteeName}."
@@ -3747,7 +3909,7 @@
     "messageformat": "Hai annullato il tuo invito a {inviteeName}."
   },
   "icu:GroupV2--pending-remove--revoke-invite-from-you--one--unknown": {
-    "messageformat": "Un amministratore ha revocato l'invito al gruppo che hai inviato a {inviteeName}."
+    "messageformat": "Un admin ha revocato l'invito al gruppo che hai inviato a {inviteeName}."
   },
   "icu:GroupV2--pending-remove--revoke-invite-from--many--other": {
     "messageformat": "{count, plural, one {{adminName} ha annullato gli inviti al gruppo per {count,number} persona invitata da {memberName}.} other {{adminName} ha annullato gli inviti al gruppo per {count,number} persone invitate da {memberName}.}}"
@@ -3792,7 +3954,7 @@
     "messageformat": "Una richiesta di unirsi al gruppo da {joinerName} è stata rifiutata."
   },
   "icu:GroupV2--admin-approval-bounce--pluralized": {
-    "messageformat": "{numberOfRequests, plural, one {{joinerName} ha richiesto e annullato la sua richiesta di unirsi tramite il link del gruppo} other {{joinerName} ha richiesto e annullato {numberOfRequests,number} richieste di unirsi tramite il link del gruppo}}"
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} requested and canceled their request to join via the group link} other {{joinerName} requested and canceled {numberOfRequests,number} requests to join via the group link}}"
   },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Hai attivato il link del gruppo senza l'approvazione degli amministratori."
@@ -4026,10 +4188,10 @@
     "messageformat": "Riprova"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
-    "messageformat": "Ripristino dei media in corso"
+    "messageformat": "Sincronizzazione media"
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
-    "messageformat": "Ripristino in pausa"
+    "messageformat": "Sincronizzazione in pausa"
   },
   "icu:BackupMediaDownloadProgress__title-idle": {
     "messageformat": "Ripristinati {currentSize} su {totalSize}"
@@ -4044,13 +4206,13 @@
     "messageformat": "In attesa di una connessione Internet…"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
-    "messageformat": "Metti in pausa"
+    "messageformat": "Pausa"
   },
   "icu:BackupMediaDownloadProgress__button-resume": {
-    "messageformat": "Riprendi il trasferimento"
+    "messageformat": "Riprendi"
   },
   "icu:BackupMediaDownloadProgress__button-cancel": {
-    "messageformat": "Annulla trasferimento"
+    "messageformat": "Annulla sincronizzazione"
   },
   "icu:BackupMediaDownloadProgress__button-more": {
     "messageformat": "Più opzioni"
@@ -4062,16 +4224,34 @@
     "messageformat": "{currentSize} di {totalSize}"
   },
   "icu:BackupMediaDownloadCancelConfirmation__title": {
-    "messageformat": "Annullare il trasferimento dei media?"
+    "messageformat": "Annullare la sincronizzazione dei media?"
   },
   "icu:BackupMediaDownloadCancelConfirmation__description": {
-    "messageformat": "Il ripristino dei tuoi messaggi e media non è stato ancora completato. Se lo annulli, potrai rieffettuare il trasferimento dalle Impostazioni."
+    "messageformat": "La sincronizzazione dei media non è stata completata. Se la annulli, potrai sincronizzarli di nuovo ricollegando questo dispositivo. <learnMoreLink>Scopri di più</learnMoreLink>."
   },
   "icu:BackupMediaDownloadCancelConfirmation__button-continue": {
-    "messageformat": "Continua con il trasferimento"
+    "messageformat": "Prosegui"
   },
   "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
-    "messageformat": "Annulla trasferimento"
+    "messageformat": "Annulla sincronizzazione"
+  },
+  "icu:BackupMediaDownloadProgressSettings__paused--title": {
+    "messageformat": "Sincronizzazione in pausa"
+  },
+  "icu:BackupMediaDownloadProgressSettings__paused--description": {
+    "messageformat": "Clicca su \"{resumeButtonText}\" per proseguire con la sincronizzazione"
+  },
+  "icu:BackupMediaDownloadProgressSettings__button-resume": {
+    "messageformat": "Riprendi"
+  },
+  "icu:BackupMediaDownloadProgressSettings__button-pause": {
+    "messageformat": "Pausa"
+  },
+  "icu:BackupMediaDownloadProgressSettings__title-in-progress": {
+    "messageformat": "Sincronizzazione media"
+  },
+  "icu:BackupMediaDownloadProgressSettings__progressbar-hint": {
+    "messageformat": "{currentSize} di {totalSize} ({fractionComplete,number,percent})…"
   },
   "icu:CriticalIdlePrimaryDeviceModal__title": {
     "messageformat": "Richiesta azione per il tuo account"
@@ -4134,7 +4314,7 @@
     "messageformat": "{contact} potrà modificare questo gruppo e i suoi membri."
   },
   "icu:ContactModal--rm-admin-info": {
-    "messageformat": "Rimuovere {contact} come amministratore del gruppo?"
+    "messageformat": "Rimuovere {contact} come admin del gruppo?"
   },
   "icu:ContactModal--add-to-group": {
     "messageformat": "Aggiungi a un altro gruppo"
@@ -4215,10 +4395,10 @@
     "messageformat": "Blocca gruppo"
   },
   "icu:ConversationDetailsActions--unblock-group": {
-    "messageformat": "Sblocca gruppo"
+    "messageformat": "Sblocca il gruppo"
   },
   "icu:ConversationDetailsActions--leave-group-must-choose-new-admin": {
-    "messageformat": "Prima di abbandonarlo, devi scegliere almeno un nuovo amministratore per questo gruppo."
+    "messageformat": "Prima di abbandonarlo, devi scegliere almeno un nuovo admin per questo gruppo."
   },
   "icu:ConversationDetailsActions--leave-group-modal-title": {
     "messageformat": "Vuoi davvero abbandonare?"
@@ -4329,7 +4509,7 @@
     "messageformat": "Richiedi l'approvazione dell'admin"
   },
   "icu:GroupLinkManagement--approve-info": {
-    "messageformat": "Richiedi a un amministratore di approvare i nuovi membri che si uniscono tramite il link del gruppo"
+    "messageformat": "Richiedi a un admin di approvare i nuovi membri che si uniscono tramite il link del gruppo"
   },
   "icu:GroupLinkManagement__CopyGroupLinkButtonLabel": {
     "messageformat": "Copia il link signal.group negli appunti"
@@ -4811,6 +4991,12 @@
   "icu:ProfileEditor__username-link__error-icon": {
     "messageformat": "Il link nome utente deve essere reimpostato"
   },
+  "icu:ProfileEditor__open": {
+    "messageformat": "Open username link screen"
+  },
+  "icu:ProfileEditor__username-link__open": {
+    "messageformat": "Open username link screen"
+  },
   "icu:ProfileEditor__username-link__tooltip__title": {
     "messageformat": "Condividi il tuo nome utente"
   },
@@ -5016,7 +5202,7 @@
     "messageformat": "Documenti"
   },
   "icu:Preferences__media-auto-download__description": {
-    "messageformat": "I messaggi vocali e gli sticker vengono sempre scaricati automaticamente."
+    "messageformat": "I messaggi vocali e gli adesivi vengono sempre scaricati automaticamente."
   },
   "icu:Preferences__button--backups": {
     "messageformat": "Backup"
@@ -5082,7 +5268,7 @@
     "messageformat": "Backup di Signal"
   },
   "icu:Preferences--signal-backups-off-description": {
-    "messageformat": "Automatic backups with Signal’s secure, end-to-end encrypted storage service. Get started on your phone. <learnMoreLink>Learn more</learnMoreLink>."
+    "messageformat": "Backup automatici e sicuri con il servizio di archiviazione crittografato end-to-end di Signal. Provali subito sul tuo telefono. <learnMoreLink>Scopri di più</learnMoreLink>."
   },
   "icu:Preferences--backup-section-description": {
     "messageformat": "Salva la cronologia dei tuoi messaggi con dei backup per non perdere neanche una virgola quando compri un nuovo telefono o reinstalli Signal."
@@ -5125,9 +5311,6 @@
   },
   "icu:Preferences--backup-created-by-phone": {
     "messageformat": "Il tuo telefono"
-  },
-  "icu:Preferences--backup-size__label": {
-    "messageformat": "Dimensioni del backup"
   },
   "icu:Preferences__local-backups": {
     "messageformat": "Backup del desktop"
@@ -5718,7 +5901,7 @@
     "messageformat": "Storia di gruppo"
   },
   "icu:StoriesSettings__viewers": {
-    "messageformat": "{count, plural, one {1 persona vedranno la Storia} other {{count,number} persone vedranno la Storia}}"
+    "messageformat": "{count, plural, one {1 persona vedrà la Storia} other {{count,number} persone vedranno la Storia}}"
   },
   "icu:StoriesSettings__who-can-see": {
     "messageformat": "Chi può vedere questa Storia"
@@ -6114,9 +6297,6 @@
   "icu:UsernameLinkModalBody__reset": {
     "messageformat": "Resetta"
   },
-  "icu:UsernameLinkModalBody__done": {
-    "messageformat": "Fatto"
-  },
   "icu:UsernameLinkModalBody__color__radio": {
     "messageformat": "Colore link del nome utente, {index,number} di {total,number}"
   },
@@ -6444,6 +6624,198 @@
   "icu:WhatsNew__modal-title": {
     "messageformat": "Cosa c'è di nuovo"
   },
+  "icu:PreferencesDonations__title": {
+    "messageformat": "La privacy prima di tutto"
+  },
+  "icu:PreferencesDonations__description": {
+    "messageformat": "Messaggi privati e sicuri, sostenuti proprio da te. Niente pubblicità, cookie o tracciamenti. Dona ora a Signal per supportare il nostro lavoro. <readMoreLink>Leggi di più</readMoreLink>"
+  },
+  "icu:PreferencesDonations__donate-button": {
+    "messageformat": "Dona"
+  },
+  "icu:PreferencesDonations__my-support": {
+    "messageformat": "Il mio supporto"
+  },
+  "icu:PreferencesDonations__donate-button-with-amount": {
+    "messageformat": "Dona {formattedCurrencyAmount}"
+  },
+  "icu:PreferencesDonations__mobile-info": {
+    "messageformat": "Puoi gestire i badge e le donazioni mensili sul tuo dispositivo mobile."
+  },
+  "icu:PreferencesDonations__privacy-modal-title": {
+    "messageformat": "Le tue informazioni rimangono sempre private"
+  },
+  "icu:PreferencesDonations__privacy-modal-content": {
+    "messageformat": "<paragraph>Signal non archivia né salva le tue informazioni personali quando fai una donazione.</paragraph><paragraph>Usiamo Stripe per elaborare i pagamenti e ricevere le tue donazioni. Non abbiamo accesso, né archiviamo o salviamo le informazioni che fornisci a Stripe per le transazioni.</paragraph><paragraph>Signal non assocerà mai (né è in grado di farlo) le informazioni legate alla donazione al tuo account.</paragraph><paragraph>Grazie per il tuo supporto!</paragraph>"
+  },
+  "icu:PreferencesDonations__receipts": {
+    "messageformat": "Ricevute"
+  },
+  "icu:PreferencesDonations__faqs": {
+    "messageformat": "FAQ sulle donazioni"
+  },
+  "icu:PreferencesDonations--receiptList__info": {
+    "messageformat": "Le ricevute delle donazioni non vengono sincronizzate tra i vari dispositivi. Se hai reinstallato Signal, le ricevute delle donazioni precedenti non saranno disponibili."
+  },
+  "icu:PreferencesDonations--receiptList__empty-title": {
+    "messageformat": "Nessun destinatario"
+  },
+  "icu:PreferencesDonations__ReceiptModal--title": {
+    "messageformat": "Dettagli"
+  },
+  "icu:PreferencesDonations__ReceiptModal--download": {
+    "messageformat": "Scarica la ricevuta"
+  },
+  "icu:PreferencesDonations__ReceiptModal--type-label": {
+    "messageformat": "Tipo"
+  },
+  "icu:PreferencesDonations__ReceiptModal--date-paid-label": {
+    "messageformat": "Data pagamento"
+  },
+  "icu:DonateFlow__make-a-one-time-donation": {
+    "messageformat": "Fai una donazione singola"
+  },
+  "icu:DonateFlow__desktop-one-time-only-notice": {
+    "messageformat": "Su desktop sono disponibili solo le donazioni singole. Puoi effettuare le donazioni mensili dal tuo dispositivo mobile."
+  },
+  "icu:DonateFlow__having-issues-contact-support": {
+    "messageformat": "Stai riscontrando dei problemi? <contactSupportLink>Contatta l'assistenza</contactSupportLink>"
+  },
+  "icu:DonateFlow__amount-picker-custom-amount-placeholder": {
+    "messageformat": "Enter Custom Amount"
+  },
+  "icu:DonateFlow__credit-or-debit-card": {
+    "messageformat": "Credit or Debit Card"
+  },
+  "icu:DonateFlow__card-form-instructions": {
+    "messageformat": "Enter your credit or debit card details. Signal does not collect or store your personal information. <learnMoreLink>Learn more</learnMoreLink>"
+  },
+  "icu:DonateFlow__card-form-card-number": {
+    "messageformat": "Card Number"
+  },
+  "icu:DonateFlow__card-form-expiration-date": {
+    "messageformat": "Expiration Date"
+  },
+  "icu:DonateFlow__card-form-title-donate-with-amount": {
+    "messageformat": "Donate {formattedCurrencyAmount} to Signal"
+  },
+  "icu:DonateFlow__card-form-error-invalid-card-number": {
+    "messageformat": "Invalid card number"
+  },
+  "icu:DonateFlow__card-form-error-expiration-expired": {
+    "messageformat": "Card has expired"
+  },
+  "icu:DonateFlow__card-form-error-year-missing": {
+    "messageformat": "Year required"
+  },
+  "icu:DonateFlow__card-form-error-invalid": {
+    "messageformat": "Invalid"
+  },
+  "icu:DonateFlow__card-form-error-cvc-too-short": {
+    "messageformat": "Code too short"
+  },
+  "icu:DonateFlow__one-time-donation-boost-badge-info": {
+    "messageformat": "Get the Signal Boost badge for 30 days"
+  },
+  "icu:DonationReceipt__title": {
+    "messageformat": "Ricevuta della donazione"
+  },
+  "icu:DonationReceipt__amount-label": {
+    "messageformat": "Importo"
+  },
+  "icu:DonationReceipt__type-label": {
+    "messageformat": "Tipo"
+  },
+  "icu:DonationReceipt__date-paid-label": {
+    "messageformat": "Data pagamento"
+  },
+  "icu:DonationReceipt__type-value--one-time": {
+    "messageformat": "Una volta"
+  },
+  "icu:DonationReceipt__footer-text": {
+    "messageformat": "Grazie per sostenere Signal. Il tuo contributo aiuta ad alimentare la missione di sviluppare una tecnologia open source per la privacy che tuteli la libera espressione e che consenta una comunicazione globale sicura per milioni di persone in tutto il mondo. Se sei residente negli Stati Uniti, conserva questa ricevuta per la tua documentazione fiscale. Signal Technology Foundation è un'organizzazione non profit esente da tasse negli Stati Uniti ai sensi della sezione 501c3 dell'Internal Revenue Code. Il nostro Federal Tax ID è 82-4506840."
+  },
+  "icu:Donations__Toast__Canceled": {
+    "messageformat": "Donation canceled"
+  },
+  "icu:Donations__Toast__Completed": {
+    "messageformat": "Donazione completata"
+  },
+  "icu:Donations__Toast__Error": {
+    "messageformat": "Errore nell'elaborazione della donazione"
+  },
+  "icu:Donations__Toast__Processing": {
+    "messageformat": "Donazione in elaborazione"
+  },
+  "icu:Donations__Toast__VerificationFailed": {
+    "messageformat": "Verifica non riuscita"
+  },
+  "icu:Donations__Toast__VerificationNeeded": {
+    "messageformat": "Hai una donazione in corso che richiede una verifica ulteriore."
+  },
+  "icu:Donations__Toast__ConfirmationNeeded": {
+    "messageformat": "You have a donation in progress that requires confirmation."
+  },
+  "icu:Donations__DonationInterrupted": {
+    "messageformat": "Donation interrupted"
+  },
+  "icu:Donations__DonationInterrupted__Description": {
+    "messageformat": "Your card was not charged. Do you want to retry the donation?"
+  },
+  "icu:Donations__DonationInterrupted__RetryButton": {
+    "messageformat": "Try again"
+  },
+  "icu:Donations__PaymentMethodDeclined": {
+    "messageformat": "Metodo di pagamento rifiutato"
+  },
+  "icu:Donations__PaymentMethodDeclined__Description": {
+    "messageformat": "Prova un altro metodo di pagamento o contatta la tua banca per maggiori informazioni."
+  },
+  "icu:Donations__Failed3dsValidation": {
+    "messageformat": "Verifica non riuscita"
+  },
+  "icu:Donations__Failed3dsValidation__Description": {
+    "messageformat": "Il passaggio di verifica aggiuntivo non è riuscito. Riprova."
+  },
+  "icu:Donations__GenericError": {
+    "messageformat": "Si è verificato un errore con la tua donazione"
+  },
+  "icu:Donations__GenericError__Description": {
+    "messageformat": "Probabilmente non è stato possibile elaborare la tua donazione. Clicca su \"Dona a Signal\" e poi su \"Ricevute delle donazioni\" per controllare le tue ricevute e assicurarti che la donazione sia stata effettuata correttamente."
+  },
+  "icu:Donations__Processing": {
+    "messageformat": "Donazione in elaborazione…"
+  },
+  "icu:Donations__StillProcessing": {
+    "messageformat": "Ancora in fase di elaborazione"
+  },
+  "icu:Donations__StillProcessing__Description": {
+    "messageformat": "La tua donazione è ancora in fase di elaborazione. L'operazione può richiedere alcuni minuti."
+  },
+  "icu:Donations__TimedOut": {
+    "messageformat": "Donation canceled"
+  },
+  "icu:Donations__TimedOut__Description": {
+    "messageformat": "It has been too long since you started your donation. Please start over."
+  },
+  "icu:Donations__3dsValidationNeeded": {
+    "messageformat": "È richiesta un'ulteriore verifica"
+  },
+  "icu:Donations__3dsValidationNeeded--waiting": {
+    "messageformat": "In attesa della verifica"
+  },
+  "icu:Donations__3dsValidationNeeded__Description": {
+    "messageformat": "La società emittente della tua carta di credito richiede un ulteriore passaggio di verifica da completare in un browser web."
+  },
+  "icu:Donations__3dsValidationNeeded__OpenBrowser": {
+    "messageformat": "Apri il browser"
+  },
+  "icu:Donations__3dsValidationNeeded__OpenBrowser--opened": {
+    "messageformat": "Riapri il browser"
+  },
+  "icu:Donations__3dsValidationNeeded__CancelDonation": {
+    "messageformat": "Annulla donazione"
+  },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "Questa versione contiene una serie di piccole modifiche e correzioni di bug per far funzionare Signal senza problemi.",
     "ignoreUnused": true
@@ -6472,10 +6844,13 @@
     "messageformat": "Altre piccole modifiche e correzioni di bug per far funzionare l'app senza problemi. Grazie per usare Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.58--0": {
-    "messageformat": "Una nuova sezione all'interno del selezionatore di reazioni per i messaggi mostrerà in automatico tutte le reazioni con emoji che un messaggio specifico ha ricevuto. Ora puoi scegliere con attenzione quale strada intraprendere: lasciare un bel cuoricino o un semplice pollice di approvazione?"
+  "icu:WhatsNew__v7.64--0": {
+    "messageformat": "Abbiamo migliorato l'esperienza dei messaggi letti/non letti durante il multitasking e risolto un bug che a volte apriva in modo improprio la schermata per vedere le immagini a dimensioni originali quando premevi la barra spaziatrice mentre cercavi l'emoji perfetta. Puoi ancora fare zoom se clicchi sull'immagine o se digiti velocemente."
   },
-  "icu:WhatsNew__v7.59--0": {
-    "messageformat": "Questo aggiornamento supporta l'accelerazione tramite GPU su Linux per avere delle performance migliorate e un'esperienza più fluida nella visione dei video su tutti gli hardware supportati."
+  "icu:WhatsNew__v7.65--0": {
+    "messageformat": "Trovare la giusta emoji a volte non è per niente facile, ma almeno abbiamo risolto un bug che causava un errore dopo aver premuto il tasto ESC nella barra di ricerca delle emoji."
+  },
+  "icu:WhatsNew__v7.66--0": {
+    "messageformat": "This update fixes a few small bugs, including one where emoji reactions weren't being grouped together correctly in some cases."
   }
 }

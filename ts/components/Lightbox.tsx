@@ -34,6 +34,7 @@ import { useReducedMotion } from '../hooks/useReducedMotion';
 import { formatFileSize } from '../util/formatFileSize';
 import { SECOND } from '../util/durations';
 import { Toast } from './Toast';
+import { isAbortError } from '../util/isAbortError';
 
 const log = createLogger('Lightbox');
 
@@ -323,7 +324,9 @@ export function Lightbox({
     if (videoElement.paused) {
       onMediaPlaybackStart();
       void videoElement.play().catch(error => {
-        log.error('Failed to play video', Errors.toLogFormat(error));
+        if (!isAbortError(error)) {
+          log.error('Failed to play video', Errors.toLogFormat(error));
+        }
       });
     } else {
       videoElement.pause();

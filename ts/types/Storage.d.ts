@@ -78,12 +78,6 @@ export type StorageAccessType = {
   blocked: ReadonlyArray<string>;
   defaultConversationColor: DefaultConversationColorType;
 
-  // Not used UI, stored as is when imported from backup.
-  defaultWallpaperPhotoPointer: Uint8Array;
-  defaultWallpaperPreset: number;
-  defaultDimWallpaperInDarkMode: boolean;
-  defaultAutoBubbleColor: boolean;
-
   customColors: CustomColorsItemType;
   device_name: string;
   existingOnboardingStoryMessageIds: ReadonlyArray<string> | undefined;
@@ -131,6 +125,7 @@ export type StorageAccessType = {
   linkPreviews: boolean;
   universalExpireTimer: number;
   retryPlaceholders: ReadonlyArray<RetryItemType>;
+  donationWorkflow: string;
   chromiumRegistrationDoneEver: '';
   chromiumRegistrationDone: '';
   phoneNumberSharingMode: PhoneNumberSharingMode;
@@ -185,6 +180,7 @@ export type StorageAccessType = {
   areWeASubscriber: boolean;
   subscriberId: Uint8Array;
   subscriberCurrencyCode: string;
+  // Note: for historical reasons, this has two l's
   donorSubscriptionManuallyCancelled: boolean;
   backupsSubscriberId: Uint8Array;
   backupsSubscriberPurchaseToken: string;
@@ -248,6 +244,13 @@ export type StorageAccessType = {
   postRegistrationSyncsStatus: 'incomplete' | 'complete';
 
   avatarsHaveBeenMigrated: boolean;
+
+  // Test-only
+  // Not used UI, stored as is when imported from backup during tests
+  defaultWallpaperPhotoPointer: Uint8Array;
+  defaultWallpaperPreset: number;
+  defaultDimWallpaperInDarkMode: boolean;
+  defaultAutoBubbleColor: boolean;
 
   // Deprecated
   'challenge:retry-message-ids': never;

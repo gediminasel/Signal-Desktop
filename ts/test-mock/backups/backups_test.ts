@@ -15,7 +15,7 @@ import Long from 'long';
 import { generateStoryDistributionId } from '../../types/StoryDistributionId';
 import { MY_STORY_ID } from '../../types/Stories';
 import { generateAci } from '../../types/ServiceId';
-import { generateBackup } from '../../test-both/helpers/generateBackup';
+import { generateBackup } from '../../test-helpers/generateBackup';
 import { IMAGE_JPEG } from '../../types/MIME';
 import { uuidToBytes } from '../../util/uuidToBytes';
 import * as durations from '../../util/durations';
@@ -424,7 +424,7 @@ describe('backups', function (this: Mocha.Suite) {
     await window.locator('.module-message >> "Message 33"').waitFor();
   });
 
-  it('handles remote ephemeral backup cancelation', async function () {
+  it('handles remote ephemeral backup cancellation', async function () {
     const ephemeralBackupKey = randomBytes(32);
 
     const { phone, server } = bootstrap;

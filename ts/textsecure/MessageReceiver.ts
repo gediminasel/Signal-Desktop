@@ -29,7 +29,6 @@ import {
   signalDecrypt,
   signalDecryptPreKey,
   SignalMessage,
-  UsePQRatchet,
 } from '@signalapp/libsignal-client';
 
 import {
@@ -68,6 +67,7 @@ import {
 import { normalizeAci } from '../util/normalizeAci';
 import { isAciString } from '../util/isAciString';
 import * as Errors from '../types/errors';
+import { isPQRatchetEnabled } from '../util/isPQRatchetEnabled';
 
 import { SignalService as Proto } from '../protobuf';
 import { deriveGroupFields, MASTER_KEY_LENGTH } from '../groups';
@@ -165,6 +165,10 @@ import {
   fromAciUuidBytesOrString,
   fromPniUuidBytesOrUntaggedString,
 } from '../util/ServiceId';
+import {
+  type MessageRequestResponseInfo,
+  MessageRequestResponseSource,
+} from '../types/MessageRequestResponseEvent';
 
 const log = createLogger('MessageReceiver');
 
@@ -212,9 +216,13 @@ type CacheAddItemType = {
 };
 
 type LockedStores = {
+  readonly identityKeyStore: IdentityKeys;
+  readonly kyberPreKeyStore: KyberPreKeys;
+  readonly preKeyStore: PreKeys;
   readonly senderKeyStore: SenderKeys;
   readonly sessionStore: Sessions;
-  readonly identityKeyStore: IdentityKeys;
+  readonly signedPreKeyStore: SignedPreKeys;
+
   readonly zone?: Zone;
 };
 
@@ -321,7 +329,7 @@ export default class MessageReceiver
       throw new Error('Server trust root is required!');
     }
     this.#serverTrustRoot = PublicKey.deserialize(
-      Buffer.from(Bytes.fromBase64(serverTrustRoot))
+      Bytes.fromBase64(serverTrustRoot)
     );
 
     this.#incomingQueue = new PQueue({
@@ -409,7 +417,7 @@ export default class MessageReceiver
         const envelope: ProcessedEnvelope = {
           // Make non-private envelope IDs dashless so they don't get redacted
           //   from logs
-          id: getGuid().replace(/-/g, ''),
+          id: getGuid().replace(/-/g, '.'),
           receivedAtCounter: incrementMessageCounter(),
           receivedAtDate: Date.now(),
           // Calculate the message age (time on server).
@@ -990,6 +998,8 @@ export default class MessageReceiver
 
     try {
       const zone = new Zone('decryptAndCacheBatch', {
+        pendingKyberPreKeysToRemove: true,
+        pendingPreKeysToRemove: true,
         pendingSenderKeys: true,
         pendingSessions: true,
         pendingUnprocessed: true,
@@ -1015,19 +1025,17 @@ export default class MessageReceiver
 
               let stores = storesMap.get(destinationServiceId);
               if (!stores) {
+                const sharedParams = {
+                  ourServiceId: destinationServiceId,
+                  zone,
+                };
                 stores = {
-                  senderKeyStore: new SenderKeys({
-                    ourServiceId: destinationServiceId,
-                    zone,
-                  }),
-                  sessionStore: new Sessions({
-                    zone,
-                    ourServiceId: destinationServiceId,
-                  }),
-                  identityKeyStore: new IdentityKeys({
-                    zone,
-                    ourServiceId: destinationServiceId,
-                  }),
+                  identityKeyStore: new IdentityKeys(sharedParams),
+                  kyberPreKeyStore: new KyberPreKeys(sharedParams),
+                  preKeyStore: new PreKeys(sharedParams),
+                  senderKeyStore: new SenderKeys(sharedParams),
+                  sessionStore: new Sessions(sharedParams),
+                  signedPreKeyStore: new SignedPreKeys(sharedParams),
                   zone,
                 };
                 storesMap.set(destinationServiceId, stores);
@@ -1351,7 +1359,7 @@ export default class MessageReceiver
 
     log.info(`unsealEnvelope(${logId}): unidentified message`);
     const messageContent = await sealedSenderDecryptToUsmc(
-      Buffer.from(ciphertext),
+      ciphertext,
       stores.identityKeyStore
     );
 
@@ -1361,6 +1369,8 @@ export default class MessageReceiver
 
     const originalSource = envelope.source;
     const originalSourceUuid = envelope.sourceServiceId;
+
+    const groupId = messageContent.groupId();
 
     const newEnvelope: UnsealedEnvelope = {
       ...envelope,
@@ -1379,7 +1389,7 @@ export default class MessageReceiver
       // UnsealedEnvelope-only fields
       unidentifiedDeliveryReceived: !(originalSource || originalSourceUuid),
       contentHint: messageContent.contentHint(),
-      groupId: messageContent.groupId()?.toString('base64'),
+      groupId: groupId ? Bytes.toBase64(groupId) : undefined,
       certificate,
       unsealedContent: messageContent,
     };
@@ -1665,7 +1675,15 @@ export default class MessageReceiver
   }
 
   async #decryptSealedSender(
-    { senderKeyStore, sessionStore, identityKeyStore, zone }: LockedStores,
+    {
+      identityKeyStore,
+      kyberPreKeyStore,
+      preKeyStore,
+      senderKeyStore,
+      sessionStore,
+      signedPreKeyStore,
+      zone,
+    }: LockedStores,
     envelope: UnsealedEnvelope
   ): Promise<DecryptSealedSenderResult> {
     const { destinationServiceId } = envelope;
@@ -1741,14 +1759,6 @@ export default class MessageReceiver
         'unidentified message/passing to sealedSenderDecryptMessage'
     );
 
-    const preKeyStore = new PreKeys({ ourServiceId: destinationServiceId });
-    const signedPreKeyStore = new SignedPreKeys({
-      ourServiceId: destinationServiceId,
-    });
-    const kyberPreKeyStore = new KyberPreKeys({
-      ourServiceId: destinationServiceId,
-    });
-
     const sealedSenderIdentifier = envelope.sourceServiceId;
     strictAssert(
       sealedSenderIdentifier !== undefined,
@@ -1782,7 +1792,7 @@ export default class MessageReceiver
             preKeyStore,
             signedPreKeyStore,
             kyberPreKeyStore,
-            UsePQRatchet.No
+            isPQRatchetEnabled()
           );
         }
         return signalDecrypt(
@@ -1804,7 +1814,14 @@ export default class MessageReceiver
     ciphertext: Uint8Array,
     serviceIdKind: ServiceIdKind
   ): Promise<InnerDecryptResultType | undefined> {
-    const { sessionStore, identityKeyStore, zone } = stores;
+    const {
+      identityKeyStore,
+      kyberPreKeyStore,
+      preKeyStore,
+      sessionStore,
+      signedPreKeyStore,
+      zone,
+    } = stores;
 
     const logId = getEnvelopeId(envelope);
     const envelopeTypeEnum = Proto.Envelope.Type;
@@ -1813,13 +1830,6 @@ export default class MessageReceiver
     const { sourceDevice } = envelope;
 
     const { destinationServiceId } = envelope;
-    const preKeyStore = new PreKeys({ ourServiceId: destinationServiceId });
-    const signedPreKeyStore = new SignedPreKeys({
-      ourServiceId: destinationServiceId,
-    });
-    const kyberPreKeyStore = new KyberPreKeys({
-      ourServiceId: destinationServiceId,
-    });
 
     strictAssert(identifier !== undefined, 'Empty identifier');
     strictAssert(sourceDevice !== undefined, 'Empty source device');
@@ -1845,8 +1855,7 @@ export default class MessageReceiver
 
     if (envelope.type === envelopeTypeEnum.PLAINTEXT_CONTENT) {
       log.info(`decrypt/${logId}: plaintext message`);
-      const buffer = Buffer.from(ciphertext);
-      const plaintextContent = PlaintextContent.deserialize(buffer);
+      const plaintextContent = PlaintextContent.deserialize(ciphertext);
 
       return {
         plaintext: this.#unpad(plaintextContent.body()),
@@ -1865,7 +1874,7 @@ export default class MessageReceiver
           'MessageReceiver.innerDecrypt: No sourceDevice for CIPHERTEXT message'
         );
       }
-      const signalMessage = SignalMessage.deserialize(Buffer.from(ciphertext));
+      const signalMessage = SignalMessage.deserialize(ciphertext);
 
       const plaintext = await this.#storage.protocol.enqueueSessionJob(
         address,
@@ -1894,9 +1903,7 @@ export default class MessageReceiver
           'MessageReceiver.innerDecrypt: No sourceDevice for PREKEY_BUNDLE message'
         );
       }
-      const preKeySignalMessage = PreKeySignalMessage.deserialize(
-        Buffer.from(ciphertext)
-      );
+      const preKeySignalMessage = PreKeySignalMessage.deserialize(ciphertext);
 
       const plaintext = await this.#storage.protocol.enqueueSessionJob(
         address,
@@ -1910,7 +1917,7 @@ export default class MessageReceiver
               preKeyStore,
               signedPreKeyStore,
               kyberPreKeyStore,
-              UsePQRatchet.No
+              isPQRatchetEnabled()
             )
           ),
         zone
@@ -2619,8 +2626,7 @@ export default class MessageReceiver
 
     logUnexpectedUrgentValue(envelope, 'retryRequest');
 
-    const buffer = Buffer.from(decryptionError);
-    const request = DecryptionErrorMessage.deserialize(buffer);
+    const request = DecryptionErrorMessage.deserialize(decryptionError);
 
     const { sourceServiceId: sourceAci, sourceDevice } = envelope;
     if (!sourceAci || !sourceDevice) {
@@ -2672,9 +2678,7 @@ export default class MessageReceiver
 
     const sender = ProtocolAddress.new(sourceServiceId, sourceDevice);
     const senderKeyDistributionMessage =
-      SenderKeyDistributionMessage.deserialize(
-        Buffer.from(distributionMessage)
-      );
+      SenderKeyDistributionMessage.deserialize(distributionMessage);
     const { destinationServiceId } = envelope;
     const address = new QualifiedAddress(
       destinationServiceId,
@@ -2708,7 +2712,7 @@ export default class MessageReceiver
 
     const { pni: pniBytes, signature } = pniSignatureMessage;
     strictAssert(Bytes.isNotEmpty(pniBytes), `${logId}: missing PNI bytes`);
-    const pni = fromPniObject(Pni.fromUuidBytes(Buffer.from(pniBytes)));
+    const pni = fromPniObject(Pni.fromUuidBytes(pniBytes));
     strictAssert(pni, `${logId}: missing PNI`);
     strictAssert(Bytes.isNotEmpty(signature), `${logId}: empty signature`);
     strictAssert(isAciString(aci), `${logId}: invalid ACI`);
@@ -3228,6 +3232,9 @@ export default class MessageReceiver
         ),
         messageRequestResponseType: sync.type,
         groupV2Id: groupV2IdString,
+        receivedAtCounter: envelope.receivedAtCounter,
+        receivedAtMs: envelope.receivedAtDate,
+        sentAt: envelope.timestamp,
       },
       this.#removeFromCache.bind(this, envelope)
     );
@@ -3862,6 +3869,13 @@ export default class MessageReceiver
 
     logUnexpectedUrgentValue(envelope, 'blockSync');
 
+    const responseInfo: MessageRequestResponseInfo = {
+      source: MessageRequestResponseSource.BLOCK_SYNC,
+      receivedAtCounter: envelope.receivedAtCounter,
+      receivedAtMs: envelope.receivedAtDate,
+      timestamp: envelope.timestamp,
+    };
+
     function getAndApply(
       type: Proto.SyncMessage.MessageRequestResponse.Type
     ): (value: string) => Promise<void> {
@@ -3870,9 +3884,7 @@ export default class MessageReceiver
           item,
           'private'
         );
-        await conversation.applyMessageRequestResponse(type, {
-          fromSync: true,
-        });
+        await conversation.applyMessageRequestResponse(type, responseInfo);
       };
     }
 
@@ -3962,9 +3974,7 @@ export default class MessageReceiver
             }
             await conversation.applyMessageRequestResponse(
               messageRequestEnum.BLOCK,
-              {
-                fromSync: true,
-              }
+              responseInfo
             );
           })
         );
@@ -3979,9 +3989,7 @@ export default class MessageReceiver
             }
             await conversation.applyMessageRequestResponse(
               messageRequestEnum.ACCEPT,
-              {
-                fromSync: true,
-              }
+              responseInfo
             );
           })
         );
@@ -4153,7 +4161,7 @@ function processConversationIdentifier(
   if (threadGroupId) {
     return {
       type: 'group' as const,
-      groupId: Buffer.from(threadGroupId).toString('base64'),
+      groupId: Bytes.toBase64(threadGroupId),
     };
   }
   if (threadE164) {

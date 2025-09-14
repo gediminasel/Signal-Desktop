@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { CallLinkRootKey } from '@signalapp/ringrtc';
+import * as Bytes from '../../Bytes';
 import type {
   CallLinkRecord,
   CallLinkStateType,
@@ -121,6 +122,41 @@ export function insertCallLink(db: WritableDB, callLink: CallLinkType): void {
   _insertCallLink(db, callLink);
 }
 
+export type InsertOrUpdateCallLinkFromSyncResult = Readonly<{
+  callLink: CallLinkType;
+  inserted: boolean;
+  updated: boolean;
+}>;
+
+export function insertOrUpdateCallLinkFromSync(
+  db: WritableDB,
+  callLink: CallLinkType
+): InsertOrUpdateCallLinkFromSyncResult {
+  const { roomId, adminKey } = callLink;
+  return db.transaction(() => {
+    const existingCallLink = getCallLinkByRoomId(db, roomId);
+    if (existingCallLink) {
+      if (adminKey && adminKey !== existingCallLink.adminKey) {
+        updateCallLinkAdminKeyByRoomId(db, roomId, adminKey);
+        return {
+          callLink: { ...existingCallLink, adminKey },
+          inserted: false,
+          updated: true,
+        };
+      }
+
+      return {
+        callLink: existingCallLink,
+        inserted: false,
+        updated: false,
+      };
+    }
+
+    insertCallLink(db, callLink);
+    return { callLink, inserted: true, updated: false };
+  })();
+}
+
 export function updateCallLink(db: WritableDB, callLink: CallLinkType): void {
   const { roomId, rootKey } = callLink;
   assertRoomIdMatchesRootKey(roomId, rootKey);
@@ -186,9 +222,9 @@ export function updateCallLinkAdminKeyByRoomId(
 }
 
 function assertRoomIdMatchesRootKey(roomId: string, rootKey: string): void {
-  const derivedRoomId = CallLinkRootKey.parse(rootKey)
-    .deriveRoomId()
-    .toString('hex');
+  const derivedRoomId = Bytes.toHex(
+    CallLinkRootKey.parse(rootKey).deriveRoomId()
+  );
   strictAssert(
     roomId === derivedRoomId,
     'passed roomId must match roomId derived from root key'

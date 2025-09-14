@@ -305,9 +305,6 @@
   "icu:NavTabs__ItemLabel--Settings": {
     "messageformat": "Тууралоо"
   },
-  "icu:NavTabs__ItemLabel--Update": {
-    "messageformat": "Signal'ды жаңыртуу"
-  },
   "icu:NavTabs__ItemLabel--Profile": {
     "messageformat": "Профиль"
   },
@@ -605,6 +602,12 @@
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
+  "icu:Toast--ReceiptSaved": {
+    "messageformat": "Дүмүрчөк сакталды"
+  },
+  "icu:Toast--ReceiptSaveFailed": {
+    "messageformat": "Дүмүрчөк сакталып жатканда ката кетти. Кайталап көрүңүз."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Файлдар менен кошо сүрөттөрдү жана видеолорду тандай албайсыз."
   },
@@ -664,9 +667,6 @@
   },
   "icu:joinTheBeta": {
     "messageformat": "Beta версиясына кошулуу"
-  },
-  "icu:signalDesktopPreferences": {
-    "messageformat": "Signal Desktop жөндөөлөрү"
   },
   "icu:signalDesktopStickerCreator": {
     "messageformat": "Стикерлер топтомун жаратуучусу"
@@ -1285,6 +1285,168 @@
   },
   "icu:Preferences__EmojiSkinToneDefaultSetting__Label": {
     "messageformat": "Быйтыкчанын терисинин өңү"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__Title": {
+    "messageformat": "Маектер папкалары"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Title": {
+    "messageformat": "Маек папкасын кошуу"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Description": {
+    "messageformat": "Маектериңизди папкаларга салып, керектүүлөрүн оңой тапкыдай кылыңыз."
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__EditFolder": {
+    "messageformat": "Папканы оңдоо"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__DeleteFolder": {
+    "messageformat": "Өчүрүү"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__Title": {
+    "messageformat": "Папканы өчүрөсүзбү?"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__Description": {
+    "messageformat": "“{chatFolderTitle}” папкасын өчүрөсүзбү?"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__DeleteButton": {
+    "messageformat": "Өчүрүү"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__CancelButton": {
+    "messageformat": "Жок"
+  },
+  "icu:Preferences__ChatFoldersPage__Title": {
+    "messageformat": "Маектер папкалары"
+  },
+  "icu:Preferences__ChatFoldersPage__Description": {
+    "messageformat": "Маектериңизди папкаларга салып, керектүүлөрүн маектер тизмесинен оңой табасыз"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__Title": {
+    "messageformat": "Папкалар"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__AllChatsFolder__Title": {
+    "messageformat": "Бардык маектер"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__CreateAFolderButton": {
+    "messageformat": "Папка түзүү"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__Title": {
+    "messageformat": "Сунушталган папкалар"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton": {
+    "messageformat": "Кошуу"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton__Toast": {
+    "messageformat": "{chatFolderTitle} папкасы кошулду"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Title": {
+    "messageformat": "Окула элек"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Description": {
+    "messageformat": "Бардык маектердеги окула элек билдирүүлөр"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__DirectChatsFolder__Title": {
+    "messageformat": "Жекеме-жеке маектешүү"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__DirectChatsFolder__Description": {
+    "messageformat": "Жекеме-жеке маектердеги билдирүүлөр гана"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__GroupChatsFolder__Title": {
+    "messageformat": "Топтор"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__GroupChatsFolder__Description": {
+    "messageformat": "Топтук маектердеги билдирүүлөр гана"
+  },
+  "icu:Preferences__EditChatFolderPage__Title": {
+    "messageformat": "Папка түзүү"
+  },
+  "icu:Preferences__EditChatFolderPage__FolderNameField__Label": {
+    "messageformat": "Папканын аталышы"
+  },
+  "icu:Preferences__EditChatFolderPage__FolderNameField__Placeholder": {
+    "messageformat": "Папканын аталышы (талап кылынат)"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__Title": {
+    "messageformat": "Кошулган маектер"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__Help": {
+    "messageformat": "Бул папкада көрүнө турган маектерди тандайсыз"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__AddChatsButton": {
+    "messageformat": "Маектерди кошуу"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog--IncludedChats__Title": {
+    "messageformat": "Кошулган маектер"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog--ExcludedChats__Title": {
+    "messageformat": "Маектерди чыгарып салуу"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__Search__Placeholder": {
+    "messageformat": "Издөө"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__Title": {
+    "messageformat": "Маектин түрлөрү"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__DirectChats": {
+    "messageformat": "Жекеме-жеке маектешүү"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__GroupChats": {
+    "messageformat": "Топтор"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__RecentChats__Title": {
+    "messageformat": "Соңку маектер"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__DoneButton": {
+    "messageformat": "Бүттү"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__Title": {
+    "messageformat": "Өзгөчө учурлар"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__Help": {
+    "messageformat": "Бул папкада көрүнбөсүн деген маектерди тандайсыз"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__ExcludeChatsButton": {
+    "messageformat": "Маектерди чыгаруу"
+  },
+  "icu:Preferences__EditChatFolderPage__OnlyShowUnreadChatsCheckbox__Label": {
+    "messageformat": "Окула элек маектер гана көрүнсүн"
+  },
+  "icu:Preferences__EditChatFolderPage__OnlyShowUnreadChatsCheckbox__Description": {
+    "messageformat": "Бул папкада окула элек билдирүүлөр бар маектер гана көрүнөт."
+  },
+  "icu:Preferences__EditChatFolderPage__IncludeMutedChatsCheckbox__Label": {
+    "messageformat": "Үнү басылган маектерди да"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteFolderButton": {
+    "messageformat": "Папканы өчүрүү"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__Title": {
+    "messageformat": "Бул маектер папкасын өчүрөсүзбү?"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__Description": {
+    "messageformat": "Бул папка маектер тизмеңизден өчүрүлөт."
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__DeleteButton": {
+    "messageformat": "Өчүрүү"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__CancelButton": {
+    "messageformat": "Жок"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__Title": {
+    "messageformat": "Өзгөрүүлөрдү сактайсызбы?"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__Description": {
+    "messageformat": "Ушул маектер папкасына киргизилген өзгөрүүлөрдү сактайсызбы?"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__SaveButton": {
+    "messageformat": "Сактоо"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__DiscardButton": {
+    "messageformat": "Жокко чыгаруу"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveButton": {
+    "messageformat": "Сактоо"
+  },
+  "icu:Preferences__EditChatFolderPage__CancelButton": {
+    "messageformat": "Жок"
   },
   "icu:initialSync": {
     "messageformat": "Байланыштарды жана топторду шайкештирүү"
@@ -3792,7 +3954,7 @@
     "messageformat": "{joinerName} жөнөткөн топко кошулуу өтүнүчү четке кагылды."
   },
   "icu:GroupV2--admin-approval-bounce--pluralized": {
-    "messageformat": "{numberOfRequests, plural, other {{joinerName} топко шилтеме аркылуу кошулууну {numberOfRequests,number} жолу суранып, жокко чыгарды}}"
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} requested and canceled their request to join via the group link} other {{joinerName} requested and canceled {numberOfRequests,number} requests to join via the group link}}"
   },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Сиз администратордун уруксаты өчүрүлгөн топко шилтеме коштуңуз."
@@ -4026,10 +4188,10 @@
     "messageformat": "Кайра аракет кылуу"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
-    "messageformat": "Медиа файлдарыңыз калыбына келүүдө"
+    "messageformat": "Медиа файлдар шайкештирилүүдө"
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
-    "messageformat": "Калыбына келтирүү тындырылды"
+    "messageformat": "Шайкештирүү тындырылды"
   },
   "icu:BackupMediaDownloadProgress__title-idle": {
     "messageformat": "{totalSize} ичинен {currentSize} калыбына келди"
@@ -4044,13 +4206,13 @@
     "messageformat": "Internet байланышы күтүлүүдө..."
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
-    "messageformat": "Өткөрүүнү тындыруу"
+    "messageformat": "Тыныгуу"
   },
   "icu:BackupMediaDownloadProgress__button-resume": {
-    "messageformat": "Өтөрүүнү улантуу"
+    "messageformat": "Улантуу"
   },
   "icu:BackupMediaDownloadProgress__button-cancel": {
-    "messageformat": "Өткөрүүнү токтотуу"
+    "messageformat": "Ооба"
   },
   "icu:BackupMediaDownloadProgress__button-more": {
     "messageformat": "Дагы параметрлер"
@@ -4062,16 +4224,34 @@
     "messageformat": "{totalSize} ичинен {currentSize}"
   },
   "icu:BackupMediaDownloadCancelConfirmation__title": {
-    "messageformat": "Медиа файлдарды өткөрүү токтотулсунбу?"
+    "messageformat": "Медиа файлдардын шайкештирилишин токтотосузбу?"
   },
   "icu:BackupMediaDownloadCancelConfirmation__description": {
-    "messageformat": "Билдирүүлөрүңүз менен медиа файлдарыңыз толук калыбына келген жок. Токтото турган болсоңуз, аларды кайра Параметрлерден өткөрсөңүз болот."
+    "messageformat": "Медиа файлдарыңыз шайкештирилип бүтө элек. Токтото турган болсоңуз, бул түзмөктү кайра туташтырып кайра шайкештирип көрсөңүз болот. <learnMoreLink>Кененирээк маалымат.</learnMoreLink>"
   },
   "icu:BackupMediaDownloadCancelConfirmation__button-continue": {
-    "messageformat": "Өткөрүүнү улантуу"
+    "messageformat": "Жок"
   },
   "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
-    "messageformat": "Өткөрүүнү токтотуу"
+    "messageformat": "Ооба"
+  },
+  "icu:BackupMediaDownloadProgressSettings__paused--title": {
+    "messageformat": "Шайкештирүү тындырылды"
+  },
+  "icu:BackupMediaDownloadProgressSettings__paused--description": {
+    "messageformat": "Шайкештирүүнү улантуу үчүн “{resumeButtonText}” дегенди басыңыз"
+  },
+  "icu:BackupMediaDownloadProgressSettings__button-resume": {
+    "messageformat": "Улантуу"
+  },
+  "icu:BackupMediaDownloadProgressSettings__button-pause": {
+    "messageformat": "Тыныгуу"
+  },
+  "icu:BackupMediaDownloadProgressSettings__title-in-progress": {
+    "messageformat": "Медиа файлдар шайкештирилүүдө"
+  },
+  "icu:BackupMediaDownloadProgressSettings__progressbar-hint": {
+    "messageformat": "{totalSize} ичинен {currentSize} ({fractionComplete,number,percent})..."
   },
   "icu:CriticalIdlePrimaryDeviceModal__title": {
     "messageformat": "Аккаунтка чара көрүшүңүз керек"
@@ -4811,6 +4991,12 @@
   "icu:ProfileEditor__username-link__error-icon": {
     "messageformat": "Колдонуучу атынын шилтемесин кайра түзүү керек"
   },
+  "icu:ProfileEditor__open": {
+    "messageformat": "Open username link screen"
+  },
+  "icu:ProfileEditor__username-link__open": {
+    "messageformat": "Open username link screen"
+  },
   "icu:ProfileEditor__username-link__tooltip__title": {
     "messageformat": "Колдонуучу атыңызды бөлүшүңүз"
   },
@@ -5082,7 +5268,7 @@
     "messageformat": "Signal'дын камдык көчүрмөлөрү"
   },
   "icu:Preferences--signal-backups-off-description": {
-    "messageformat": "Automatic backups with Signal’s secure, end-to-end encrypted storage service. Get started on your phone. <learnMoreLink>Learn more</learnMoreLink>."
+    "messageformat": "Signal'дын баштан аяк шифрленген сактоо кызматы менен камдык көчүрмөлөр автоматтык түрдө сакталат. Телефонуңузда баштаңыз. <learnMoreLink>Кененирээк маалымат.</learnMoreLink>"
   },
   "icu:Preferences--backup-section-description": {
     "messageformat": "Жаңы телефон алганыңызда же Signal'ды кайра орнотконуңузда эч качан дайындарыңызды жоготуп албашыңыз үчүн билдирүүлөр таржымалыңыздын камдык көчүрмөсүн сактаңыз."
@@ -5125,9 +5311,6 @@
   },
   "icu:Preferences--backup-created-by-phone": {
     "messageformat": "Телефонуңуз"
-  },
-  "icu:Preferences--backup-size__label": {
-    "messageformat": "Камдык көчүрмөнүн өлчөмү"
   },
   "icu:Preferences__local-backups": {
     "messageformat": "Компьютерде сакталган камдык көчүрмөлөр"
@@ -6114,9 +6297,6 @@
   "icu:UsernameLinkModalBody__reset": {
     "messageformat": "Баштапкы абалга келтирүү"
   },
-  "icu:UsernameLinkModalBody__done": {
-    "messageformat": "Бүттү"
-  },
   "icu:UsernameLinkModalBody__color__radio": {
     "messageformat": "Колдонуучунун атынын шилтемесинин түсү, {total,number} ичинен {index,number}"
   },
@@ -6444,6 +6624,198 @@
   "icu:WhatsNew__modal-title": {
     "messageformat": "Жаңылыктар"
   },
+  "icu:PreferencesDonations__title": {
+    "messageformat": "Кирешеге караганда коопсуздукту жогору коебуз"
+  },
+  "icu:PreferencesDonations__description": {
+    "messageformat": "Өзүңүз каржылаган купуя жазышуу мүмкүнчүлүгү. Жарнамалар жок, эч ким көз салбайт, эч ким ачыктабайт. Signal'ды колдоо үчүн азыр салым кошуңуз. <readMoreLink>Дагы</readMoreLink>"
+  },
+  "icu:PreferencesDonations__donate-button": {
+    "messageformat": "Колдоо көрсөтүү"
+  },
+  "icu:PreferencesDonations__my-support": {
+    "messageformat": "Менин колдоом"
+  },
+  "icu:PreferencesDonations__donate-button-with-amount": {
+    "messageformat": "Колдоо көрсөтүү: {formattedCurrencyAmount}"
+  },
+  "icu:PreferencesDonations__mobile-info": {
+    "messageformat": "Мобилдик түзмөгүңүздө төшбелгилер менен бир айлык салымдарыңызды тескей аласыз."
+  },
+  "icu:PreferencesDonations__privacy-modal-title": {
+    "messageformat": "Маалыматыңыз купуя сакталууда"
+  },
+  "icu:PreferencesDonations__privacy-modal-content": {
+    "messageformat": "<paragraph>Салым кошкондо, Signal сизге байланыштуу эч кандай жеке маалымат чогултпайт же сактабайт.</paragraph><paragraph>Салым түрүндөгү төлөмдөрүңүздү Stripe кызматы аркылуу алабыз. Аларга берген бир дагы маалыматыңызды албайбыз, сактабайбыз же жазып албайбыз.</paragraph><paragraph>Signal салымыңызды Signal аккаунтуңузга байланыштыра албайт жана байланыштырбайт.</paragraph><paragraph>Колдоо көрсөткөнүңүз үчүн чоң рахмат!</paragraph>"
+  },
+  "icu:PreferencesDonations__receipts": {
+    "messageformat": "Дүмүрчөктөр"
+  },
+  "icu:PreferencesDonations__faqs": {
+    "messageformat": "Салым тууралуу КБС"
+  },
+  "icu:PreferencesDonations--receiptList__info": {
+    "messageformat": "Дүмүрчөктөр түзмөктөр ортосунда шайкештирилбейт. Эгер Signal'ды кайра орноткон болсоңуз, буга чейинки дүмүрчөктөрдү көрө албай каласыз."
+  },
+  "icu:PreferencesDonations--receiptList__empty-title": {
+    "messageformat": "Дүмүрчөктөр жок"
+  },
+  "icu:PreferencesDonations__ReceiptModal--title": {
+    "messageformat": "Чоо-жайы"
+  },
+  "icu:PreferencesDonations__ReceiptModal--download": {
+    "messageformat": "Дүмүрчөктү жүктөп алуу"
+  },
+  "icu:PreferencesDonations__ReceiptModal--type-label": {
+    "messageformat": "Түрү"
+  },
+  "icu:PreferencesDonations__ReceiptModal--date-paid-label": {
+    "messageformat": "Төлөгөн күн"
+  },
+  "icu:DonateFlow__make-a-one-time-donation": {
+    "messageformat": "Бир жолу колдоо көрсөтүү"
+  },
+  "icu:DonateFlow__desktop-one-time-only-notice": {
+    "messageformat": "Бир жолу компьютериңизден салым кошо аласыз. Ал эми мобилдик түзмөгүңүздөн ай сайын колдоо көрсөтүп турсаңыз болот."
+  },
+  "icu:DonateFlow__having-issues-contact-support": {
+    "messageformat": "Маселе жаралдыбы? <contactSupportLink>Кардарларды тейлеген кызматка кайрылыңыз</contactSupportLink>"
+  },
+  "icu:DonateFlow__amount-picker-custom-amount-placeholder": {
+    "messageformat": "Enter Custom Amount"
+  },
+  "icu:DonateFlow__credit-or-debit-card": {
+    "messageformat": "Credit or Debit Card"
+  },
+  "icu:DonateFlow__card-form-instructions": {
+    "messageformat": "Enter your credit or debit card details. Signal does not collect or store your personal information. <learnMoreLink>Learn more</learnMoreLink>"
+  },
+  "icu:DonateFlow__card-form-card-number": {
+    "messageformat": "Card Number"
+  },
+  "icu:DonateFlow__card-form-expiration-date": {
+    "messageformat": "Expiration Date"
+  },
+  "icu:DonateFlow__card-form-title-donate-with-amount": {
+    "messageformat": "Donate {formattedCurrencyAmount} to Signal"
+  },
+  "icu:DonateFlow__card-form-error-invalid-card-number": {
+    "messageformat": "Invalid card number"
+  },
+  "icu:DonateFlow__card-form-error-expiration-expired": {
+    "messageformat": "Card has expired"
+  },
+  "icu:DonateFlow__card-form-error-year-missing": {
+    "messageformat": "Year required"
+  },
+  "icu:DonateFlow__card-form-error-invalid": {
+    "messageformat": "Invalid"
+  },
+  "icu:DonateFlow__card-form-error-cvc-too-short": {
+    "messageformat": "Code too short"
+  },
+  "icu:DonateFlow__one-time-donation-boost-badge-info": {
+    "messageformat": "Get the Signal Boost badge for 30 days"
+  },
+  "icu:DonationReceipt__title": {
+    "messageformat": "Колдоо дүмүрчөгү"
+  },
+  "icu:DonationReceipt__amount-label": {
+    "messageformat": "Суммасы"
+  },
+  "icu:DonationReceipt__type-label": {
+    "messageformat": "Түрү"
+  },
+  "icu:DonationReceipt__date-paid-label": {
+    "messageformat": "Төлөгөн күн"
+  },
+  "icu:DonationReceipt__type-value--one-time": {
+    "messageformat": "Бир жолу"
+  },
+  "icu:DonationReceipt__footer-text": {
+    "messageformat": "Signal'ды колдогонуңуз үчүн чоң рахмат! Салым кошуу менен, баштапкы коду ачык купуялык технологиялары аркылуу дүйнө жүзүндөгү миллиондогон адамдарга өз оюн эркин билдирип, коопсуз шарттарда баарлашуу мүмкүнчүлүгүн берүү миссиябызды жайылтканга жардам бересиз. Эгер Америка Кошмо Штаттарынын тургуну болсоңуз, бул дүмүрчөктү салык органдарына көрсөтүү үчүн сактап коюңуз. Signal Technology фонду Ички кирешелер кодексинин 501(c)(3) бөлүмү боюнча салыктан бошотулган коммерциялык эмес уюм. Федералдык салык идентификаторубуз 82-4506840."
+  },
+  "icu:Donations__Toast__Canceled": {
+    "messageformat": "Donation canceled"
+  },
+  "icu:Donations__Toast__Completed": {
+    "messageformat": "Салым кошулду"
+  },
+  "icu:Donations__Toast__Error": {
+    "messageformat": "Салымды иштетүүдө ката кетти"
+  },
+  "icu:Donations__Toast__Processing": {
+    "messageformat": "Салым иштелүүдө"
+  },
+  "icu:Donations__Toast__VerificationFailed": {
+    "messageformat": "Ырасталбай калды"
+  },
+  "icu:Donations__Toast__VerificationNeeded": {
+    "messageformat": "Кошумча ырастоону талап кылган салымыңыз каралууда."
+  },
+  "icu:Donations__Toast__ConfirmationNeeded": {
+    "messageformat": "You have a donation in progress that requires confirmation."
+  },
+  "icu:Donations__DonationInterrupted": {
+    "messageformat": "Donation interrupted"
+  },
+  "icu:Donations__DonationInterrupted__Description": {
+    "messageformat": "Your card was not charged. Do you want to retry the donation?"
+  },
+  "icu:Donations__DonationInterrupted__RetryButton": {
+    "messageformat": "Try again"
+  },
+  "icu:Donations__PaymentMethodDeclined": {
+    "messageformat": "Төлөм ыкмасы четке кагылды"
+  },
+  "icu:Donations__PaymentMethodDeclined__Description": {
+    "messageformat": "Башка төлөм ыкмасын колдонуп көрүңүз же көбүрөөк маалымат алуу үчүн банкыңызга кайрылыңыз."
+  },
+  "icu:Donations__Failed3dsValidation": {
+    "messageformat": "Ырасталбай калды"
+  },
+  "icu:Donations__Failed3dsValidation__Description": {
+    "messageformat": "Кошумча ырастоо кадамы аткарылбай калды. Кайталап көрүңүз."
+  },
+  "icu:Donations__GenericError": {
+    "messageformat": "Салымыңыз өтпөй калды"
+  },
+  "icu:Donations__GenericError__Description": {
+    "messageformat": "Салымыңыз иштелбей калды окшойт. \"Signal'га колдоо көрсөтүү\" дегенди басып, дүмүрчөктөрүңүздү текшерүү үчүн \"Салымдардын дүмүрчөктөрү\" дегенди караңыз."
+  },
+  "icu:Donations__Processing": {
+    "messageformat": "Салым иштелүүдө..."
+  },
+  "icu:Donations__StillProcessing": {
+    "messageformat": "Дагы эле иштетилүүдө"
+  },
+  "icu:Donations__StillProcessing__Description": {
+    "messageformat": "Салымыңыз дагы деле иштелүүдө. Бир нече мүнөт кетиши мүмкүн."
+  },
+  "icu:Donations__TimedOut": {
+    "messageformat": "Donation canceled"
+  },
+  "icu:Donations__TimedOut__Description": {
+    "messageformat": "It has been too long since you started your donation. Please start over."
+  },
+  "icu:Donations__3dsValidationNeeded": {
+    "messageformat": "Дагы бир жолу ырастоо керек"
+  },
+  "icu:Donations__3dsValidationNeeded--waiting": {
+    "messageformat": "Ырастоо күтүлүүдө"
+  },
+  "icu:Donations__3dsValidationNeeded__Description": {
+    "messageformat": "Картаңызды берген тараптын талабы боюнча веб браузерде кошумча ырастоодон өтүшүңүз керек."
+  },
+  "icu:Donations__3dsValidationNeeded__OpenBrowser": {
+    "messageformat": "Браузерди ачуу"
+  },
+  "icu:Donations__3dsValidationNeeded__OpenBrowser--opened": {
+    "messageformat": "Браузерди кайра ачуу"
+  },
+  "icu:Donations__3dsValidationNeeded__CancelDonation": {
+    "messageformat": "Салымды токтотуу"
+  },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "Бул версия бир нече майда өзгөртүүлөрдү жана мүчүлүштүктөрдү оңдоолорду камтыйт.",
     "ignoreUnused": true
@@ -6472,10 +6844,13 @@
     "messageformat": "Майда-барат өзгөрүүлөрдү киргизип, мүчүлүштүктөрдү оңдоп, колдонмонун иштешин жакшыртып жатабыз. Signal'ды колдонгонуңуз үчүн чоң рахмат!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.58--0": {
-    "messageformat": "Билдирүүгө сезимиңизди билдирүүчү жаңы бөлүмдө билдирүүгө коюлган бардык быйтыкчалар көрүнөт. Эми элдин агымына оңой кошулуп, башкалар сыяктуу жылтылдаган жүрөк кошосуз же өз жолуңузду тандап, кадимки эле жүрөкчөнү кошосуз."
+  "icu:WhatsNew__v7.64--0": {
+    "messageformat": "Бир нече колдонмо ачылып турганда, окулган/окула элек билдирүүлөрдүн көрүнүшүн жакшыртып, сезимиңизди билдирүү үчүн быйтыкча издеп жатканда кокус боштукту басып алып, быйтыкча толук көрүнгөн мүчүлүштүктү оңдоп койдук. Азыр деле быйтыкчаны басып, чоңойтуп көрө аласыз же терип деле көрсөңүз болот."
   },
-  "icu:WhatsNew__v7.59--0": {
-    "messageformat": "Бул жаңы версияда Linux'тагы аппаратты тездетүүчү GPU процессору иштеп, колдоого алынган түзмөктөрдө видеолор бир калыпта көрүнөт."
+  "icu:WhatsNew__v7.65--0": {
+    "messageformat": "Кээде керектүү быйтыкчаны таба албай калабыз. Издөө сабында Esc баскычын басканда ката деп чыккан билдирүүнү оңдоп койдук."
+  },
+  "icu:WhatsNew__v7.66--0": {
+    "messageformat": "This update fixes a few small bugs, including one where emoji reactions weren't being grouped together correctly in some cases."
   }
 }

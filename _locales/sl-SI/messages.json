@@ -305,9 +305,6 @@
   "icu:NavTabs__ItemLabel--Settings": {
     "messageformat": "Nastavitve"
   },
-  "icu:NavTabs__ItemLabel--Update": {
-    "messageformat": "Posodobite aplikacijo Signal"
-  },
   "icu:NavTabs__ItemLabel--Profile": {
     "messageformat": "Profil"
   },
@@ -605,6 +602,12 @@
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
+  "icu:Toast--ReceiptSaved": {
+    "messageformat": "Račun je shranjen"
+  },
+  "icu:Toast--ReceiptSaveFailed": {
+    "messageformat": "Napaka pri shranjevanju računa. Prosimo, poskusite znova."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Poleg datotek ne morete izbrati fotografij in videoposnetkov."
   },
@@ -664,9 +667,6 @@
   },
   "icu:joinTheBeta": {
     "messageformat": "Pridružite se 'Beta' programu"
-  },
-  "icu:signalDesktopPreferences": {
-    "messageformat": "Nastavitve Signal Desktop"
   },
   "icu:signalDesktopStickerCreator": {
     "messageformat": "Urejevalnik paketov nalepk"
@@ -1285,6 +1285,168 @@
   },
   "icu:Preferences__EmojiSkinToneDefaultSetting__Label": {
     "messageformat": "Odtenek kože emojija"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__Title": {
+    "messageformat": "Mape klepetov"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Title": {
+    "messageformat": "Dodaj mapo klepeta"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Description": {
+    "messageformat": "Klepete organizirajte v mape in med njimi hitro preklapljajte na seznamu klepetov."
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__EditFolder": {
+    "messageformat": "Uredi mape"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__DeleteFolder": {
+    "messageformat": "Izbriši"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__Title": {
+    "messageformat": "Želite izbrisati mapo?"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__Description": {
+    "messageformat": "Želite izbrisati mapo »{chatFolderTitle}«?"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__DeleteButton": {
+    "messageformat": "Izbriši"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__CancelButton": {
+    "messageformat": "Prekliči"
+  },
+  "icu:Preferences__ChatFoldersPage__Title": {
+    "messageformat": "Mape klepetov"
+  },
+  "icu:Preferences__ChatFoldersPage__Description": {
+    "messageformat": "Klepete organizirajte v mape in med njimi hitro preklapljajte na seznamu klepetov"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__Title": {
+    "messageformat": "Mape"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__AllChatsFolder__Title": {
+    "messageformat": "Vsi klepeti"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__CreateAFolderButton": {
+    "messageformat": "Ustvari mapo"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__Title": {
+    "messageformat": "Predlagane mape"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton": {
+    "messageformat": "Dodaj"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton__Toast": {
+    "messageformat": "{chatFolderTitle} mapa dodana"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Title": {
+    "messageformat": "Neprebrano"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Description": {
+    "messageformat": "Neprebrana sporočila iz vseh klepetov"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__DirectChatsFolder__Title": {
+    "messageformat": "Klepeti 1:1"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__DirectChatsFolder__Description": {
+    "messageformat": "Samo sporočila iz neposrednih klepetov"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__GroupChatsFolder__Title": {
+    "messageformat": "Skupine"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__GroupChatsFolder__Description": {
+    "messageformat": "Samo sporočila iz skupinskih klepetov"
+  },
+  "icu:Preferences__EditChatFolderPage__Title": {
+    "messageformat": "Ustvari mapo"
+  },
+  "icu:Preferences__EditChatFolderPage__FolderNameField__Label": {
+    "messageformat": "Ime mape"
+  },
+  "icu:Preferences__EditChatFolderPage__FolderNameField__Placeholder": {
+    "messageformat": "Ime mape (obvezno)"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__Title": {
+    "messageformat": "Vključeni klepeti"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__Help": {
+    "messageformat": "Izberite klepete, ki jih želite prikazati v tej mapi"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__AddChatsButton": {
+    "messageformat": "Dodaj klepete"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog--IncludedChats__Title": {
+    "messageformat": "Vključeni klepeti"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog--ExcludedChats__Title": {
+    "messageformat": "Izključeni klepeti"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__Search__Placeholder": {
+    "messageformat": "Iskanje"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__Title": {
+    "messageformat": "Vrste klepeta"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__DirectChats": {
+    "messageformat": "Klepeti 1:1"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__GroupChats": {
+    "messageformat": "Skupine"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__RecentChats__Title": {
+    "messageformat": "Nedavni klepeti"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__DoneButton": {
+    "messageformat": "V redu"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__Title": {
+    "messageformat": "Izjeme"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__Help": {
+    "messageformat": "Izberite klepete, za katere ne želite, da so prikazani v tej mapi"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__ExcludeChatsButton": {
+    "messageformat": "Izključi klepete"
+  },
+  "icu:Preferences__EditChatFolderPage__OnlyShowUnreadChatsCheckbox__Label": {
+    "messageformat": "Prikaži samo neprebrane klepete"
+  },
+  "icu:Preferences__EditChatFolderPage__OnlyShowUnreadChatsCheckbox__Description": {
+    "messageformat": "V tej mapi bodo prikazani samo klepeti z neprebranimi sporočili."
+  },
+  "icu:Preferences__EditChatFolderPage__IncludeMutedChatsCheckbox__Label": {
+    "messageformat": "Vključi utišane klepete"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteFolderButton": {
+    "messageformat": "Izbriši mapo"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__Title": {
+    "messageformat": "Želite izbrisati mapo klepeta?"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__Description": {
+    "messageformat": "Ta mapa bo odstranjena s seznama klepetov."
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__DeleteButton": {
+    "messageformat": "Izbriši"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__CancelButton": {
+    "messageformat": "Prekliči"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__Title": {
+    "messageformat": "Želite shraniti spremembe?"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__Description": {
+    "messageformat": "Želite shraniti spremembe, ki ste jih naredili v tej mapi klepetov?"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__SaveButton": {
+    "messageformat": "Shrani"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__DiscardButton": {
+    "messageformat": "Zavrzi"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveButton": {
+    "messageformat": "Shrani"
+  },
+  "icu:Preferences__EditChatFolderPage__CancelButton": {
+    "messageformat": "Prekliči"
   },
   "icu:initialSync": {
     "messageformat": "Usklajujem stike in skupine"
@@ -3792,7 +3954,7 @@
     "messageformat": "Prošnja osebe {joinerName} za pridružitev skupini je bila zavrnjena."
   },
   "icu:GroupV2--admin-approval-bounce--pluralized": {
-    "messageformat": "{numberOfRequests, plural, one {{joinerName} je zaprosil_a in nato preklical_a svojo prošnjo za pridružitev preko povezave skupine} two {{joinerName} je zaprosil_a in nato preklical_a {numberOfRequests,number} prošnji za pridružitev preko povezave skupine} few {{joinerName} je zaprosil_a in nato preklical_a {numberOfRequests,number} prošnje za pridružitev preko povezave skupine} other {{joinerName} je zaprosil_a in nato preklical_a {numberOfRequests,number} prošenj za pridružitev preko povezave skupine}}"
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} requested and canceled their request to join via the group link} other {{joinerName} requested and canceled {numberOfRequests,number} requests to join via the group link}}"
   },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Vklopili ste povezavo do skupine z izklopljenim obveznim skrbniškim potrjevanjem novih članov_ic."
@@ -4026,10 +4188,10 @@
     "messageformat": "Ponovno"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
-    "messageformat": "Obnovitev medijev"
+    "messageformat": "Sinhronizacija medijev"
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
-    "messageformat": "Obnovitev je prekinjena"
+    "messageformat": "Sinhronizacija je ustavljena"
   },
   "icu:BackupMediaDownloadProgress__title-idle": {
     "messageformat": "Obnovljeno {currentSize} od {totalSize}"
@@ -4044,13 +4206,13 @@
     "messageformat": "Čakanje na internetno povezavo …"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
-    "messageformat": "Prekini prenos"
+    "messageformat": "Premor"
   },
   "icu:BackupMediaDownloadProgress__button-resume": {
-    "messageformat": "Nadaljuj prenos"
+    "messageformat": "Nadaljuj"
   },
   "icu:BackupMediaDownloadProgress__button-cancel": {
-    "messageformat": "Prekliči prenos"
+    "messageformat": "Prekliči sinhronizacijo"
   },
   "icu:BackupMediaDownloadProgress__button-more": {
     "messageformat": "Več možnosti"
@@ -4062,16 +4224,34 @@
     "messageformat": "{currentSize} od {totalSize}"
   },
   "icu:BackupMediaDownloadCancelConfirmation__title": {
-    "messageformat": "Želite preklicati prenos medijev?"
+    "messageformat": "Želite preklicati sinhronizacijo medijev?"
   },
   "icu:BackupMediaDownloadCancelConfirmation__description": {
-    "messageformat": "Vaša sporočila in mediji se še niso obnovili. Če se odločite za preklic, lahko prenos ponovno izvedete v nastavitvah."
+    "messageformat": "Sinhronizacija vaših medijev se ni zaključila. Če se odločite za preklic, lahko sinhronizacijo ponovno izvedete, tako da ponovno povežete to napravo. <learnMoreLink>Preberite več.</learnMoreLink>"
   },
   "icu:BackupMediaDownloadCancelConfirmation__button-continue": {
-    "messageformat": "Nadaljuj prenos"
+    "messageformat": "Nadaljuj sinhronizacijo"
   },
   "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
-    "messageformat": "Prekliči prenos"
+    "messageformat": "Prekliči sinhronizacijo"
+  },
+  "icu:BackupMediaDownloadProgressSettings__paused--title": {
+    "messageformat": "Sinhronizacija je ustavljena"
+  },
+  "icu:BackupMediaDownloadProgressSettings__paused--description": {
+    "messageformat": "Kliknite »{resumeButtonText}« za nadaljevanje sinhronizacije"
+  },
+  "icu:BackupMediaDownloadProgressSettings__button-resume": {
+    "messageformat": "Nadaljuj"
+  },
+  "icu:BackupMediaDownloadProgressSettings__button-pause": {
+    "messageformat": "Premor"
+  },
+  "icu:BackupMediaDownloadProgressSettings__title-in-progress": {
+    "messageformat": "Sinhronizacija medijev"
+  },
+  "icu:BackupMediaDownloadProgressSettings__progressbar-hint": {
+    "messageformat": "{currentSize} od {totalSize} ({fractionComplete,number,percent})..."
   },
   "icu:CriticalIdlePrimaryDeviceModal__title": {
     "messageformat": "Zahtevani ukrepi v računu"
@@ -4811,6 +4991,12 @@
   "icu:ProfileEditor__username-link__error-icon": {
     "messageformat": "Povezavo uporabniškega imena je treba ponastaviti"
   },
+  "icu:ProfileEditor__open": {
+    "messageformat": "Open username link screen"
+  },
+  "icu:ProfileEditor__username-link__open": {
+    "messageformat": "Open username link screen"
+  },
   "icu:ProfileEditor__username-link__tooltip__title": {
     "messageformat": "Delite svoje uporabniško ime"
   },
@@ -5082,7 +5268,7 @@
     "messageformat": "Varnostne kopije Signal"
   },
   "icu:Preferences--signal-backups-off-description": {
-    "messageformat": "Automatic backups with Signal’s secure, end-to-end encrypted storage service. Get started on your phone. <learnMoreLink>Learn more</learnMoreLink>."
+    "messageformat": "Samodejno varnostno kopiranje s Signalovo varno storitvijo šifriranega shranjevanja od konca do konca. Začnite v telefonu. <learnMoreLink>Preberite več.</learnMoreLink>"
   },
   "icu:Preferences--backup-section-description": {
     "messageformat": "Ustvarite varnostno kopijo zgodovine sporočil, da ne izgubite podatkov, ko dobite nov telefon ali znova namestite Signal."
@@ -5125,9 +5311,6 @@
   },
   "icu:Preferences--backup-created-by-phone": {
     "messageformat": "Vaš telefon"
-  },
-  "icu:Preferences--backup-size__label": {
-    "messageformat": "Velikost varnostne kopije"
   },
   "icu:Preferences__local-backups": {
     "messageformat": "Lokalne varnostne kopije"
@@ -6114,9 +6297,6 @@
   "icu:UsernameLinkModalBody__reset": {
     "messageformat": "Ponastavi"
   },
-  "icu:UsernameLinkModalBody__done": {
-    "messageformat": "OK"
-  },
   "icu:UsernameLinkModalBody__color__radio": {
     "messageformat": "Barva povezave uporabniškega imena, {index,number} od {total,number}"
   },
@@ -6444,6 +6624,198 @@
   "icu:WhatsNew__modal-title": {
     "messageformat": "Kaj je novega"
   },
+  "icu:PreferencesDonations__title": {
+    "messageformat": "Zasebnost pred dobičkom"
+  },
+  "icu:PreferencesDonations__description": {
+    "messageformat": "Zasebna sporočila, ki jih financirate vi. Brez oglasov, brez sledenja, brez kompromisov. Donirajte in podprite Signal. <readMoreLink>Preberite več</readMoreLink>"
+  },
+  "icu:PreferencesDonations__donate-button": {
+    "messageformat": "Doniraj"
+  },
+  "icu:PreferencesDonations__my-support": {
+    "messageformat": "Moja podpora"
+  },
+  "icu:PreferencesDonations__donate-button-with-amount": {
+    "messageformat": "Donirajte {formattedCurrencyAmount}"
+  },
+  "icu:PreferencesDonations__mobile-info": {
+    "messageformat": "Značke in mesečne donacije lahko upravljate v mobilni napravi."
+  },
+  "icu:PreferencesDonations__privacy-modal-title": {
+    "messageformat": "Vaši podatki so zasebni"
+  },
+  "icu:PreferencesDonations__privacy-modal-content": {
+    "messageformat": "<paragraph>Signal ne zbira ali shranjuje nobenih vaših osebnih podatkov, ko naredite donacijo.</paragraph><paragraph>Za prejemanje vaših donacij uporabljamo plačilni sistem Stripe. Ne dostopamo do nobenih podatkov, ki jih posredujete temu sistemu, niti jih ne shranjujemo ali hranimo.</paragraph><paragraph>Signal ne povezuje in ne more povezati vaše donacije z vašim Signal računom.</paragraph><paragraph>Hvala za vašo podporo!</paragraph>"
+  },
+  "icu:PreferencesDonations__receipts": {
+    "messageformat": "Računi"
+  },
+  "icu:PreferencesDonations__faqs": {
+    "messageformat": "Pogosta vprašanja o donacijah"
+  },
+  "icu:PreferencesDonations--receiptList__info": {
+    "messageformat": "Računi se ne sinhronizirajo med napravami. Če ste ponovno namestili Signal, računi vaših prejšnjih donacij niso več na voljo."
+  },
+  "icu:PreferencesDonations--receiptList__empty-title": {
+    "messageformat": "Ni prejemnikov"
+  },
+  "icu:PreferencesDonations__ReceiptModal--title": {
+    "messageformat": "Podrobnosti"
+  },
+  "icu:PreferencesDonations__ReceiptModal--download": {
+    "messageformat": "Prenesi račun"
+  },
+  "icu:PreferencesDonations__ReceiptModal--type-label": {
+    "messageformat": "Tipkaj"
+  },
+  "icu:PreferencesDonations__ReceiptModal--date-paid-label": {
+    "messageformat": "Datum plačila"
+  },
+  "icu:DonateFlow__make-a-one-time-donation": {
+    "messageformat": "Naredite enkratno donacijo"
+  },
+  "icu:DonateFlow__desktop-one-time-only-notice": {
+    "messageformat": "Na namiznem računalniku so na voljo samo enkratne donacije. Mesečne donacije lahko opravite prek mobilne naprave."
+  },
+  "icu:DonateFlow__having-issues-contact-support": {
+    "messageformat": "Imate težave? <contactSupportLink>Obrnite se na službo za podporo</contactSupportLink>"
+  },
+  "icu:DonateFlow__amount-picker-custom-amount-placeholder": {
+    "messageformat": "Enter Custom Amount"
+  },
+  "icu:DonateFlow__credit-or-debit-card": {
+    "messageformat": "Credit or Debit Card"
+  },
+  "icu:DonateFlow__card-form-instructions": {
+    "messageformat": "Enter your credit or debit card details. Signal does not collect or store your personal information. <learnMoreLink>Learn more</learnMoreLink>"
+  },
+  "icu:DonateFlow__card-form-card-number": {
+    "messageformat": "Card Number"
+  },
+  "icu:DonateFlow__card-form-expiration-date": {
+    "messageformat": "Expiration Date"
+  },
+  "icu:DonateFlow__card-form-title-donate-with-amount": {
+    "messageformat": "Donate {formattedCurrencyAmount} to Signal"
+  },
+  "icu:DonateFlow__card-form-error-invalid-card-number": {
+    "messageformat": "Invalid card number"
+  },
+  "icu:DonateFlow__card-form-error-expiration-expired": {
+    "messageformat": "Card has expired"
+  },
+  "icu:DonateFlow__card-form-error-year-missing": {
+    "messageformat": "Year required"
+  },
+  "icu:DonateFlow__card-form-error-invalid": {
+    "messageformat": "Invalid"
+  },
+  "icu:DonateFlow__card-form-error-cvc-too-short": {
+    "messageformat": "Code too short"
+  },
+  "icu:DonateFlow__one-time-donation-boost-badge-info": {
+    "messageformat": "Get the Signal Boost badge for 30 days"
+  },
+  "icu:DonationReceipt__title": {
+    "messageformat": "Račun za donacijo"
+  },
+  "icu:DonationReceipt__amount-label": {
+    "messageformat": "Količina"
+  },
+  "icu:DonationReceipt__type-label": {
+    "messageformat": "Tipkanje"
+  },
+  "icu:DonationReceipt__date-paid-label": {
+    "messageformat": "Datum plačila"
+  },
+  "icu:DonationReceipt__type-value--one-time": {
+    "messageformat": "Enkrat"
+  },
+  "icu:DonationReceipt__footer-text": {
+    "messageformat": "Hvala, ker podpirate Signal. S svojim prispevkom prispevate k uresničevanju poslanstva zaščite svobode izražanja in omogočanja varne globalne komunikacije za milijone ljudi po vsem svetu z odprtokodno tehnologijo zasebnosti. Če prebivate v Združenih državah Amerike, to potrdilo shranite za davčno evidenco. Signal Technology Foundation je neprofitna organizacija v Združenih državah Amerike, ki je oproščena davka v skladu s členom 501c3 zakonika o notranjih prihodkih. Naša zvezna davčna številka je 82-4506840."
+  },
+  "icu:Donations__Toast__Canceled": {
+    "messageformat": "Donation canceled"
+  },
+  "icu:Donations__Toast__Completed": {
+    "messageformat": "Donacija je zaključena"
+  },
+  "icu:Donations__Toast__Error": {
+    "messageformat": "Napaka pri obdelavi donacije"
+  },
+  "icu:Donations__Toast__Processing": {
+    "messageformat": "Obdelava donacije"
+  },
+  "icu:Donations__Toast__VerificationFailed": {
+    "messageformat": "Preverjanje ni uspelo"
+  },
+  "icu:Donations__Toast__VerificationNeeded": {
+    "messageformat": "V teku imate donacijo, ki potrebuje dodatno preverjanje."
+  },
+  "icu:Donations__Toast__ConfirmationNeeded": {
+    "messageformat": "You have a donation in progress that requires confirmation."
+  },
+  "icu:Donations__DonationInterrupted": {
+    "messageformat": "Donation interrupted"
+  },
+  "icu:Donations__DonationInterrupted__Description": {
+    "messageformat": "Your card was not charged. Do you want to retry the donation?"
+  },
+  "icu:Donations__DonationInterrupted__RetryButton": {
+    "messageformat": "Try again"
+  },
+  "icu:Donations__PaymentMethodDeclined": {
+    "messageformat": "Način plačila je zavrnjen"
+  },
+  "icu:Donations__PaymentMethodDeclined__Description": {
+    "messageformat": "Poskusite z drugim načinom plačila ali preverite pri svoji banki."
+  },
+  "icu:Donations__Failed3dsValidation": {
+    "messageformat": "Preverjanje ni uspelo"
+  },
+  "icu:Donations__Failed3dsValidation__Description": {
+    "messageformat": "Dodatni korak preverjanja ni uspel. Poskusite znova."
+  },
+  "icu:Donations__GenericError": {
+    "messageformat": "Pri vaši donaciji je prišlo do napake"
+  },
+  "icu:Donations__GenericError__Description": {
+    "messageformat": "Vaša donacija morda ni bila obdelana. Kliknite na »Doniraj Signalu« in nato na »Računi za donacijo«, da jih preverite in potrdite."
+  },
+  "icu:Donations__Processing": {
+    "messageformat": "Obdelava donacije ..."
+  },
+  "icu:Donations__StillProcessing": {
+    "messageformat": "Obdelava še vedno poteka"
+  },
+  "icu:Donations__StillProcessing__Description": {
+    "messageformat": "Vaša donacija je še v obdelavi. To lahko traja nekaj minut."
+  },
+  "icu:Donations__TimedOut": {
+    "messageformat": "Donation canceled"
+  },
+  "icu:Donations__TimedOut__Description": {
+    "messageformat": "It has been too long since you started your donation. Please start over."
+  },
+  "icu:Donations__3dsValidationNeeded": {
+    "messageformat": "Potrebno je dodatno preverjanje"
+  },
+  "icu:Donations__3dsValidationNeeded--waiting": {
+    "messageformat": "Čakam na potrditev"
+  },
+  "icu:Donations__3dsValidationNeeded__Description": {
+    "messageformat": "Izdajatelj vaše kreditne kartice zahteva dodatno preverjanje v spletnem brskalniku."
+  },
+  "icu:Donations__3dsValidationNeeded__OpenBrowser": {
+    "messageformat": "Odpri brskalnik"
+  },
+  "icu:Donations__3dsValidationNeeded__OpenBrowser--opened": {
+    "messageformat": "Ponovno odpri brskalnik"
+  },
+  "icu:Donations__3dsValidationNeeded__CancelDonation": {
+    "messageformat": "Prekliči donacijo"
+  },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "Ta različica vsebuje majhne spremembe in popravke, ki omogočajo, da Signal teče brez težav.",
     "ignoreUnused": true
@@ -6472,10 +6844,13 @@
     "messageformat": "Majhne prilagoditve, popravki napak in izboljšave zmogljivosti. Hvala, da uporabljate Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.58--0": {
-    "messageformat": "V novem razdelku v izbirniku odzivov na sporočila so samodejno prikazani vsi odzivi z emojiji, ki jih je sporočilo prejelo. Sedaj se lahko pridružite ostalim in dodate standardno svetlikajoče se srce ali pa sledite svojemu srcu in namesto tega uporabite anatomsko srce."
+  "icu:WhatsNew__v7.64--0": {
+    "messageformat": "Izboljšali smo izkušnjo prebranih/neprebranih sporočil med večopravilnostjo. Še vedno lahko povečate sliko, če kliknete nanjo ali če tipkate dovolj hitro."
   },
-  "icu:WhatsNew__v7.59--0": {
-    "messageformat": "Izboljšave zmogljivosti Linuxa."
+  "icu:WhatsNew__v7.65--0": {
+    "messageformat": "Odpravili smo napako v iskalnem polju za emojije."
+  },
+  "icu:WhatsNew__v7.66--0": {
+    "messageformat": "This update fixes a few small bugs, including one where emoji reactions weren't being grouped together correctly in some cases."
   }
 }

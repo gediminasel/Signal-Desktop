@@ -305,9 +305,6 @@
   "icu:NavTabs__ItemLabel--Settings": {
     "messageformat": "הגדרות"
   },
-  "icu:NavTabs__ItemLabel--Update": {
-    "messageformat": "עדכן את Signal"
-  },
   "icu:NavTabs__ItemLabel--Profile": {
     "messageformat": "פרופיל"
   },
@@ -605,6 +602,12 @@
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
+  "icu:Toast--ReceiptSaved": {
+    "messageformat": "הקבלה נשמרה"
+  },
+  "icu:Toast--ReceiptSaveFailed": {
+    "messageformat": "שגיאה בשמירת הקבלה. יש לנסות שוב."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "אי אפשר לבחור תמונות וסרטונים יחד עם קבצים."
   },
@@ -664,9 +667,6 @@
   },
   "icu:joinTheBeta": {
     "messageformat": "הצטרף אל הבטא"
-  },
-  "icu:signalDesktopPreferences": {
-    "messageformat": "העדפות Signal Desktop"
   },
   "icu:signalDesktopStickerCreator": {
     "messageformat": "יוצר חבילות מדבקות"
@@ -1285,6 +1285,168 @@
   },
   "icu:Preferences__EmojiSkinToneDefaultSetting__Label": {
     "messageformat": "גוון עור של אמוג'י"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__Title": {
+    "messageformat": "תיקיות צ׳אטים"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Title": {
+    "messageformat": "הוספת תיקיית צ׳אטים"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Description": {
+    "messageformat": "ארגון הצ׳אטים שלך בתיקיות והחלפה מהירה ביניהם ברשימת הצ׳אטים שלך."
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__EditFolder": {
+    "messageformat": "עריכת תיקיה"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__DeleteFolder": {
+    "messageformat": "מחיקה"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__Title": {
+    "messageformat": "למחוק את התיקייה?"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__Description": {
+    "messageformat": "האם ברצונך למחוק את התיקייה ״{chatFolderTitle}״?"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__DeleteButton": {
+    "messageformat": "מחיקה"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__CancelButton": {
+    "messageformat": "ביטול"
+  },
+  "icu:Preferences__ChatFoldersPage__Title": {
+    "messageformat": "תיקיות צ׳אטים"
+  },
+  "icu:Preferences__ChatFoldersPage__Description": {
+    "messageformat": "ארגנו את הצ'אטים שלכם בתיקיות ועברו ביניהן במהירות ברשימת הצ'אטים שלכם"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__Title": {
+    "messageformat": "תיקיות"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__AllChatsFolder__Title": {
+    "messageformat": "כל הצ׳אטים"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__CreateAFolderButton": {
+    "messageformat": "יצירת תיקיה"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__Title": {
+    "messageformat": "תיקיות מוצעות"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton": {
+    "messageformat": "הוסף"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton__Toast": {
+    "messageformat": "תיקיה נוספה: {chatFolderTitle}"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Title": {
+    "messageformat": "לא נקראו"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Description": {
+    "messageformat": "הודעות שלא נקראו מכל הצ׳אטים"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__DirectChatsFolder__Title": {
+    "messageformat": "צ׳אטים 1:1"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__DirectChatsFolder__Description": {
+    "messageformat": "רק הודעות מצ׳אטים ישירים"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__GroupChatsFolder__Title": {
+    "messageformat": "קבוצות"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__GroupChatsFolder__Description": {
+    "messageformat": "רק הודעות מצ׳אטים קבוצתיים"
+  },
+  "icu:Preferences__EditChatFolderPage__Title": {
+    "messageformat": "יצירת תיקיה"
+  },
+  "icu:Preferences__EditChatFolderPage__FolderNameField__Label": {
+    "messageformat": "שם תיקייה"
+  },
+  "icu:Preferences__EditChatFolderPage__FolderNameField__Placeholder": {
+    "messageformat": "שם תיקיה (חובה)"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__Title": {
+    "messageformat": "צ׳אטים כלולים"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__Help": {
+    "messageformat": "יש לבחור צ׳אטים שברצונך לכלול בתיקיה הזו"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__AddChatsButton": {
+    "messageformat": "הוספת צ׳אטים"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog--IncludedChats__Title": {
+    "messageformat": "צ׳אטים כלולים"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog--ExcludedChats__Title": {
+    "messageformat": "החרגת צ׳אטים"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__Search__Placeholder": {
+    "messageformat": "חיפוש"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__Title": {
+    "messageformat": "סוגי צ׳אטים"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__DirectChats": {
+    "messageformat": "צ׳אטים 1:1"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__GroupChats": {
+    "messageformat": "קבוצות"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__RecentChats__Title": {
+    "messageformat": "צ'אטים אחרונים"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__DoneButton": {
+    "messageformat": "סיים"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__Title": {
+    "messageformat": "יוצאי דופן"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__Help": {
+    "messageformat": "אפשר לבחור צ׳אטים שלא יופיעו בתיקיה הזו"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__ExcludeChatsButton": {
+    "messageformat": "החרגת צ׳אטים"
+  },
+  "icu:Preferences__EditChatFolderPage__OnlyShowUnreadChatsCheckbox__Label": {
+    "messageformat": "להציג רק צ׳אטים שלא נקראו"
+  },
+  "icu:Preferences__EditChatFolderPage__OnlyShowUnreadChatsCheckbox__Description": {
+    "messageformat": "רק צ׳אטים עם הודעות שלא נקראו יוצגו בתיקיה הזו."
+  },
+  "icu:Preferences__EditChatFolderPage__IncludeMutedChatsCheckbox__Label": {
+    "messageformat": "כלילת צ׳אטים מושתקים"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteFolderButton": {
+    "messageformat": "מחיקת תיקיה"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__Title": {
+    "messageformat": "למחוק את תיקיית הצ׳אטים הזו?"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__Description": {
+    "messageformat": "תיקייה זו תוסר מרשימת הצ'אטים שלך."
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__DeleteButton": {
+    "messageformat": "מחיקה"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__CancelButton": {
+    "messageformat": "ביטול"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__Title": {
+    "messageformat": "לשמור שינויים?"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__Description": {
+    "messageformat": "האם ברצונך לשמור את השינויים שביצעת בתיקיית הצ׳אטים הזו?"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__SaveButton": {
+    "messageformat": "שמור"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__DiscardButton": {
+    "messageformat": "השמט"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveButton": {
+    "messageformat": "שמור"
+  },
+  "icu:Preferences__EditChatFolderPage__CancelButton": {
+    "messageformat": "ביטול"
   },
   "icu:initialSync": {
     "messageformat": "מסנכרן אנשי קשר וקבוצות"
@@ -3792,7 +3954,7 @@
     "messageformat": "בקשה להצטרף אל הקבוצה מאת {joinerName} נדחתה."
   },
   "icu:GroupV2--admin-approval-bounce--pluralized": {
-    "messageformat": "{numberOfRequests, plural, one {{joinerName} ביקש/ה וביטל/ה את הבקשה להצטרף באמצעות לינק הקבוצה} two {{joinerName} ביקש/ה וביטל/ה {numberOfRequests,number} בקשות להצטרף דרך הלינק הקבוצתי.} many {{joinerName} ביקש/ה וביטל/ה {numberOfRequests,number} בקשות להצטרף באמצעות קישור הקבוצה} other {{joinerName} ביקש/ה וביטל/ה {numberOfRequests,number} בקשות להצטרף דרך הלינק הקבוצתי.}}"
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} requested and canceled their request to join via the group link} other {{joinerName} requested and canceled {numberOfRequests,number} requests to join via the group link}}"
   },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "הפעלת את קישור הקבוצה עם אישור מנהלן מושבת."
@@ -4026,10 +4188,10 @@
     "messageformat": "נסה שוב"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
-    "messageformat": "מדיה בשחזור"
+    "messageformat": "מדיה בסנכרון"
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
-    "messageformat": "שחזור הושהה"
+    "messageformat": "הסנכרון הושהה"
   },
   "icu:BackupMediaDownloadProgress__title-idle": {
     "messageformat": "{currentSize} מתוך {totalSize} שוחזרו"
@@ -4044,13 +4206,13 @@
     "messageformat": "בהמתנה לחיבור אינטרנט…"
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
-    "messageformat": "השהיית העברה"
+    "messageformat": "השהה"
   },
   "icu:BackupMediaDownloadProgress__button-resume": {
-    "messageformat": "המשך העברה"
+    "messageformat": "חידוש"
   },
   "icu:BackupMediaDownloadProgress__button-cancel": {
-    "messageformat": "ביטול העברה"
+    "messageformat": "ביטול סנכרון"
   },
   "icu:BackupMediaDownloadProgress__button-more": {
     "messageformat": "עוד אפשרויות"
@@ -4062,16 +4224,34 @@
     "messageformat": "{currentSize} מתוך {totalSize}"
   },
   "icu:BackupMediaDownloadCancelConfirmation__title": {
-    "messageformat": "לבטל העברת מדיה?"
+    "messageformat": "לבטל סנכרון מדיה?"
   },
   "icu:BackupMediaDownloadCancelConfirmation__description": {
-    "messageformat": "שחזור ההודעות והמדיה שלך לא הושלם. אם תבחר/י לבטל, אפשר לבצע העברה שוב מתוך ההגדרות."
+    "messageformat": "סנכרון המדיה שלך לא הושלם. אם תבחר/י לבטל, אפשר לבצע סנכרון שוב באמצעות קישור מחדש של מכשיר זה. <learnMoreLink>למידע נוסף</learnMoreLink>."
   },
   "icu:BackupMediaDownloadCancelConfirmation__button-continue": {
-    "messageformat": "המשך העברה"
+    "messageformat": "המשך סנכרון"
   },
   "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
-    "messageformat": "ביטול העברה"
+    "messageformat": "ביטול סנכרון"
+  },
+  "icu:BackupMediaDownloadProgressSettings__paused--title": {
+    "messageformat": "הסנכרון הושהה"
+  },
+  "icu:BackupMediaDownloadProgressSettings__paused--description": {
+    "messageformat": "יש ללחוץ על ״{resumeButtonText}״ כדי להמשיך בסנכרון"
+  },
+  "icu:BackupMediaDownloadProgressSettings__button-resume": {
+    "messageformat": "חידוש"
+  },
+  "icu:BackupMediaDownloadProgressSettings__button-pause": {
+    "messageformat": "השהה"
+  },
+  "icu:BackupMediaDownloadProgressSettings__title-in-progress": {
+    "messageformat": "מדיה בסנכרון"
+  },
+  "icu:BackupMediaDownloadProgressSettings__progressbar-hint": {
+    "messageformat": "{currentSize} מתוך {totalSize} ({fractionComplete,number,percent})…"
   },
   "icu:CriticalIdlePrimaryDeviceModal__title": {
     "messageformat": "נדרשת פעולה בחשבון"
@@ -4811,6 +4991,12 @@
   "icu:ProfileEditor__username-link__error-icon": {
     "messageformat": "יש לאפס את לינק שם המשתמש"
   },
+  "icu:ProfileEditor__open": {
+    "messageformat": "Open username link screen"
+  },
+  "icu:ProfileEditor__username-link__open": {
+    "messageformat": "Open username link screen"
+  },
   "icu:ProfileEditor__username-link__tooltip__title": {
     "messageformat": "שיתוף שם המשתמש שלך"
   },
@@ -5082,7 +5268,7 @@
     "messageformat": "גיבויי Signal"
   },
   "icu:Preferences--signal-backups-off-description": {
-    "messageformat": "Automatic backups with Signal’s secure, end-to-end encrypted storage service. Get started on your phone. <learnMoreLink>Learn more</learnMoreLink>."
+    "messageformat": "גיבויים אוטומטיים בשירות האחסון המאובטח והמוצפן מקצה לקצה של Signal. אפשר להתחיל כעת בטלפון שלך. <learnMoreLink>למידע נוסף</learnMoreLink>."
   },
   "icu:Preferences--backup-section-description": {
     "messageformat": "אפשר לגבות את היסטוריית ההודעות כך שאף פעם לא מאבדים נתונים כשמחליפים טלפון או מתקינים מחדש את Signal."
@@ -5125,9 +5311,6 @@
   },
   "icu:Preferences--backup-created-by-phone": {
     "messageformat": "הטלפון שלך"
-  },
-  "icu:Preferences--backup-size__label": {
-    "messageformat": "נפח גיבוי"
   },
   "icu:Preferences__local-backups": {
     "messageformat": "גיבויים של שולחן העבודה"
@@ -6114,9 +6297,6 @@
   "icu:UsernameLinkModalBody__reset": {
     "messageformat": "אפס"
   },
-  "icu:UsernameLinkModalBody__done": {
-    "messageformat": "סיים"
-  },
   "icu:UsernameLinkModalBody__color__radio": {
     "messageformat": "צבע לינק של שם משתמש, {index,number} מתוך {total,number}"
   },
@@ -6444,6 +6624,198 @@
   "icu:WhatsNew__modal-title": {
     "messageformat": "מה חדש"
   },
+  "icu:PreferencesDonations__title": {
+    "messageformat": "פרטיות לפני רווחים"
+  },
+  "icu:PreferencesDonations__description": {
+    "messageformat": "שליחת הודעות פרטית, ממומנת על ידך. בלי מודעות, בלי מעקב, בלי פשרות. תורמים עכשיו ותומכים ב–Signal. <readMoreLink>למידע נוסף</readMoreLink>"
+  },
+  "icu:PreferencesDonations__donate-button": {
+    "messageformat": "לתרומה"
+  },
+  "icu:PreferencesDonations__my-support": {
+    "messageformat": "התמיכה שלי"
+  },
+  "icu:PreferencesDonations__donate-button-with-amount": {
+    "messageformat": "תרומה של {formattedCurrencyAmount}"
+  },
+  "icu:PreferencesDonations__mobile-info": {
+    "messageformat": "ניתן לנהל תגים ותרומות חודשיות במכשיר הנייד שלך."
+  },
+  "icu:PreferencesDonations__privacy-modal-title": {
+    "messageformat": "המידע שלך פרטי"
+  },
+  "icu:PreferencesDonations__privacy-modal-content": {
+    "messageformat": "<paragraph>Signal לא אוספת או מאחסנת את המידע האישי שלך בעת ביצוע תרומה.</paragraph><paragraph>אנחנו משתמשים ב–Stripe בתור מעבד התשלומים שלנו כדי לקבל את התרומות שלך. אנחנו לא ניגשים לשום מידע שהם מקבלים ממך ולא מאחסנים או שומרים אותו.</paragraph><paragraph>Signal אינה מקשרת את התרומה שלך לחשבון Signal שלך ואין לה אפשרות לעשות זאת.</paragraph><paragraph>תודה על התמיכה שלך!</paragraph>"
+  },
+  "icu:PreferencesDonations__receipts": {
+    "messageformat": "קבלות"
+  },
+  "icu:PreferencesDonations__faqs": {
+    "messageformat": "שאלות נפוצות על תרומה"
+  },
+  "icu:PreferencesDonations--receiptList__info": {
+    "messageformat": "קבלות אינן מסתנכרנות בין מכשירים. אם התקנת מחדש את Signal, קבלות מתרומות קודמות לא יהיו זמינות."
+  },
+  "icu:PreferencesDonations--receiptList__empty-title": {
+    "messageformat": "אין קבלות"
+  },
+  "icu:PreferencesDonations__ReceiptModal--title": {
+    "messageformat": "פרטים"
+  },
+  "icu:PreferencesDonations__ReceiptModal--download": {
+    "messageformat": "הורדת קבלה"
+  },
+  "icu:PreferencesDonations__ReceiptModal--type-label": {
+    "messageformat": "סוג"
+  },
+  "icu:PreferencesDonations__ReceiptModal--date-paid-label": {
+    "messageformat": "תאריך תשלום"
+  },
+  "icu:DonateFlow__make-a-one-time-donation": {
+    "messageformat": "ביצוע תרומה חד פעמית"
+  },
+  "icu:DonateFlow__desktop-one-time-only-notice": {
+    "messageformat": "רק תרומות חד פעמיות זמינות דרך שולחן העבודה. ניתן לבצע תרומות חודשיות באמצעות המכשיר הנייד שלך."
+  },
+  "icu:DonateFlow__having-issues-contact-support": {
+    "messageformat": "נתקלת בבעיה? אפשר <contactSupportLink>ליצור קשר עם התמיכה</contactSupportLink>"
+  },
+  "icu:DonateFlow__amount-picker-custom-amount-placeholder": {
+    "messageformat": "Enter Custom Amount"
+  },
+  "icu:DonateFlow__credit-or-debit-card": {
+    "messageformat": "Credit or Debit Card"
+  },
+  "icu:DonateFlow__card-form-instructions": {
+    "messageformat": "Enter your credit or debit card details. Signal does not collect or store your personal information. <learnMoreLink>Learn more</learnMoreLink>"
+  },
+  "icu:DonateFlow__card-form-card-number": {
+    "messageformat": "Card Number"
+  },
+  "icu:DonateFlow__card-form-expiration-date": {
+    "messageformat": "Expiration Date"
+  },
+  "icu:DonateFlow__card-form-title-donate-with-amount": {
+    "messageformat": "Donate {formattedCurrencyAmount} to Signal"
+  },
+  "icu:DonateFlow__card-form-error-invalid-card-number": {
+    "messageformat": "Invalid card number"
+  },
+  "icu:DonateFlow__card-form-error-expiration-expired": {
+    "messageformat": "Card has expired"
+  },
+  "icu:DonateFlow__card-form-error-year-missing": {
+    "messageformat": "Year required"
+  },
+  "icu:DonateFlow__card-form-error-invalid": {
+    "messageformat": "Invalid"
+  },
+  "icu:DonateFlow__card-form-error-cvc-too-short": {
+    "messageformat": "Code too short"
+  },
+  "icu:DonateFlow__one-time-donation-boost-badge-info": {
+    "messageformat": "Get the Signal Boost badge for 30 days"
+  },
+  "icu:DonationReceipt__title": {
+    "messageformat": "קבלה על תרומה"
+  },
+  "icu:DonationReceipt__amount-label": {
+    "messageformat": "סכום"
+  },
+  "icu:DonationReceipt__type-label": {
+    "messageformat": "סוג"
+  },
+  "icu:DonationReceipt__date-paid-label": {
+    "messageformat": "תאריך תשלום"
+  },
+  "icu:DonationReceipt__type-value--one-time": {
+    "messageformat": "פעם אחת"
+  },
+  "icu:DonationReceipt__footer-text": {
+    "messageformat": "תודה על התמיכה ב–Signal. התרומה שלך עוזרת להמשיך להניע את המשימה שלנו להגן על חופש הביטוי ולאפשר תקשורת גלובלית מאובטחת עבור מיליונים ברחבי העולם, באמצעות טכנולוגיית פרטיות בקוד פתוח. אם מקום המגורים שלך הוא ארה״ב, יש לשמור את הקבלה הזו לצורך רישומי המס שלך. Signal Technology Foundation היא עמותה ללא מטרות רווח פטורה ממס בארה״ב תחת סעיף 501c3 של קוד מס ההכנסה האמריקאי. מזהה המס הפדרלי שלנו הוא 82-4506840."
+  },
+  "icu:Donations__Toast__Canceled": {
+    "messageformat": "Donation canceled"
+  },
+  "icu:Donations__Toast__Completed": {
+    "messageformat": "תרומה הושלמה"
+  },
+  "icu:Donations__Toast__Error": {
+    "messageformat": "שגיאה בעיבוד תרומה"
+  },
+  "icu:Donations__Toast__Processing": {
+    "messageformat": "תרומה בעיבוד"
+  },
+  "icu:Donations__Toast__VerificationFailed": {
+    "messageformat": "וידוא נכשל"
+  },
+  "icu:Donations__Toast__VerificationNeeded": {
+    "messageformat": "יש לך תרומה בתהליך שדורשת אימות נוסף."
+  },
+  "icu:Donations__Toast__ConfirmationNeeded": {
+    "messageformat": "You have a donation in progress that requires confirmation."
+  },
+  "icu:Donations__DonationInterrupted": {
+    "messageformat": "Donation interrupted"
+  },
+  "icu:Donations__DonationInterrupted__Description": {
+    "messageformat": "Your card was not charged. Do you want to retry the donation?"
+  },
+  "icu:Donations__DonationInterrupted__RetryButton": {
+    "messageformat": "Try again"
+  },
+  "icu:Donations__PaymentMethodDeclined": {
+    "messageformat": "אמצעי התשלום נדחה"
+  },
+  "icu:Donations__PaymentMethodDeclined__Description": {
+    "messageformat": "יש לנסות שיטת תשלום אחרת או ליצור קשר עם הבנק שלך לקבלת מידע נוסף."
+  },
+  "icu:Donations__Failed3dsValidation": {
+    "messageformat": "וידוא נכשל"
+  },
+  "icu:Donations__Failed3dsValidation__Description": {
+    "messageformat": "שלב האימות הנוסף נכשל. יש לנסות שוב."
+  },
+  "icu:Donations__GenericError": {
+    "messageformat": "אירעה שגיאה במהלך עיבוד התרומה שלך"
+  },
+  "icu:Donations__GenericError__Description": {
+    "messageformat": "ייתכן שהתרומה שלך לא עובדה בהצלחה. יש ללחוץ על ״תרומה ל–Signal״ ואז על ״קבלות על תרומות״ כדי לבדוק את הקבלות שלך ולאשר."
+  },
+  "icu:Donations__Processing": {
+    "messageformat": "תרומה בעיבוד…"
+  },
+  "icu:Donations__StillProcessing": {
+    "messageformat": "עדין מעבד"
+  },
+  "icu:Donations__StillProcessing__Description": {
+    "messageformat": "התרומה שלך עדיין בתהליך עיבוד. ייתכן וזה יקח מספר דקות"
+  },
+  "icu:Donations__TimedOut": {
+    "messageformat": "Donation canceled"
+  },
+  "icu:Donations__TimedOut__Description": {
+    "messageformat": "It has been too long since you started your donation. Please start over."
+  },
+  "icu:Donations__3dsValidationNeeded": {
+    "messageformat": "נדרש אימות נוסף"
+  },
+  "icu:Donations__3dsValidationNeeded--waiting": {
+    "messageformat": "בהמתנה לאישור"
+  },
+  "icu:Donations__3dsValidationNeeded__Description": {
+    "messageformat": "חברת האשראי שלך דורשת שלב אימות נוסף בדפדפן אינטרנט."
+  },
+  "icu:Donations__3dsValidationNeeded__OpenBrowser": {
+    "messageformat": "פתיחת דפדפן"
+  },
+  "icu:Donations__3dsValidationNeeded__OpenBrowser--opened": {
+    "messageformat": "פתיחת דפדפן מחדש"
+  },
+  "icu:Donations__3dsValidationNeeded__CancelDonation": {
+    "messageformat": "ביטול תרומה"
+  },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "גרסה זו מכילה מספר של שפצורים קטנים ותיקוני תקלים כדי לשמור על Signal שירוץ באופן חלק.",
     "ignoreUnused": true
@@ -6472,10 +6844,13 @@
     "messageformat": "התאמות קטנות, תיקוני באגים ושיפורי ביצועים. תודה על השימוש ב-Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.58--0": {
-    "messageformat": "מקטע חדש בבורר התגובות להודעות מציג אוטומטית את כל תגובות האימוג׳י שהודעה קיבלה."
+  "icu:WhatsNew__v7.64--0": {
+    "messageformat": "שיפרנו את חוויית התצוגה של הודעות שנקראו/שלא נקראו בזמן ריבוי משימות."
   },
-  "icu:WhatsNew__v7.59--0": {
-    "messageformat": "שיפורי ביצועים ב–Linux."
+  "icu:WhatsNew__v7.65--0": {
+    "messageformat": "מציאת האימוג'י הנכון יכולה להרגיש כמו מאבק בלתי נגמר, אבל תיקנו באג שגרם לשגיאה להתרחש לאחר לחיצה על מקש Escape בתיבת החיפוש של האימוג'י."
+  },
+  "icu:WhatsNew__v7.66--0": {
+    "messageformat": "This update fixes a few small bugs, including one where emoji reactions weren't being grouped together correctly in some cases."
   }
 }

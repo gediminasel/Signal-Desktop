@@ -305,9 +305,6 @@
   "icu:NavTabs__ItemLabel--Settings": {
     "messageformat": "ക്രമീകരണങ്ങൾ"
   },
-  "icu:NavTabs__ItemLabel--Update": {
-    "messageformat": "Signal അപ്ഡേറ്റ് ചെയ്യുക"
-  },
   "icu:NavTabs__ItemLabel--Profile": {
     "messageformat": "പ്രൊഫൈൽ"
   },
@@ -605,6 +602,12 @@
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
+  "icu:Toast--ReceiptSaved": {
+    "messageformat": "രസീത് സംരക്ഷിച്ചു"
+  },
+  "icu:Toast--ReceiptSaveFailed": {
+    "messageformat": "രസീത് സംരക്ഷിക്കുന്നതിൽ പിശക്. വീണ്ടും ശ്രമിക്കുക."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "നിങ്ങൾക്ക് ഫയലുകൾക്കൊപ്പം ഫോട്ടോകളും വീഡിയോകളും തിരഞ്ഞെടുക്കാനാകില്ല."
   },
@@ -664,9 +667,6 @@
   },
   "icu:joinTheBeta": {
     "messageformat": "ബീറ്റയിൽ ചേരുക"
-  },
-  "icu:signalDesktopPreferences": {
-    "messageformat": "Signal Desktop-ന്റെ മുൻഗണനകൾ "
   },
   "icu:signalDesktopStickerCreator": {
     "messageformat": "സ്റ്റിക്കർ പായ്ക്ക് നിര്‍മ്മാതാവ്‌"
@@ -1285,6 +1285,168 @@
   },
   "icu:Preferences__EmojiSkinToneDefaultSetting__Label": {
     "messageformat": "ഇമോജി സ്കിൻ ടോൺ"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__Title": {
+    "messageformat": "ചാറ്റ് ഫോൾഡറുകൾ"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Title": {
+    "messageformat": "ഒരു ചാറ്റ് ഫോൾഡർ ചേർക്കുക"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Description": {
+    "messageformat": "നിങ്ങളുടെ ചാറ്റുകൾ ഫോൾഡറുകളായി ഓർഗനൈസുചെയ്യുകയും നിങ്ങളുടെ ചാറ്റ് ലിസ്റ്റിൽ അവയ്ക്കിടയിൽ വേഗത്തിൽ മാറുകയും ചെയ്യുക."
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__EditFolder": {
+    "messageformat": "ഫോൾഡർ എഡിറ്റ് ചെയ്യുക"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__DeleteFolder": {
+    "messageformat": "ഇല്ലാതാക്കൂ"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__Title": {
+    "messageformat": "ഫോൾഡർ ഇല്ലാതാക്കണോ?"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__Description": {
+    "messageformat": "“{chatFolderTitle}” എന്ന ഫോൾഡർ ഇല്ലാതാക്കണോ?"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__DeleteButton": {
+    "messageformat": "ഇല്ലാതാക്കൂ"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__CancelButton": {
+    "messageformat": "റദ്ദാക്കുക"
+  },
+  "icu:Preferences__ChatFoldersPage__Title": {
+    "messageformat": "ചാറ്റ് ഫോൾഡറുകൾ"
+  },
+  "icu:Preferences__ChatFoldersPage__Description": {
+    "messageformat": "നിങ്ങളുടെ ചാറ്റുകൾ ഫോൾഡറുകളായി ഓർഗനൈസുചെയ്യുകയും നിങ്ങളുടെ ചാറ്റ് ലിസ്റ്റിൽ അവയ്ക്കിടയിൽ വേഗത്തിൽ മാറുകയും ചെയ്യുക"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__Title": {
+    "messageformat": "ഫോൾഡറുകൾ"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__AllChatsFolder__Title": {
+    "messageformat": "എല്ലാ ചാറ്റുകളും"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__CreateAFolderButton": {
+    "messageformat": "ഒരു ഫോൾഡർ സൃഷ്ടിക്കുക"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__Title": {
+    "messageformat": "നിർദ്ദേശിക്കപ്പെട്ട ഫോൾഡറുകൾ"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton": {
+    "messageformat": "ചേർക്കുക"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton__Toast": {
+    "messageformat": "{chatFolderTitle} ഫോൾഡർ ചേർത്തു"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Title": {
+    "messageformat": "വായിക്കാത്തവ"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Description": {
+    "messageformat": "എല്ലാ ചാറ്റുകളിൽ നിന്നുമുള്ള വായിക്കാത്ത സന്ദേശങ്ങൾ"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__DirectChatsFolder__Title": {
+    "messageformat": "1:1 ചാറ്റുകൾ"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__DirectChatsFolder__Description": {
+    "messageformat": "നേരിട്ടുള്ള ചാറ്റുകളിൽ നിന്നുള്ള സന്ദേശങ്ങൾ മാത്രം"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__GroupChatsFolder__Title": {
+    "messageformat": "ഗ്രൂപ്പുകൾ"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__GroupChatsFolder__Description": {
+    "messageformat": "ഗ്രൂപ്പ് ചാറ്റുകളിൽ നിന്നുള്ള സന്ദേശം മാത്രം"
+  },
+  "icu:Preferences__EditChatFolderPage__Title": {
+    "messageformat": "ഒരു ഫോൾഡർ സൃഷ്ടിക്കുക"
+  },
+  "icu:Preferences__EditChatFolderPage__FolderNameField__Label": {
+    "messageformat": "ഫോൾഡർ നാമം"
+  },
+  "icu:Preferences__EditChatFolderPage__FolderNameField__Placeholder": {
+    "messageformat": "ഫോൾഡർ നാമം (ആവശ്യമാണ്)"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__Title": {
+    "messageformat": "ഉൾപ്പെടുത്തിയ ചാറ്റുകൾ"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__Help": {
+    "messageformat": "ഈ ഫോൾഡറിൽ ദൃശ്യമാകാൻ ആഗ്രഹിക്കുന്ന ചാറ്റുകൾ തിരഞ്ഞെടുക്കുക"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__AddChatsButton": {
+    "messageformat": "ചാറ്റുകൾ ചേർക്കുക"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog--IncludedChats__Title": {
+    "messageformat": "ഉൾപ്പെടുത്തിയ ചാറ്റുകൾ"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog--ExcludedChats__Title": {
+    "messageformat": "ഒഴിവാക്കിയ ചാറ്റുകൾ"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__Search__Placeholder": {
+    "messageformat": "തിരയൽ"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__Title": {
+    "messageformat": "ചാറ്റ് തരങ്ങൾ"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__DirectChats": {
+    "messageformat": "1:1 ചാറ്റുകൾ"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__GroupChats": {
+    "messageformat": "ഗ്രൂപ്പുകൾ"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__RecentChats__Title": {
+    "messageformat": "സമീപകാല ചാറ്റുകൾ"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__DoneButton": {
+    "messageformat": "ചെയ്‌തു"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__Title": {
+    "messageformat": "ഉള്‍പ്പെടാത്തവ"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__Help": {
+    "messageformat": "ഈ ഫോൾഡറിൽ ദൃശ്യമാകാൻ നിങ്ങൾ ആഗ്രഹിക്കാത്ത ചാറ്റുകൾ തിരഞ്ഞെടുക്കുക"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__ExcludeChatsButton": {
+    "messageformat": "ചാറ്റുകൾ ഒഴിവാക്കുക"
+  },
+  "icu:Preferences__EditChatFolderPage__OnlyShowUnreadChatsCheckbox__Label": {
+    "messageformat": "വായിക്കാത്ത ചാറ്റുകൾ മാത്രം കാണിക്കുക"
+  },
+  "icu:Preferences__EditChatFolderPage__OnlyShowUnreadChatsCheckbox__Description": {
+    "messageformat": "വായിക്കാത്ത സന്ദേശങ്ങളുള്ള ചാറ്റുകൾ മാത്രമേ ഈ ഫോൾഡറിൽ കാണിക്കൂ."
+  },
+  "icu:Preferences__EditChatFolderPage__IncludeMutedChatsCheckbox__Label": {
+    "messageformat": "മ്യൂട്ട് ചെയ്ത ചാറ്റുകൾ ഉൾപ്പെടുത്തുക"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteFolderButton": {
+    "messageformat": "ഫോൾഡർ ഇല്ലാതാക്കുക"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__Title": {
+    "messageformat": "ഈ ചാറ്റ് ഫോൾഡർ ഇല്ലാതാക്കണോ?"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__Description": {
+    "messageformat": "ഈ ഫോൾഡർ നിങ്ങളുടെ ചാറ്റ് ലിസ്റ്റിൽ നിന്ന് നീക്കം ചെയ്യപ്പെടും."
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__DeleteButton": {
+    "messageformat": "ഇല്ലാതാക്കുക"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__CancelButton": {
+    "messageformat": "റദ്ദാക്കുക"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__Title": {
+    "messageformat": "മാറ്റങ്ങൾ സംരക്ഷിക്കണോ?"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__Description": {
+    "messageformat": "ഈ ചാറ്റ് ഫോൾഡറിൽ നിങ്ങൾ വരുത്തിയ മാറ്റങ്ങൾ സംരക്ഷിക്കണോ?"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__SaveButton": {
+    "messageformat": "സംരക്ഷിക്കൂ"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__DiscardButton": {
+    "messageformat": "കളയുക"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveButton": {
+    "messageformat": "സംരക്ഷിക്കൂ"
+  },
+  "icu:Preferences__EditChatFolderPage__CancelButton": {
+    "messageformat": "റദ്ദാക്കുക"
   },
   "icu:initialSync": {
     "messageformat": "കോൺ‌ടാക്റ്റുകളും ഗ്രൂപ്പുകളും സമന്വയിപ്പിക്കുന്നു"
@@ -3792,7 +3954,7 @@
     "messageformat": "ഗ്രൂപ്പിൽ ചേരാനുള്ള {joinerName}-യുടെ അഭ്യർത്ഥന നിരസിച്ചു."
   },
   "icu:GroupV2--admin-approval-bounce--pluralized": {
-    "messageformat": "{numberOfRequests, plural, one {ഗ്രൂപ്പ് ലിങ്ക് ഉപയോഗിച്ച് ചേരാൻ {joinerName} അഭ്യർത്ഥിക്കുകയും ആ ആഭ്യർത്ഥന സ്വയം റദ്ദാക്കുകയും ചെയ്‌തു} other {ഗ്രൂപ്പ് ലിങ്ക് ഉപയോഗിച്ച് ചേരാന്‍ {joinerName} {numberOfRequests,number} അഭ്യർത്ഥിക്കുകയും ആ അഭ്യർത്ഥനകൾ സ്വയം റദ്ദാക്കുകയും ചെയ്‌തു}}"
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} requested and canceled their request to join via the group link} other {{joinerName} requested and canceled {numberOfRequests,number} requests to join via the group link}}"
   },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "അഡ്മിൻ അംഗീകാരം പ്രവർത്തനരഹിതമാക്കിയുള്ള ഗ്രൂപ്പ് ലിങ്ക് നിങ്ങൾ ഓണാക്കി."
@@ -4026,10 +4188,10 @@
     "messageformat": "വീണ്ടും ശ്രമിക്കുക"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
-    "messageformat": "മീഡിയ പുനഃസ്ഥാപിക്കുന്നു"
+    "messageformat": "മീഡിയ സമന്വയിപ്പിക്കുന്നു"
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
-    "messageformat": "പുനഃസ്ഥാപിക്കൽ താൽക്കാലികമായി നിർത്തി"
+    "messageformat": "സമന്വയം താൽക്കാലികമായി നിർത്തി"
   },
   "icu:BackupMediaDownloadProgress__title-idle": {
     "messageformat": "{totalSize} -ൽ {currentSize} പുനഃസ്ഥാപിച്ചു"
@@ -4044,13 +4206,13 @@
     "messageformat": "ഇൻ്റർനെറ്റ് കണക്ഷനായി കാത്തിരിക്കുന്നു..."
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
-    "messageformat": "കൈമാറ്റം താൽക്കാലികമായി നിർത്തുക"
+    "messageformat": "താൽക്കാലികമായി നിർത്തുക"
   },
   "icu:BackupMediaDownloadProgress__button-resume": {
-    "messageformat": "കൈമാറ്റം പുനരാരംഭിക്കുക"
+    "messageformat": "പുനരാരംഭിക്കുക"
   },
   "icu:BackupMediaDownloadProgress__button-cancel": {
-    "messageformat": "കൈമാറ്റം റദ്ദാക്കുക"
+    "messageformat": "സമന്വയിപ്പിക്കൽ റദ്ദാക്കുക"
   },
   "icu:BackupMediaDownloadProgress__button-more": {
     "messageformat": "കൂടുതൽ ഓപ്‌ഷനുകൾ"
@@ -4062,16 +4224,34 @@
     "messageformat": "{totalSize} ൽ {currentSize}"
   },
   "icu:BackupMediaDownloadCancelConfirmation__title": {
-    "messageformat": "മീഡിയ കൈമാറ്റം റദ്ദാക്കണോ?"
+    "messageformat": "മീഡിയ സമന്വയിപ്പിക്കൽ റദ്ദാക്കണോ?"
   },
   "icu:BackupMediaDownloadCancelConfirmation__description": {
-    "messageformat": "നിങ്ങളുടെ സന്ദേശങ്ങളും മീഡിയയും പുനഃസ്ഥാപിക്കൽ പൂർത്തിയാക്കിയിട്ടില്ല. നിങ്ങൾ റദ്ദാക്കാൻ തിരഞ്ഞെടുക്കുകയാണെങ്കിൽ, ക്രമീകരണങ്ങളിൽ നിന്ന് നിങ്ങൾക്ക് വീണ്ടും കൈമാറാനാകും."
+    "messageformat": "നിങ്ങളുടെ മീഡിയ സമന്വയിപ്പിക്കൽ പൂർത്തിയാക്കിയിട്ടില്ല. റദ്ദാക്കാൻ തിരഞ്ഞെടുക്കുകയാണെങ്കിൽ, ഈ ഉപകരണം വീണ്ടും ലിങ്ക് ചെയ്‌ത് നിങ്ങൾക്ക് വീണ്ടും സമന്വയിപ്പിക്കാൻ കഴിയും. <learnMoreLink>കൂടുതലറിയുക</learnMoreLink>."
   },
   "icu:BackupMediaDownloadCancelConfirmation__button-continue": {
-    "messageformat": "കൈമാറ്റം തുടരുക"
+    "messageformat": "സമന്വയിപ്പിക്കൽ തുടരുക"
   },
   "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
-    "messageformat": "കൈമാറ്റം റദ്ദാക്കുക"
+    "messageformat": "സമന്വയിപ്പിക്കൽ റദ്ദാക്കുക"
+  },
+  "icu:BackupMediaDownloadProgressSettings__paused--title": {
+    "messageformat": "സമന്വയം താൽക്കാലികമായി നിർത്തി"
+  },
+  "icu:BackupMediaDownloadProgressSettings__paused--description": {
+    "messageformat": "സമന്വയം തുടരാൻ “{resumeButtonText}” ക്ലിക്ക് ചെയ്യുക"
+  },
+  "icu:BackupMediaDownloadProgressSettings__button-resume": {
+    "messageformat": "പുനരാരംഭിക്കുക"
+  },
+  "icu:BackupMediaDownloadProgressSettings__button-pause": {
+    "messageformat": "താൽക്കാലികമായി നിർത്തുക"
+  },
+  "icu:BackupMediaDownloadProgressSettings__title-in-progress": {
+    "messageformat": "മീഡിയ സമന്വയിപ്പിക്കുന്നു"
+  },
+  "icu:BackupMediaDownloadProgressSettings__progressbar-hint": {
+    "messageformat": "{currentSize} / {totalSize} ({fractionComplete,number,percent})..."
   },
   "icu:CriticalIdlePrimaryDeviceModal__title": {
     "messageformat": "അക്കൗണ്ട് നടപടി ആവശ്യമാണ്"
@@ -4811,6 +4991,12 @@
   "icu:ProfileEditor__username-link__error-icon": {
     "messageformat": "ഉപയോക്തൃനാമ ലിങ്ക് പുനഃക്രമീകരിക്കേണ്ടതുണ്ട്"
   },
+  "icu:ProfileEditor__open": {
+    "messageformat": "Open username link screen"
+  },
+  "icu:ProfileEditor__username-link__open": {
+    "messageformat": "Open username link screen"
+  },
   "icu:ProfileEditor__username-link__tooltip__title": {
     "messageformat": "നിങ്ങളുടെ ഉപയോക്തൃനാമം പങ്കിടുക"
   },
@@ -5082,7 +5268,7 @@
     "messageformat": "Signal ബാക്കപ്പുകൾ"
   },
   "icu:Preferences--signal-backups-off-description": {
-    "messageformat": "Automatic backups with Signal’s secure, end-to-end encrypted storage service. Get started on your phone. <learnMoreLink>Learn more</learnMoreLink>."
+    "messageformat": "Signal-ൻ്റെ സുരക്ഷിതമായ, എൻഡ്-ടു-എൻഡ് എൻക്രിപ്റ്റ് ചെയ്ത സ്റ്റോറേജ് സേവനത്തോടുകൂടിയ സ്വയമേവയുള്ള ബാക്കപ്പുകൾ. നിങ്ങളുടെ ഫോണിൽ ആരംഭിക്കുക. <learnMoreLink>കൂടുതലറിയുക</learnMoreLink>."
   },
   "icu:Preferences--backup-section-description": {
     "messageformat": "നിങ്ങളുടെ സന്ദേശ ചരിത്രം ബാക്കപ്പ് ചെയ്യുക, അതുവഴി നിങ്ങൾക്ക് ഒരു പുതിയ ഫോൺ ലഭിക്കുമ്പോഴോ Signal വീണ്ടും ഇൻസ്റ്റാൾ ചെയ്യുമ്പോഴോ ഒരിക്കലും ഡാറ്റ നഷ്‌ടപ്പെടില്ല."
@@ -5125,9 +5311,6 @@
   },
   "icu:Preferences--backup-created-by-phone": {
     "messageformat": "നിങ്ങളുടെ ഫോൺ"
-  },
-  "icu:Preferences--backup-size__label": {
-    "messageformat": "ബാക്കപ്പ് വലുപ്പം"
   },
   "icu:Preferences__local-backups": {
     "messageformat": "ഡെസ്‌ക്‌ടോപ്പ് ബാക്കപ്പുകൾ"
@@ -6114,9 +6297,6 @@
   "icu:UsernameLinkModalBody__reset": {
     "messageformat": "പുനഃക്രമീകരിക്കുക"
   },
-  "icu:UsernameLinkModalBody__done": {
-    "messageformat": "ചെയ്‌തു"
-  },
   "icu:UsernameLinkModalBody__color__radio": {
     "messageformat": "ഉപയോക്തൃനാമ ലിങ്ക് നിറം, {total,number}-ൽ {index,number}"
   },
@@ -6444,6 +6624,198 @@
   "icu:WhatsNew__modal-title": {
     "messageformat": "പുതിയതായി എന്തുണ്ട്"
   },
+  "icu:PreferencesDonations__title": {
+    "messageformat": "ലാഭത്തേക്കാൾ മുഖ്യം സ്വകാര്യത"
+  },
+  "icu:PreferencesDonations__description": {
+    "messageformat": "നിങ്ങൾ ധനസഹായം നൽകുന്ന, സ്വകാര്യ സന്ദേശമയയ്ക്കൽ. പരസ്യങ്ങളില്ല, ട്രാക്കിംഗില്ല, വിട്ടുവീഴ്‌ചയില്ല. Signal-നെ പിന്തുണയ്ക്കാൻ ഇപ്പോൾ സംഭാവന നൽകൂ. <readMoreLink>കൂടുതൽ വായിക്കുക</readMoreLink>"
+  },
+  "icu:PreferencesDonations__donate-button": {
+    "messageformat": "സംഭാവന നൽകുക"
+  },
+  "icu:PreferencesDonations__my-support": {
+    "messageformat": "എന്റെ പിന്തുണ"
+  },
+  "icu:PreferencesDonations__donate-button-with-amount": {
+    "messageformat": "{formattedCurrencyAmount} സംഭാവന നൽകുക"
+  },
+  "icu:PreferencesDonations__mobile-info": {
+    "messageformat": "ബാഡ്ജുകളും പ്രതിമാസ സംഭാവനകളും നിങ്ങളുടെ മൊബൈൽ ഉപകരണത്തിൽ കൈകാര്യം ചെയ്യാൻ കഴിയും."
+  },
+  "icu:PreferencesDonations__privacy-modal-title": {
+    "messageformat": "നിങ്ങളുടെ വിവരങ്ങൾ സ്വകാര്യമാണ്"
+  },
+  "icu:PreferencesDonations__privacy-modal-content": {
+    "messageformat": "<paragraph>നിങ്ങൾ ഒരു സംഭാവന നൽകുമ്പോൾ Signal നിങ്ങളുടെ സ്വകാര്യ വിവരങ്ങളൊന്നും ശേഖരിക്കുകയോ സൂക്ഷിക്കുകയോ ചെയ്യുന്നില്ല.</paragraph><paragraph>നിങ്ങളുടെ സംഭാവനകൾ സ്വീകരിക്കുന്നതിന് ഞങ്ങൾ Stripe പേയ്‌മെന്റ് പ്രോസസ്സറായി ഉപയോഗിക്കുന്നു. നിങ്ങൾ അവർക്ക് നൽകുന്ന ഒരു വിവരവും ഞങ്ങൾ ആക്‌സസ് ചെയ്യുകയോ സംഭരിക്കുകയോ സംരക്ഷിക്കുകയോ ചെയ്യുന്നില്ല.</paragraph><paragraph>Signal നിങ്ങളുടെ സംഭാവന നിങ്ങളുടെ Signal അക്കൗണ്ടുമായി ബന്ധിപ്പിക്കുന്നില്ല, ബന്ധിപ്പിക്കാനും കഴിയില്ല.</paragraph><paragraph>നിങ്ങളുടെ പിന്തുണയ്ക്ക് നന്ദി!</paragraph>"
+  },
+  "icu:PreferencesDonations__receipts": {
+    "messageformat": "രസീതുകൾ"
+  },
+  "icu:PreferencesDonations__faqs": {
+    "messageformat": "സംഭാവനയെക്കുറിച്ചുള്ള പതിവ് ചോദ്യങ്ങൾ"
+  },
+  "icu:PreferencesDonations--receiptList__info": {
+    "messageformat": "ഉപകരണങ്ങളിലുടനീളം രസീതുകൾ സമന്വയിപ്പിക്കുന്നില്ല. നിങ്ങൾ Signal റീഇൻസ്റ്റോൾ ചെയ്‌തിട്ടുണ്ടെങ്കിൽ, മുൻ സംഭാവനകളുടെ രസീതുകൾ ലഭ്യമാകില്ല."
+  },
+  "icu:PreferencesDonations--receiptList__empty-title": {
+    "messageformat": "രസീതുകളൊന്നുമില്ല"
+  },
+  "icu:PreferencesDonations__ReceiptModal--title": {
+    "messageformat": "വിശദാംശങ്ങൾ"
+  },
+  "icu:PreferencesDonations__ReceiptModal--download": {
+    "messageformat": "രസീത് ഡൗൺലോഡ് ചെയ്യുക"
+  },
+  "icu:PreferencesDonations__ReceiptModal--type-label": {
+    "messageformat": "തരം"
+  },
+  "icu:PreferencesDonations__ReceiptModal--date-paid-label": {
+    "messageformat": "പണം നൽകിയ തീയതി"
+  },
+  "icu:DonateFlow__make-a-one-time-donation": {
+    "messageformat": "ഒറ്റത്തവണ സംഭാവന നൽകൂ"
+  },
+  "icu:DonateFlow__desktop-one-time-only-notice": {
+    "messageformat": "ഡെസ്ക്ടോപ്പിൽ മാത്രമേ ഒറ്റത്തവണ സംഭാവനകൾ ലഭ്യമാകൂ. നിങ്ങളുടെ മൊബൈലിൽ പ്രതിമാസ സംഭാവനകൾ നൽകാം."
+  },
+  "icu:DonateFlow__having-issues-contact-support": {
+    "messageformat": "പ്രശ്നങ്ങൾ ഉണ്ടോ? <contactSupportLink>പിന്തുണയുമായി ബന്ധപ്പെടുക</contactSupportLink>"
+  },
+  "icu:DonateFlow__amount-picker-custom-amount-placeholder": {
+    "messageformat": "Enter Custom Amount"
+  },
+  "icu:DonateFlow__credit-or-debit-card": {
+    "messageformat": "Credit or Debit Card"
+  },
+  "icu:DonateFlow__card-form-instructions": {
+    "messageformat": "Enter your credit or debit card details. Signal does not collect or store your personal information. <learnMoreLink>Learn more</learnMoreLink>"
+  },
+  "icu:DonateFlow__card-form-card-number": {
+    "messageformat": "Card Number"
+  },
+  "icu:DonateFlow__card-form-expiration-date": {
+    "messageformat": "Expiration Date"
+  },
+  "icu:DonateFlow__card-form-title-donate-with-amount": {
+    "messageformat": "Donate {formattedCurrencyAmount} to Signal"
+  },
+  "icu:DonateFlow__card-form-error-invalid-card-number": {
+    "messageformat": "Invalid card number"
+  },
+  "icu:DonateFlow__card-form-error-expiration-expired": {
+    "messageformat": "Card has expired"
+  },
+  "icu:DonateFlow__card-form-error-year-missing": {
+    "messageformat": "Year required"
+  },
+  "icu:DonateFlow__card-form-error-invalid": {
+    "messageformat": "Invalid"
+  },
+  "icu:DonateFlow__card-form-error-cvc-too-short": {
+    "messageformat": "Code too short"
+  },
+  "icu:DonateFlow__one-time-donation-boost-badge-info": {
+    "messageformat": "Get the Signal Boost badge for 30 days"
+  },
+  "icu:DonationReceipt__title": {
+    "messageformat": "സംഭാവനാ രസീത്"
+  },
+  "icu:DonationReceipt__amount-label": {
+    "messageformat": "തുക"
+  },
+  "icu:DonationReceipt__type-label": {
+    "messageformat": "തരം"
+  },
+  "icu:DonationReceipt__date-paid-label": {
+    "messageformat": "പണം നൽകിയ തീയതി"
+  },
+  "icu:DonationReceipt__type-value--one-time": {
+    "messageformat": "ഒരിക്കൽ"
+  },
+  "icu:DonationReceipt__footer-text": {
+    "messageformat": "Signal-നെ പിന്തുണച്ചതിന് നന്ദി. സ്വതന്ത്രമായ അഭിപ്രായപ്രകടനം സംരക്ഷിക്കുന്നതിനും ലോകമെമ്പാടുമുള്ള ദശലക്ഷക്കണക്കിന് ആളുകൾക്ക് ഓപ്പൺ സോഴ്‌സ് സ്വകാര്യതാ സാങ്കേതികവിദ്യയിലൂടെ സുരക്ഷിതമായ ആഗോള ആശയവിനിമയം സാധ്യമാക്കുന്നതിനുമുള്ള ദൗത്യത്തിന് നിങ്ങളുടെ സംഭാവന ഇന്ധനം പകരുന്നു. നിങ്ങൾ യുണൈറ്റഡ് സ്റ്റേറ്റ്സിൽ താമസിക്കുന്ന ആളാണെങ്കിൽ, നിങ്ങളുടെ നികുതി രേഖകൾക്കായി ഈ രസീത് സൂക്ഷിക്കുക. Signal ടെക്നോളജി ഫൗണ്ടേഷൻ, ഇന്റേണൽ റവന്യൂ കോഡിന്റെ സെക്ഷൻ 501c3 പ്രകാരം യുണൈറ്റഡ് സ്റ്റേറ്റ്സിലെ നികുതി ഇളവ് ലഭിച്ച ഒരു ലാഭേച്ഛയില്ലാത്ത സ്ഥാപനമാണ്. ഞങ്ങളുടെ ഫെഡറൽ ടാക്സ് ഐഡി 82-4506840 ആണ്."
+  },
+  "icu:Donations__Toast__Canceled": {
+    "messageformat": "Donation canceled"
+  },
+  "icu:Donations__Toast__Completed": {
+    "messageformat": "സംഭാവന പൂർത്തിയായി"
+  },
+  "icu:Donations__Toast__Error": {
+    "messageformat": "സംഭാവന പ്രോസസ്സ് ചെയ്യുന്നതിൽ പിശക്"
+  },
+  "icu:Donations__Toast__Processing": {
+    "messageformat": "സംഭാവന പ്രോസസ് ചെയ്യുന്നു"
+  },
+  "icu:Donations__Toast__VerificationFailed": {
+    "messageformat": "പരിശോധിച്ചുറപ്പിക്കൽ പരാജയപ്പെട്ടു"
+  },
+  "icu:Donations__Toast__VerificationNeeded": {
+    "messageformat": "കൂടുതൽ പരിശോധിച്ചുറപ്പിക്കൽ ആവശ്യമായ നിങ്ങളുടെ ഒരു സംഭാവന പുരോഗമിച്ചുകൊണ്ടിരിക്കുന്നു."
+  },
+  "icu:Donations__Toast__ConfirmationNeeded": {
+    "messageformat": "You have a donation in progress that requires confirmation."
+  },
+  "icu:Donations__DonationInterrupted": {
+    "messageformat": "Donation interrupted"
+  },
+  "icu:Donations__DonationInterrupted__Description": {
+    "messageformat": "Your card was not charged. Do you want to retry the donation?"
+  },
+  "icu:Donations__DonationInterrupted__RetryButton": {
+    "messageformat": "Try again"
+  },
+  "icu:Donations__PaymentMethodDeclined": {
+    "messageformat": "പേയ്‌മെന്റ് രീതി നിരസിച്ചു"
+  },
+  "icu:Donations__PaymentMethodDeclined__Description": {
+    "messageformat": "മറ്റൊരു പേയ്മെന്റ് രീതി പരീക്ഷിക്കുക അല്ലെങ്കിൽ കൂടുതൽ വിവരങ്ങൾക്ക് നിങ്ങളുടെ ബാങ്കുമായി ബന്ധപ്പെടുക."
+  },
+  "icu:Donations__Failed3dsValidation": {
+    "messageformat": "പരിശോധിച്ചുറപ്പിക്കൽ പരാജയപ്പെട്ടു"
+  },
+  "icu:Donations__Failed3dsValidation__Description": {
+    "messageformat": "അധിക പരിശോധിച്ചുറപ്പിക്കൽ ഘട്ടം പരാജയപ്പെട്ടു. വീണ്ടും ശ്രമിക്കുക."
+  },
+  "icu:Donations__GenericError": {
+    "messageformat": "നിങ്ങളുടെ സംഭാവനയിൽ ഒരു പിശക് സംഭവിച്ചു"
+  },
+  "icu:Donations__GenericError__Description": {
+    "messageformat": "നിങ്ങളുടെ സംഭാവന പ്രോസസ്സ് ചെയ്തിട്ടുണ്ടാകില്ല. നിങ്ങളുടെ രസീതുകൾ പരിശോധിച്ച് പരിശോധിച്ചുറപ്പിക്കാൻ “Signal-ന് സംഭാവന ചെയ്യുക” എന്നതിലും തുടർന്ന് “സംഭാവനയുടെ രസീത്” എന്നതിലും ക്ലിക്ക് ചെയ്യുക."
+  },
+  "icu:Donations__Processing": {
+    "messageformat": "സംഭാവന പ്രോസസ്സ് ചെയ്യുന്നു..."
+  },
+  "icu:Donations__StillProcessing": {
+    "messageformat": "പ്രോസസ്സ് ചെയ്യുന്നു"
+  },
+  "icu:Donations__StillProcessing__Description": {
+    "messageformat": "നിങ്ങളുടെ സംഭാവന ഇപ്പോഴും പ്രോസസ്സ് ചെയ്യുകയാണ്. ഇതിന് കുറച്ച് മിനിറ്റ് എടുത്തേക്കാം."
+  },
+  "icu:Donations__TimedOut": {
+    "messageformat": "Donation canceled"
+  },
+  "icu:Donations__TimedOut__Description": {
+    "messageformat": "It has been too long since you started your donation. Please start over."
+  },
+  "icu:Donations__3dsValidationNeeded": {
+    "messageformat": "അധിക പരിശോധിച്ചുറപ്പിക്കൽ ആവശ്യമാണ്"
+  },
+  "icu:Donations__3dsValidationNeeded--waiting": {
+    "messageformat": "പരിശോധിച്ചുറപ്പിക്കലിനായി കാത്തിരിക്കുന്നു"
+  },
+  "icu:Donations__3dsValidationNeeded__Description": {
+    "messageformat": "നിങ്ങളുടെ ക്രെഡിറ്റ് കാർഡ് ഇഷ്യൂവർ ഒരു വെബ് ബ്രൗസറിൽ ഒരു അധിക പരിശോധിച്ചുറപ്പിക്കൽ ഘട്ടം ആവശ്യപ്പെടുന്നു."
+  },
+  "icu:Donations__3dsValidationNeeded__OpenBrowser": {
+    "messageformat": "ബ്രൗസർ തുറക്കുക"
+  },
+  "icu:Donations__3dsValidationNeeded__OpenBrowser--opened": {
+    "messageformat": "ബ്രൗസർ വീണ്ടും തുറക്കുക"
+  },
+  "icu:Donations__3dsValidationNeeded__CancelDonation": {
+    "messageformat": "സംഭാവന റദ്ദാക്കുക"
+  },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "Signal സുഗമമായി പ്രവർത്തിപ്പിക്കുന്നതിന് ആവശ്യമായ ഏതാനും ചെറിയ മാറ്റങ്ങളും ബഗ് ഫിക്‌സുകളും ഈ പതിപ്പിൽ അടങ്ങിയിട്ടുണ്ട്.",
     "ignoreUnused": true
@@ -6472,10 +6844,13 @@
     "messageformat": "ചെറിയ മാറ്റങ്ങളും ബഗ് പരിഹരിക്കലുകളും പ്രകടന മെച്ചപ്പെടുത്തലുകളും. Signal ഉപയോഗിക്കുന്നതിന് നന്ദി!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.58--0": {
-    "messageformat": "സന്ദേശ പ്രതികരണ സെലക്ടറിലെ ഒരു പുതിയ വിഭാഗം ഒരു സന്ദേശത്തിന് ലഭിച്ച എല്ലാ ഇമോജി പ്രതികരണങ്ങളും സ്വയമേവ പ്രദർശിപ്പിക്കുന്നു. ഇനി നിങ്ങൾക്ക് വേഗത്തിൽ തന്നെ ആ വഴിയിലേക്ക് കടന്ന്, മറ്റെല്ലാവരും ചെയ്യുന്നത് പോലെ പ്രചാരമേറിയ ഒരു തിളങ്ങുന്ന ഹൃദയം ചേർക്കാം, അല്ലെങ്കിൽ നിങ്ങളുടെ സ്വന്തം ഹൃദയത്തെ പിന്തുടർന്ന് തനതായ ഒരു ഹൃദയം തിരഞ്ഞെടുക്കാം."
+  "icu:WhatsNew__v7.64--0": {
+    "messageformat": "മൾട്ടിടാസ്കിംഗ് ചെയ്യുമ്പോൾ സന്ദേശം വായിക്കുക/വായിക്കാതിരിക്കുക എന്നുള്ള അനുഭവം ഞങ്ങൾ മെച്ചപ്പെടുത്തി, ഒപ്പം മികച്ച ഇമോജി പ്രതികരണത്തിനായി തിരയുമ്പോൾ സ്‌പെയ്‌സ് ബാറിൽ അമർത്തിയാൽ എക്സ്പാൻഡഡ് ഇമേജ് വ്യൂവർ ചിലപ്പോൾ തെറ്റായി തുറക്കുമായിരുന്ന ഒരു ബഗ് പരിഹരിക്കുകയും ചെയ്തു. ചിത്രത്തിൽ ക്ലിക്ക് ചെയ്‌താൽ, അല്ലെങ്കിൽ വേഗത്തിൽ ടൈപ്പ് ചെയ്‌താൽ, നിങ്ങൾക്ക് ഇപ്പോഴും സൂം ചെയ്യാൻ കഴിയും."
   },
-  "icu:WhatsNew__v7.59--0": {
-    "messageformat": "പിന്തുണയ്ക്കുന്ന ഹാർഡ്‌വെയറിൽ മെച്ചപ്പെട്ട പ്രകടനത്തിനും സുഗമമായ വീഡിയോ പ്ലേബാക്കിനുമായി ഈ അപ്‌ഡേറ്റ് ലിനക്സിൽ GPU ആക്സിലറേഷൻ പ്രാപ്തമാക്കുന്നു."
+  "icu:WhatsNew__v7.65--0": {
+    "messageformat": "ശരിയായ ഇമോജി കണ്ടെത്തൽ ഒഴിവാക്കാനാവാത്ത ഒരു ബുദ്ധിമുട്ടായി തോന്നിയേക്കാം, പക്ഷേ ഇമോജി തിരയൽ ബോക്സിലെ എസ്കേപ്പ് കീ അമർത്തുമ്പോൾ പിശക് സംഭവിക്കാൻ ഇടയുണ്ടായിരുന്ന ഒരു ബഗ് ഞങ്ങൾ പരിഹരിച്ചു."
+  },
+  "icu:WhatsNew__v7.66--0": {
+    "messageformat": "This update fixes a few small bugs, including one where emoji reactions weren't being grouped together correctly in some cases."
   }
 }

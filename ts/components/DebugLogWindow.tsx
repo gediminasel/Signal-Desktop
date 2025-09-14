@@ -98,7 +98,7 @@ export function DebugLogWindow({
       const publishedLogURL = await uploadLogs(text);
       setPublicLogURL(publishedLogURL);
     } catch (error) {
-      log.error('error:', Errors.toLogFormat(error));
+      log.error('Failed to upload logs:', Errors.toLogFormat(error));
       setLoadState(LoadState.Loaded);
       setToast({ toastType: ToastType.DebugLogError });
     }
@@ -151,12 +151,15 @@ export function DebugLogWindow({
           <Button onClick={copyLog}>{i18n('icu:debugLogCopy')}</Button>
         </div>
         <ToastManager
+          changeLocation={shouldNeverBeCalled}
+          clearDonation={shouldNeverBeCalled}
           OS="unused"
           hideToast={closeToast}
           i18n={i18n}
           onShowDebugLog={shouldNeverBeCalled}
           onUndoArchive={shouldNeverBeCalled}
           openFileInFolder={shouldNeverBeCalled}
+          setDidResumeDonation={shouldNeverBeCalled}
           showAttachmentNotAvailableModal={shouldNeverBeCalled}
           toast={toast}
           containerWidthBreakpoint={null}
@@ -209,12 +212,15 @@ export function DebugLogWindow({
         </Button>
       </div>
       <ToastManager
+        changeLocation={shouldNeverBeCalled}
+        clearDonation={shouldNeverBeCalled}
         OS="unused"
         hideToast={closeToast}
         i18n={i18n}
         onShowDebugLog={shouldNeverBeCalled}
         onUndoArchive={shouldNeverBeCalled}
         openFileInFolder={shouldNeverBeCalled}
+        setDidResumeDonation={shouldNeverBeCalled}
         showAttachmentNotAvailableModal={shouldNeverBeCalled}
         toast={toast}
         containerWidthBreakpoint={null}

@@ -305,9 +305,6 @@
   "icu:NavTabs__ItemLabel--Settings": {
     "messageformat": "Asetukset"
   },
-  "icu:NavTabs__ItemLabel--Update": {
-    "messageformat": "Päivitä Signal"
-  },
   "icu:NavTabs__ItemLabel--Profile": {
     "messageformat": "Profiili"
   },
@@ -605,6 +602,12 @@
   "icu:Toast--FailedToImportBackup": {
     "messageformat": "Failed to process some frames during backup import. Please share your logs."
   },
+  "icu:Toast--ReceiptSaved": {
+    "messageformat": "Kuitti tallennettu"
+  },
+  "icu:Toast--ReceiptSaveFailed": {
+    "messageformat": "Virhe tallennettaessa kuittia. Yritä uudelleen."
+  },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Valokuvia ja videoita ei voi valita yhdessä tiedostojen kanssa."
   },
@@ -664,9 +667,6 @@
   },
   "icu:joinTheBeta": {
     "messageformat": "Liity beeta-ohjelmaan"
-  },
-  "icu:signalDesktopPreferences": {
-    "messageformat": "Signal Desktop -asetukset"
   },
   "icu:signalDesktopStickerCreator": {
     "messageformat": "Tarrapaketin luonti"
@@ -1285,6 +1285,168 @@
   },
   "icu:Preferences__EmojiSkinToneDefaultSetting__Label": {
     "messageformat": "Emojin ihonväri"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__Title": {
+    "messageformat": "Keskustelukansiot"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Title": {
+    "messageformat": "Lisää keskustelukansio"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Description": {
+    "messageformat": "Järjestä keskustelut kansioihin ja siirry nopeasti kansiosta toiseen keskusteluluettelossa."
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__EditFolder": {
+    "messageformat": "Muokkaa kansiota"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__DeleteFolder": {
+    "messageformat": "Poista"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__Title": {
+    "messageformat": "Poistetaanko kansio?"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__Description": {
+    "messageformat": "Haluatko poistaa kansion “{chatFolderTitle}”?"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__DeleteButton": {
+    "messageformat": "Poista"
+  },
+  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__CancelButton": {
+    "messageformat": "Peruuta"
+  },
+  "icu:Preferences__ChatFoldersPage__Title": {
+    "messageformat": "Keskustelukansiot"
+  },
+  "icu:Preferences__ChatFoldersPage__Description": {
+    "messageformat": "Järjestä keskustelut kansioihin ja siirry nopeasti kansiosta toiseen keskusteluluettelossa"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__Title": {
+    "messageformat": "Kansiot"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__AllChatsFolder__Title": {
+    "messageformat": "Kaikki keskustelut"
+  },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__CreateAFolderButton": {
+    "messageformat": "Luo kansio"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__Title": {
+    "messageformat": "Ehdotetut kansiot"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton": {
+    "messageformat": "Lisää"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton__Toast": {
+    "messageformat": "Kansio {chatFolderTitle} lisätty"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Title": {
+    "messageformat": "Lukematta"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Description": {
+    "messageformat": "Lukemattomat viestit kaikista keskusteluista"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__DirectChatsFolder__Title": {
+    "messageformat": "Kahdenväliset keskustelut"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__DirectChatsFolder__Description": {
+    "messageformat": "Vain viestit kahdenvälisistä keskusteluista"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__GroupChatsFolder__Title": {
+    "messageformat": "Ryhmät"
+  },
+  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__GroupChatsFolder__Description": {
+    "messageformat": "Vain viestit ryhmäkeskusteluista"
+  },
+  "icu:Preferences__EditChatFolderPage__Title": {
+    "messageformat": "Luo kansio"
+  },
+  "icu:Preferences__EditChatFolderPage__FolderNameField__Label": {
+    "messageformat": "Kansion nimi"
+  },
+  "icu:Preferences__EditChatFolderPage__FolderNameField__Placeholder": {
+    "messageformat": "Kansion nimi (pakollinen)"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__Title": {
+    "messageformat": "Sisältyvät keskustelut"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__Help": {
+    "messageformat": "Valitse keskustelut, joiden haluat näkyvän kansiossa"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__AddChatsButton": {
+    "messageformat": "Lisää keskusteluja"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog--IncludedChats__Title": {
+    "messageformat": "Sisältyvät keskustelut"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog--ExcludedChats__Title": {
+    "messageformat": "Pois suljetut keskustelut"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__Search__Placeholder": {
+    "messageformat": "Hae"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__Title": {
+    "messageformat": "Keskustelutyypit"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__DirectChats": {
+    "messageformat": "Kahdenväliset keskustelut"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__ChatTypesSection__GroupChats": {
+    "messageformat": "Ryhmät"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__RecentChats__Title": {
+    "messageformat": "Viimeisimmät keskustelut"
+  },
+  "icu:Preferences__EditChatFolderPage__SelectChatsDialog__DoneButton": {
+    "messageformat": "Valmis"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__Title": {
+    "messageformat": "Poikkeukset"
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__Help": {
+    "messageformat": "Valitse keskustelut, joiden et halua näkyvän kansiossa."
+  },
+  "icu:Preferences__EditChatFolderPage__ExceptionsSection__ExcludeChatsButton": {
+    "messageformat": "Sulje pois keskusteluja"
+  },
+  "icu:Preferences__EditChatFolderPage__OnlyShowUnreadChatsCheckbox__Label": {
+    "messageformat": "Näytä vain lukemattomat keskustelut"
+  },
+  "icu:Preferences__EditChatFolderPage__OnlyShowUnreadChatsCheckbox__Description": {
+    "messageformat": "Kansiossa näytetään vain keskustelut, joissa on lukemattomia viestejä."
+  },
+  "icu:Preferences__EditChatFolderPage__IncludeMutedChatsCheckbox__Label": {
+    "messageformat": "Sisällytä mykistetyt keskustelut"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteFolderButton": {
+    "messageformat": "Poista kansio"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__Title": {
+    "messageformat": "Poistetaanko keskustelukansio?"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__Description": {
+    "messageformat": "Kansio poistetaan keskusteluluettelostasi."
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__DeleteButton": {
+    "messageformat": "Poista"
+  },
+  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__CancelButton": {
+    "messageformat": "Peruuta"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__Title": {
+    "messageformat": "Tallennetaanko muutokset?"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__Description": {
+    "messageformat": "Haluatko tallentaa keskustelukansioon tekemäsi muutokset?"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__SaveButton": {
+    "messageformat": "Tallenna"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__DiscardButton": {
+    "messageformat": "Hylkää"
+  },
+  "icu:Preferences__EditChatFolderPage__SaveButton": {
+    "messageformat": "Tallenna"
+  },
+  "icu:Preferences__EditChatFolderPage__CancelButton": {
+    "messageformat": "Peruuta"
   },
   "icu:initialSync": {
     "messageformat": "Synkronoidaan yhteystietoja ja ryhmiä"
@@ -3792,7 +3954,7 @@
     "messageformat": "Henkilön {joinerName} pyyntö liittyä ryhmään on hylätty."
   },
   "icu:GroupV2--admin-approval-bounce--pluralized": {
-    "messageformat": "{numberOfRequests, plural, one {{joinerName} pyysi ja peruutti liittymispyyntönsä ryhmälinkin kautta} other {{joinerName} pyysi ja peruutti {numberOfRequests,number} liittymispyyntöä ryhmälinkin kautta}}"
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} requested and canceled their request to join via the group link} other {{joinerName} requested and canceled {numberOfRequests,number} requests to join via the group link}}"
   },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Otit ryhmälinkin käyttöön. Liittymispyynnöt eivät ole käytössä."
@@ -4026,10 +4188,10 @@
     "messageformat": "Yritä uudelleen"
   },
   "icu:BackupMediaDownloadProgress__title-in-progress": {
-    "messageformat": "Palautetaan mediaa"
+    "messageformat": "Synkronoidaan mediaa"
   },
   "icu:BackupMediaDownloadProgress__title-paused": {
-    "messageformat": "Palauttaminen keskeytetty"
+    "messageformat": "Synkronointi keskeytetty"
   },
   "icu:BackupMediaDownloadProgress__title-idle": {
     "messageformat": "{currentSize} / {totalSize} palautettu"
@@ -4044,13 +4206,13 @@
     "messageformat": "Odotetaan internetyhteyttä..."
   },
   "icu:BackupMediaDownloadProgress__button-pause": {
-    "messageformat": "Keskeytä siirto"
+    "messageformat": "Pysäytä"
   },
   "icu:BackupMediaDownloadProgress__button-resume": {
-    "messageformat": "Jatka siirtoa"
+    "messageformat": "Jatka"
   },
   "icu:BackupMediaDownloadProgress__button-cancel": {
-    "messageformat": "Peruuta siirto"
+    "messageformat": "Peruuta synkronointi"
   },
   "icu:BackupMediaDownloadProgress__button-more": {
     "messageformat": "Lisää valintoja"
@@ -4062,16 +4224,34 @@
     "messageformat": "{currentSize} / {totalSize}"
   },
   "icu:BackupMediaDownloadCancelConfirmation__title": {
-    "messageformat": "Perutaanko median siirto?"
+    "messageformat": "Perutaanko median synkronointi?"
   },
   "icu:BackupMediaDownloadCancelConfirmation__description": {
-    "messageformat": "Viestejä ja mediaa ei ole vielä kokonaan palautettu. Jos peruutat toiminnot nyt, voit käynnistää siirron uudelleen Asetuksista."
+    "messageformat": "Mediasisällön synkronointi ei ole valmis. Jos peruutat toiminnon nyt, voit käynnistää synkronoinnin yhdistämällä laitteen uudelleen. <learnMoreLink>Lue lisää</learnMoreLink>."
   },
   "icu:BackupMediaDownloadCancelConfirmation__button-continue": {
-    "messageformat": "Jatka siirtoa"
+    "messageformat": "Jatka synkronointia"
   },
   "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
-    "messageformat": "Peruuta siirto"
+    "messageformat": "Peruuta synkronointi"
+  },
+  "icu:BackupMediaDownloadProgressSettings__paused--title": {
+    "messageformat": "Synkronointi keskeytetty"
+  },
+  "icu:BackupMediaDownloadProgressSettings__paused--description": {
+    "messageformat": "Jatka synkronointia napsauttamalla {resumeButtonText}"
+  },
+  "icu:BackupMediaDownloadProgressSettings__button-resume": {
+    "messageformat": "Jatka"
+  },
+  "icu:BackupMediaDownloadProgressSettings__button-pause": {
+    "messageformat": "Pysäytä"
+  },
+  "icu:BackupMediaDownloadProgressSettings__title-in-progress": {
+    "messageformat": "Synkronoidaan mediaa"
+  },
+  "icu:BackupMediaDownloadProgressSettings__progressbar-hint": {
+    "messageformat": "{currentSize}/{totalSize} ({fractionComplete,number,percent})..."
   },
   "icu:CriticalIdlePrimaryDeviceModal__title": {
     "messageformat": "Tiliin liittyviä toimenpiteitä vaaditaan"
@@ -4811,6 +4991,12 @@
   "icu:ProfileEditor__username-link__error-icon": {
     "messageformat": "Käyttäjänimen linkki on nollattava"
   },
+  "icu:ProfileEditor__open": {
+    "messageformat": "Open username link screen"
+  },
+  "icu:ProfileEditor__username-link__open": {
+    "messageformat": "Open username link screen"
+  },
   "icu:ProfileEditor__username-link__tooltip__title": {
     "messageformat": "Jaa käyttäjänimesi"
   },
@@ -5082,7 +5268,7 @@
     "messageformat": "Signal-varmuuskopiot"
   },
   "icu:Preferences--signal-backups-off-description": {
-    "messageformat": "Automatic backups with Signal’s secure, end-to-end encrypted storage service. Get started on your phone. <learnMoreLink>Learn more</learnMoreLink>."
+    "messageformat": "Automaattiset varmuuskopiot Signalin turvallisella, päästä päähän salatulla tallennuspalvelulla. Aloita puhelimellasi. <learnMoreLink>Lue lisää</learnMoreLink>."
   },
   "icu:Preferences--backup-section-description": {
     "messageformat": "Varmuuskopioi viestihistoriasi, jotta et koskaan menetä tietoja, kun hankit uuden puhelimen tai asennat Signalin uudelleen."
@@ -5125,9 +5311,6 @@
   },
   "icu:Preferences--backup-created-by-phone": {
     "messageformat": "Puhelimesi"
-  },
-  "icu:Preferences--backup-size__label": {
-    "messageformat": "Varmuuskopion koko"
   },
   "icu:Preferences__local-backups": {
     "messageformat": "Desktop-version varmuuskopiot"
@@ -6114,9 +6297,6 @@
   "icu:UsernameLinkModalBody__reset": {
     "messageformat": "Palauta alkuasetuksiin"
   },
-  "icu:UsernameLinkModalBody__done": {
-    "messageformat": "Valmis"
-  },
   "icu:UsernameLinkModalBody__color__radio": {
     "messageformat": "Käyttäjänimen linkin väri, {index,number}/{total,number}"
   },
@@ -6444,6 +6624,198 @@
   "icu:WhatsNew__modal-title": {
     "messageformat": "Uudet ominaisuudet"
   },
+  "icu:PreferencesDonations__title": {
+    "messageformat": "Yksityisyys voiton sijaan"
+  },
+  "icu:PreferencesDonations__description": {
+    "messageformat": "Yksityistä viestintää – sinun rahoittamanasi. Ei mainoksia, seurantaa tai kompromisseja. Tue Signalia lahjoittamalla nyt. <readMoreLink>Lue lisää</readMoreLink>"
+  },
+  "icu:PreferencesDonations__donate-button": {
+    "messageformat": "Lahjoita"
+  },
+  "icu:PreferencesDonations__my-support": {
+    "messageformat": "Antamani tuki"
+  },
+  "icu:PreferencesDonations__donate-button-with-amount": {
+    "messageformat": "Lahjoita {formattedCurrencyAmount}"
+  },
+  "icu:PreferencesDonations__mobile-info": {
+    "messageformat": "Voit hallinnoida merkkejä ja kuukausittaisia lahjoituksia mobiililaitteellasi."
+  },
+  "icu:PreferencesDonations__privacy-modal-title": {
+    "messageformat": "Tietosi ovat yksityisiä"
+  },
+  "icu:PreferencesDonations__privacy-modal-content": {
+    "messageformat": "<paragraph>Signal ei kerää tai tallenna mitään henkilötietoja, kun teet lahjoituksen.</paragraph><paragraph>Käytämme Stripea maksujen käsittelijänä lahjoitusten vastaanottamiseksi. Emme käytä, säilytä tai tallenna mitään heille antamistasi tiedoista.</paragraph><paragraph>Signal ei yhdistä eikä voi yhdistää lahjoitustasi Signal-tiliisi.</paragraph><paragraph>Kiitos tuestasi!</paragraph>"
+  },
+  "icu:PreferencesDonations__receipts": {
+    "messageformat": "Kuitit"
+  },
+  "icu:PreferencesDonations__faqs": {
+    "messageformat": "Usein kysyttyä lahjoituksista"
+  },
+  "icu:PreferencesDonations--receiptList__info": {
+    "messageformat": "Kuitit eivät synkronoidu laitteiden välillä. Jos olet asentanut Signalin uudelleen, kuitit vanhemmista lahjoituksista eivät näy."
+  },
+  "icu:PreferencesDonations--receiptList__empty-title": {
+    "messageformat": "Ei kuitteja"
+  },
+  "icu:PreferencesDonations__ReceiptModal--title": {
+    "messageformat": "Lisätietoja"
+  },
+  "icu:PreferencesDonations__ReceiptModal--download": {
+    "messageformat": "Lataa kuitti"
+  },
+  "icu:PreferencesDonations__ReceiptModal--type-label": {
+    "messageformat": "Tyyppi"
+  },
+  "icu:PreferencesDonations__ReceiptModal--date-paid-label": {
+    "messageformat": "Maksun päivämäärä"
+  },
+  "icu:DonateFlow__make-a-one-time-donation": {
+    "messageformat": "Tee kertalahjoitus"
+  },
+  "icu:DonateFlow__desktop-one-time-only-notice": {
+    "messageformat": "Signal Desktopissa voi tehdä vain kertalahjoituksia. Kuukausittaiset lahjoitukset voi tehdä mobiililaitteella."
+  },
+  "icu:DonateFlow__having-issues-contact-support": {
+    "messageformat": "Ongelmia? <contactSupportLink>Ota yhteyttä tukeen</contactSupportLink>"
+  },
+  "icu:DonateFlow__amount-picker-custom-amount-placeholder": {
+    "messageformat": "Enter Custom Amount"
+  },
+  "icu:DonateFlow__credit-or-debit-card": {
+    "messageformat": "Credit or Debit Card"
+  },
+  "icu:DonateFlow__card-form-instructions": {
+    "messageformat": "Enter your credit or debit card details. Signal does not collect or store your personal information. <learnMoreLink>Learn more</learnMoreLink>"
+  },
+  "icu:DonateFlow__card-form-card-number": {
+    "messageformat": "Card Number"
+  },
+  "icu:DonateFlow__card-form-expiration-date": {
+    "messageformat": "Expiration Date"
+  },
+  "icu:DonateFlow__card-form-title-donate-with-amount": {
+    "messageformat": "Donate {formattedCurrencyAmount} to Signal"
+  },
+  "icu:DonateFlow__card-form-error-invalid-card-number": {
+    "messageformat": "Invalid card number"
+  },
+  "icu:DonateFlow__card-form-error-expiration-expired": {
+    "messageformat": "Card has expired"
+  },
+  "icu:DonateFlow__card-form-error-year-missing": {
+    "messageformat": "Year required"
+  },
+  "icu:DonateFlow__card-form-error-invalid": {
+    "messageformat": "Invalid"
+  },
+  "icu:DonateFlow__card-form-error-cvc-too-short": {
+    "messageformat": "Code too short"
+  },
+  "icu:DonateFlow__one-time-donation-boost-badge-info": {
+    "messageformat": "Get the Signal Boost badge for 30 days"
+  },
+  "icu:DonationReceipt__title": {
+    "messageformat": "Lahjoituskuitti"
+  },
+  "icu:DonationReceipt__amount-label": {
+    "messageformat": "Summa"
+  },
+  "icu:DonationReceipt__type-label": {
+    "messageformat": "Tyyppi"
+  },
+  "icu:DonationReceipt__date-paid-label": {
+    "messageformat": "Maksun päivämäärä"
+  },
+  "icu:DonationReceipt__type-value--one-time": {
+    "messageformat": "Kerran"
+  },
+  "icu:DonationReceipt__footer-text": {
+    "messageformat": "Kiitos Signalin tukemisesta. Lahjoituksesi auttaa edistämään tavoitettamme suojata sananvapautta ja mahdollistaa turvallinen maailmanlaajuinen viestintä miljoonille käyttäjille ympäri maailmaa avoimen lähdekoodin tietosuojateknologialla. Jos asut Yhdysvalloissa, säilytä tämä kuitti verotusta varten. Signal Technology Foundation on verovapaa voittoa tavoittelematon organisaatio Yhdysvaltojen Internal Revenue Code -pykälän 501c3 mukaisesti. Liittovaltion verotunnuksemme on 82-4506840."
+  },
+  "icu:Donations__Toast__Canceled": {
+    "messageformat": "Donation canceled"
+  },
+  "icu:Donations__Toast__Completed": {
+    "messageformat": "Lahjoitus on valmis"
+  },
+  "icu:Donations__Toast__Error": {
+    "messageformat": "Virhe lahjoituksen käsittelyssä"
+  },
+  "icu:Donations__Toast__Processing": {
+    "messageformat": "Käsitellään lahjoitusta"
+  },
+  "icu:Donations__Toast__VerificationFailed": {
+    "messageformat": "Vahvistus epäonnistui"
+  },
+  "icu:Donations__Toast__VerificationNeeded": {
+    "messageformat": "Sinulla on käynnissä lahjoitus, joka vaatii lisävahvistusta."
+  },
+  "icu:Donations__Toast__ConfirmationNeeded": {
+    "messageformat": "You have a donation in progress that requires confirmation."
+  },
+  "icu:Donations__DonationInterrupted": {
+    "messageformat": "Donation interrupted"
+  },
+  "icu:Donations__DonationInterrupted__Description": {
+    "messageformat": "Your card was not charged. Do you want to retry the donation?"
+  },
+  "icu:Donations__DonationInterrupted__RetryButton": {
+    "messageformat": "Try again"
+  },
+  "icu:Donations__PaymentMethodDeclined": {
+    "messageformat": "Maksutapa hylätty"
+  },
+  "icu:Donations__PaymentMethodDeclined__Description": {
+    "messageformat": "Kokeile toista maksutapaa tai ole yhteydessä pankkiisi saadaksesi lisätietoja."
+  },
+  "icu:Donations__Failed3dsValidation": {
+    "messageformat": "Vahvistus epäonnistui"
+  },
+  "icu:Donations__Failed3dsValidation__Description": {
+    "messageformat": "Lisävahvistus epäonnistui. Yritä uudelleen."
+  },
+  "icu:Donations__GenericError": {
+    "messageformat": "Lahjoituksen kanssa tapahtui virhe"
+  },
+  "icu:Donations__GenericError__Description": {
+    "messageformat": "Lahjoitusta ei ehkä ole käsitelty. Tarkista kuitti napsauttamalla Lahjoita Signalille ja sitten Lahjoituskuitit."
+  },
+  "icu:Donations__Processing": {
+    "messageformat": "Käsitellään lahjoitusta..."
+  },
+  "icu:Donations__StillProcessing": {
+    "messageformat": "Käsitellään edelleen"
+  },
+  "icu:Donations__StillProcessing__Description": {
+    "messageformat": "Lahjoitusta käsitellään vielä. Tämä saattaa kestää muutaman minuutin."
+  },
+  "icu:Donations__TimedOut": {
+    "messageformat": "Donation canceled"
+  },
+  "icu:Donations__TimedOut__Description": {
+    "messageformat": "It has been too long since you started your donation. Please start over."
+  },
+  "icu:Donations__3dsValidationNeeded": {
+    "messageformat": "Lisävahvistus vaaditaan"
+  },
+  "icu:Donations__3dsValidationNeeded--waiting": {
+    "messageformat": "Odotetaan vahvistusta"
+  },
+  "icu:Donations__3dsValidationNeeded__Description": {
+    "messageformat": "Luottokorttisi myöntäjä vaatii ylimääräisen vahvistusvaiheen verkkoselaimessa."
+  },
+  "icu:Donations__3dsValidationNeeded__OpenBrowser": {
+    "messageformat": "Avaa selain"
+  },
+  "icu:Donations__3dsValidationNeeded__OpenBrowser--opened": {
+    "messageformat": "Avaa selain uudelleen"
+  },
+  "icu:Donations__3dsValidationNeeded__CancelDonation": {
+    "messageformat": "Peruuta lahjoitus"
+  },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "Tämä versio sisältää useita pieniä parannuksia ja virhekorjauksia, jotka pitävät Signalin toiminnan sujuvana.",
     "ignoreUnused": true
@@ -6472,10 +6844,13 @@
     "messageformat": "Pieniä säätöjä, virheenkorjauksia ja suorituskykyparannuksia. Kiitos, että käytät Signalia!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.58--0": {
-    "messageformat": "Viestin reaktiovalitsimen uusi osio näyttää automaattisesti kaikki viestiin lisätyt emoji-reaktiot."
+  "icu:WhatsNew__v7.64--0": {
+    "messageformat": "Paransimme viestien luettu/lukematon-tilan käyttökokemusta moniajon aikana."
   },
-  "icu:WhatsNew__v7.59--0": {
-    "messageformat": "Parannuksia Linux-suorituskykyyn."
+  "icu:WhatsNew__v7.65--0": {
+    "messageformat": "Korjasimme virheen emoji-hakukentässä."
+  },
+  "icu:WhatsNew__v7.66--0": {
+    "messageformat": "This update fixes a few small bugs, including one where emoji reactions weren't being grouped together correctly in some cases."
   }
 }

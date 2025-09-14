@@ -46,6 +46,7 @@ import {
   CreateCallLinkCredentialRequestContext,
   CreateCallLinkCredentialResponse,
   GenericServerPublicParams,
+  ServerPublicParams,
 } from '@signalapp/libsignal-client/zkgroup';
 import { Aci } from '@signalapp/libsignal-client';
 import { CanvasVideoRenderer, GumVideoCapturer } from '../calling/VideoSupport';
@@ -158,7 +159,6 @@ import { getConversationIdForLogging } from '../util/idForLogging';
 import { sendCallLinkUpdateSync } from '../util/sendCallLinkUpdateSync';
 import { createIdenticon } from '../util/createIdenticon';
 import { getColorForCallLink } from '../util/getColorForCallLink';
-import { getUseRingrtcAdm } from '../util/ringrtc/ringrtcAdm';
 import OS from '../util/os/osMain';
 import { sleep } from '../util/sleep';
 
@@ -502,7 +502,6 @@ export class CallingClass {
 
     RingRTC.setConfig({
       field_trials: undefined,
-      use_ringrtc_adm: getUseRingrtcAdm(),
     });
 
     RingRTC.handleOutgoingSignaling = this.#handleOutgoingSignaling.bind(this);
@@ -744,7 +743,7 @@ export class CallingClass {
 
     const rootKey = CallLinkRootKey.generate();
     const roomId = rootKey.deriveRoomId();
-    const roomIdHex = roomId.toString('hex');
+    const roomIdHex = Bytes.toHex(roomId);
     const logId = `createCallLink(${roomIdHex})`;
 
     log.info(`${logId}: Creating call link`);
@@ -764,11 +763,11 @@ export class CallingClass {
       );
 
     const response = new CreateCallLinkCredentialResponse(
-      Buffer.from(credentialBase64, 'base64')
+      Bytes.fromBase64(credentialBase64)
     );
 
     const genericServerPublicParams = new GenericServerPublicParams(
-      Buffer.from(window.getGenericServerPublicParams(), 'base64')
+      Bytes.fromBase64(window.getGenericServerPublicParams())
     );
     const credential = context.receive(
       response,
@@ -804,7 +803,7 @@ export class CallingClass {
     const callLink: CallLinkType = {
       roomId: roomIdHex,
       rootKey: rootKey.toString(),
-      adminKey: adminKey.toString('base64'),
+      adminKey: Bytes.toBase64(adminKey),
       storageNeedsSync: true,
       ...state,
     };
@@ -973,7 +972,7 @@ export class CallingClass {
     preferLocalVideo = true,
   }: Readonly<{
     callLinkRootKey: CallLinkRootKey;
-    adminPasskey: Buffer | undefined;
+    adminPasskey: Uint8Array | undefined;
     hasLocalAudio: boolean;
     preferLocalVideo?: boolean;
   }>): Promise<
@@ -1007,12 +1006,17 @@ export class CallingClass {
 
     const authCredentialPresentation =
       await getCallLinkAuthCredentialPresentation(callLinkRootKey);
+    const serverPublicParams = new ServerPublicParams(
+      Buffer.from(window.getServerPublicParams(), 'base64')
+    );
+    const endorsementsPublicKey = serverPublicParams.getEndorsementPublicKey();
 
     const groupCall = this.connectCallLinkCall({
       roomId,
       authCredentialPresentation,
       callLinkRootKey,
       adminPasskey,
+      endorsementsPublicKey,
     });
 
     groupCall.setOutgoingAudioMuted(!hasLocalAudio);
@@ -1296,14 +1300,14 @@ export class CallingClass {
     const logId = getLogId({ source: 'connectGroupCall', conversationId });
     log.info(logId);
 
-    const groupIdBuffer = Buffer.from(Bytes.fromBase64(groupId));
+    const groupIdBuffer = Bytes.fromBase64(groupId);
 
     let isRequestingMembershipProof = false;
 
     const outerGroupCall = RingRTC.getGroupCall(
       groupIdBuffer,
       this._sfuUrl,
-      Buffer.alloc(0),
+      new Uint8Array(),
       AUDIO_LEVEL_INTERVAL_MS,
       {
         ...this.#getGroupCallObserver(conversationId, CallMode.Group),
@@ -1352,11 +1356,13 @@ export class CallingClass {
     authCredentialPresentation,
     callLinkRootKey,
     adminPasskey,
+    endorsementsPublicKey,
   }: {
     roomId: string;
     authCredentialPresentation: CallLinkAuthCredentialPresentation;
     callLinkRootKey: CallLinkRootKey;
-    adminPasskey: Buffer | undefined;
+    adminPasskey: Uint8Array | undefined;
+    endorsementsPublicKey: Uint8Array;
   }): GroupCall {
     const existing = this.#getGroupCall(roomId);
     if (existing) {
@@ -1380,11 +1386,12 @@ export class CallingClass {
 
     const outerGroupCall = RingRTC.getCallLinkCall(
       this._sfuUrl,
+      endorsementsPublicKey,
       authCredentialPresentation.serialize(),
       callLinkRootKey,
       undefined,
       adminPasskey,
-      Buffer.alloc(0),
+      new Uint8Array(),
       AUDIO_LEVEL_INTERVAL_MS,
       this.#getGroupCallObserver(roomId, CallMode.Adhoc)
     );
@@ -1803,6 +1810,10 @@ export class CallingClass {
     const authCredentialPresentation =
       await getCallLinkAuthCredentialPresentation(callLinkRootKey);
     const adminPasskey = adminKey ? toAdminKeyBytes(adminKey) : undefined;
+    const serverPublicParams = new ServerPublicParams(
+      Buffer.from(window.getServerPublicParams(), 'base64')
+    );
+    const endorsementsPublicKey = serverPublicParams.getEndorsementPublicKey();
 
     // RingRTC reuses the same type GroupCall between Adhoc and Group calls.
     const groupCall = this.connectCallLinkCall({
@@ -1810,6 +1821,7 @@ export class CallingClass {
       authCredentialPresentation,
       callLinkRootKey,
       adminPasskey,
+      endorsementsPublicKey,
     });
 
     // Set the camera disposition as we transition from the lobby to the call link call.
@@ -2218,7 +2230,7 @@ export class CallingClass {
       );
       return;
     }
-    const groupIdBuffer = Buffer.from(Bytes.fromBase64(groupId));
+    const groupIdBuffer = Bytes.fromBase64(groupId);
 
     RingRTC.cancelGroupRing(
       groupIdBuffer,
@@ -2918,8 +2930,8 @@ export class CallingClass {
       ageSec: messageAgeSec,
       receivedAtCounter: envelope.receivedAtCounter,
       receivedAtDate: envelope.receivedAtDate,
-      senderIdentityKey: Buffer.from(senderIdentityKey),
-      receiverIdentityKey: Buffer.from(receiverIdentityKey),
+      senderIdentityKey,
+      receiverIdentityKey,
     });
   }
 
@@ -2987,12 +2999,12 @@ export class CallingClass {
 
   // Used to send a variety of group call messages, including the initial call message
   async #handleSendCallMessageToGroup(
-    groupIdBytes: Buffer,
+    groupIdBytes: Uint8Array,
     data: Buffer,
     urgency: CallMessageUrgency,
     overrideRecipients: Array<Buffer> = []
   ): Promise<boolean> {
-    const groupId = groupIdBytes.toString('base64');
+    const groupId = Bytes.toBase64(groupIdBytes);
     const conversation = window.ConversationController.get(groupId);
     if (!conversation) {
       log.error('handleSendCallMessageToGroup(): could not find conversation');
@@ -3058,14 +3070,14 @@ export class CallingClass {
   }
 
   async #handleGroupCallRingUpdate(
-    groupIdBytes: Buffer,
+    groupIdBytes: Uint8Array,
     ringId: bigint,
     ringerBytes: Buffer,
     update: RingUpdate
   ): Promise<void> {
     log.info(`handleGroupCallRingUpdate(): got ring update ${update}`);
 
-    const groupId = groupIdBytes.toString('base64');
+    const groupId = Bytes.toBase64(groupIdBytes);
 
     const ringerUuid = bytesToUuid(ringerBytes);
     if (!ringerUuid) {

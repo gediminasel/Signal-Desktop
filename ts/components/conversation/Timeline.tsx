@@ -40,7 +40,7 @@ import {
   setScrollBottom,
 } from '../../util/scrollUtil';
 import { LastSeenIndicator } from './LastSeenIndicator';
-import { MINUTE } from '../../util/durations';
+import { MINUTE, SECOND } from '../../util/durations';
 import { SizeObserver } from '../../hooks/useSizeObserver';
 import {
   createScrollerLock,
@@ -53,6 +53,8 @@ const AT_BOTTOM_DETECTOR_STYLE = { height: AT_BOTTOM_THRESHOLD };
 const MIN_ROW_HEIGHT = 18;
 const SCROLL_DOWN_BUTTON_THRESHOLD = 8;
 const LOAD_NEWER_THRESHOLD = 5;
+
+const DELAY_BEFORE_MARKING_READ_AFTER_FOCUS = SECOND;
 
 export type WarningType = ReadonlyDeep<
   | {
@@ -84,6 +86,7 @@ type PropsHousekeepingType = {
   isBlocked: boolean;
   isConversationSelected: boolean;
   isGroupV1AndDisabled?: boolean;
+  isInFullScreenCall: boolean;
   isIncomingMessageRequest: boolean;
   isSomeoneTyping: boolean;
   unreadCount?: number;
@@ -452,7 +455,9 @@ export class Timeline extends React.Component<
         setIsNearBottom(id, newIsNearBottom);
 
         if (newestBottomVisibleMessageId) {
-          this.#markNewestBottomVisibleMessageRead();
+          this.#markNewestBottomVisibleMessageRead(
+            newestBottomVisibleMessageId
+          );
 
           const rowIndex = getRowIndexFromElement(newestBottomVisible);
           const maxRowIndex = items.length - 1;
@@ -506,13 +511,25 @@ export class Timeline extends React.Component<
     this.#intersectionObserver.observe(atBottomDetectorEl);
   }
 
-  #markNewestBottomVisibleMessageRead = throttle((): void => {
+  #markNewestBottomVisibleMessageRead = throttle((messageId?: string): void => {
     const { id, markMessageRead } = this.props;
-    const { newestBottomVisibleMessageId } = this.state;
-    if (newestBottomVisibleMessageId) {
-      markMessageRead(id, newestBottomVisibleMessageId);
+    const messageIdToMarkRead =
+      messageId ?? this.state.newestBottomVisibleMessageId;
+    if (messageIdToMarkRead) {
+      markMessageRead(id, messageIdToMarkRead);
     }
   }, 500);
+
+  // When the the window becomes active, or when a fullsceen call is ended, we mark read
+  // with a delay, to allow users to navigate away quickly without marking messages read
+  #markNewestBottomVisibleMessageReadAfterDelay = throttle(
+    this.#markNewestBottomVisibleMessageRead,
+    DELAY_BEFORE_MARKING_READ_AFTER_FOCUS,
+    {
+      leading: false,
+      trailing: true,
+    }
+  );
 
   #setupGroupCallPeekTimeouts(): void {
     this.#cleanupGroupCallPeekTimeouts();
@@ -555,7 +572,7 @@ export class Timeline extends React.Component<
     this.#updateIntersectionObserver();
 
     window.SignalContext.activeWindowService.registerForActive(
-      this.#markNewestBottomVisibleMessageRead
+      this.#markNewestBottomVisibleMessageReadAfterDelay
     );
 
     if (conversationType === 'group') {
@@ -565,9 +582,10 @@ export class Timeline extends React.Component<
 
   public override componentWillUnmount(): void {
     window.SignalContext.activeWindowService.unregisterForActive(
-      this.#markNewestBottomVisibleMessageRead
+      this.#markNewestBottomVisibleMessageReadAfterDelay
     );
-
+    this.#markNewestBottomVisibleMessageReadAfterDelay.cancel();
+    this.#markNewestBottomVisibleMessageRead.cancel();
     this.#intersectionObserver?.disconnect();
     this.#cleanupGroupCallPeekTimeouts();
     this.props.updateVisibleMessages?.([]);
@@ -622,6 +640,7 @@ export class Timeline extends React.Component<
   ): void {
     const {
       conversationType: previousConversationType,
+      isInFullScreenCall: previousIsInFullScreenCall,
       items: oldItems,
       messageChangeCounter: previousMessageChangeCounter,
       messageLoadingState: previousMessageLoadingState,
@@ -630,6 +649,7 @@ export class Timeline extends React.Component<
       conversationType,
       discardMessages,
       id,
+      isInFullScreenCall,
       items: newItems,
       messageChangeCounter,
       messageLoadingState,
@@ -700,6 +720,10 @@ export class Timeline extends React.Component<
     }
     if (previousMessageChangeCounter !== messageChangeCounter) {
       this.#markNewestBottomVisibleMessageRead();
+    }
+
+    if (previousIsInFullScreenCall && !isInFullScreenCall) {
+      this.#markNewestBottomVisibleMessageReadAfterDelay();
     }
 
     if (previousConversationType !== conversationType) {

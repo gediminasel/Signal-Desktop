@@ -245,7 +245,6 @@ export async function modifyTargetMessage(
       const markReadAt = message.pendingMarkRead;
       // eslint-disable-next-line no-param-reassign
       message.pendingMarkRead = undefined;
-      const newestSentAt = maybeSingleReadSync?.readSync.timestamp;
 
       // This is primarily to allow the conversation to mark all older
       // messages as read, as is done when we receive a read sync for
@@ -257,7 +256,7 @@ export async function modifyTargetMessage(
       drop(
         window.ConversationController.get(
           message.get('conversationId')
-        )?.onReadMessage(message.attributes, markReadAt, newestSentAt)
+        )?.onReadMessage(message.attributes, markReadAt)
       );
     }
 

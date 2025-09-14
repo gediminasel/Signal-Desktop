@@ -100,6 +100,22 @@ function getToast(toastType: ToastType): AnyToast {
       };
     case ToastType.DeleteForEveryoneFailed:
       return { toastType: ToastType.DeleteForEveryoneFailed };
+    case ToastType.DonationCanceled:
+      return { toastType: ToastType.DonationCanceled };
+    case ToastType.DonationCanceledWithView:
+      return { toastType: ToastType.DonationCanceledWithView };
+    case ToastType.DonationCompleted:
+      return { toastType: ToastType.DonationCompleted };
+    case ToastType.DonationConfirmationNeeded:
+      return { toastType: ToastType.DonationConfirmationNeeded };
+    case ToastType.DonationError:
+      return { toastType: ToastType.DonationError };
+    case ToastType.DonationProcessing:
+      return { toastType: ToastType.DonationProcessing };
+    case ToastType.DonationVerificationFailed:
+      return { toastType: ToastType.DonationVerificationFailed };
+    case ToastType.DonationVerificationNeeded:
+      return { toastType: ToastType.DonationVerificationNeeded };
     case ToastType.Error:
       return { toastType: ToastType.Error };
     case ToastType.Expired:
@@ -150,6 +166,13 @@ function getToast(toastType: ToastType): AnyToast {
       return { toastType: ToastType.PinnedConversationsFull };
     case ToastType.ReactionFailed:
       return { toastType: ToastType.ReactionFailed };
+    case ToastType.ReceiptSaved:
+      return {
+        toastType: ToastType.ReceiptSaved,
+        parameters: { fullPath: '/image.png' },
+      };
+    case ToastType.ReceiptSaveFailed:
+      return { toastType: ToastType.ReceiptSaveFailed };
     case ToastType.ReportedSpam:
       return { toastType: ToastType.ReportedSpam };
     case ToastType.ReportedSpamAndBlocked:
@@ -247,6 +270,8 @@ export default {
     },
   },
   args: {
+    changeLocation: action('changeLocation'),
+    clearDonation: action('clearDonation'),
     hideToast: action('hideToast'),
     openFileInFolder: action('openFileInFolder'),
     onShowDebugLog: action('onShowDebugLog'),
