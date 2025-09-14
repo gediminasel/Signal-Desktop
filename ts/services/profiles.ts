@@ -71,8 +71,6 @@ type JobType = {
 //   - Don't even attempt jobs when offline
 
 const OBSERVED_CAPABILITY_KEYS = Object.keys({
-  deleteSync: true,
-  ssre2: true,
   attachmentBackfill: true,
 } satisfies CapabilitiesType) as ReadonlyArray<keyof CapabilitiesType>;
 
@@ -311,23 +309,15 @@ async function buildProfileFetchOptions({
   const accessKey = conversation.get('accessKey');
   const serviceId = conversation.getCheckedServiceId('getProfile');
 
-  if (
-    profileKey &&
-    profileKeyVersion &&
-    accessKey &&
-    !options.ignoreProfileKey
-  ) {
+  function getProfileCredentialsToUseIfExpired(profileKeyArg: string): {
+    credentialRequestContext: ProfileKeyCredentialRequestContext | null;
+    credentialRequestHex: string | null;
+  } {
     if (!conversation.hasProfileKeyCredentialExpired()) {
       log.info(`${logId}: using unexpired profile key credential`);
       return {
-        profileKey,
-        profileCredentialRequestContext: null,
-        request: {
-          accessKey,
-          groupSendToken: null,
-          profileKeyVersion,
-          profileKeyCredentialRequest: null,
-        },
+        credentialRequestContext: null,
+        credentialRequestHex: null,
       };
     }
 
@@ -335,17 +325,32 @@ async function buildProfileFetchOptions({
     const result = generateProfileKeyCredentialRequest(
       clientZkProfileCipher,
       serviceId,
-      profileKey
+      profileKeyArg
     );
 
     return {
+      credentialRequestContext: result.context,
+      credentialRequestHex: result.requestHex,
+    };
+  }
+
+  if (
+    profileKey &&
+    profileKeyVersion &&
+    accessKey &&
+    !options.ignoreProfileKey &&
+    !isMe(conversation.attributes)
+  ) {
+    const { credentialRequestContext, credentialRequestHex } =
+      getProfileCredentialsToUseIfExpired(profileKey);
+    return {
       profileKey,
-      profileCredentialRequestContext: result.context,
+      profileCredentialRequestContext: credentialRequestContext,
       request: {
         accessKey,
         groupSendToken: null,
         profileKeyVersion,
-        profileKeyCredentialRequest: result.requestHex,
+        profileKeyCredentialRequest: credentialRequestHex,
       },
     };
   }
@@ -369,6 +374,23 @@ async function buildProfileFetchOptions({
         groupSendToken: null,
         profileKeyVersion: lastProfile.profileKeyVersion,
         profileKeyCredentialRequest: null,
+      },
+    };
+  }
+
+  // For self we also use the versioned profile on the authenticated socket,
+  // with profile key credentials if needed.
+  if (profileKey && profileKeyVersion && isMe(conversation.attributes)) {
+    const { credentialRequestContext, credentialRequestHex } =
+      getProfileCredentialsToUseIfExpired(profileKey);
+    return {
+      profileKey,
+      profileCredentialRequestContext: credentialRequestContext,
+      request: {
+        accessKey: null,
+        groupSendToken: null,
+        profileKeyVersion,
+        profileKeyCredentialRequest: credentialRequestHex,
       },
     };
   }
@@ -531,7 +553,7 @@ async function doGetProfile(
             // Record that the accessKey we have in the conversation is invalid
             const sealedSender = c.get('sealedSender');
             if (sealedSender !== SEALED_SENDER.DISABLED) {
-              c.set('sealedSender', SEALED_SENDER.DISABLED);
+              c.set({ sealedSender: SEALED_SENDER.DISABLED });
             }
 
             // Retry fetch using last known profileKey or fetch unversioned profile.
@@ -558,7 +580,7 @@ async function doGetProfile(
       if (error.code === 404) {
         log.info(`${logId}: Profile not found`);
 
-        c.set('profileLastFetchedAt', Date.now());
+        c.set({ profileLastFetchedAt: Date.now() });
 
         if (!isVersioned || ignoreProfileKey) {
           log.info(`${logId}: Marking conversation unregistered`);
@@ -633,20 +655,20 @@ async function doGetProfile(
   if (isFieldDefined(profile.about)) {
     if (updatedDecryptionKey != null) {
       const decrypted = decryptField(profile.about, updatedDecryptionKey);
-      c.set('about', formatTextField(decrypted));
+      c.set({ about: formatTextField(decrypted) });
     }
   } else {
-    c.unset('about');
+    c.set({ about: undefined });
   }
 
   // Step #: Save profile `aboutEmoji` to conversation
   if (isFieldDefined(profile.aboutEmoji)) {
     if (updatedDecryptionKey != null) {
       const decrypted = decryptField(profile.aboutEmoji, updatedDecryptionKey);
-      c.set('aboutEmoji', formatTextField(decrypted));
+      c.set({ aboutEmoji: formatTextField(decrypted) });
     }
   } else {
-    c.unset('aboutEmoji');
+    c.set({ aboutEmoji: undefined });
   }
 
   // Step #: Save profile `phoneNumberSharing` to conversation
@@ -659,10 +681,10 @@ async function doGetProfile(
       // It should be one byte, but be conservative about it and
       // set `sharingPhoneNumber` to `false` in all cases except [0x01].
       const sharingPhoneNumber = decrypted.length === 1 && decrypted[0] === 1;
-      c.set('sharingPhoneNumber', sharingPhoneNumber);
+      c.set({ sharingPhoneNumber });
     }
   } else {
-    c.unset('sharingPhoneNumber');
+    c.set({ sharingPhoneNumber: undefined });
   }
 
   // Step #: Save our own `paymentAddress` to Storage
@@ -675,7 +697,7 @@ async function doGetProfile(
   if (profile.capabilities != null) {
     c.set({ capabilities: profile.capabilities });
   } else {
-    c.unset('capabilities');
+    c.set({ capabilities: undefined });
   }
 
   // Step #: Save our own `observedCapabilities` to Storage and trigger sync if changed
@@ -730,7 +752,7 @@ async function doGetProfile(
       })),
     });
   } else {
-    c.unset('badges');
+    c.set({ badges: undefined });
   }
 
   // Step #: Save updated (or clear if missing) profile `credential` to conversation
@@ -749,7 +771,7 @@ async function doGetProfile(
       log.warn(
         `${logId}: Included credential request, but got no credential. Clearing profileKeyCredential.`
       );
-      c.unset('profileKeyCredential');
+      c.set({ profileKeyCredential: undefined });
     }
   }
 
@@ -800,7 +822,7 @@ async function doGetProfile(
     }
   }
 
-  c.set('profileLastFetchedAt', Date.now());
+  c.set({ profileLastFetchedAt: Date.now() });
 
   // After we successfully decrypted - update lastProfile property
   if (

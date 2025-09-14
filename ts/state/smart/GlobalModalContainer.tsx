@@ -29,9 +29,9 @@ import { SmartCallLinkEditModal } from './CallLinkEditModal';
 import { SmartCallLinkAddNameModal } from './CallLinkAddNameModal';
 import { SmartConfirmLeaveCallModal } from './ConfirmLeaveCallModal';
 import { SmartCallLinkPendingParticipantModal } from './CallLinkPendingParticipantModal';
-import { SmartAttachmentNotAvailableModal } from './AttachmentNotAvailableModal';
 import { SmartProfileNameWarningModal } from './ProfileNameWarningModal';
 import { SmartDraftGifMessageSendModal } from './DraftGifMessageSendModal';
+import { DebugLogErrorModal } from '../../components/DebugLogErrorModal';
 
 function renderCallLinkAddNameModal(): JSX.Element {
   return <SmartCallLinkAddNameModal />;
@@ -105,10 +105,6 @@ function renderAboutContactModal(): JSX.Element {
   return <SmartAboutContactModal />;
 }
 
-function renderAttachmentNotAvailableModal(): JSX.Element {
-  return <SmartAttachmentNotAvailableModal />;
-}
-
 export const SmartGlobalModalContainer = memo(
   function SmartGlobalModalContainer() {
     const conversationsStoppingSend = useSelector(getConversationsStoppingSend);
@@ -120,7 +116,6 @@ export const SmartGlobalModalContainer = memo(
     const {
       aboutContactModalContactId,
       addUserToAnotherGroupModalContactId,
-      attachmentNotAvailableModalType,
       backfillFailureModalProps,
       callLinkAddNameModalRoomId,
       callLinkEditModalRoomId,
@@ -128,6 +123,7 @@ export const SmartGlobalModalContainer = memo(
       confirmLeaveCallModalState,
       contactModalState,
       criticalIdlePrimaryDeviceModal,
+      debugLogErrorModalProps,
       deleteMessagesProps,
       draftGifMessageSendModalProps,
       editHistoryMessages,
@@ -153,6 +149,7 @@ export const SmartGlobalModalContainer = memo(
     } = useSelector(getGlobalModalsState);
 
     const {
+      closeDebugLogErrorModal,
       closeErrorModal,
       closeMediaPermissionsModal,
       hideCriticalIdlePrimaryDeviceModal,
@@ -210,9 +207,20 @@ export const SmartGlobalModalContainer = memo(
       [closeErrorModal, i18n]
     );
 
+    const renderDebugLogErrorModal = useCallback(
+      ({ description }: { description?: string }) => (
+        <DebugLogErrorModal
+          description={description}
+          i18n={i18n}
+          onClose={closeDebugLogErrorModal}
+          onSubmitDebugLog={() => window.IPC.showDebugLog()}
+        />
+      ),
+      [closeDebugLogErrorModal, i18n]
+    );
+
     return (
       <GlobalModalContainer
-        attachmentNotAvailableModalType={attachmentNotAvailableModalType}
         addUserToAnotherGroupModalContactId={
           addUserToAnotherGroupModalContactId
         }
@@ -225,6 +233,7 @@ export const SmartGlobalModalContainer = memo(
         confirmLeaveCallModalState={confirmLeaveCallModalState}
         contactModalState={contactModalState}
         criticalIdlePrimaryDeviceModal={criticalIdlePrimaryDeviceModal}
+        debugLogErrorModalProps={debugLogErrorModalProps}
         editHistoryMessages={editHistoryMessages}
         editNicknameAndNoteModalProps={editNicknameAndNoteModalProps}
         errorModalProps={errorModalProps}
@@ -255,7 +264,6 @@ export const SmartGlobalModalContainer = memo(
         isWhatsNewVisible={isWhatsNewVisible}
         renderAboutContactModal={renderAboutContactModal}
         renderAddUserToAnotherGroup={renderAddUserToAnotherGroup}
-        renderAttachmentNotAvailableModal={renderAttachmentNotAvailableModal}
         renderCallLinkAddNameModal={renderCallLinkAddNameModal}
         renderCallLinkEditModal={renderCallLinkEditModal}
         renderCallLinkPendingParticipantModal={
@@ -263,6 +271,7 @@ export const SmartGlobalModalContainer = memo(
         }
         renderConfirmLeaveCallModal={renderConfirmLeaveCallModal}
         renderContactModal={renderContactModal}
+        renderDebugLogErrorModal={renderDebugLogErrorModal}
         renderEditHistoryMessagesModal={renderEditHistoryMessagesModal}
         renderEditNicknameAndNoteModal={renderEditNicknameAndNoteModal}
         renderErrorModal={renderErrorModal}

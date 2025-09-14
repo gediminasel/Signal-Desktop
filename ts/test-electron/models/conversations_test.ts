@@ -10,12 +10,18 @@ import { IMAGE_PNG } from '../../types/MIME';
 import { generateAci, generatePni } from '../../types/ServiceId';
 import { MessageModel } from '../../models/messages';
 import { DurationInSeconds } from '../../util/durations';
+import { ConversationModel } from '../../models/conversations';
 
 describe('Conversations', () => {
   async function resetConversationController(): Promise<void> {
     window.ConversationController.reset();
     await window.ConversationController.load();
   }
+
+  after(async () => {
+    await DataWriter.removeAll();
+    await window.storage.fetch();
+  });
 
   beforeEach(async () => {
     await DataWriter.removeAll();
@@ -32,7 +38,7 @@ describe('Conversations', () => {
 
   it('updates lastMessage even in race conditions with db', async () => {
     // Creating a fake conversation
-    const conversation = new window.Whisper.Conversation({
+    const conversation = new ConversationModel({
       avatars: [],
       id: generateUuid(),
       e164: '+15551234567',
@@ -111,7 +117,7 @@ describe('Conversations', () => {
 
   it('only produces attachments on a quote with an image', async () => {
     // Creating a fake conversation
-    const conversation = new window.Whisper.Conversation({
+    const conversation = new ConversationModel({
       avatars: [],
       id: generateUuid(),
       e164: '+15551234567',

@@ -918,8 +918,10 @@ function addPendingAttachment(
 
     const conversation = window.ConversationController.get(conversationId);
     if (conversation) {
-      conversation.attributes.draftAttachments = nextAttachments;
-      conversation.attributes.draftChanged = true;
+      conversation.set({
+        draftAttachments: nextAttachments,
+        draftChanged: true,
+      });
       drop(DataWriter.updateConversation(conversation.attributes));
     }
   };
@@ -1220,8 +1222,10 @@ function removeAttachment(
 
     const conversation = window.ConversationController.get(conversationId);
     if (conversation) {
-      conversation.attributes.draftAttachments = nextAttachments;
-      conversation.attributes.draftChanged = true;
+      conversation.set({
+        draftAttachments: nextAttachments,
+        draftChanged: true,
+      });
       await DataWriter.updateConversation(conversation.attributes);
     }
 

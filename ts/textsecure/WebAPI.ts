@@ -470,7 +470,7 @@ async function _promiseAjax<Type extends ResponseType, OutputShape>(
 
     if (!unauthenticated && response.status === 401) {
       log.warn('Got 401 from Signal Server. We might be unlinked.');
-      window.Whisper.events.trigger('mightBeUnlinked');
+      window.Whisper.events.emit('mightBeUnlinked');
     }
   }
 
@@ -700,7 +700,7 @@ const CHAT_CALLS = {
   batchIdentityCheck: 'v1/profile/identity_check/batch',
   boostReceiptCredentials: 'v1/subscription/boost/receipt_credentials',
   challenge: 'v1/challenge',
-  config: 'v1/config',
+  configV2: 'v2/config',
   createBoost: 'v1/subscription/boost/create',
   deliveryCert: 'v1/certificate/delivery',
   devices: 'v1/devices',
@@ -849,15 +849,11 @@ export type WebAPIConnectType = {
 // When updating this make sure to update `observedCapabilities` type in
 // ts/types/Storage.d.ts
 export type CapabilitiesType = {
-  deleteSync: boolean;
-  ssre2: boolean;
   attachmentBackfill: boolean;
 };
 export type CapabilitiesUploadType = {
-  deleteSync: true;
-  versionedExpirationTimer: true;
-  ssre2: true;
   attachmentBackfill: true;
+  spqr: true;
 };
 
 type StickerPackManifestType = Uint8Array;
@@ -929,18 +925,14 @@ export type UploadAvatarHeadersOrOtherType = z.infer<
 >;
 
 const remoteConfigResponseZod = z.object({
-  config: z
-    .object({
-      name: z.string(),
-      enabled: z.boolean(),
-      value: z.string().nullish(),
-    })
-    .array(),
+  config: z.object({}).catchall(z.string()),
 });
-export type RemoteConfigResponseType = z.infer<typeof remoteConfigResponseZod> &
-  Readonly<{
-    serverTimestamp: number;
-  }>;
+export type RemoteConfigResponseType = {
+  config: Map<string, string> | 'unmodified';
+} & Readonly<{
+  serverTimestamp: number;
+  configHash: string;
+}>;
 
 export type ProfileType = Readonly<{
   identityKey?: string;
@@ -1358,7 +1350,7 @@ export type GetBackupCredentialsResponseType = z.infer<
 
 export type GetBackupCDNCredentialsOptionsType = Readonly<{
   headers: BackupPresentationHeadersType;
-  cdn: number;
+  cdnNumber: number;
 }>;
 
 export const getBackupCDNCredentialsResponseSchema = z.object({
@@ -1827,7 +1819,7 @@ export type WebAPIType = {
   ) => Promise<string>;
   whoami: () => Promise<WhoamiResultType>;
   sendChallengeResponse: (challengeResponse: ChallengeType) => Promise<void>;
-  getConfig: () => Promise<RemoteConfigResponseType>;
+  getConfig: (configHash?: string) => Promise<RemoteConfigResponseType>;
   authenticate: (credentials: WebAPICredentials) => Promise<void>;
   logout: () => Promise<void>;
   getServerAlerts: () => Array<ServerAlert>;
@@ -2042,6 +2034,22 @@ export function initialize({
       log.info('libsignal net will require TLS 1.3');
       libsignalRemoteConfig.set('enforceMinimumTls', 'true');
     }
+    if (
+      window.Signal.RemoteConfig.isEnabled(
+        'desktop.libsignalNet.shadowUnauthChatWithNoise'
+      )
+    ) {
+      log.info('libsignal net will shadow unauth chat connections');
+      libsignalRemoteConfig.set('shadowUnauthChatWithNoise', 'true');
+    }
+    if (
+      window.Signal.RemoteConfig.isEnabled(
+        'desktop.libsignalNet.shadowAuthChatWithNoise'
+      )
+    ) {
+      log.info('libsignal net will shadow auth chat connections');
+      libsignalRemoteConfig.set('shadowAuthChatWithNoise', 'true');
+    }
     libsignalNet.setRemoteConfig(libsignalRemoteConfig);
 
     const socketManager = new SocketManager(libsignalNet, {
@@ -2053,23 +2061,23 @@ export function initialize({
     });
 
     socketManager.on('statusChange', () => {
-      window.Whisper.events.trigger('socketStatusChange');
+      window.Whisper.events.emit('socketStatusChange');
     });
 
     socketManager.on('online', () => {
-      window.Whisper.events.trigger('online');
+      window.Whisper.events.emit('online');
     });
 
     socketManager.on('offline', () => {
-      window.Whisper.events.trigger('offline');
+      window.Whisper.events.emit('offline');
     });
 
     socketManager.on('authError', () => {
-      window.Whisper.events.trigger('unlinkAndDisconnect');
+      window.Whisper.events.emit('unlinkAndDisconnect');
     });
 
     socketManager.on('firstEnvelope', incoming => {
-      window.Whisper.events.trigger('firstEnvelope', incoming);
+      window.Whisper.events.emit('firstEnvelope', incoming);
     });
 
     socketManager.on('serverAlerts', alerts => {
@@ -2456,31 +2464,64 @@ export function initialize({
       void socketManager.onHasStoriesDisabledChange(newValue);
     }
 
-    async function getConfig() {
+    async function getConfig(
+      configHash?: string
+    ): Promise<RemoteConfigResponseType> {
       const { data, response } = await _ajax({
         host: 'chatService',
-        call: 'config',
+        call: 'configV2',
         httpType: 'GET',
         responseType: 'jsonwithdetails',
-        zodSchema: remoteConfigResponseZod,
+        zodSchema: z.union([
+          remoteConfigResponseZod,
+          // When a 304 is returned, the body of the response is empty.
+          z.literal(''),
+        ]),
+        headers: {
+          ...(configHash && { 'if-none-match': configHash }),
+        },
       });
 
       const serverTimestamp = safeParseNumber(
         response.headers.get('x-signal-timestamp') || ''
       );
+
       if (serverTimestamp == null) {
         throw new Error('Missing required x-signal-timestamp header');
       }
 
-      return {
-        ...data,
-        serverTimestamp,
-        config: data.config.filter(
-          ({ name }: { name: string }) =>
+      const newConfigHash = response.headers.get('etag');
+      if (newConfigHash == null) {
+        throw new Error('Missing required ETag header');
+      }
+
+      const partialResponse = { serverTimestamp, configHash: newConfigHash };
+
+      if (response.status === 304) {
+        return {
+          config: 'unmodified',
+          ...partialResponse,
+        };
+      }
+
+      if (data === '') {
+        throw new Error('Empty data returned for non-304');
+      }
+
+      const { config: newConfig } = data;
+
+      const config = new Map(
+        Object.entries(newConfig).filter(
+          ([name, _value]) =>
             name.startsWith('desktop.') ||
             name.startsWith('global.') ||
             name.startsWith('cds.')
-        ),
+        )
+      );
+
+      return {
+        config,
+        ...partialResponse,
       };
     }
 
@@ -2801,10 +2842,12 @@ export function initialize({
           // Add a bit of leeway to let server respond properly
           timeout: (requestTimeoutInSecs + 15) * SECOND,
           abortSignal,
-          zodSchema: TransferArchiveSchema,
+          // We may also get a 204 with no content, indicating we should try again
+          zodSchema: TransferArchiveSchema.or(z.literal('')),
         });
 
         if (response.status === 200) {
+          strictAssert(data !== '', '200 must have data');
           return data;
         }
 
@@ -3206,10 +3249,8 @@ export function initialize({
       }
 
       const capabilities: CapabilitiesUploadType = {
-        deleteSync: true,
-        versionedExpirationTimer: true,
-        ssre2: true,
         attachmentBackfill: true,
+        spqr: true,
       };
 
       // Desktop doesn't support recovery but we need to provide a recovery password.
@@ -3273,10 +3314,8 @@ export function initialize({
       pniPqLastResortPreKey,
     }: LinkDeviceOptionsType) {
       const capabilities: CapabilitiesUploadType = {
-        deleteSync: true,
-        versionedExpirationTimer: true,
-        ssre2: true,
         attachmentBackfill: true,
+        spqr: true,
       };
 
       const jsonData = {
@@ -3606,7 +3645,7 @@ export function initialize({
 
     async function getBackupCDNCredentials({
       headers,
-      cdn,
+      cdnNumber,
     }: GetBackupCDNCredentialsOptionsType) {
       return _ajax({
         host: 'chatService',
@@ -3616,7 +3655,7 @@ export function initialize({
         accessKey: undefined,
         groupSendToken: undefined,
         headers,
-        urlParameters: `?cdn=${cdn}`,
+        urlParameters: `?cdn=${cdnNumber}`,
         responseType: 'json',
         zodSchema: getBackupCDNCredentialsResponseSchema,
       });

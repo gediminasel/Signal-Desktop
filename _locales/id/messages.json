@@ -1370,6 +1370,12 @@
   "icu:Preferences__EditChatFolderPage__IncludedChatsSection__Help": {
     "messageformat": "Pilih chat yang ingin Anda tampilkan di folder ini"
   },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__DirectChats": {
+    "messageformat": "Chat pribadi"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__GroupChats": {
+    "messageformat": "Chat grup"
+  },
   "icu:Preferences__EditChatFolderPage__IncludedChatsSection__AddChatsButton": {
     "messageformat": "Tambahkan chat"
   },
@@ -2063,6 +2069,9 @@
   "icu:Toast--download-failed": {
     "messageformat": "Gagal mengunduh"
   },
+  "icu:Toast--unable-download-from-backup-tier": {
+    "messageformat": "Download of attachment from backup failed"
+  },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "Pengeditan hanya dapat diterapkan dalam rentang waktu 24 jam sejak Anda mengirimkan pesan ini."
   },
@@ -2236,6 +2245,9 @@
   },
   "icu:message--getDescription--disappearing-video": {
     "messageformat": "Video sekali-lihat"
+  },
+  "icu:message--getDescription--gif": {
+    "messageformat": "GIF"
   },
   "icu:message--deletedForEveryone": {
     "messageformat": "Pesan ini telah dihapus."
@@ -3524,6 +3536,15 @@
   "icu:ErrorModal--description": {
     "messageformat": "Coba lagi atau hubungi bantuan."
   },
+  "icu:DebugLogErrorModal__UnexpectedError": {
+    "messageformat": "Terjadi kesalahan tidak terduga"
+  },
+  "icu:DebugLogErrorModal__SubmitDebugLog": {
+    "messageformat": "Kirim catatan debug"
+  },
+  "icu:DebugLogErrorModal__SubmitDebugLog__Cancel": {
+    "messageformat": "Tidak, terima kasih"
+  },
   "icu:Confirmation--confirm": {
     "messageformat": "Oke"
   },
@@ -3954,7 +3975,7 @@
     "messageformat": "Permintaan bergabung ke grup dari {joinerName} telah ditolak."
   },
   "icu:GroupV2--admin-approval-bounce--pluralized": {
-    "messageformat": "{numberOfRequests, plural, one {{joinerName} requested and canceled their request to join via the group link} other {{joinerName} requested and canceled {numberOfRequests,number} requests to join via the group link}}"
+    "messageformat": "{numberOfRequests, plural, other {{joinerName} mengajukan dan membatalkan {numberOfRequests,number} permintaan bergabung lewat tautan grup}}"
   },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Anda menyalakan tautan grup tanpa persetujuan admin."
@@ -4122,7 +4143,7 @@
     "messageformat": "Berdonasi ke Signal"
   },
   "icu:BadgeSustainerInstructions__subheader": {
-    "messageformat": "Signal didukung olejh orang seperti Anda. Berkontribusi dan dapatkan sebuah lencana."
+    "messageformat": "Signal didukung oleh orang-orang seperti Anda. Berkontribusi dan dapatkan sebuah lencana."
   },
   "icu:BadgeSustainerInstructions__instructions__1": {
     "messageformat": "Buka Signal di ponsel Anda"
@@ -4992,10 +5013,10 @@
     "messageformat": "Tautan nama pengguna perlu direset"
   },
   "icu:ProfileEditor__open": {
-    "messageformat": "Open username link screen"
+    "messageformat": "Buka layar tautan nama pengguna"
   },
   "icu:ProfileEditor__username-link__open": {
-    "messageformat": "Open username link screen"
+    "messageformat": "Buka layar tautan nama pengguna"
   },
   "icu:ProfileEditor__username-link__tooltip__title": {
     "messageformat": "Bagikan Nama Pengguna Anda"
@@ -5255,6 +5276,12 @@
   "icu:Preferences__auto-convert-emoji--description": {
     "messageformat": "Contoh, :-) akan diubah jadi <emojify>🙂</emojify>"
   },
+  "icu:Preferences__keep-muted-chats-archived--title": {
+    "messageformat": "Biarkan obrolan yang dibisukan tetap dalam arsip"
+  },
+  "icu:Preferences__keep-muted-chats-archived--description": {
+    "messageformat": "Obrolan dibisukan yang diarsipkan akan tetap dalam arsip saat ada pesan baru yang masuk."
+  },
   "icu:Preferences--advanced": {
     "messageformat": "Lanjutan"
   },
@@ -5265,7 +5292,7 @@
     "messageformat": "Diblokir"
   },
   "icu:Preferences--signal-backups": {
-    "messageformat": "Signal Backups"
+    "messageformat": "Signal Secure Backups"
   },
   "icu:Preferences--signal-backups-off-description": {
     "messageformat": "Pencadangan otomatis dengan layanan penyimpanan Signal yang aman dan terenkripsi total. Mulai pencadangan di ponsel Anda. <learnMoreLink>Info lengkap</learnMoreLink>."
@@ -5280,7 +5307,7 @@
     "messageformat": "Pencadangan pesan + semua media"
   },
   "icu:Preferences--backup-plan-not-found__description": {
-    "messageformat": "Langganan Anda tidak ditemukan. Perbarui agar dapat terus memakai Signal Backups."
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Secure Backups."
   },
   "icu:Preferences--backup-messages-plan__description": {
     "messageformat": "{mediaDayCount, plural, other {Pencadangan pesan + media selama {mediaDayCount,number} hari}}"
@@ -5298,13 +5325,13 @@
     "messageformat": "Langganan dibatalkan"
   },
   "icu:Preferences--backup-media-plan__note": {
-    "messageformat": "Anda dapat mengelola atau membatalkan langganan Signal Backups di ponsel."
+    "messageformat": "You can manage or cancel your Signal Secure Backups subscription on your phone."
   },
   "icu:Preferences--backup-messages-plan__note": {
-    "messageformat": "Anda dapat mengelola atau meng-upgrade Signal Backups di ponsel."
+    "messageformat": "You can manage or upgrade Signal Secure Backups on your phone."
   },
   "icu:Preferences--backup-plan__not-found__note": {
-    "messageformat": "Anda dapat mengelola atau memperbarui langganan Signal Backups di ponsel."
+    "messageformat": "You can manage or renew your Signal Secure Backups subscription on your phone."
   },
   "icu:Preferences--backup-created-at__label": {
     "messageformat": "Pencadangan terakhir"
@@ -6636,11 +6663,17 @@
   "icu:PreferencesDonations__my-support": {
     "messageformat": "Dukungan Saya"
   },
+  "icu:PreferencesDonations__badge-label-one-time": {
+    "messageformat": "{formattedCurrencyAmount} satu kali"
+  },
+  "icu:PreferencesDonations__badge-processing-donation": {
+    "messageformat": "Memproses donasi …"
+  },
   "icu:PreferencesDonations__donate-button-with-amount": {
     "messageformat": "Donasi {formattedCurrencyAmount}"
   },
   "icu:PreferencesDonations__mobile-info": {
-    "messageformat": "Badge dan donasi bulanan dapat dikelola dari perangkat seluler Anda."
+    "messageformat": "Lencana dan donasi bulanan dapat dikelola dari perangkat seluler Anda."
   },
   "icu:PreferencesDonations__privacy-modal-title": {
     "messageformat": "Informasi Anda bersifat privat"
@@ -6648,11 +6681,17 @@
   "icu:PreferencesDonations__privacy-modal-content": {
     "messageformat": "<paragraph>Signal tidak mengumpulkan atau menyimpan informasi pribadi saat Anda memberikan donasi.</paragraph><paragraph>Kami menggunakan Stripe sebagai pemroses pembayaran donasi Anda. Kami tidak mengakses, menahan, atau menyimpan informasi apa pun yang Anda berikan kepada mereka.</paragraph><paragraph>Signal tidak (dan tidak dapat) menghubungkan donasi Anda ke akun Signal Anda.</paragraph><paragraph>Terima kasih atas dukungan Anda!</paragraph>"
   },
+  "icu:PreferencesDonations__privacy-modal-ok": {
+    "messageformat": "OK"
+  },
   "icu:PreferencesDonations__receipts": {
     "messageformat": "Struk"
   },
+  "icu:PreferencesDonations__receipt-details-button-aria": {
+    "messageformat": "Lihat detail struk"
+  },
   "icu:PreferencesDonations__faqs": {
-    "messageformat": "Pertanyaan Umum tentang Donasi"
+    "messageformat": "Pertanyaan Umum tentang Donatur"
   },
   "icu:PreferencesDonations--receiptList__info": {
     "messageformat": "Struk tidak disinkronkan di semua perangkat. Struk dari donasi sebelumnya tidak akan tersedia jika Anda menginstal ulang Signal."
@@ -6682,40 +6721,61 @@
     "messageformat": "Ada masalah? <contactSupportLink>Hubungi Tim Dukungan</contactSupportLink>"
   },
   "icu:DonateFlow__amount-picker-custom-amount-placeholder": {
-    "messageformat": "Enter Custom Amount"
+    "messageformat": "Masukkan Jumlah Kustom"
   },
   "icu:DonateFlow__credit-or-debit-card": {
-    "messageformat": "Credit or Debit Card"
+    "messageformat": "Kartu Kredit atau Debit"
   },
   "icu:DonateFlow__card-form-instructions": {
-    "messageformat": "Enter your credit or debit card details. Signal does not collect or store your personal information. <learnMoreLink>Learn more</learnMoreLink>"
+    "messageformat": "Masukkan detail kartu kredit atau debit. Signal tidak mengumpulkan atau menyimpan informasi pribadi Anda. <learnMoreLink>Pelajari selengkapnya</learnMoreLink>"
   },
   "icu:DonateFlow__card-form-card-number": {
-    "messageformat": "Card Number"
+    "messageformat": "Nomor Kartu"
   },
   "icu:DonateFlow__card-form-expiration-date": {
-    "messageformat": "Expiration Date"
+    "messageformat": "Tanggal Kedaluwarsa"
+  },
+  "icu:DonateFlow__card-form-expiration-date-placeholder": {
+    "messageformat": "BB/TT"
   },
   "icu:DonateFlow__card-form-title-donate-with-amount": {
-    "messageformat": "Donate {formattedCurrencyAmount} to Signal"
+    "messageformat": "Donasi {formattedCurrencyAmount} ke Signal"
   },
   "icu:DonateFlow__card-form-error-invalid-card-number": {
-    "messageformat": "Invalid card number"
+    "messageformat": "Nomor kartu tidak valid"
   },
   "icu:DonateFlow__card-form-error-expiration-expired": {
-    "messageformat": "Card has expired"
+    "messageformat": "Kartu telah kedaluwarsa"
   },
   "icu:DonateFlow__card-form-error-year-missing": {
-    "messageformat": "Year required"
+    "messageformat": "Tahun wajib diisi"
   },
   "icu:DonateFlow__card-form-error-invalid": {
-    "messageformat": "Invalid"
+    "messageformat": "Tidak valid"
   },
   "icu:DonateFlow__card-form-error-cvc-too-short": {
-    "messageformat": "Code too short"
+    "messageformat": "Kode terlalu pendek"
   },
   "icu:DonateFlow__one-time-donation-boost-badge-info": {
-    "messageformat": "Get the Signal Boost badge for 30 days"
+    "messageformat": "Dapatkan lencana Boost Signal selama 30 hari"
+  },
+  "icu:DonateFlow__custom-amount-below-minimum-error": {
+    "messageformat": "Jumlah donasi minimum {formattedCurrencyAmount}"
+  },
+  "icu:DonateFlow__custom-amount-below-minimum-tooltip": {
+    "messageformat": "Jumlah minimal donasi yang dapat diberikan adalah {formattedCurrencyAmount}"
+  },
+  "icu:DonateFlow__custom-amount-above-maximum-error": {
+    "messageformat": "Jumlah donasi maksimum {formattedCurrencyAmount}"
+  },
+  "icu:DonateFlow__discard-dialog-body": {
+    "messageformat": "Informasi kartu kredit akan dihapus saat Anda meninggalkan halaman ini. Lanjutkan?"
+  },
+  "icu:DonateFlow__discard-dialog-remove-info": {
+    "messageformat": "Hapus info"
+  },
+  "icu:DonateFlow__continue": {
+    "messageformat": "Lanjutkan"
   },
   "icu:DonationReceipt__title": {
     "messageformat": "Struk donasi"
@@ -6735,8 +6795,11 @@
   "icu:DonationReceipt__footer-text": {
     "messageformat": "Terima kasih telah mendukung Signal. Kontribusi Anda membantu misi perlindungan terhadap kebebasan berekspresi dan mendukung teknologi privasi sumber terbuka yang memungkinkan komunikasi yang aman bagi jutaan pengguna di seluruh dunia. Jika Anda warga Amerika Serikat, harap simpan struk ini untuk pencatatan pajak. Signal Technology Foundation adalah organisasi nirlaba bebas pajak di Amerika Serikat menurut pasal 501c3 di Internal Revenue Code (IRC). ID Pajak Federal kami adalah 82-4506840."
   },
+  "icu:Donations__OfflineTooltip": {
+    "messageformat": "Anda sedang offline. Hubungkan perangkat ke internet untuk menyelesaikan donasi."
+  },
   "icu:Donations__Toast__Canceled": {
-    "messageformat": "Donation canceled"
+    "messageformat": "Donasi dibatalkan"
   },
   "icu:Donations__Toast__Completed": {
     "messageformat": "Donasi selesai"
@@ -6754,16 +6817,25 @@
     "messageformat": "Ada donasi yang sedang diproses yang memerlukan verifikasi tambahan."
   },
   "icu:Donations__Toast__ConfirmationNeeded": {
-    "messageformat": "You have a donation in progress that requires confirmation."
+    "messageformat": "Ada donasi yang sedang diproses dan memerlukan konfirmasi lebih lanjut."
+  },
+  "icu:Donations__Toast__DonationCompletedAndBadgeApplicationFailed": {
+    "messageformat": "Donasi berhasil, tetapi kami tidak dapat memperbarui pengaturan lencana Anda"
+  },
+  "icu:Donations__BadgeApplicationFailed__Title": {
+    "messageformat": "Donation succeeded, but we could not update your badge settings"
+  },
+  "icu:Donations__BadgeApplicationFailed__Description": {
+    "messageformat": "To update your badge settings on your mobile device, go to Settings → Donate to Signal → Badges."
   },
   "icu:Donations__DonationInterrupted": {
-    "messageformat": "Donation interrupted"
+    "messageformat": "Proses donasi terganggu"
   },
   "icu:Donations__DonationInterrupted__Description": {
-    "messageformat": "Your card was not charged. Do you want to retry the donation?"
+    "messageformat": "Kartu belum dikenakan tagihan. Mau coba berdonasi lagi?"
   },
   "icu:Donations__DonationInterrupted__RetryButton": {
-    "messageformat": "Try again"
+    "messageformat": "Coba lagi"
   },
   "icu:Donations__PaymentMethodDeclined": {
     "messageformat": "Metode pembayaran ditolak"
@@ -6783,20 +6855,23 @@
   "icu:Donations__GenericError__Description": {
     "messageformat": "Donasi Anda mungkin belum diproses. Klik “Donasi ke Signal”, lalu klik “Struk Donasi” untuk memeriksa struk dan mengonfirmasi."
   },
+  "icu:DonationsErrorBoundary__DonationUnexpectedError": {
+    "messageformat": "Coba lagi atau kirimkan catatan debug ke tim Dukungan untuk bantuan penyelesaian donasi Anda. Catatan debug membantu kami mendiagnosis dan memperbaiki masalah. Catatan tidak berisi informasi identifikasi."
+  },
   "icu:Donations__Processing": {
     "messageformat": "Memproses donasi …"
   },
   "icu:Donations__StillProcessing": {
-    "messageformat": "Masih memproses"
+    "messageformat": "Masih memproses donasi"
   },
   "icu:Donations__StillProcessing__Description": {
     "messageformat": "Donasi Anda sedang diproses. Perlu waktu beberapa menit."
   },
   "icu:Donations__TimedOut": {
-    "messageformat": "Donation canceled"
+    "messageformat": "Donasi dibatalkan"
   },
   "icu:Donations__TimedOut__Description": {
-    "messageformat": "It has been too long since you started your donation. Please start over."
+    "messageformat": "Batas waktu penyelesaian proses donasi telah berakhir. Silakan mulai dari awal."
   },
   "icu:Donations__3dsValidationNeeded": {
     "messageformat": "Diperlukan verifikasi tambahan"
@@ -6815,6 +6890,18 @@
   },
   "icu:Donations__3dsValidationNeeded__CancelDonation": {
     "messageformat": "Batalkan donasi"
+  },
+  "icu:Donations__badge-modal--title": {
+    "messageformat": "Terima kasih atas dukungan Anda!"
+  },
+  "icu:Donations__badge-modal--description": {
+    "messageformat": "Anda mendapatkan lencana donatur dari Signal! Tampilkan di profil untuk menunjukkan dukungan yang telah Anda berikan."
+  },
+  "icu:Donations__badge-modal--display-on-profile": {
+    "messageformat": "Tampilkan di profil"
+  },
+  "icu:Donations__badge-modal--help-text": {
+    "messageformat": "Anda dapat menyesuaikan ini di ponsel melalui Pengaturan → Donasi ke Signal → Lencana"
   },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "Versi ini mengandung sejumlah perubahan kecil dan perbaikan bug agar Signal tetap berjalan lancar.",
@@ -6844,13 +6931,13 @@
     "messageformat": "Tambahan penyesuaian kecil, perbaikan bug, dan peningkatan performa. Terima kasih telah menggunakan Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.64--0": {
-    "messageformat": "Kami meningkatkan pengalaman fitur pesan telah dibaca/belum dibaca saat Anda melakukan beberapa hal sekaligus. Kami juga memperbaiki bug yang kadang salah membuka penampil gambar yang diperbesar ketika Anda menekan spasi saat mencari emoji yang tepat. Anda masih bisa memperbesar gambar dengan mengkliknya atau bila Anda mengetiknya cukup cepat."
-  },
-  "icu:WhatsNew__v7.65--0": {
-    "messageformat": "Menemukan emoji yang tepat bisa sangat sulit, kadang terjadi masalah setelah Anda menekan tombol escape di kotak pencarian. Tapi tenang, kami sudah memperbaiki bug ini."
-  },
   "icu:WhatsNew__v7.66--0": {
-    "messageformat": "This update fixes a few small bugs, including one where emoji reactions weren't being grouped together correctly in some cases."
+    "messageformat": "Dalam pembaruan kali ini kami memperbaiki beberapa bug kecil, antara lain tanggapan emoji yang kadang tidak dikelompokkan dengan benar."
+  },
+  "icu:WhatsNew__v7.67--0": {
+    "messageformat": "Kami memperbaiki bug yang membuat lencana donasi tidak ditampilkan dengan benar di sebagian profil pengguna. Signal adalah organisasi nirlaba di bawah klasifikasi 501(c)(3) IRS Amerika Serikat dan kami sangat menghargai dukungan Anda!"
+  },
+  "icu:WhatsNew__v7.70--0": {
+    "messageformat": "Kami memperbaiki bug di Microsoft Windows yang terkadang menampilkan warna yang salah di bilah judul."
   }
 }

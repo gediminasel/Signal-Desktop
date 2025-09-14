@@ -19,6 +19,7 @@ import {
   CallingMessage,
   CallMessageUrgency,
   CallLinkRootKey,
+  CallLinkEpoch,
   CallLogLevel,
   CallState,
   ConnectionState,
@@ -318,7 +319,7 @@ function protoToCallingMessage({
     iceUpdate.forEach(candidate => {
       if (candidate.id && candidate.opaque) {
         newIceCandidates.push(
-          new IceCandidateMessage(candidate.id, Buffer.from(candidate.opaque))
+          new IceCandidateMessage(candidate.id, candidate.opaque)
         );
       }
     });
@@ -330,12 +331,12 @@ function protoToCallingMessage({
         ? new OfferMessage(
             offer.id,
             dropNull(offer.type) as number,
-            Buffer.from(offer.opaque)
+            offer.opaque
           )
         : undefined,
     answer:
       answer && answer.id && answer.opaque
-        ? new AnswerMessage(answer.id, Buffer.from(answer.opaque))
+        ? new AnswerMessage(answer.id, answer.opaque)
         : undefined,
     iceCandidates: newIceCandidates.length > 0 ? newIceCandidates : undefined,
     busy: busy && busy.id ? new BusyMessage(busy.id) : undefined,
@@ -350,7 +351,7 @@ function protoToCallingMessage({
     destinationDeviceId: dropNull(destinationDeviceId),
     opaque: opaque
       ? {
-          data: opaque.data ? Buffer.from(opaque.data) : undefined,
+          data: opaque.data ? opaque.data : undefined,
         }
       : undefined,
   };
@@ -558,7 +559,7 @@ export class CallingClass {
       return;
     }
 
-    RingRTC.setSelfUuid(Buffer.from(uuidToBytes(ourAci)));
+    RingRTC.setSelfUuid(uuidToBytes(ourAci));
   }
 
   async startCallingLobby({
@@ -798,11 +799,13 @@ export class CallingClass {
     }
 
     log.info(`${logId}: success`);
+    const { epoch } = result.value;
     const state = callLinkStateFromRingRTC(result.value);
 
     const callLink: CallLinkType = {
       roomId: roomIdHex,
       rootKey: rootKey.toString(),
+      epoch: epoch ? epoch.toString() : null,
       adminKey: Bytes.toBase64(adminKey),
       storageNeedsSync: true,
       ...state,
@@ -824,6 +827,9 @@ export class CallingClass {
     log.info(logId);
 
     const callLinkRootKey = CallLinkRootKey.parse(callLink.rootKey);
+    const callLinkEpoch = callLink.epoch
+      ? CallLinkEpoch.parse(callLink.epoch)
+      : undefined;
     strictAssert(callLink.adminKey, 'Missing admin key');
     const callLinkAdminKey = toAdminKeyBytes(callLink.adminKey);
     const authCredentialPresentation =
@@ -833,7 +839,7 @@ export class CallingClass {
       sfuUrl,
       authCredentialPresentation.serialize(),
       callLinkRootKey,
-      undefined,
+      callLinkEpoch,
       callLinkAdminKey
     );
 
@@ -862,6 +868,9 @@ export class CallingClass {
     log.info(`${logId}: Updating call link name`);
 
     const callLinkRootKey = CallLinkRootKey.parse(callLink.rootKey);
+    const callLinkEpoch = callLink.epoch
+      ? CallLinkEpoch.parse(callLink.epoch)
+      : undefined;
     strictAssert(callLink.adminKey, 'Missing admin key');
     const callLinkAdminKey = toAdminKeyBytes(callLink.adminKey);
     const authCredentialPresentation =
@@ -870,7 +879,7 @@ export class CallingClass {
       sfuUrl,
       authCredentialPresentation.serialize(),
       callLinkRootKey,
-      undefined,
+      callLinkEpoch,
       callLinkAdminKey,
       name
     );
@@ -901,6 +910,9 @@ export class CallingClass {
     log.info(`${logId}: Updating call link restrictions`);
 
     const callLinkRootKey = CallLinkRootKey.parse(callLink.rootKey);
+    const callLinkEpoch = callLink.epoch
+      ? CallLinkEpoch.parse(callLink.epoch)
+      : undefined;
     strictAssert(callLink.adminKey, 'Missing admin key');
     const callLinkAdminKey = toAdminKeyBytes(callLink.adminKey);
     const authCredentialPresentation =
@@ -916,7 +928,7 @@ export class CallingClass {
       sfuUrl,
       authCredentialPresentation.serialize(),
       callLinkRootKey,
-      undefined,
+      callLinkEpoch,
       callLinkAdminKey,
       newRestrictions
     );
@@ -934,7 +946,8 @@ export class CallingClass {
   }
 
   async readCallLink(
-    callLinkRootKey: CallLinkRootKey
+    callLinkRootKey: CallLinkRootKey,
+    callLinkEpoch: CallLinkEpoch | undefined
   ): Promise<CallLinkStateType | null> {
     if (!this._sfuUrl) {
       throw new Error('readCallLink() missing SFU URL; not handling call link');
@@ -951,7 +964,7 @@ export class CallingClass {
       this._sfuUrl,
       authCredentialPresentation.serialize(),
       callLinkRootKey,
-      undefined
+      callLinkEpoch
     );
     if (!result.success) {
       log.warn(`${logId}: failed with status ${result.errorStatusCode}`);
@@ -967,11 +980,13 @@ export class CallingClass {
 
   async startCallLinkLobby({
     callLinkRootKey,
+    callLinkEpoch,
     adminPasskey,
     hasLocalAudio,
     preferLocalVideo = true,
   }: Readonly<{
     callLinkRootKey: CallLinkRootKey;
+    callLinkEpoch: CallLinkEpoch | undefined;
     adminPasskey: Uint8Array | undefined;
     hasLocalAudio: boolean;
     preferLocalVideo?: boolean;
@@ -1015,6 +1030,7 @@ export class CallingClass {
       roomId,
       authCredentialPresentation,
       callLinkRootKey,
+      callLinkEpoch,
       adminPasskey,
       endorsementsPublicKey,
     });
@@ -1136,10 +1152,7 @@ export class CallingClass {
   #getGroupCallMembers(conversationId: string) {
     return getMembershipList(conversationId).map(
       member =>
-        new GroupMemberInfo(
-          Buffer.from(uuidToBytes(member.aci)),
-          Buffer.from(member.uuidCiphertext)
-        )
+        new GroupMemberInfo(uuidToBytes(member.aci), member.uuidCiphertext)
     );
   }
 
@@ -1218,14 +1231,15 @@ export class CallingClass {
 
     return RingRTC.peekGroupCall(
       this._sfuUrl,
-      Buffer.from(membershipProof),
+      membershipProof,
       this.#getGroupCallMembers(conversationId)
     );
   }
 
   public async peekCallLinkCall(
     roomId: string,
-    rootKey: string | undefined
+    rootKey: string | undefined,
+    epoch: string | undefined
   ): Promise<PeekInfo> {
     log.info(`peekCallLinkCall: For roomId ${roomId}`);
     const statefulPeekInfo = this.#getGroupCall(roomId)?.getPeekInfo();
@@ -1244,7 +1258,7 @@ export class CallingClass {
     }
 
     const callLinkRootKey = CallLinkRootKey.parse(rootKey);
-
+    const callLinkEpoch = epoch ? CallLinkEpoch.parse(epoch) : undefined;
     const authCredentialPresentation =
       await getCallLinkAuthCredentialPresentation(callLinkRootKey);
 
@@ -1252,7 +1266,7 @@ export class CallingClass {
       this._sfuUrl,
       authCredentialPresentation.serialize(),
       callLinkRootKey,
-      undefined
+      callLinkEpoch
     );
     if (!result.success) {
       throw new Error(
@@ -1322,9 +1336,7 @@ export class CallingClass {
               secretParams,
             });
             if (proof) {
-              groupCall.setMembershipProof(
-                Buffer.from(Bytes.fromString(proof))
-              );
+              groupCall.setMembershipProof(Bytes.fromString(proof));
             }
           } catch (err) {
             log.error(`${logId}: Failed to fetch membership proof`, err);
@@ -1355,12 +1367,14 @@ export class CallingClass {
     roomId,
     authCredentialPresentation,
     callLinkRootKey,
+    callLinkEpoch,
     adminPasskey,
     endorsementsPublicKey,
   }: {
     roomId: string;
     authCredentialPresentation: CallLinkAuthCredentialPresentation;
     callLinkRootKey: CallLinkRootKey;
+    callLinkEpoch: CallLinkEpoch | undefined;
     adminPasskey: Uint8Array | undefined;
     endorsementsPublicKey: Uint8Array;
   }): GroupCall {
@@ -1389,7 +1403,7 @@ export class CallingClass {
       endorsementsPublicKey,
       authCredentialPresentation.serialize(),
       callLinkRootKey,
-      undefined,
+      callLinkEpoch,
       adminPasskey,
       new Uint8Array(),
       AUDIO_LEVEL_INTERVAL_MS,
@@ -1783,12 +1797,14 @@ export class CallingClass {
   public async joinCallLinkCall({
     roomId,
     rootKey,
+    epoch,
     adminKey,
     hasLocalAudio,
     hasLocalVideo,
   }: {
     roomId: string;
     rootKey: string;
+    epoch: string | undefined;
     adminKey: string | undefined;
     hasLocalAudio: boolean;
     hasLocalVideo: boolean;
@@ -1807,6 +1823,7 @@ export class CallingClass {
     await this.#startDeviceReselectionTimer();
 
     const callLinkRootKey = CallLinkRootKey.parse(rootKey);
+    const callLinkEpoch = epoch ? CallLinkEpoch.parse(epoch) : undefined;
     const authCredentialPresentation =
       await getCallLinkAuthCredentialPresentation(callLinkRootKey);
     const adminPasskey = adminKey ? toAdminKeyBytes(adminKey) : undefined;
@@ -1820,6 +1837,7 @@ export class CallingClass {
       roomId,
       authCredentialPresentation,
       callLinkRootKey,
+      callLinkEpoch,
       adminPasskey,
       endorsementsPublicKey,
     });
@@ -1867,7 +1885,7 @@ export class CallingClass {
       throw new Error('Could not find matching call');
     }
 
-    groupCall.approveUser(Buffer.from(uuidToBytes(aci)));
+    groupCall.approveUser(uuidToBytes(aci));
   }
 
   public denyUser(conversationId: string, aci: AciString): void {
@@ -1876,7 +1894,7 @@ export class CallingClass {
       throw new Error('Could not find matching call');
     }
 
-    groupCall.denyUser(Buffer.from(uuidToBytes(aci)));
+    groupCall.denyUser(uuidToBytes(aci));
   }
 
   public removeClient(conversationId: string, demuxId: number): void {
@@ -1931,7 +1949,7 @@ export class CallingClass {
     }
   }
 
-  #formatUserId(userId: Buffer): AciString | null {
+  #formatUserId(userId: Uint8Array): AciString | null {
     const uuid = bytesToUuid(userId);
     if (uuid && isAciString(uuid)) {
       return uuid;
@@ -2916,7 +2934,7 @@ export class CallingClass {
 
     const sourceServiceId = envelope.sourceServiceId
       ? uuidToBytes(envelope.sourceServiceId)
-      : null;
+      : undefined;
 
     const messageAgeSec = envelope.messageAgeSec ? envelope.messageAgeSec : 0;
 
@@ -2924,7 +2942,7 @@ export class CallingClass {
 
     RingRTC.handleCallingMessage(protoToCallingMessage(callingMessage), {
       remoteUserId,
-      remoteUuid: sourceServiceId ? Buffer.from(sourceServiceId) : undefined,
+      remoteUuid: sourceServiceId,
       remoteDeviceId,
       localDeviceId: this.#localDeviceId,
       ageSec: messageAgeSec,
@@ -2993,16 +3011,16 @@ export class CallingClass {
     }
     const message = new CallingMessage();
     message.opaque = new OpaqueMessage();
-    message.opaque.data = Buffer.from(data);
+    message.opaque.data = data;
     return this.#handleOutgoingSignaling(userId, message, urgency);
   }
 
   // Used to send a variety of group call messages, including the initial call message
   async #handleSendCallMessageToGroup(
     groupIdBytes: Uint8Array,
-    data: Buffer,
+    data: Uint8Array,
     urgency: CallMessageUrgency,
-    overrideRecipients: Array<Buffer> = []
+    overrideRecipients: Array<Uint8Array> = []
   ): Promise<boolean> {
     const groupId = Bytes.toBase64(groupIdBytes);
     const conversation = window.ConversationController.get(groupId);
@@ -3072,7 +3090,7 @@ export class CallingClass {
   async #handleGroupCallRingUpdate(
     groupIdBytes: Uint8Array,
     ringId: bigint,
-    ringerBytes: Buffer,
+    ringerBytes: Uint8Array,
     update: RingUpdate
   ): Promise<void> {
     log.info(`handleGroupCallRingUpdate(): got ring update ${update}`);
@@ -3539,7 +3557,7 @@ export class CallingClass {
         // WebAPI treats certain response codes as errors, but RingRTC still needs to
         // see them. It does not currently look at the response body, so we're giving
         // it an empty one.
-        RingRTC.receivedHttpResponse(requestId, err.code, Buffer.alloc(0));
+        RingRTC.receivedHttpResponse(requestId, err.code, new Uint8Array(0));
       } else {
         log.error('handleSendHttpRequest: fetch failed with error', err);
         RingRTC.httpRequestFailed(requestId, String(err));
@@ -3550,7 +3568,7 @@ export class CallingClass {
     RingRTC.receivedHttpResponse(
       requestId,
       result.response.status,
-      Buffer.from(result.data)
+      result.data
     );
   }
 

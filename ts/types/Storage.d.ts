@@ -147,6 +147,7 @@ export type StorageAccessType = {
   'preferred-audio-input-device': AudioDevice | undefined;
   'preferred-audio-output-device': AudioDevice | undefined;
   remoteConfig: RemoteConfigType;
+  remoteConfigHash: string;
   serverTimeSkew: number;
   unidentifiedDeliveryIndicators: boolean;
   groupCredentials: ReadonlyArray<GroupCredentialType>;
@@ -200,12 +201,12 @@ export type StorageAccessType = {
   needProfileMovedModal: boolean;
   notificationProfileOverride: NotificationProfileOverride | undefined;
   observedCapabilities: {
-    deleteSync?: true;
-    ssre2?: true;
     attachmentBackfill?: true;
 
     // Note: Upon capability deprecation - change the value type to `never` and
     // remove it in `ts/background.ts`
+    deleteSync?: never;
+    ssre2?: never;
   };
   releaseNotesNextFetchTime: number;
   releaseNotesVersionWatermark: string;

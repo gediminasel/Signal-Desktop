@@ -32,6 +32,8 @@ import {
   toCallLinkRecord,
   mergeCallLinkRecord,
   toDefunctOrPendingCallLinkRecord,
+  toChatFolderRecord,
+  mergeChatFolderRecord,
 } from './storageRecordOps';
 import type { MergeResultType } from './storageRecordOps';
 import { MAX_READ_KEYS } from './storageConstants';
@@ -82,7 +84,11 @@ import {
   getRoomIdFromRootKeyString,
 } from '../util/callLinksRingrtc';
 import { fromPniUuidBytesOrUntaggedString } from '../util/ServiceId';
+import { isDone as isRegistrationDone } from '../util/registration';
 import { callLinkRefreshJobQueue } from '../jobs/callLinkRefreshJobQueue';
+import { isMockEnvironment } from '../environment';
+import { validateConversation } from '../util/validateConversation';
+import type { ChatFolder } from '../types/ChatFolder';
 
 const log = createLogger('storage');
 
@@ -99,15 +105,18 @@ const {
 
 const uploadBucket: Array<number> = [];
 
+const ITEM_TYPE = Proto.ManifestRecord.Identifier.Type;
+
 const validRecordTypes = new Set([
-  0, // UNKNOWN
-  1, // CONTACT
-  2, // GROUPV1
-  3, // GROUPV2
-  4, // ACCOUNT
-  5, // STORY_DISTRIBUTION_LIST
-  6, // STICKER_PACK
-  7, // CALL_LINK
+  ITEM_TYPE.UNKNOWN,
+  ITEM_TYPE.CONTACT,
+  ITEM_TYPE.GROUPV1,
+  ITEM_TYPE.GROUPV2,
+  ITEM_TYPE.ACCOUNT,
+  ITEM_TYPE.STORY_DISTRIBUTION_LIST,
+  ITEM_TYPE.STICKER_PACK,
+  ITEM_TYPE.CALL_LINK,
+  ITEM_TYPE.CHAT_FOLDER,
 ]);
 
 const backOff = new BackOff([
@@ -178,8 +187,6 @@ async function generateManifest(
 
   await window.ConversationController.checkForConflicts();
 
-  const ITEM_TYPE = Proto.ManifestRecord.Identifier.Type;
-
   const postUploadUpdateFunctions: Array<() => unknown> = [];
   const insertKeys = new Set<string>();
   const deleteKeys = new Set<string>();
@@ -194,8 +201,8 @@ async function generateManifest(
     storageRecord,
   }: {
     conversation?: ConversationModel;
-    currentStorageID?: string;
-    currentStorageVersion?: number;
+    currentStorageID?: string | null;
+    currentStorageVersion?: number | null;
     identifierType: Proto.ManifestRecord.Identifier.Type;
     storageNeedsSync: boolean;
     storageRecord: Proto.IStorageRecord;
@@ -239,9 +246,9 @@ async function generateManifest(
     };
   }
 
-  const conversations = window.getConversations();
+  const conversations = window.ConversationController.getAll();
   for (let i = 0; i < conversations.length; i += 1) {
-    const conversation = conversations.models[i];
+    const conversation = conversations[i];
 
     let identifierType;
     let storageRecord;
@@ -265,10 +272,12 @@ async function generateManifest(
       let shouldDrop = false;
       let dropReason: string | undefined;
 
-      const validationError = conversation.validate();
-      if (validationError) {
+      const validationErrorString = validateConversation(
+        conversation.attributes
+      );
+      if (validationErrorString) {
         shouldDrop = true;
-        dropReason = `local validation error=${validationError}`;
+        dropReason = `local validation error=${validationErrorString}`;
       } else if (conversation.isUnregisteredAndStale()) {
         shouldDrop = true;
         dropReason = 'unregistered and stale';
@@ -292,7 +301,7 @@ async function generateManifest(
             `dropping contact=${recordID} ` +
             `due to ${dropReason}`
         );
-        conversation.unset('storageID');
+        conversation.set({ storageID: undefined });
         deleteKeys.add(droppedID);
         continue;
       }
@@ -348,6 +357,7 @@ async function generateManifest(
     storyDistributionLists,
     installedStickerPacks,
     uninstalledStickerPacks,
+    chatFolders,
   } = await getNonConversationRecords();
 
   log.info(
@@ -599,6 +609,33 @@ async function generateManifest(
             storageVersion: version,
             storageNeedsSync: false,
           }
+        );
+      });
+    }
+  });
+
+  log.info(`upload(${version}): adding chatFolders=${chatFolders.length}`);
+
+  chatFolders.forEach(chatFolder => {
+    const { isNewItem, storageID } = processStorageRecord({
+      currentStorageID: chatFolder.storageID ?? undefined,
+      currentStorageVersion: chatFolder.storageVersion ?? undefined,
+      identifierType: ITEM_TYPE.CHAT_FOLDER,
+      storageNeedsSync: chatFolder.storageNeedsSync,
+      storageRecord: new Proto.StorageRecord({
+        chatFolder: toChatFolderRecord(chatFolder),
+      }),
+    });
+
+    if (isNewItem) {
+      postUploadUpdateFunctions.push(() => {
+        drop(
+          DataWriter.updateChatFolder({
+            ...chatFolder,
+            storageID,
+            storageVersion: version,
+            storageNeedsSync: false,
+          })
         );
       });
     }
@@ -1100,8 +1137,6 @@ async function mergeRecord(
     storageVersion,
   });
 
-  const ITEM_TYPE = Proto.ManifestRecord.Identifier.Type;
-
   let mergeResult: MergeResultType = { details: [] };
   let isUnsupported = false;
   let hasError = false;
@@ -1159,6 +1194,12 @@ async function mergeRecord(
         storageVersion,
         storageRecord.callLink
       );
+    } else if (itemType === ITEM_TYPE.CHAT_FOLDER && storageRecord.chatFolder) {
+      mergeResult = await mergeChatFolderRecord(
+        storageID,
+        storageVersion,
+        storageRecord.chatFolder
+      );
     } else {
       isUnsupported = true;
       log.warn(`merge(${redactedStorageID}): unknown item type=${itemType}`);
@@ -1215,6 +1256,7 @@ type NonConversationRecordsResultType = Readonly<{
   installedStickerPacks: ReadonlyArray<StickerPackType>;
   uninstalledStickerPacks: ReadonlyArray<UninstalledStickerPackType>;
   storyDistributionLists: ReadonlyArray<StoryDistributionWithMembersType>;
+  chatFolders: ReadonlyArray<ChatFolder>;
 }>;
 
 // TODO: DESKTOP-3929
@@ -1226,6 +1268,7 @@ async function getNonConversationRecords(): Promise<NonConversationRecordsResult
     storyDistributionLists,
     uninstalledStickerPacks,
     installedStickerPacks,
+    chatFolders,
   ] = await Promise.all([
     DataReader.getAllCallLinkRecordsWithAdminKey(),
     DataReader.getAllDefunctCallLinksWithAdminKey(),
@@ -1233,6 +1276,7 @@ async function getNonConversationRecords(): Promise<NonConversationRecordsResult
     DataReader.getAllStoryDistributionsWithMembers(),
     DataReader.getUninstalledStickerPacks(),
     DataReader.getInstalledStickerPacks(),
+    DataReader.getAllChatFolders(),
   ]);
 
   return {
@@ -1242,6 +1286,7 @@ async function getNonConversationRecords(): Promise<NonConversationRecordsResult
     storyDistributionLists,
     uninstalledStickerPacks,
     installedStickerPacks,
+    chatFolders,
   };
 }
 
@@ -1262,10 +1307,10 @@ async function processManifest(
   );
 
   const remoteKeys = new Set(remoteKeysTypeMap.keys());
-  const localVersions = new Map<string, number | undefined>();
+  const localVersions = new Map<string, number | null | undefined>();
   let localRecordCount = 0;
 
-  const conversations = window.getConversations();
+  const conversations = window.ConversationController.getAll();
   conversations.forEach((conversation: ConversationModel) => {
     const storageID = conversation.get('storageID');
     if (storageID) {
@@ -1282,6 +1327,7 @@ async function processManifest(
       storyDistributionLists,
       installedStickerPacks,
       uninstalledStickerPacks,
+      chatFolders,
     } = await getNonConversationRecords();
 
     const collectLocalKeysFromFields = ({
@@ -1312,6 +1358,9 @@ async function processManifest(
 
     installedStickerPacks.forEach(collectLocalKeysFromFields);
     localRecordCount += installedStickerPacks.length;
+
+    chatFolders.forEach(collectLocalKeysFromFields);
+    localRecordCount += chatFolders.length;
   }
 
   const unknownRecordsArray: ReadonlyArray<UnknownRecord> =
@@ -1385,44 +1434,45 @@ async function processManifest(
   // new storageID for that record, and upload.
   // This might happen if a device pushes a manifest which doesn't contain
   // the keys that we have in our local database.
-  window.getConversations().forEach((conversation: ConversationModel) => {
-    const storageID = conversation.get('storageID');
-    if (storageID && !remoteKeys.has(storageID)) {
-      const storageVersion = conversation.get('storageVersion');
-      const missingKey = redactStorageID(
-        storageID,
-        storageVersion,
-        conversation
-      );
-
-      // Remote might have dropped this conversation already, but our value of
-      // `firstUnregisteredAt` is too high for us to drop it. Don't reupload it!
-      if (
-        isDirectConversation(conversation.attributes) &&
-        conversation.isUnregistered()
-      ) {
-        log.info(
-          `process(${version}): localKey=${missingKey} is ` +
-            'unregistered and not in remote manifest'
+  window.ConversationController.getAll().forEach(
+    (conversation: ConversationModel) => {
+      const storageID = conversation.get('storageID');
+      if (storageID && !remoteKeys.has(storageID)) {
+        const storageVersion = conversation.get('storageVersion');
+        const missingKey = redactStorageID(
+          storageID,
+          storageVersion,
+          conversation
         );
-        conversation.setUnregistered({
-          timestamp: Date.now() - getMessageQueueTime(),
-          fromStorageService: true,
 
-          // Saving below
-          shouldSave: false,
-        });
-      } else {
-        log.info(
-          `process(${version}): localKey=${missingKey} ` +
-            'was not in remote manifest'
-        );
+        // Remote might have dropped this conversation already, but our value of
+        // `firstUnregisteredAt` is too high for us to drop it. Don't reupload it!
+        if (
+          isDirectConversation(conversation.attributes) &&
+          conversation.isUnregistered()
+        ) {
+          log.info(
+            `process(${version}): localKey=${missingKey} is ` +
+              'unregistered and not in remote manifest'
+          );
+          conversation.setUnregistered({
+            timestamp: Date.now() - getMessageQueueTime(),
+            fromStorageService: true,
+
+            // Saving below
+            shouldSave: false,
+          });
+        } else {
+          log.info(
+            `process(${version}): localKey=${missingKey} ` +
+              'was not in remote manifest'
+          );
+        }
+        conversation.set({ storageID: undefined, storageVersion: undefined });
+        drop(updateConversation(conversation.attributes));
       }
-      conversation.unset('storageID');
-      conversation.unset('storageVersion');
-      drop(updateConversation(conversation.attributes));
     }
-  });
+  );
 
   // Refetch various records post-merge
   {
@@ -1433,6 +1483,7 @@ async function processManifest(
       storyDistributionLists,
       installedStickerPacks,
       uninstalledStickerPacks,
+      chatFolders,
     } = await getNonConversationRecords();
 
     uninstalledStickerPacks.forEach(stickerPack => {
@@ -1586,6 +1637,25 @@ async function processManifest(
         }
       );
     });
+
+    chatFolders.forEach(chatFolder => {
+      const { storageID, storageVersion } = chatFolder;
+      if (!storageID || remoteKeys.has(storageID)) {
+        return;
+      }
+
+      const missingKey = redactStorageID(storageID, storageVersion);
+      log.info(
+        `process(${version}): localKey=${missingKey} was not ` +
+          'in remote manifest'
+      );
+
+      void DataWriter.updateChatFolder({
+        ...chatFolder,
+        storageID: null,
+        storageVersion: null,
+      });
+    });
   }
 
   log.info(`process(${version}): done`);
@@ -1724,7 +1794,6 @@ async function processRemoteRecords(
   storageVersion: number,
   { decryptedItems, missingKeys }: FetchRemoteRecordsResultType
 ): Promise<void> {
-  const ITEM_TYPE = Proto.ManifestRecord.Identifier.Type;
   const droppedKeys = new Set<string>();
 
   // Drop all GV1 records for which we have GV2 record in the same manifest
@@ -2083,7 +2152,6 @@ async function upload({
   if (!window.storage.get('storageKey')) {
     // requesting new keys runs the sync job which will detect the conflict
     // and re-run the upload job once we're merged and up-to-date.
-    log.info(`${logId}: no storageKey, requesting new keys`);
     backOff.reset();
 
     if (window.ConversationController.areWePrimaryDevice()) {
@@ -2091,6 +2159,12 @@ async function upload({
       return;
     }
 
+    if (!isRegistrationDone()) {
+      log.warn(`${logId}: no storageKey, unlinked`);
+      return;
+    }
+
+    log.info(`${logId}: no storageKey, requesting new keys`);
     await singleProtoJobQueue.add(MessageSender.getRequestKeySyncMessage());
 
     return;
@@ -2185,10 +2259,12 @@ export async function eraseAllStorageServiceState({
   window.reduxActions.user.eraseStorageServiceState();
 
   // Conversations. These properties are not present in redux.
-  window.getConversations().forEach(conversation => {
-    conversation.unset('storageID');
-    conversation.unset('needsStorageServiceSync');
-    conversation.unset('storageUnknownFields');
+  window.ConversationController.getAll().forEach(conversation => {
+    conversation.set({
+      storageID: undefined,
+      needsStorageServiceSync: undefined,
+      storageUnknownFields: undefined,
+    });
   });
 
   // Then make sure outstanding conversation saves are flushed
@@ -2267,7 +2343,7 @@ export const storageServiceUploadJob = debounce(
       `upload v${window.storage.get('manifestVersion')}`
     );
   },
-  500
+  isMockEnvironment() ? 0 : 500
 );
 
 export const runStorageServiceSyncJob = debounce(
@@ -2283,13 +2359,13 @@ export const runStorageServiceSyncJob = debounce(
           await sync({ reason });
 
           // Notify listeners about sync completion
-          window.Whisper.events.trigger('storageService:syncComplete');
+          window.Whisper.events.emit('storageService:syncComplete');
         },
         `sync v${window.storage.get('manifestVersion')}`
       )
     );
   },
-  500
+  isMockEnvironment() ? 0 : 500
 );
 
 export const addPendingDelete = (item: ExtendedStorageID): void => {

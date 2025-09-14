@@ -173,9 +173,11 @@ export async function modifyTargetMessage(
     );
 
     if (newLastSeenMessageByUser) {
-      conversation.set('lastSeenMessageByUser', {
-        ...conversation.get('lastSeenMessageByUser'),
-        ...newLastSeenMessageByUser,
+      conversation.set({
+        lastSeenMessageByUser: {
+          ...conversation.get('lastSeenMessageByUser'),
+          ...newLastSeenMessageByUser,
+        },
       });
     }
   }

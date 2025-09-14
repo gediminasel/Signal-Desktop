@@ -1370,6 +1370,12 @@
   "icu:Preferences__EditChatFolderPage__IncludedChatsSection__Help": {
     "messageformat": "Roghnaigh comhráite is mian leat a thaispeáint san fhillteán seo"
   },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__DirectChats": {
+    "messageformat": "Comhráite 1:1"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__GroupChats": {
+    "messageformat": "Grúpchomhráite"
+  },
   "icu:Preferences__EditChatFolderPage__IncludedChatsSection__AddChatsButton": {
     "messageformat": "Cuir comhráite leis"
   },
@@ -2063,6 +2069,9 @@
   "icu:Toast--download-failed": {
     "messageformat": "Theip ar íoslódáil"
   },
+  "icu:Toast--unable-download-from-backup-tier": {
+    "messageformat": "Download of attachment from backup failed"
+  },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "Ní féidir eagarthóireacht a chur i bhfeidhm ach amháin laistigh de 24 uair an chloig ón uair a sheol tú an teachtaireacht seo."
   },
@@ -2236,6 +2245,9 @@
   },
   "icu:message--getDescription--disappearing-video": {
     "messageformat": "Físeán amhairc aonuaire"
+  },
+  "icu:message--getDescription--gif": {
+    "messageformat": "GIF"
   },
   "icu:message--deletedForEveryone": {
     "messageformat": "Scriosadh an teachtaireacht seo."
@@ -3524,6 +3536,15 @@
   "icu:ErrorModal--description": {
     "messageformat": "Triail arís nó déan teagmháil leis an bhfoireann tacaíochta."
   },
+  "icu:DebugLogErrorModal__UnexpectedError": {
+    "messageformat": "Tharla earráid gan choinne"
+  },
+  "icu:DebugLogErrorModal__SubmitDebugLog": {
+    "messageformat": "Cuir isteach an loga dífhabhtaithe"
+  },
+  "icu:DebugLogErrorModal__SubmitDebugLog__Cancel": {
+    "messageformat": "Níl, go raibh maith agat"
+  },
   "icu:Confirmation--confirm": {
     "messageformat": "Tá go maith"
   },
@@ -3954,7 +3975,7 @@
     "messageformat": "A request to join the group from {joinerName} was denied."
   },
   "icu:GroupV2--admin-approval-bounce--pluralized": {
-    "messageformat": "{numberOfRequests, plural, one {{joinerName} requested and canceled their request to join via the group link} other {{joinerName} requested and canceled {numberOfRequests,number} requests to join via the group link}}"
+    "messageformat": "{numberOfRequests, plural, one {Rinne {joinerName} iarratas ar dhul isteach tríd an nasc grúpa agus cuireadh an t-iarratas sin ar ceal} two {Rinne {joinerName} {numberOfRequests,number} iarratas ar dhul isteach tríd an nasc grúpa agus cuireadh na hiarratais sin ar ceal} few {Rinne {joinerName} {numberOfRequests,number} iarratas ar dhul isteach tríd an nasc grúpa agus cuireadh na hiarratais sin ar ceal} many {Rinne {joinerName} {numberOfRequests,number} n-iarratas ar dhul isteach tríd an nasc grúpa agus cuireadh na hiarratais sin ar ceal} other {Rinne {joinerName} {numberOfRequests,number} iarratas ar dhul isteach tríd an nasc grúpa agus cuireadh na hiarratais sin ar ceal}}"
   },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Chas tú air an nasc grúpa le faomhadh riarthóra díchumasaithe."
@@ -4992,10 +5013,10 @@
     "messageformat": "Ní mór nasc an ainm úsáideora a athshocrú"
   },
   "icu:ProfileEditor__open": {
-    "messageformat": "Open username link screen"
+    "messageformat": "Oscail scáileán nasc an ainm úsáideora"
   },
   "icu:ProfileEditor__username-link__open": {
-    "messageformat": "Open username link screen"
+    "messageformat": "Oscail scáileán nasc an ainm úsáideora"
   },
   "icu:ProfileEditor__username-link__tooltip__title": {
     "messageformat": "Comhroinn d'ainm úsáideora"
@@ -5255,6 +5276,12 @@
   "icu:Preferences__auto-convert-emoji--description": {
     "messageformat": "Mar shampla, tiontófar :-) ina <emojify>🙂</emojify>"
   },
+  "icu:Preferences__keep-muted-chats-archived--title": {
+    "messageformat": "Coinnigh comhráite balbhaithe sa chartlann"
+  },
+  "icu:Preferences__keep-muted-chats-archived--description": {
+    "messageformat": "Fanfaidh comhráite balbhaithe sa chartlann fós nuair a thagann teachtaireacht nua isteach."
+  },
   "icu:Preferences--advanced": {
     "messageformat": "Ardroghanna"
   },
@@ -5265,7 +5292,7 @@
     "messageformat": "Bac curtha"
   },
   "icu:Preferences--signal-backups": {
-    "messageformat": "Cúltacaí Signal"
+    "messageformat": "Signal Secure Backups"
   },
   "icu:Preferences--signal-backups-off-description": {
     "messageformat": "Cúltacaí uathoibríocha le seirbhís shlán stórála, atá criptithe ó cheann ceann, de chuid Signal. Bain úsáid astu ar do ghuthán. <learnMoreLink>Tuilleadh faisnéise</learnMoreLink>."
@@ -5280,7 +5307,7 @@
     "messageformat": "Cúltaca téacs + gach meáin"
   },
   "icu:Preferences--backup-plan-not-found__description": {
-    "messageformat": "Ní bhfuarthas do shíntiús. Athnuaigh le leanúint le húsáid Chúltacaí Signal."
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Secure Backups."
   },
   "icu:Preferences--backup-messages-plan__description": {
     "messageformat": "{mediaDayCount, plural, one {Téacs + {mediaDayCount,number} lá de chúltaca meán} two {Téacs + {mediaDayCount,number} lá de chúltaca meán} few {Téacs + {mediaDayCount,number} lá de chúltaca meán} many {Téacs + {mediaDayCount,number} lá de chúltaca meán} other {Téacs + {mediaDayCount,number} lá de chúltaca meán}}"
@@ -5298,13 +5325,13 @@
     "messageformat": "Síntiús curtha ar ceal"
   },
   "icu:Preferences--backup-media-plan__note": {
-    "messageformat": "Is féidir leat do shíntiús le Cúltacaí Signal a bhainistiú nó a chur ar ceal ar do ghuthán."
+    "messageformat": "You can manage or cancel your Signal Secure Backups subscription on your phone."
   },
   "icu:Preferences--backup-messages-plan__note": {
-    "messageformat": "Is féidir leat Cúltacaí Signal a bhainistiú nó a uasghrádú ar do ghuthán."
+    "messageformat": "You can manage or upgrade Signal Secure Backups on your phone."
   },
   "icu:Preferences--backup-plan__not-found__note": {
-    "messageformat": "Is féidir leat do shíntiús le Cúltacaí Signal a bhainistiú nó a athnuachan ar do ghuthán."
+    "messageformat": "You can manage or renew your Signal Secure Backups subscription on your phone."
   },
   "icu:Preferences--backup-created-at__label": {
     "messageformat": "Cúltaca deiridh"
@@ -6636,6 +6663,12 @@
   "icu:PreferencesDonations__my-support": {
     "messageformat": "Tabhartais"
   },
+  "icu:PreferencesDonations__badge-label-one-time": {
+    "messageformat": "{formattedCurrencyAmount} aonuaire"
+  },
+  "icu:PreferencesDonations__badge-processing-donation": {
+    "messageformat": "Tabhartas á phróiseáil…"
+  },
   "icu:PreferencesDonations__donate-button-with-amount": {
     "messageformat": "Tabhair {formattedCurrencyAmount}"
   },
@@ -6648,11 +6681,17 @@
   "icu:PreferencesDonations__privacy-modal-content": {
     "messageformat": "<paragraph>Ní dhéanann Signal d'fhaisnéis phearsanta a bhailiú ná a stóráil nuair a thugann tú tabhartas.</paragraph><paragraph>Úsáidimid Stripe mar ár bpróiseálaí íocaíochtaí chun do thabhartais a fháil. Ní dhéanaimid aon fhaisnéis a thugann tú dóibh a rochtain, a stóráil ná a shábháil.</paragraph><paragraph>Níl cead ag Signal do thabhartas a cheangal le do chuntas Signal agus ní déanann sé amhlaidh.</paragraph><paragraph>Go raibh maith agat as do thacaíocht!</paragraph>"
   },
+  "icu:PreferencesDonations__privacy-modal-ok": {
+    "messageformat": "OK"
+  },
   "icu:PreferencesDonations__receipts": {
     "messageformat": "Admhálacha"
   },
+  "icu:PreferencesDonations__receipt-details-button-aria": {
+    "messageformat": "Féach ar shonraí na hadmhála"
+  },
   "icu:PreferencesDonations__faqs": {
-    "messageformat": "CCanna maidir le Tabhartais"
+    "messageformat": "CCanna do Dheontóirí"
   },
   "icu:PreferencesDonations--receiptList__info": {
     "messageformat": "Ní shioncronaítear admhálacha thar raon gléasanna. Má tá Signal athshuiteáilte agat, ní bheidh admhálacha ó thabhartais roimhe seo ar fáil."
@@ -6682,40 +6721,61 @@
     "messageformat": "Fadhbanna agat? <contactSupportLink>Déan teagmháil leis an bhfoireann tacaíochta</contactSupportLink>"
   },
   "icu:DonateFlow__amount-picker-custom-amount-placeholder": {
-    "messageformat": "Enter Custom Amount"
+    "messageformat": "Cuir isteach méid saincheaptha"
   },
   "icu:DonateFlow__credit-or-debit-card": {
-    "messageformat": "Credit or Debit Card"
+    "messageformat": "Cárta creidmheasa nó dochair"
   },
   "icu:DonateFlow__card-form-instructions": {
-    "messageformat": "Enter your credit or debit card details. Signal does not collect or store your personal information. <learnMoreLink>Learn more</learnMoreLink>"
+    "messageformat": "Cuir isteach sonraí do chárta creidmheasa nó dochair. Ní dhéanann Signal d'fhaisnéis phearsanta a bhailiú ná a stóráil. <learnMoreLink>Tuilleadh faisnéise</learnMoreLink>"
   },
   "icu:DonateFlow__card-form-card-number": {
-    "messageformat": "Card Number"
+    "messageformat": "Uimhir an chárta"
   },
   "icu:DonateFlow__card-form-expiration-date": {
-    "messageformat": "Expiration Date"
+    "messageformat": "Dáta as Feidhm"
+  },
+  "icu:DonateFlow__card-form-expiration-date-placeholder": {
+    "messageformat": "MM/BB"
   },
   "icu:DonateFlow__card-form-title-donate-with-amount": {
-    "messageformat": "Donate {formattedCurrencyAmount} to Signal"
+    "messageformat": "Tabhair {formattedCurrencyAmount} do Signal"
   },
   "icu:DonateFlow__card-form-error-invalid-card-number": {
-    "messageformat": "Invalid card number"
+    "messageformat": "Uimhir chárta neamhbhailí"
   },
   "icu:DonateFlow__card-form-error-expiration-expired": {
-    "messageformat": "Card has expired"
+    "messageformat": "Tá an cárta imithe as feidhm"
   },
   "icu:DonateFlow__card-form-error-year-missing": {
-    "messageformat": "Year required"
+    "messageformat": "Bliain de dhíth"
   },
   "icu:DonateFlow__card-form-error-invalid": {
-    "messageformat": "Invalid"
+    "messageformat": "Neamhbhailí"
   },
   "icu:DonateFlow__card-form-error-cvc-too-short": {
-    "messageformat": "Code too short"
+    "messageformat": "Cód róghearr"
   },
   "icu:DonateFlow__one-time-donation-boost-badge-info": {
-    "messageformat": "Get the Signal Boost badge for 30 days"
+    "messageformat": "Faigh Suaitheantas spreagtha Signal go ceann 30 lá"
+  },
+  "icu:DonateFlow__custom-amount-below-minimum-error": {
+    "messageformat": "Is é {formattedCurrencyAmount} íosmhéid an tabhartais"
+  },
+  "icu:DonateFlow__custom-amount-below-minimum-tooltip": {
+    "messageformat": "Is é {formattedCurrencyAmount} an t-íosmhéid is féidir leat a thabhairt"
+  },
+  "icu:DonateFlow__custom-amount-above-maximum-error": {
+    "messageformat": "Is é {formattedCurrencyAmount} uasmhéid an tabhartais"
+  },
+  "icu:DonateFlow__discard-dialog-body": {
+    "messageformat": "Bainfear faisnéis an chárta creidmheasa ar imeacht as an leathanach seo. An bhfuil fonn ort leanúint leis?"
+  },
+  "icu:DonateFlow__discard-dialog-remove-info": {
+    "messageformat": "Bain an fhaisnéis"
+  },
+  "icu:DonateFlow__continue": {
+    "messageformat": "Ar aghaidh"
   },
   "icu:DonationReceipt__title": {
     "messageformat": "Admháil tabhartais"
@@ -6735,8 +6795,11 @@
   "icu:DonationReceipt__footer-text": {
     "messageformat": "Go raibh maith agat as tacú le Signal. Cabhraíonn do dheonachán cur leis an misean chun saoirse cainte a chosaint agus chun cur ar ár gcumas cumarsáid dhomhanda a chur ar fáil ag na milliúin ar fud an domhan, trí theicneolaíocht phríobháideachta foinse oscailte. Más cónaitheoir sna Stáit Aontaithe thú, coinnigh an admháil seo do do thaifid chánach. Eagraíocht neamhbhrabúis díolmhaithe ó cháin sna Stáit Aontaithe faoi alt 501c3 den Internal Revenue Code is ea Signal Technology Foundation. Is é 82–4506840 ár nUimhir Aitheantais Cánach Feidearálaí."
   },
+  "icu:Donations__OfflineTooltip": {
+    "messageformat": "Tá tú as líne. Nasc leis an Idirlíon le tabhartas a chur i gcrích."
+  },
   "icu:Donations__Toast__Canceled": {
-    "messageformat": "Donation canceled"
+    "messageformat": "Tabhartas curtha ar ceal"
   },
   "icu:Donations__Toast__Completed": {
     "messageformat": "Tabhartas críochnaithe"
@@ -6754,16 +6817,25 @@
     "messageformat": "Tá tabhartas ar bun agat a bhfuil fíorú sa bhreis ag teastáil ina leith."
   },
   "icu:Donations__Toast__ConfirmationNeeded": {
-    "messageformat": "You have a donation in progress that requires confirmation."
+    "messageformat": "Tá tabhartas ar bun agat a éilíonn fíorú."
+  },
+  "icu:Donations__Toast__DonationCompletedAndBadgeApplicationFailed": {
+    "messageformat": "D’éirigh leis an tabhartas, ach ní rabhamar in ann socruithe do shuaitheantais a nuashonrú"
+  },
+  "icu:Donations__BadgeApplicationFailed__Title": {
+    "messageformat": "Donation succeeded, but we could not update your badge settings"
+  },
+  "icu:Donations__BadgeApplicationFailed__Description": {
+    "messageformat": "To update your badge settings on your mobile device, go to Settings → Donate to Signal → Badges."
   },
   "icu:Donations__DonationInterrupted": {
-    "messageformat": "Donation interrupted"
+    "messageformat": "Cuireadh isteach ar an tabhartas"
   },
   "icu:Donations__DonationInterrupted__Description": {
-    "messageformat": "Your card was not charged. Do you want to retry the donation?"
+    "messageformat": "Níor gearradh táille ar do chárta. An bhfuil fonn ort an tabhartas a atriail?"
   },
   "icu:Donations__DonationInterrupted__RetryButton": {
-    "messageformat": "Try again"
+    "messageformat": "Triail arís é"
   },
   "icu:Donations__PaymentMethodDeclined": {
     "messageformat": "Diúltaíodh don mhodh íocaíochta"
@@ -6783,20 +6855,23 @@
   "icu:Donations__GenericError__Description": {
     "messageformat": "Is féidir nár próiseáladh do dheonachán. Cliceáil ar \"Tabhair airgead do Signal\" agus ansin ar \"Admhálacha Tabhartas\" le do chuid admhálacha a sheiceáil agus a dheimhniú."
   },
+  "icu:DonationsErrorBoundary__DonationUnexpectedError": {
+    "messageformat": "Triail arís nó seol isteach loga dífhabhtaithe chuig an bhFoireann Tacaíochta chun cabhair a fháil le do thabhartas a chur i gcrích. Cabhraíonn logaí dífhabhtaithe linn an fhadhb a dhiagnóisiú agus a réiteach, agus ní bhíonn faisnéis aitheantais iontu."
+  },
   "icu:Donations__Processing": {
     "messageformat": "Tabhartas á phróiseáil..."
   },
   "icu:Donations__StillProcessing": {
-    "messageformat": "Still Processing"
+    "messageformat": "Tabhartas á phróiseáil fós"
   },
   "icu:Donations__StillProcessing__Description": {
     "messageformat": "Tá do thabhartas á phróiseáil fós. Tógann sé seo nóiméad nó dhó."
   },
   "icu:Donations__TimedOut": {
-    "messageformat": "Donation canceled"
+    "messageformat": "Tabhartas curtha ar ceal"
   },
   "icu:Donations__TimedOut__Description": {
-    "messageformat": "It has been too long since you started your donation. Please start over."
+    "messageformat": "Tá sé rófhada ó thosaigh tú ar do thabhartas. Tosaigh air arís."
   },
   "icu:Donations__3dsValidationNeeded": {
     "messageformat": "Fíorú breise ag teastáil"
@@ -6815,6 +6890,18 @@
   },
   "icu:Donations__3dsValidationNeeded__CancelDonation": {
     "messageformat": "Cuir an tabhartas ar ceal"
+  },
+  "icu:Donations__badge-modal--title": {
+    "messageformat": "Go raibh maith agat as do thacaíocht!"
+  },
+  "icu:Donations__badge-modal--description": {
+    "messageformat": "Tá suaitheantas deontóra tuillte agat ó Signal! Taispeáin ar do phróifíl é chun do thacaíocht a thaispeáint."
+  },
+  "icu:Donations__badge-modal--display-on-profile": {
+    "messageformat": "Taispeáin ar do phróifíl"
+  },
+  "icu:Donations__badge-modal--help-text": {
+    "messageformat": "Is féidir leat é sin a choigeartú ar do ghléas móibíleach faoi Socruithe → Tabhair Airgead do Signal → Suaitheantais"
   },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "Tá roinnt mionathruithe agus paistí ar fhabhtanna sa leagan seo chun Signal a choinneáil ag rith go réidh.",
@@ -6844,13 +6931,13 @@
     "messageformat": "Mionathruithe, paistí fabhtanna agus feabhsuithe ar fheidhmíocht. Go raibh maith agat as Signal a úsáid!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.64--0": {
-    "messageformat": "D'fheabhsaíomar an t-eispéireas maidir le teachtaireacht léite/neamhléite le linn na hiltascála."
-  },
-  "icu:WhatsNew__v7.65--0": {
-    "messageformat": "Réitíomar fabht sa bhosca cuardaigh emoji."
-  },
   "icu:WhatsNew__v7.66--0": {
-    "messageformat": "This update fixes a few small bugs, including one where emoji reactions weren't being grouped together correctly in some cases."
+    "messageformat": "Cúpla réiteach bheaga ar fhabhtanna."
+  },
+  "icu:WhatsNew__v7.67--0": {
+    "messageformat": "Réitíomar fabht a chuir cosc ar shuaitheantais deonaithe roinnt úsáideoirí a thaispeáint i gceart."
+  },
+  "icu:WhatsNew__v7.70--0": {
+    "messageformat": "Réitíomar fabht ar Microsoft Windows a thaispeáin an dath mícheart sa bharra teidil corruair."
   }
 }

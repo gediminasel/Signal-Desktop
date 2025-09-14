@@ -11,6 +11,7 @@ import {
   callIdFromRingId,
   RingUpdate,
 } from '@signalapp/ringrtc';
+import { ContentHint } from '@signalapp/libsignal-client';
 import { isEqual } from 'lodash';
 import { strictAssert } from './assert';
 import { DataReader, DataWriter } from '../sql/Client';
@@ -144,7 +145,7 @@ export function getCallIdFromEra(eraId: string): string {
   return Long.fromValue(callIdFromEra(eraId)).toString();
 }
 
-export function getCreatorAci(creator: Buffer): AciString {
+export function getCreatorAci(creator: Uint8Array): AciString {
   const aci = bytesToUuid(creator);
   strictAssert(aci != null, 'creator uuid buffer was not a valid uuid');
   strictAssert(isAciString(aci), 'creator uuid buffer was not a valid aci');
@@ -1262,10 +1263,12 @@ async function saveCallHistory({
     );
   });
 
-  conversation.set(
-    'active_at',
-    Math.max(conversation.get('active_at') ?? 0, callHistory.timestamp)
-  );
+  conversation.set({
+    active_at: Math.max(
+      conversation.get('active_at') ?? 0,
+      callHistory.timestamp
+    ),
+  });
 
   if (canConversationBeUnarchived(conversation.attributes)) {
     conversation.setArchived(false);
@@ -1303,10 +1306,8 @@ async function updateRemoteCallHistory(
     const contentMessage = new Proto.Content();
     contentMessage.syncMessage = syncMessage;
 
-    const { ContentHint } = Proto.UnidentifiedSenderMessage.Message;
-
     await singleProtoJobQueue.add({
-      contentHint: ContentHint.RESENDABLE,
+      contentHint: ContentHint.Resendable,
       serviceId: ourAci,
       isSyncMessage: true,
       protoBase64: Bytes.toBase64(
@@ -1457,7 +1458,7 @@ export async function markAllCallHistoryReadAndSync(
         : Proto.SyncMessage.CallLogEvent.Type.MARKED_AS_READ,
       timestamp: Long.fromNumber(latestCall.timestamp),
       peerId: getBytesForPeerId(latestCall),
-      callId: Long.fromString(latestCall.callId),
+      callId: getCallIdForProto(latestCall),
     });
 
     const syncMessage = MessageSender.createSyncMessage();
@@ -1466,11 +1467,9 @@ export async function markAllCallHistoryReadAndSync(
     const contentMessage = new Proto.Content();
     contentMessage.syncMessage = syncMessage;
 
-    const { ContentHint } = Proto.UnidentifiedSenderMessage.Message;
-
     log.info('markAllCallHistoryReadAndSync: Queueing sync message');
     await singleProtoJobQueue.add({
-      contentHint: ContentHint.RESENDABLE,
+      contentHint: ContentHint.Resendable,
       serviceId: ourAci,
       isSyncMessage: true,
       protoBase64: Bytes.toBase64(

@@ -60,7 +60,6 @@ import type {
   ConversationAttributesType,
   DraftEditMessageType,
   LastMessageStatus,
-  MessageAttributesType,
   ReadonlyMessageAttributesType,
 } from '../../model-types.d';
 import type {
@@ -215,7 +214,6 @@ import {
 } from '../../messages/MessageSendState';
 import { markFailed } from '../../test-node/util/messageFailures';
 import { cleanupMessages } from '../../util/cleanup';
-import { MessageModel } from '../../models/messages';
 import type { ConversationModel } from '../../models/conversations';
 import { MessageRequestResponseSource } from '../../types/MessageRequestResponseEvent';
 
@@ -421,9 +419,12 @@ export type ConversationType = ReadonlyDeep<
   )
 >;
 export type ProfileDataType = ReadonlyDeep<
-  {
-    firstName: string;
-  } & Pick<ConversationType, 'aboutEmoji' | 'aboutText' | 'familyName'>
+  Partial<
+    Pick<
+      ConversationType,
+      'firstName' | 'badges' | 'aboutEmoji' | 'aboutText' | 'familyName'
+    >
+  >
 >;
 
 export type ConversationLookupType = ReadonlyDeep<{
@@ -1168,7 +1169,6 @@ export const actions = {
   loadNewerMessages,
   loadNewestMessages,
   loadOlderMessages,
-  loadRecentMediaItems,
   markAttachmentAsCorrupted,
   markMessageRead,
   markOpenConversationRead,
@@ -1543,12 +1543,10 @@ async function getAvatarsAndUpdateConversation(
   const nextAvatars = getNextAvatarsData(avatars, nextAvatarId);
   // We don't save buffers to the db, but we definitely want it in-memory so
   // we don't have to re-generate them.
-  //
-  // Mutating here because we don't want to trigger a model change
-  // because we're updating redux here manually ourselves. Au revoir Backbone!
-  conversation.attributes.avatars = nextAvatars.map(avatarData =>
-    omit(avatarData, ['buffer'])
-  );
+
+  conversation.set({
+    avatars: nextAvatars.map(avatarData => omit(avatarData, ['buffer'])),
+  });
   await DataWriter.updateConversation(conversation.attributes);
 
   return nextAvatars;
@@ -1843,13 +1841,6 @@ function deleteMessages({
       dispatch(scrollToMessage(conversationId, nearbyMessageId));
     }
 
-    const ourConversation =
-      window.ConversationController.getOurConversationOrThrow();
-    const capable = Boolean(ourConversation.get('capabilities')?.deleteSync);
-
-    if (!capable) {
-      return;
-    }
     if (messages.length === 0) {
       return;
     }
@@ -1931,15 +1922,12 @@ function discardEditMessage(
   conversationId: string
 ): ThunkAction<void, RootStateType, unknown, never> {
   return () => {
-    window.ConversationController.get(conversationId)?.set(
-      {
-        draftEditMessage: undefined,
-        draftBodyRanges: undefined,
-        draft: undefined,
-        quotedMessageId: undefined,
-      },
-      { unset: true }
-    );
+    window.ConversationController.get(conversationId)?.set({
+      draftEditMessage: undefined,
+      draftBodyRanges: undefined,
+      draft: undefined,
+      quotedMessageId: undefined,
+    });
   };
 }
 
@@ -2045,7 +2033,7 @@ function generateNewGroupLink(
 
 /**
  * Not an actual redux action creator, so it doesn't produce an action (or dispatch
- * itself) because updates are managed through the backbone model, which will trigger
+ * itself) because updates are managed through the model, which will trigger
  * necessary updates and refresh conversation_view.
  *
  * In practice, it's similar to an already-connected thunk action. Later on we will
@@ -2238,9 +2226,8 @@ function myProfileChanged(
         avatarUpdateOptions
       );
 
-      // writeProfile above updates the backbone model which in turn updates
-      // redux through it's on:change event listener. Once we lose Backbone
-      // we'll need to manually sync these new changes.
+      // writeProfile above updates the model which in turn updates
+      // redux through it's on:change event listener.
 
       // We just want to clear whatever error was there before:
       dispatch({
@@ -2276,7 +2263,7 @@ function removeCustomColorOnConversations(
 ): ThunkAction<void, RootStateType, unknown, CustomColorRemovedActionType> {
   return async dispatch => {
     const conversationsToUpdate: Array<ConversationAttributesType> = [];
-    window.getConversations().forEach(conversation => {
+    window.ConversationController.getAll().forEach(conversation => {
       if (conversation.get('customColorId') === colorId) {
         conversation.set({
           conversationColor: undefined,
@@ -2310,7 +2297,7 @@ function resetAllChatColors(): ThunkAction<
     // Calling this with no args unsets all the colors in the db
     await DataWriter.updateAllConversationColors();
 
-    window.getConversations().forEach(conversation => {
+    window.ConversationController.getAll().forEach(conversation => {
       conversation.set({
         conversationColor: undefined,
         customColor: undefined,
@@ -4008,73 +3995,6 @@ function initiateMigrationToGroupV2(conversationId: string): NoopActionType {
   };
 }
 
-function loadRecentMediaItems(
-  conversationId: string,
-  limit: number
-): ThunkAction<void, RootStateType, unknown, SetRecentMediaItemsActionType> {
-  return async dispatch => {
-    const messages: Array<MessageAttributesType> =
-      await DataReader.getOlderMessagesByConversation({
-        conversationId,
-        limit,
-        requireVisualMediaAttachments: true,
-        storyId: undefined,
-        includeStoryReplies: false,
-      });
-
-    // Cache these messages in memory to ensure Lightbox can find them
-    messages.forEach(message => {
-      window.MessageCache.register(new MessageModel(message));
-    });
-
-    let index = 0;
-    const recentMediaItems = messages
-      .filter(message => message.attachments !== undefined)
-      .reduce(
-        (acc, message) => [
-          ...acc,
-          ...(message.attachments || []).map(
-            (attachment: AttachmentType): MediaItemType => {
-              const { thumbnail } = attachment;
-
-              const result = {
-                objectURL: attachment.path
-                  ? getLocalAttachmentUrl(attachment)
-                  : '',
-                thumbnailObjectUrl: thumbnail?.path
-                  ? getLocalAttachmentUrl(thumbnail)
-                  : '',
-                contentType: attachment.contentType,
-                index,
-                attachment,
-                message: {
-                  attachments: message.attachments || [],
-                  conversationId:
-                    window.ConversationController.get(message.sourceServiceId)
-                      ?.id || message.conversationId,
-                  id: message.id,
-                  receivedAt: message.received_at,
-                  receivedAtMs: Number(message.received_at_ms),
-                  sentAt: message.sent_at,
-                },
-              };
-
-              index += 1;
-
-              return result;
-            }
-          ),
-        ],
-        [] as Array<MediaItemType>
-      );
-
-    dispatch({
-      type: 'SET_RECENT_MEDIA_ITEMS',
-      payload: { id: conversationId, recentMediaItems },
-    });
-  };
-}
-
 export type SaveAttachmentActionCreatorType = ReadonlyDeep<
   (attachment: AttachmentType, timestamp?: number, index?: number) => unknown
 >;
@@ -4881,14 +4801,17 @@ function onConversationClosed(
 ): ThunkAction<void, RootStateType, unknown, ConversationUnloadedActionType> {
   return async dispatch => {
     const conversation = window.ConversationController.get(conversationId);
+    // Conversation was removed due to the merge
     if (!conversation) {
-      throw new Error('onConversationClosed: Conversation not found');
+      log.warn(
+        `onConversationClosed: Conversation ${conversationId} not found`
+      );
     }
 
-    const logId = `onConversationClosed/${conversation.idForLogging()}`;
+    const logId = `onConversationClosed/${conversation?.idForLogging() ?? conversationId}`;
     log.info(`${logId}: unloading due to ${reason}`);
 
-    if (conversation.get('draftChanged')) {
+    if (conversation?.get('draftChanged')) {
       if (conversation.hasDraft()) {
         log.info(`${logId}: new draft info needs update`);
         const now = Date.now();

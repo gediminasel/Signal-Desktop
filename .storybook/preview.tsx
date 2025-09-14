@@ -6,7 +6,7 @@ import '../ts/window.d.ts';
 import React, { StrictMode } from 'react';
 
 import '../stylesheets/manifest.scss';
-import '../ts/axo/tailwind.css';
+import '../stylesheets/tailwind-config.css';
 
 import * as styles from './styles.scss';
 import messages from '../_locales/en/messages.json';
@@ -17,6 +17,7 @@ import { HourCyclePreference } from '../ts/types/I18N';
 import { Provider } from 'react-redux';
 import { Store, combineReducers, createStore } from 'redux';
 import { Globals } from '@react-spring/web';
+import { AxoProvider } from '../ts/axo/AxoProvider';
 import { StateType } from '../ts/state/reducer';
 import {
   ScrollerLockContext,
@@ -254,8 +255,17 @@ function withFunProvider(Story, context) {
   );
 }
 
+function withAxoProvider(Story, context) {
+  return (
+    <AxoProvider dir={context.globals.direction ?? 'ltr'}>
+      <Story {...context} />
+    </AxoProvider>
+  );
+}
+
 export const decorators = [
   withStrictMode,
+  withAxoProvider,
   withGlobalTypesProvider,
   withMockStoreProvider,
   withScrollLockProvider,

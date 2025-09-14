@@ -59,12 +59,14 @@ export function ImageOrBlurhash({
             ? `${intrinsicWidth} / ${intrinsicHeight}`
             : undefined,
 
+        width: '100%',
+        height: '100%',
+
         // Preserve aspect ratio
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
       loading={blurHashUrl != null ? 'lazy' : 'eager'}
-      decoding={blurHashUrl != null ? 'async' : 'auto'}
     />
   );
 }

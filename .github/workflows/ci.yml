@@ -234,7 +234,7 @@ jobs:
       uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       with:
         repository: 'signalapp/Signal-Message-Backup-Tests'
-        ref: 'df09e4bfa985c68daf845ad96abae3ae8f9b07ca'
+        ref: '279370b21fd089956a581c3b027489594135998a'
         path: 'backup-integration-tests'
 
     - run: xvfb-run --auto-servernum pnpm run test-electron
@@ -257,7 +257,7 @@ jobs:
 
   windows:
     needs: lint
-    runs-on: windows-latest
+    runs-on: windows-latest-8-cores
     timeout-minutes: 30
 
     steps:
@@ -273,18 +273,10 @@ jobs:
         node-version-file: '.nvmrc'
         cache: 'pnpm'
         cache-dependency-path: 'pnpm-lock.yaml'
-    - name: Cache .electron-gyp
-      uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4
-      with:
-        path: ${{ env.SCCACHE_PATH }}\.electron-gyp
-        key: electron-gyp-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-
-    - run: pnpm install -g node-gyp@10.0.1
 
     - name: Install Desktop node_modules
       run: pnpm install
       env:
-        CHILD_CONCURRENCY: 1
         NPM_CONFIG_LOGLEVEL: verbose
 
     - run: pnpm run generate
@@ -321,6 +313,7 @@ jobs:
     - run: pnpm run test-electron
       env:
         ARTIFACTS_DIR: artifacts/windows
+        WORKER_COUNT: 4
       timeout-minutes: 5
     - run: pnpm run test-release
       env:
@@ -370,6 +363,11 @@ jobs:
 
   mock-tests:
     needs: lint
+
+    strategy:
+      matrix:
+        workerIndex: [0, 1, 2, 3]
+
     runs-on: ubuntu-22.04-8-cores
     if: ${{ github.repository == 'signalapp/Signal-Desktop-Private' }}
     timeout-minutes: 30
@@ -429,12 +427,24 @@ jobs:
       run: |
         set -o pipefail
         xvfb-run --auto-servernum pnpm run test-mock
+      timeout-minutes: 15
+      env:
+        NODE_ENV: production
+        DEBUG: mock:test:*
+        ARTIFACTS_DIR: artifacts/mock
+        WORKER_INDEX: ${{ matrix.workerIndex }}
+        WORKER_COUNT: 4
+
+    - name: Run docker mock server tests
+      if: ${{ matrix.workerIndex == 0 }}
+      run: |
+        set -o pipefail
         xvfb-run --auto-servernum pnpm run test-mock-docker
       timeout-minutes: 15
       env:
         NODE_ENV: production
         DEBUG: mock:test:*
-        ARTIFACTS_DIR: artifacts/startup
+        ARTIFACTS_DIR: artifacts/mock-docker
 
     - name: Upload mock server test logs on failure
       if: failure()

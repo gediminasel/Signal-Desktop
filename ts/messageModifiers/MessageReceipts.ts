@@ -227,9 +227,11 @@ async function processReceiptsForMessage(
       message.get('sendStateByConversationId'),
       message.attributes
     );
-    conversation.set('lastSeenMessageByUser', {
-      ...conversation.get('lastSeenMessageByUser'),
-      ...newLastSeenMessageByUser,
+    conversation.set({
+      lastSeenMessageByUser: {
+        ...conversation.get('lastSeenMessageByUser'),
+        ...newLastSeenMessageByUser,
+      },
     });
   }
 
@@ -310,7 +312,7 @@ const deleteSentProtoBatcher = createWaitBatcher({
 
       // `deleteSentProtoRecipient` has already updated the database so there
       // is no need in calling `updateConversation`
-      convo.unset('shareMyPhoneNumber');
+      convo.set({ shareMyPhoneNumber: undefined });
     }
   },
 });

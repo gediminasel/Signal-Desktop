@@ -129,6 +129,9 @@ function getTypeLabel({
     if (isViewOnce) {
       return i18n('icu:message--getDescription--disappearing-photo');
     }
+    if (contentType === MIME.IMAGE_GIF) {
+      return i18n('icu:message--getDescription--gif');
+    }
     return i18n('icu:photo');
   }
 

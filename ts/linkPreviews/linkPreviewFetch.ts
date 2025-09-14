@@ -621,6 +621,12 @@ async function processImageResponse(
   abortSignal: AbortSignal,
   logger: Pick<LoggerType, 'warn'> = log
 ): Promise<null | LinkPreviewImage> {
+  const screenshotServer =
+    window.localStorage && localStorage.getItem('screenshotServerUrl');
+  const maxImageContentLength =
+    screenshotServer && response.url.startsWith(screenshotServer)
+      ? 5 * MAX_IMAGE_CONTENT_LENGTH
+      : MAX_IMAGE_CONTENT_LENGTH;
   const contentLength = parseContentLength(
     response.headers.get('Content-Length')
   );

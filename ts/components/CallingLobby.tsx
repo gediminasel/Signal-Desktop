@@ -291,6 +291,7 @@ export function CallingLobby({
           className={classNames(
             'module-calling__camera-is-off module-CallingLobby__camera-is-off',
             `module-CallingLobby__camera-is-off--${
+              // eslint-disable-next-line local-rules/enforce-tw
               shouldShowLocalVideo ? 'invisible' : 'visible'
             }`
           )}
@@ -302,12 +303,10 @@ export function CallingLobby({
         {callMode === CallMode.Adhoc ? (
           isAdhocJoinRequestPending ? (
             <div className="CallingLobby__CallLinkNotice CallingLobby__CallLinkNotice--join-request-pending">
-              <SpinnerV2
-                className="CallingLobby__CallLinkJoinRequestPendingSpinner"
-                size={16}
-                strokeWidth={3}
-              />
-              {i18n('icu:CallingLobby__CallLinkNotice--join-request-pending')}
+              <SpinnerV2 size={16} strokeWidth={1.5} />
+              <span className="CallingLobby__CallLinkJoinRequestPendingText">
+                {i18n('icu:CallingLobby__CallLinkNotice--join-request-pending')}
+              </span>
             </div>
           ) : (
             <div className="CallingLobby__CallLinkNotice">

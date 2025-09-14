@@ -175,7 +175,6 @@ function sanitizePathComponent(component: string): string {
 }
 
 const DEFAULT_REMOTE_CONFIG = [
-  ['desktop.backup.credentialFetch', { enabled: true }],
   ['desktop.internalUser', { enabled: true }],
   ['desktop.senderKey.retry', { enabled: true }],
   ['global.backups.mediaTierFallbackCdnNumber', { enabled: true, value: '3' }],
@@ -221,6 +220,7 @@ export class Bootstrap {
   #storagePath?: string;
   #timestamp: number = Date.now() - WEEK;
   #lastApp?: App;
+  #screenshotId = 0;
   readonly #randomId = crypto.randomBytes(8).toString('hex');
 
   constructor(options: BootstrapOptions = {}) {
@@ -400,23 +400,30 @@ export class Bootstrap {
       await app.stageLocalBackupForImport(localBackup);
     }
 
-    debug('looking for QR code or relink button');
-    const qrCode = window.locator(
-      '.module-InstallScreenQrCodeNotScannedStep__qr-code__code'
+    let gotProvisionURL = false;
+
+    drop(
+      (async () => {
+        try {
+          const relinkButton = window.locator('.LeftPaneDialog__icon--relink');
+          await relinkButton.waitFor();
+          if (gotProvisionURL) {
+            return;
+          }
+          await relinkButton.click();
+        } catch {
+          // Ignore, provision will fail if QR code was never generated
+        }
+      })()
     );
-    const relinkButton = window.locator('.LeftPaneDialog__icon--relink');
-    await qrCode.or(relinkButton).waitFor();
-    if (await relinkButton.isVisible()) {
-      debug('unlinked, clicking left pane button');
-      await relinkButton.click();
-      await qrCode.waitFor();
-    }
 
     debug('waiting for provision');
     const provision = await this.server.waitForProvision();
 
     debug('waiting for provision URL');
     const provisionURL = await app.waitForProvisionURL();
+
+    gotProvisionURL = true;
 
     debug('completing provision');
     this.#privDesktop = await provision.complete({
@@ -538,6 +545,28 @@ export class Bootstrap {
     }
   }
 
+  public async screenshot(
+    app: App | undefined = this.#lastApp,
+    testName?: string
+  ): Promise<void> {
+    if (!app) {
+      return;
+    }
+
+    const outDir = await this.#getArtifactsDir(testName);
+    if (outDir == null) {
+      return;
+    }
+
+    const window = await app.getWindow();
+    const screenshot = await window.screenshot();
+
+    const id = this.#screenshotId;
+    this.#screenshotId += 1;
+
+    await fs.writeFile(path.join(outDir, `screenshot-${id}.png`), screenshot);
+  }
+
   public async saveLogs(
     app: App | undefined = this.#lastApp,
     testName?: string
@@ -559,11 +588,7 @@ export class Bootstrap {
         ?.context()
         .tracing.stop({ path: path.join(outDir, 'trace.zip') });
     }
-    if (app) {
-      const window = await app.getWindow();
-      const screenshot = await window.screenshot();
-      await fs.writeFile(path.join(outDir, 'screenshot.png'), screenshot);
-    }
+    await this.screenshot(app, testName);
   }
 
   public async createScreenshotComparator(
@@ -648,7 +673,7 @@ export class Bootstrap {
     return join(this.#storagePath, 'attachments.noindex', relativePath);
   }
 
-  public async storeAttachmentOnCDN(
+  public async encryptAndStoreAttachmentOnCDN(
     data: Buffer,
     contentType: MIMEType
   ): Promise<Proto.IAttachmentPointer> {
@@ -658,13 +683,13 @@ export class Bootstrap {
 
     const passthrough = new PassThrough();
 
-    const [{ digest }] = await Promise.all([
+    const [{ digest, chunkSize, incrementalMac }] = await Promise.all([
       encryptAttachmentV2({
         keys,
         plaintext: {
           data,
         },
-        needIncrementalMac: false,
+        needIncrementalMac: true,
         sink: passthrough,
       }),
       this.server.storeAttachmentOnCdn(cdnNumber, cdnKey, passthrough),
@@ -677,6 +702,8 @@ export class Bootstrap {
       cdnNumber,
       key: keys,
       digest,
+      chunkSize,
+      incrementalMac,
     };
   }
 

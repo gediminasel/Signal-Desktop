@@ -1,5 +1,8 @@
 // Copyright 2024 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
+
+import { ContentHint } from '@signalapp/libsignal-client';
+
 import * as Bytes from '../Bytes';
 import { CallLinkUpdateSyncType } from '../types/CallLink';
 import { createLogger } from '../logging/log';
@@ -8,12 +11,13 @@ import { SignalService as Proto } from '../protobuf';
 import { singleProtoJobQueue } from '../jobs/singleProtoJobQueue';
 import MessageSender from '../textsecure/SendMessage';
 import { toAdminKeyBytes } from './callLinks';
-import { toRootKeyBytes } from './callLinksRingrtc';
+import { toEpochBytes, toRootKeyBytes } from './callLinksRingrtc';
 
 const log = createLogger('sendCallLinkUpdateSync');
 
 export type sendCallLinkUpdateSyncCallLinkType = {
   rootKey: string;
+  epoch: string | null;
   adminKey: string | null;
 };
 
@@ -42,6 +46,7 @@ async function _sendCallLinkUpdateSync(
     const callLinkUpdate = new Proto.SyncMessage.CallLinkUpdate({
       type: protoType,
       rootKey: toRootKeyBytes(callLink.rootKey),
+      epoch: callLink.epoch ? toEpochBytes(callLink.epoch) : null,
       adminPasskey: callLink.adminKey
         ? toAdminKeyBytes(callLink.adminKey)
         : null,
@@ -53,10 +58,8 @@ async function _sendCallLinkUpdateSync(
     const contentMessage = new Proto.Content();
     contentMessage.syncMessage = syncMessage;
 
-    const { ContentHint } = Proto.UnidentifiedSenderMessage.Message;
-
     await singleProtoJobQueue.add({
-      contentHint: ContentHint.RESENDABLE,
+      contentHint: ContentHint.Resendable,
       serviceId: ourAci,
       isSyncMessage: true,
       protoBase64: Bytes.toBase64(

@@ -56,7 +56,6 @@ import type { LocalizerType } from '../../types/I18N';
 import { linkCallRoute } from '../../util/signalRoutes';
 import type { StartCallData } from '../../components/ConfirmLeaveCallModal';
 import { getMessageById } from '../../messages/getMessageById';
-import type { AttachmentNotAvailableModalType } from '../../components/AttachmentNotAvailableModal';
 import type { DataPropsType as TapToViewNotAvailablePropsType } from '../../components/TapToViewNotAvailableModal';
 import type { DataPropsType as BackfillFailureModalPropsType } from '../../components/BackfillFailureModal';
 import type { SmartDraftGifMessageSendModalProps } from '../smart/DraftGifMessageSendModal';
@@ -106,7 +105,6 @@ type MigrateToGV2PropsType = ReadonlyDeep<{
 export type GlobalModalsStateType = ReadonlyDeep<{
   addUserToAnotherGroupModalContactId?: string;
   aboutContactModalContactId?: string;
-  attachmentNotAvailableModalType: AttachmentNotAvailableModalType | undefined;
   backfillFailureModalProps: BackfillFailureModalPropsType | undefined;
   callLinkAddNameModalRoomId: string | null;
   callLinkEditModalRoomId: string | null;
@@ -116,6 +114,9 @@ export type GlobalModalsStateType = ReadonlyDeep<{
   criticalIdlePrimaryDeviceModal: boolean;
   deleteMessagesProps?: DeleteMessagesPropsType;
   draftGifMessageSendModalProps: SmartDraftGifMessageSendModalProps | null;
+  debugLogErrorModalProps?: {
+    description?: string;
+  };
   editHistoryMessages?: EditHistoryMessagesType;
   editNicknameAndNoteModalProps: EditNicknameAndNoteModalPropsType | null;
   errorModalProps?: {
@@ -152,10 +153,6 @@ export type GlobalModalsStateType = ReadonlyDeep<{
 
 // Actions
 
-const SHOW_ATTACHMENT_NOT_AVAILABLE_MODAL =
-  'globalModals/SHOW_ATTACHMENT_NOT_AVAILABLE_MODAL';
-const HIDE_ATTACHMENT_NOT_AVAILABLE_MODAL =
-  'globalModals/HIDE_ATTACHMENT_NOT_AVAILABLE_MODAL';
 const SHOW_TAP_TO_VIEW_NOT_AVAILABLE_MODAL =
   'globalModals/SHOW_TAP_TO_VIEW_NOT_AVAILABLE_MODAL';
 const HIDE_TAP_TO_VIEW_NOT_AVAILABLE_MODAL =
@@ -200,6 +197,8 @@ const SHOW_STICKER_PACK_PREVIEW = 'globalModals/SHOW_STICKER_PACK_PREVIEW';
 const CLOSE_STICKER_PACK_PREVIEW = 'globalModals/CLOSE_STICKER_PACK_PREVIEW';
 const CLOSE_ERROR_MODAL = 'globalModals/CLOSE_ERROR_MODAL';
 export const SHOW_ERROR_MODAL = 'globalModals/SHOW_ERROR_MODAL';
+const CLOSE_DEBUG_LOG_ERROR_MODAL = 'globalModals/CLOSE_DEBUG_LOG_ERROR_MODAL';
+const SHOW_DEBUG_LOG_ERROR_MODAL = 'globalModals/SHOW_DEBUG_LOG_ERROR_MODAL';
 const TOGGLE_EDIT_NICKNAME_AND_NOTE_MODAL =
   'globalModals/TOGGLE_EDIT_NICKNAME_AND_NOTE_MODAL';
 const TOGGLE_MESSAGE_REQUEST_ACTIONS_CONFIRMATION =
@@ -240,15 +239,6 @@ export type UserNotFoundModalStateType = ReadonlyDeep<
       username: string;
     }
 >;
-
-type HideAttachmentNotAvailableModalActionType = ReadonlyDeep<{
-  type: typeof HIDE_ATTACHMENT_NOT_AVAILABLE_MODAL;
-}>;
-
-type ShowAttachmentNotAvailableModalActionType = ReadonlyDeep<{
-  type: typeof SHOW_ATTACHMENT_NOT_AVAILABLE_MODAL;
-  payload: AttachmentNotAvailableModalType;
-}>;
 
 type HideTapToViewNotAvailableModalActionType = ReadonlyDeep<{
   type: typeof HIDE_TAP_TO_VIEW_NOT_AVAILABLE_MODAL;
@@ -419,6 +409,17 @@ export type ShowErrorModalActionType = ReadonlyDeep<{
   };
 }>;
 
+type CloseDebugLogErrorModalActionType = ReadonlyDeep<{
+  type: typeof CLOSE_DEBUG_LOG_ERROR_MODAL;
+}>;
+
+type ShowDebugLogErrorModalActionType = ReadonlyDeep<{
+  type: typeof SHOW_DEBUG_LOG_ERROR_MODAL;
+  payload: {
+    description?: string;
+  };
+}>;
+
 type CloseMediaPermissionsModalActionType = ReadonlyDeep<{
   type: typeof CLOSE_MEDIA_PERMISSIONS_MODAL;
 }>;
@@ -482,12 +483,12 @@ type CloseEditHistoryModalActionType = ReadonlyDeep<{
 
 export type GlobalModalsActionType = ReadonlyDeep<
   | CloseEditHistoryModalActionType
+  | CloseDebugLogErrorModalActionType
   | CloseErrorModalActionType
   | CloseMediaPermissionsModalActionType
   | CloseGV2MigrationDialogActionType
   | CloseShortcutGuideModalActionType
   | CloseStickerPackPreviewActionType
-  | HideAttachmentNotAvailableModalActionType
   | HideBackfillFailureModalActionType
   | HideContactModalActionType
   | HideCriticalIdlePrimaryDeviceModalActionType
@@ -500,10 +501,10 @@ export type GlobalModalsActionType = ReadonlyDeep<
   | MessageChangedActionType
   | MessageDeletedActionType
   | MessageExpiredActionType
-  | ShowAttachmentNotAvailableModalActionType
   | ShowBackfillFailureModalActionType
   | ShowCriticalIdlePrimaryDeviceModalActionType
   | ShowContactModalActionType
+  | ShowDebugLogErrorModalActionType
   | ShowEditHistoryModalActionType
   | ShowErrorModalActionType
   | ShowLowDiskSpaceBackupImportModalActionType
@@ -538,6 +539,7 @@ export type GlobalModalsActionType = ReadonlyDeep<
 // Action Creators
 
 export const actions = {
+  closeDebugLogErrorModal,
   closeEditHistoryModal,
   closeErrorModal,
   closeGV2MigrationDialog,
@@ -545,7 +547,6 @@ export const actions = {
   closeStickerPackPreview,
   closeMediaPermissionsModal,
   ensureSystemMediaPermissions,
-  hideAttachmentNotAvailableModal,
   hideBackfillFailureModal,
   hideBlockingSafetyNumberChangeDialog,
   hideContactModal,
@@ -555,11 +556,11 @@ export const actions = {
   hideTapToViewNotAvailableModal,
   hideUserNotFoundModal,
   hideWhatsNewModal,
-  showAttachmentNotAvailableModal,
   showBackfillFailureModal,
   showBlockingSafetyNumberChangeDialog,
   showContactModal,
   showCriticalIdlePrimaryDeviceModal,
+  showDebugLogErrorModal,
   showEditHistoryModal,
   showErrorModal,
   showGV2MigrationDialog,
@@ -593,21 +594,6 @@ export const actions = {
 export const useGlobalModalActions = (): BoundActionCreatorsMapObject<
   typeof actions
 > => useBoundActions(actions);
-
-function hideAttachmentNotAvailableModal(): HideAttachmentNotAvailableModalActionType {
-  return {
-    type: HIDE_ATTACHMENT_NOT_AVAILABLE_MODAL,
-  };
-}
-
-function showAttachmentNotAvailableModal(
-  payload: AttachmentNotAvailableModalType
-): ShowAttachmentNotAvailableModalActionType {
-  return {
-    type: SHOW_ATTACHMENT_NOT_AVAILABLE_MODAL,
-    payload,
-  };
-}
 
 function hideTapToViewNotAvailableModal(): HideTapToViewNotAvailableModalActionType {
   return {
@@ -884,6 +870,7 @@ function showShareCallLinkViaSignal(
     const url = linkCallRoute
       .toWebUrl({
         key: callLink.rootKey,
+        epoch: callLink.epoch,
       })
       .toString();
     dispatch(
@@ -1094,6 +1081,25 @@ function showErrorModal({
   };
 }
 
+function closeDebugLogErrorModal(): CloseDebugLogErrorModalActionType {
+  return {
+    type: CLOSE_DEBUG_LOG_ERROR_MODAL,
+  };
+}
+
+function showDebugLogErrorModal({
+  description,
+}: {
+  description?: string;
+}): ShowDebugLogErrorModalActionType {
+  return {
+    type: SHOW_DEBUG_LOG_ERROR_MODAL,
+    payload: {
+      description,
+    },
+  };
+}
+
 function closeMediaPermissionsModal(): CloseMediaPermissionsModalActionType {
   return {
     type: CLOSE_MEDIA_PERMISSIONS_MODAL,
@@ -1295,7 +1301,6 @@ function copyOverMessageAttributesIntoForwardMessages(
 
 export function getEmptyState(): GlobalModalsStateType {
   return {
-    attachmentNotAvailableModalType: undefined,
     backfillFailureModalProps: undefined,
     hasConfirmationModal: false,
     callLinkAddNameModalRoomId: null,
@@ -1382,20 +1387,6 @@ export function reducer(
       userNotFoundModalState: {
         ...action.payload,
       },
-    };
-  }
-
-  if (action.type === HIDE_ATTACHMENT_NOT_AVAILABLE_MODAL) {
-    return {
-      ...state,
-      attachmentNotAvailableModalType: undefined,
-    };
-  }
-
-  if (action.type === SHOW_ATTACHMENT_NOT_AVAILABLE_MODAL) {
-    return {
-      ...state,
-      attachmentNotAvailableModalType: action.payload,
     };
   }
 
@@ -1587,6 +1578,20 @@ export function reducer(
     return {
       ...state,
       errorModalProps: action.payload,
+    };
+  }
+
+  if (action.type === CLOSE_DEBUG_LOG_ERROR_MODAL) {
+    return {
+      ...state,
+      debugLogErrorModalProps: undefined,
+    };
+  }
+
+  if (action.type === SHOW_DEBUG_LOG_ERROR_MODAL) {
+    return {
+      ...state,
+      debugLogErrorModalProps: action.payload,
     };
   }
 

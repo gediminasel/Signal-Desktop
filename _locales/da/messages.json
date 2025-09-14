@@ -1370,6 +1370,12 @@
   "icu:Preferences__EditChatFolderPage__IncludedChatsSection__Help": {
     "messageformat": "Vælg de chats, du vil have vist i denne mappe"
   },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__DirectChats": {
+    "messageformat": "1:1-chats"
+  },
+  "icu:Preferences__EditChatFolderPage__IncludedChatsSection__GroupChats": {
+    "messageformat": "Gruppesamtaler"
+  },
   "icu:Preferences__EditChatFolderPage__IncludedChatsSection__AddChatsButton": {
     "messageformat": "Tilføj chats"
   },
@@ -2063,6 +2069,9 @@
   "icu:Toast--download-failed": {
     "messageformat": "Download mislykkedes"
   },
+  "icu:Toast--unable-download-from-backup-tier": {
+    "messageformat": "Download of attachment from backup failed"
+  },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "Ændringer kan kun foretages indenfor 24 timer efter at du har sendt denne besked."
   },
@@ -2236,6 +2245,9 @@
   },
   "icu:message--getDescription--disappearing-video": {
     "messageformat": "Vis engangs-video"
+  },
+  "icu:message--getDescription--gif": {
+    "messageformat": "GIF"
   },
   "icu:message--deletedForEveryone": {
     "messageformat": "Beskeden blev slettet."
@@ -3524,6 +3536,15 @@
   "icu:ErrorModal--description": {
     "messageformat": "Prøv venligst igen eller kontakt support"
   },
+  "icu:DebugLogErrorModal__UnexpectedError": {
+    "messageformat": "Der er opstået en ukendt fejl"
+  },
+  "icu:DebugLogErrorModal__SubmitDebugLog": {
+    "messageformat": "Indsend fejlsøgningslog"
+  },
+  "icu:DebugLogErrorModal__SubmitDebugLog__Cancel": {
+    "messageformat": "Nej tak"
+  },
   "icu:Confirmation--confirm": {
     "messageformat": "Okay"
   },
@@ -3954,7 +3975,7 @@
     "messageformat": "En anmodning fra {joinerName} om at deltage i gruppen blev afvist"
   },
   "icu:GroupV2--admin-approval-bounce--pluralized": {
-    "messageformat": "{numberOfRequests, plural, one {{joinerName} requested and canceled their request to join via the group link} other {{joinerName} requested and canceled {numberOfRequests,number} requests to join via the group link}}"
+    "messageformat": "{numberOfRequests, plural, one {{joinerName} anmodede om og annullerede anmodningen om at deltage via gruppelinket} other {{joinerName} anmodede og annullerede {numberOfRequests,number} anmodninger om at deltage via gruppelinket}}"
   },
   "icu:GroupV2--group-link-add--disabled--you": {
     "messageformat": "Du aktiverede gruppelinket med administratorgodkendelse slået fra."
@@ -4992,10 +5013,10 @@
     "messageformat": "Link til brugernavnet skal nulstilles"
   },
   "icu:ProfileEditor__open": {
-    "messageformat": "Open username link screen"
+    "messageformat": "Åbn skærmen med brugernavnslinket"
   },
   "icu:ProfileEditor__username-link__open": {
-    "messageformat": "Open username link screen"
+    "messageformat": "Åbn skærmen med brugernavnslinket"
   },
   "icu:ProfileEditor__username-link__tooltip__title": {
     "messageformat": "Del dit brugernavn"
@@ -5255,6 +5276,12 @@
   "icu:Preferences__auto-convert-emoji--description": {
     "messageformat": "For eksempel vil :-) blive konverteret til <emojify>🙂</emojify>"
   },
+  "icu:Preferences__keep-muted-chats-archived--title": {
+    "messageformat": "Lad ignorerede chats forblive arkiverede"
+  },
+  "icu:Preferences__keep-muted-chats-archived--description": {
+    "messageformat": "Ignorerede chats, der er arkiveret, forbliver arkiverede, når der kommer en ny besked."
+  },
   "icu:Preferences--advanced": {
     "messageformat": "Avanceret"
   },
@@ -5265,7 +5292,7 @@
     "messageformat": "Blokeret"
   },
   "icu:Preferences--signal-backups": {
-    "messageformat": "Signal-sikkerhedskopier"
+    "messageformat": "Signal Secure Backups"
   },
   "icu:Preferences--signal-backups-off-description": {
     "messageformat": "Automatiske sikkerhedskopier med Signals sikre E2E-krypterede lagertjeneste. Kom i gang på din telefon. <learnMoreLink>Få mere at vide.</learnMoreLink>"
@@ -5280,7 +5307,7 @@
     "messageformat": "Sikkerhedskopiering af tekst + alle medier"
   },
   "icu:Preferences--backup-plan-not-found__description": {
-    "messageformat": "Dit abonnement blev ikke fundet. Forny dit abonnement for at fortsætte med at bruge Signal-sikkerhedskopier."
+    "messageformat": "Your subscription was not found. Renew to continue using Signal Secure Backups."
   },
   "icu:Preferences--backup-messages-plan__description": {
     "messageformat": "{mediaDayCount, plural, one {Sikkerhedskopiering af tekst + {mediaDayCount,number} dags medier} other {Sikkerhedskopiering af tekst + {mediaDayCount,number} dages medier}}"
@@ -5298,13 +5325,13 @@
     "messageformat": "Abonnement annulleret"
   },
   "icu:Preferences--backup-media-plan__note": {
-    "messageformat": "Du kan administrere eller opsige dit abonnement på Signal-sikkerhedskopier på din telefon."
+    "messageformat": "You can manage or cancel your Signal Secure Backups subscription on your phone."
   },
   "icu:Preferences--backup-messages-plan__note": {
-    "messageformat": "Du kan administrere eller opgradere Signal-sikkerhedskopier på din telefon."
+    "messageformat": "You can manage or upgrade Signal Secure Backups on your phone."
   },
   "icu:Preferences--backup-plan__not-found__note": {
-    "messageformat": "Du kan administrere eller forny dit abonnement på Signal-sikkerhedskopier på din telefon."
+    "messageformat": "You can manage or renew your Signal Secure Backups subscription on your phone."
   },
   "icu:Preferences--backup-created-at__label": {
     "messageformat": "Seneste sikkerhedskopi"
@@ -6636,6 +6663,12 @@
   "icu:PreferencesDonations__my-support": {
     "messageformat": "Min støtte"
   },
+  "icu:PreferencesDonations__badge-label-one-time": {
+    "messageformat": "{formattedCurrencyAmount} én gang"
+  },
+  "icu:PreferencesDonations__badge-processing-donation": {
+    "messageformat": "Behandler donation…"
+  },
   "icu:PreferencesDonations__donate-button-with-amount": {
     "messageformat": "Donér {formattedCurrencyAmount}"
   },
@@ -6648,8 +6681,14 @@
   "icu:PreferencesDonations__privacy-modal-content": {
     "messageformat": "<paragraph>Signal indsamler eller opbevarer ingen af dine personlige oplysninger, når du donerer.</paragraph><paragraph>Vi bruger Stripe som vores betalingssystem til at modtage dine donationer. Vi tilgår, opbevarer eller gemmer ikke nogen af de oplysninger, du giver dem.</paragraph><paragraph>Signal kan ikke og forbinder ikke din donation til din Signal-konto.</paragraph><paragraph>Tak for din støtte!</paragraph>"
   },
+  "icu:PreferencesDonations__privacy-modal-ok": {
+    "messageformat": "Ok"
+  },
   "icu:PreferencesDonations__receipts": {
     "messageformat": "Kvitteringer"
+  },
+  "icu:PreferencesDonations__receipt-details-button-aria": {
+    "messageformat": "Vis kvitteringsoplysninger"
   },
   "icu:PreferencesDonations__faqs": {
     "messageformat": "Ofte stillede spørgsmål om donationer"
@@ -6682,40 +6721,61 @@
     "messageformat": "Har du problemer? <contactSupportLink>Kontakt support</contactSupportLink>"
   },
   "icu:DonateFlow__amount-picker-custom-amount-placeholder": {
-    "messageformat": "Enter Custom Amount"
+    "messageformat": "Angiv tilpasset beløb"
   },
   "icu:DonateFlow__credit-or-debit-card": {
-    "messageformat": "Credit or Debit Card"
+    "messageformat": "Kredit- eller debetkort"
   },
   "icu:DonateFlow__card-form-instructions": {
-    "messageformat": "Enter your credit or debit card details. Signal does not collect or store your personal information. <learnMoreLink>Learn more</learnMoreLink>"
+    "messageformat": "Angiv dine kredit- eller betalingskortoplysninger. Signal indsamler eller opbevarer ikke dine personlige oplysninger. <learnMoreLink>Få mere at vide</learnMoreLink>"
   },
   "icu:DonateFlow__card-form-card-number": {
-    "messageformat": "Card Number"
+    "messageformat": "Kortnummer"
   },
   "icu:DonateFlow__card-form-expiration-date": {
-    "messageformat": "Expiration Date"
+    "messageformat": "Udløbsdato"
+  },
+  "icu:DonateFlow__card-form-expiration-date-placeholder": {
+    "messageformat": "MM/ÅÅ"
   },
   "icu:DonateFlow__card-form-title-donate-with-amount": {
-    "messageformat": "Donate {formattedCurrencyAmount} to Signal"
+    "messageformat": "Donér {formattedCurrencyAmount} til Signal"
   },
   "icu:DonateFlow__card-form-error-invalid-card-number": {
-    "messageformat": "Invalid card number"
+    "messageformat": "Ugyldigt kortnummer"
   },
   "icu:DonateFlow__card-form-error-expiration-expired": {
-    "messageformat": "Card has expired"
+    "messageformat": "Kortet er udløbet"
   },
   "icu:DonateFlow__card-form-error-year-missing": {
-    "messageformat": "Year required"
+    "messageformat": "År påkrævet"
   },
   "icu:DonateFlow__card-form-error-invalid": {
-    "messageformat": "Invalid"
+    "messageformat": "Ugyldig"
   },
   "icu:DonateFlow__card-form-error-cvc-too-short": {
-    "messageformat": "Code too short"
+    "messageformat": "Koden er for kort"
   },
   "icu:DonateFlow__one-time-donation-boost-badge-info": {
-    "messageformat": "Get the Signal Boost badge for 30 days"
+    "messageformat": "Få et Signal Boost-badge i 30 dage"
+  },
+  "icu:DonateFlow__custom-amount-below-minimum-error": {
+    "messageformat": "Det mindste donationsbeløb er {formattedCurrencyAmount}"
+  },
+  "icu:DonateFlow__custom-amount-below-minimum-tooltip": {
+    "messageformat": "Det mindste beløb, du kan donere, er {formattedCurrencyAmount}"
+  },
+  "icu:DonateFlow__custom-amount-above-maximum-error": {
+    "messageformat": "Det maksimale donationsbeløb er {formattedCurrencyAmount}"
+  },
+  "icu:DonateFlow__discard-dialog-body": {
+    "messageformat": "Hvis du forlader denne side, vil dine kreditkortoplysninger blive slettet. Vil du fortsætte?"
+  },
+  "icu:DonateFlow__discard-dialog-remove-info": {
+    "messageformat": "Fjern oplysninger"
+  },
+  "icu:DonateFlow__continue": {
+    "messageformat": "Fortsæt"
   },
   "icu:DonationReceipt__title": {
     "messageformat": "Kvittering for donation"
@@ -6735,8 +6795,11 @@
   "icu:DonationReceipt__footer-text": {
     "messageformat": "Tak, fordi du støtter Signal! Dit bidrag er med til at fremme missionen om at beskytte ytringsfriheden og muliggøre sikker global kommunikation for millioner af mennesker verden over gennem open source-privatlivsteknologi. Hvis du er bosiddende i USA, bedes du gemme denne kvittering til dine skatteoptegnelser. Signal Technology Foundation er en skattefritaget nonprofitorganisation i USA i henhold til paragraf 501c3 i Internal Revenue Code. Vores føderale skatte-id er 82-4506840."
   },
+  "icu:Donations__OfflineTooltip": {
+    "messageformat": "Du er offline. Opret forbindelse til internettet for at gennemføre donationen."
+  },
   "icu:Donations__Toast__Canceled": {
-    "messageformat": "Donation canceled"
+    "messageformat": "Donation annulleret"
   },
   "icu:Donations__Toast__Completed": {
     "messageformat": "Donation gennemført"
@@ -6754,16 +6817,25 @@
     "messageformat": "Du har en igangværende donation, der kræver yderligere verificering."
   },
   "icu:Donations__Toast__ConfirmationNeeded": {
-    "messageformat": "You have a donation in progress that requires confirmation."
+    "messageformat": "Du har en igangværende donation, der kræver bekræftelse."
+  },
+  "icu:Donations__Toast__DonationCompletedAndBadgeApplicationFailed": {
+    "messageformat": "Donationen lykkedes, men vi kunne ikke opdatere dine badgeindstillinger"
+  },
+  "icu:Donations__BadgeApplicationFailed__Title": {
+    "messageformat": "Donation succeeded, but we could not update your badge settings"
+  },
+  "icu:Donations__BadgeApplicationFailed__Description": {
+    "messageformat": "To update your badge settings on your mobile device, go to Settings → Donate to Signal → Badges."
   },
   "icu:Donations__DonationInterrupted": {
-    "messageformat": "Donation interrupted"
+    "messageformat": "Donationen afbrudt"
   },
   "icu:Donations__DonationInterrupted__Description": {
-    "messageformat": "Your card was not charged. Do you want to retry the donation?"
+    "messageformat": "Dit kort blev ikke debiteret. Vil du prøve at donere igen?"
   },
   "icu:Donations__DonationInterrupted__RetryButton": {
-    "messageformat": "Try again"
+    "messageformat": "Prøv igen"
   },
   "icu:Donations__PaymentMethodDeclined": {
     "messageformat": "Betalingsmetode blev afvist"
@@ -6783,20 +6855,23 @@
   "icu:Donations__GenericError__Description": {
     "messageformat": "Din donation er muligvis ikke blevet gennemført. Klik på “Donér til Signal”, og klik derefter “Donationskvitteringer” for at tjekke dine kvitteringer og bekræfte."
   },
+  "icu:DonationsErrorBoundary__DonationUnexpectedError": {
+    "messageformat": "Prøv igen, eller send en fejlfindingslog til support for at få hjælp til at fuldføre din donation. Fejlfindingslogfiler hjælper os med at diagnosticere og løse problemet og indeholder ikke identificerende oplysninger."
+  },
   "icu:Donations__Processing": {
     "messageformat": "Behandler donation…"
   },
   "icu:Donations__StillProcessing": {
-    "messageformat": "Behandler stadig"
+    "messageformat": "Donationen er under behandling"
   },
   "icu:Donations__StillProcessing__Description": {
     "messageformat": "Din donation er stadig under behandling. Dette kan tage et par minutter"
   },
   "icu:Donations__TimedOut": {
-    "messageformat": "Donation canceled"
+    "messageformat": "Donation annulleret"
   },
   "icu:Donations__TimedOut__Description": {
-    "messageformat": "It has been too long since you started your donation. Please start over."
+    "messageformat": "Det er for længe siden, du startede din donation. Prøv igen."
   },
   "icu:Donations__3dsValidationNeeded": {
     "messageformat": "Yderligere verificering er påkrævet"
@@ -6815,6 +6890,18 @@
   },
   "icu:Donations__3dsValidationNeeded__CancelDonation": {
     "messageformat": "Annuller donation"
+  },
+  "icu:Donations__badge-modal--title": {
+    "messageformat": "Tak for din støtte!"
+  },
+  "icu:Donations__badge-modal--description": {
+    "messageformat": "Du har optjent en donorbadge fra Signal! Vis det på din profil for at vise din støtte."
+  },
+  "icu:Donations__badge-modal--display-on-profile": {
+    "messageformat": "Vis på profil"
+  },
+  "icu:Donations__badge-modal--help-text": {
+    "messageformat": "Du kan ændre dette på din mobilenhed under Indstillinger → Donér til Signal → Badges"
   },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "Denne version indeholder en række småjusteringer og fejlrettelser som sikrer, at Signal kører problemfrit.",
@@ -6844,13 +6931,13 @@
     "messageformat": "Små tweaks, rettelser og forbedringer af appens præstation. Tak fordi du bruger Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.64--0": {
-    "messageformat": "Vi har forbedret oplevelsen af at læse/ikke læse beskeder under multitasking og rettet en fejl, der nogle gange åbnede den udvidede billedfremviser forkert, hvis man trykkede på mellemrumstasten, mens man søgte efter den perfekte emojireaktion. Du kan stadig zoome, hvis du klikker på billedet, eller hvis du skriver hurtigt nok."
-  },
-  "icu:WhatsNew__v7.65--0": {
-    "messageformat": "Det kan føles som en uundgåelig kamp at finde den rigtige emoji, men vi har rettet en fejl, der kunne forårsage en fejl, efter at man havde trykket på escape-tasten i emoji-søgefeltet."
-  },
   "icu:WhatsNew__v7.66--0": {
-    "messageformat": "This update fixes a few small bugs, including one where emoji reactions weren't being grouped together correctly in some cases."
+    "messageformat": "Denne opdatering retter et par små fejl, herunder en hvor emoji-reaktioner i nogle tilfælde ikke blev grupperet korrekt."
+  },
+  "icu:WhatsNew__v7.67--0": {
+    "messageformat": "Vi har rettet en fejl, der forhindrede donationsmærker i at blive vist korrekt for nogle brugere. Signal er en nonprofitorganisation (501c3), og vi sætter pris på din støtte!"
+  },
+  "icu:WhatsNew__v7.70--0": {
+    "messageformat": "Vi har rettet en fejl i Microsoft Windows, der gjorde titellinjen på Signal Desktop orange i stedet for blå. Hvis du er kommet til at elske farveskemaet med citrustema i løbet af de sidste par dage, og denne fejlrettelse får dig til at føle dig blå, kan du justere din systemaccentfarve i dine Windows-indstillinger."
   }
 }

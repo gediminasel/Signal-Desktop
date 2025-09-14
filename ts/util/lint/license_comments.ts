@@ -1,6 +1,6 @@
-/* eslint-disable no-unreachable */
 // Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
+/* eslint-disable no-unreachable */
 
 // This file doesn't check the format of license files, just the end year. See
 //   `license_comments_test.ts` for those checks, which are meant to be run more often.

@@ -2,39 +2,47 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react';
 import type { ReactNode } from 'react';
-import { css } from './css';
+import { tw } from '../tw';
 import { AxoSymbol, type AxoSymbolName } from '../AxoSymbol';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace AxoBaseMenu {
   // <Content/SubContent>
-  const baseContentStyles = css(
-    'max-w-[300px] min-w-[200px] p-1.5',
+  const baseContentStyles = tw(
+    'max-w-[300px] min-w-[200px]',
     'select-none',
     'rounded-xl bg-elevated-background-tertiary shadow-elevation-3',
-    'data-[state=closed]:animate-fade-out'
+    'data-[state=closed]:animate-fade-out',
+    'forced-colors:border',
+    'forced-colors:bg-[Canvas]',
+    'forced-colors:text-[CanvasText]'
   );
 
-  const baseContentGridStyles = css('grid grid-cols-[min-content_auto]');
+  const baseContentGridStyles = tw('grid grid-cols-[min-content_auto] p-1.5');
 
   // <Group/RadioGroup>
-  const baseGroupStyles = css('col-span-full grid grid-cols-subgrid');
+  const baseGroupStyles = tw('col-span-full grid grid-cols-subgrid');
 
   // <Item/RadioItem/CheckboxItem/SubTrigger/Label/Separator>
-  const baseItemStyles = css(
+  const baseItemStyles = tw(
     'col-span-full grid grid-cols-subgrid items-center'
   );
 
   // <Item/RadioItem/CheckboxItem/SubTrigger/Label> (not Separator)
-  const labeledItemStyles = css(baseItemStyles, 'truncate p-1.5');
+  const labeledItemStyles = tw(baseItemStyles, 'truncate p-1.5');
 
   // <Item/RadioItem/CheckboxItem/SubTrigger> (not Label/Separator)
-  const navigableItemStyles = css(
+  const navigableItemStyles = tw(
     labeledItemStyles,
     'rounded-md type-body-medium',
     'outline-0 data-[highlighted]:bg-fill-secondary-pressed',
     'data-[disabled]:text-label-disabled',
-    'outline-0 outline-border-focused focused:outline-[2.5px]'
+    'outline-0 outline-border-focused focused:outline-[2.5px]',
+    'forced-colors:text-[CanvasText]',
+    'forced-colors:data-[highlighted]:bg-[Highlight]',
+    'forced-colors:data-[highlighted]:text-[HighlightText]',
+    'forced-colors:data-[disabled]:text-[GrayText]',
+    'forced-color-adjust-none'
   );
 
   /**
@@ -58,7 +66,7 @@ export namespace AxoBaseMenu {
   }>;
 
   // <Item/RadioItem/CheckboxItem> (not SubTrigger/Label/Separator)
-  const selectableItemStyles = css(navigableItemStyles);
+  const selectableItemStyles = tw(navigableItemStyles);
 
   /**
    * Used for any selectable content node such as Item, CheckboxItem, or RadioItem,
@@ -81,7 +89,9 @@ export namespace AxoBaseMenu {
 
   export function ItemLeadingSlot(props: ItemLeadingSlotProps): JSX.Element {
     return (
-      <span className="col-start-1 col-end-1 me-1.5 flex items-center gap-1.5">
+      <span
+        className={tw('col-start-1 col-end-1 me-1.5 flex items-center gap-1.5')}
+      >
         {props.children}
       </span>
     );
@@ -93,7 +103,7 @@ export namespace AxoBaseMenu {
 
   export function ItemContentSlot(props: ItemContentSlotProps): JSX.Element {
     return (
-      <span className="col-start-2 col-end-2 flex min-w-0 items-center">
+      <span className={tw('col-start-2 col-end-2 flex min-w-0 items-center')}>
         {props.children}
       </span>
     );
@@ -104,7 +114,7 @@ export namespace AxoBaseMenu {
    * -----------------------
    */
 
-  export const itemTextStyles = css('flex-1 truncate text-start');
+  export const itemTextStyles = tw('flex-1 truncate text-start');
 
   export type ItemTextProps = Readonly<{
     children: ReactNode;
@@ -121,7 +131,7 @@ export namespace AxoBaseMenu {
   export function ItemCheckPlaceholder(
     props: ItemCheckPlaceholderProps
   ): JSX.Element {
-    return <span className="w-3.5">{props.children}</span>;
+    return <span className={tw('w-3.5')}>{props.children}</span>;
   }
 
   export function ItemCheck(): JSX.Element {
@@ -140,7 +150,12 @@ export namespace AxoBaseMenu {
     props: ItemKeyboardShortcutProps
   ): JSX.Element {
     return (
-      <span className="ml-auto px-1 type-body-medium text-label-secondary">
+      <span
+        dir="auto"
+        className={tw(
+          'ms-auto px-1 type-body-medium text-label-secondary forced-colors:text-[inherit]'
+        )}
+      >
         {props.keyboardShortcut}
       </span>
     );
@@ -178,15 +193,15 @@ export namespace AxoBaseMenu {
     children: ReactNode;
   }>;
 
-  export const menuContentStyles = css(
+  export const menuContentStyles = tw(
     baseContentStyles,
     baseContentGridStyles,
     'max-h-(--radix-popper-available-height) overflow-auto [scrollbar-width:none]',
     'overflow-auto [scrollbar-width:none]'
   );
 
-  export const selectContentStyles = css(baseContentStyles);
-  export const selectContentViewportStyles = css(baseContentGridStyles);
+  export const selectContentStyles = tw(baseContentStyles);
+  export const selectContentViewportStyles = tw(baseContentGridStyles);
 
   /**
    * AxoBaseMenu: Item
@@ -204,8 +219,8 @@ export namespace AxoBaseMenu {
       children: ReactNode;
     }>;
 
-  export const menuItemStyles = css(selectableItemStyles);
-  export const selectItemStyles = css(selectableItemStyles);
+  export const menuItemStyles = tw(selectableItemStyles);
+  export const selectItemStyles = tw(selectableItemStyles);
 
   /**
    * AxoBaseMenu: Group
@@ -216,8 +231,8 @@ export namespace AxoBaseMenu {
     children: ReactNode;
   }>;
 
-  export const menuGroupStyles = css(baseGroupStyles);
-  export const selectGroupStyles = css(baseGroupStyles);
+  export const menuGroupStyles = tw(baseGroupStyles);
+  export const selectGroupStyles = tw(baseGroupStyles);
 
   /**
    * AxoBaseMenu: Label
@@ -228,13 +243,13 @@ export namespace AxoBaseMenu {
     children: ReactNode;
   }>;
 
-  const baseLabelStyles = css(
+  const baseLabelStyles = tw(
     labeledItemStyles,
     'type-body-small text-label-secondary'
   );
 
-  export const menuLabelStyles = css(baseLabelStyles);
-  export const selectLabelStyles = css(baseLabelStyles);
+  export const menuLabelStyles = tw(baseLabelStyles);
+  export const selectLabelStyles = tw(baseLabelStyles);
 
   /**
    * AxoBaseMenu: CheckboxItem
@@ -255,7 +270,7 @@ export namespace AxoBaseMenu {
       children: ReactNode;
     }>;
 
-  export const menuCheckboxItemStyles = css(selectableItemStyles);
+  export const menuCheckboxItemStyles = tw(selectableItemStyles);
 
   /**
    * AxoBaseMenu: RadioGroup
@@ -275,7 +290,7 @@ export namespace AxoBaseMenu {
     children: ReactNode;
   }>;
 
-  export const menuRadioGroupStyles = css(baseGroupStyles);
+  export const menuRadioGroupStyles = tw(baseGroupStyles);
 
   /**
    * AxoBaseMenu: RadioItem
@@ -288,7 +303,7 @@ export namespace AxoBaseMenu {
       children: ReactNode;
     }>;
 
-  export const menuRadioItemStyles = css(selectableItemStyles);
+  export const menuRadioItemStyles = tw(selectableItemStyles);
 
   /**
    * AxoBaseMenu: Separator
@@ -299,13 +314,13 @@ export namespace AxoBaseMenu {
     // N/A
   }>;
 
-  const baseSeparatorStyles = css(
+  const baseSeparatorStyles = tw(
     baseItemStyles,
     'mx-0.5 my-1 border-t-[0.5px] border-border-primary'
   );
 
-  export const menuSeparatorStyles = css(baseSeparatorStyles);
-  export const selectSeperatorStyles = css(baseSeparatorStyles);
+  export const menuSeparatorStyles = tw(baseSeparatorStyles);
+  export const selectSeperatorStyles = tw(baseSeparatorStyles);
 
   /**
    * AxoBaseMenu: Sub
@@ -326,9 +341,11 @@ export namespace AxoBaseMenu {
       children: ReactNode;
     }>;
 
-  export const menuSubTriggerStyles = css(
+  export const menuSubTriggerStyles = tw(
     navigableItemStyles,
-    'data-[state=open]:not-data-[highlighted]:bg-fill-secondary'
+    'data-[state=open]:not-data-[highlighted]:bg-fill-secondary',
+    'forced-colors:data-[state=open]:not-data-[highlighted]:bg-[Highlight]',
+    'forced-colors:data-[state=open]:not-data-[highlighted]:text-[HighlightText]'
   );
 
   /**
@@ -340,7 +357,7 @@ export namespace AxoBaseMenu {
     children: ReactNode;
   }>;
 
-  export const menuSubContentStyles = css(
+  export const menuSubContentStyles = tw(
     baseContentStyles,
     'max-h-(--radix-popper-available-height) overflow-auto [scrollbar-width:none]',
     baseContentGridStyles

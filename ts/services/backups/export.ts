@@ -142,7 +142,10 @@ import {
   isCallHistoryForUnusedCallLink,
   toAdminKeyBytes,
 } from '../../util/callLinks';
-import { getRoomIdFromRootKey } from '../../util/callLinksRingrtc';
+import {
+  getRoomIdFromRootKey,
+  toEpochBytes,
+} from '../../util/callLinksRingrtc';
 import { SeenStatus } from '../../MessageSeenStatus';
 import { migrateAllMessages } from '../../messages/migrateMessageData';
 import { isBodyTooLong, trimBody } from '../../util/longAttachment';
@@ -246,10 +249,7 @@ export class BackupExportStream extends Readable {
   readonly #serviceIdToRecipientId = new Map<string, number>();
   readonly #e164ToRecipientId = new Map<string, number>();
   readonly #roomIdToRecipientId = new Map<string, number>();
-  readonly #mediaNamesToLocatorInfos = new Map<
-    string,
-    Backups.FilePointer.ILocatorInfo
-  >();
+  readonly #mediaNamesToFilePointers = new Map<string, Backups.FilePointer>();
   readonly #stats: StatsType = {
     adHocCalls: 0,
     callLinks: 0,
@@ -352,7 +352,7 @@ export class BackupExportStream extends Readable {
   }
 
   public getMediaNamesIterator(): MapIterator<string> {
-    return this.#mediaNamesToLocatorInfos.keys();
+    return this.#mediaNamesToFilePointers.keys();
   }
 
   public getStats(): Readonly<StatsType> {
@@ -473,6 +473,7 @@ export class BackupExportStream extends Readable {
     for (const link of callLinks) {
       const {
         rootKey: rootKeyString,
+        epoch,
         adminKey,
         name,
         restrictions,
@@ -495,6 +496,7 @@ export class BackupExportStream extends Readable {
           id: Long.fromNumber(id),
           callLink: {
             rootKey: rootKey.bytes,
+            epoch: epoch ? toEpochBytes(epoch) : null,
             adminKey: adminKey ? toAdminKeyBytes(adminKey) : null,
             name,
             restrictions: toCallLinkRestrictionsProto(restrictions),
@@ -2603,16 +2605,17 @@ export class BackupExportStream extends Readable {
       const mediaName = getMediaNameForAttachment(attachment);
 
       // Re-use existing locatorInfo and backup job if we've already seen this file
-      const existingLocatorInfo = this.#mediaNamesToLocatorInfos.get(mediaName);
+      const existingFilePointer = this.#mediaNamesToFilePointers.get(mediaName);
 
-      if (existingLocatorInfo) {
-        filePointer.locatorInfo = existingLocatorInfo;
+      if (existingFilePointer?.locatorInfo) {
+        filePointer.locatorInfo = existingFilePointer.locatorInfo;
+        // Also copy over incrementalMac, since that depends on the encryption key
+        filePointer.incrementalMac = existingFilePointer.incrementalMac;
+        filePointer.incrementalMacChunkSize =
+          existingFilePointer.incrementalMacChunkSize;
       } else {
         if (filePointer.locatorInfo) {
-          this.#mediaNamesToLocatorInfos.set(
-            mediaName,
-            filePointer.locatorInfo
-          );
+          this.#mediaNamesToFilePointers.set(mediaName, filePointer);
         }
 
         if (backupJob) {
@@ -2678,9 +2681,15 @@ export class BackupExportStream extends Readable {
       sendStateByConversationId = {},
       unidentifiedDeliveries = [],
       errors = [],
+      received_at_ms: receivedAtMs,
+      editMessageReceivedAtMs,
     }: Pick<
       MessageAttributesType,
-      'sendStateByConversationId' | 'unidentifiedDeliveries' | 'errors'
+      | 'sendStateByConversationId'
+      | 'unidentifiedDeliveries'
+      | 'errors'
+      | 'received_at_ms'
+      | 'editMessageReceivedAtMs'
     >,
     { conversationId }: { conversationId: string }
   ): Backups.ChatItem.IOutgoingMessageDetails {
@@ -2779,8 +2788,12 @@ export class BackupExportStream extends Readable {
 
       sendStatuses.push(sendStatus);
     }
+
+    const dateReceived = editMessageReceivedAtMs || receivedAtMs;
     return {
       sendStatus: sendStatuses,
+      dateReceived:
+        dateReceived != null ? getSafeLongFromTimestamp(dateReceived) : null,
     };
   }
 

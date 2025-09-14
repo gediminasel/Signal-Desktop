@@ -95,7 +95,7 @@
 @use 'components/DebugLogWindow.scss';
 @use 'components/DeleteMessagesModal.scss';
 @use 'components/DisappearingTimeDialog.scss';
-@use 'components/DisappearingTimerSelect.scss';
+@use 'components/DonationThanksModal.scss';
 @use 'components/DonationErrorModal.scss';
 @use 'components/DonationForm.scss';
 @use 'components/DonationInterruptedModal.scss';
@@ -155,7 +155,6 @@
 @use 'components/ProfileMovedModal.scss';
 @use 'components/ProfileNameWarningModal.scss';
 @use 'components/ProgressBar.scss';
-@use 'components/ProgressCircle.scss';
 @use 'components/Quote.scss';
 @use 'components/ReactionPickerPicker.scss';
 @use 'components/RecordingComposer.scss';
@@ -174,7 +173,6 @@
 @use 'components/SignalConnectionsModal.scss';
 @use 'components/SignalConversationMuteToggle.scss';
 @use 'components/Slider.scss';
-@use 'components/SpinnerV2.scss';
 @use 'components/StagedLinkPreview.scss';
 @use 'components/StickerManager.scss';
 @use 'components/Stories.scss';

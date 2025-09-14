@@ -4,6 +4,7 @@
 import { z } from 'zod';
 
 export const ONE_TIME_DONATION_CONFIG_ID = '1';
+export const BOOST_ID = 'BOOST';
 
 export const donationStateSchema = z.enum([
   'INTENT',
@@ -14,6 +15,8 @@ export const donationStateSchema = z.enum([
   'DONE',
 ]);
 
+export type DonationStateType = z.infer<typeof donationStateSchema>;
+
 export const donationErrorTypeSchema = z.enum([
   // Used if the user is redirected back from validation, but continuing forward fails
   'Failed3dsValidation',
@@ -23,6 +26,8 @@ export const donationErrorTypeSchema = z.enum([
   'PaymentDeclined',
   // When it's been too long since the last step of the donation, and card wasn't charged
   'TimedOut',
+  // When donation succeeds but badge application fails
+  'BadgeApplicationFailed',
 ]);
 export type DonationErrorType = z.infer<typeof donationErrorTypeSchema>;
 

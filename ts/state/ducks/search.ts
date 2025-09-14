@@ -46,6 +46,7 @@ import { removeDiacritics } from '../../util/removeDiacritics';
 import { createLogger } from '../../logging/log';
 import { searchConversationTitles } from '../../util/searchConversationTitles';
 import { isDirectConversation } from '../../util/whatTypeOfConversation';
+import { isConversationSMSOnly } from '../../util/isConversationSMSOnly';
 import {
   countConversationUnreadStats,
   hasUnread,
@@ -226,10 +227,22 @@ function endSearch(): EndSearchActionType {
     payload: null,
   };
 }
-function endConversationSearch(): EndConversationSearchActionType {
-  return {
-    type: 'END_CONVERSATION_SEARCH',
-    payload: null,
+function endConversationSearch(): ThunkAction<
+  void,
+  RootStateType,
+  unknown,
+  EndConversationSearchActionType
+> {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: 'END_CONVERSATION_SEARCH',
+      payload: null,
+    });
+
+    doSearch({
+      dispatch,
+      state: getState(),
+    });
   };
 }
 function searchInConversation(
@@ -568,7 +581,12 @@ async function queryConversationsAndContacts(
   const normalizedQuery = removeDiacritics(query);
 
   const visibleConversations = allConversations.filter(conversation => {
-    const { activeAt, removalStage, isBlocked, messagesDeleted } = conversation;
+    const { activeAt, removalStage, isBlocked, hasMessages, messagesDeleted } =
+      conversation;
+
+    if (isConversationSMSOnly(conversation) && !hasMessages) {
+      return false;
+    }
 
     if (isDirectConversation(conversation)) {
       // if a conversation has messages (i.e. is not "deleted"), always show it
@@ -785,8 +803,9 @@ export function reducer(
 
   if (action.type === 'END_CONVERSATION_SEARCH') {
     return {
-      ...getEmptyState(),
+      ...state,
       startSearchCounter: state.startSearchCounter + 1,
+      searchConversationId: undefined,
       globalSearch: true,
     };
   }

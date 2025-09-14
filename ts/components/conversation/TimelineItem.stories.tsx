@@ -109,7 +109,6 @@ const getDefaultProps = () => ({
   showExpiredOutgoingTapToViewToast: action(
     'showExpiredIncomingTapToViewToast'
   ),
-  showAttachmentNotAvailableModal: action('showAttachmentNotAvailableModal'),
   showMediaNoLongerAvailableToast: action('showMediaNoLongerAvailableToast'),
   showTapToViewNotAvailableModal: action('showTapToViewNotAvailableModal'),
   scrollToQuotedMessage: action('scrollToQuotedMessage'),

@@ -38,6 +38,7 @@ import {
   getBackupMediaRootKey,
   deriveBackupMediaKeyMaterial,
   type BackupMediaKeyMaterialType,
+  deriveBackupThumbnailTransitKeyMaterial,
 } from '../services/backups/crypto';
 import { backupsService } from '../services/backups';
 import {
@@ -50,6 +51,7 @@ import { IV_LENGTH, MAC_LENGTH } from '../types/Crypto';
 import { BackupCredentialType } from '../types/backups';
 import { getValue } from '../RemoteConfig';
 import { parseIntOrThrow } from '../util/parseIntOrThrow';
+import { HTTPError } from './Errors';
 
 const log = createLogger('downloadAttachment');
 
@@ -72,7 +74,7 @@ function getBackupThumbnailInnerEncryptionKeyMaterial(
 ): BackupMediaKeyMaterialType {
   const mediaId = getMediaIdForAttachmentThumbnail(attachment);
   const backupKey = getBackupMediaRootKey();
-  return deriveBackupMediaKeyMaterial(backupKey, mediaId.bytes);
+  return deriveBackupThumbnailTransitKeyMaterial(backupKey, mediaId.bytes);
 }
 function getBackupThumbnailOuterEncryptionKeyMaterial(
   attachment: BackupableAttachmentType
@@ -112,18 +114,16 @@ export async function downloadAttachment(
     | { attachment: BackupableAttachmentType; mediaTier: MediaTier.BACKUP },
   options: {
     disableRetries?: boolean;
-    logPrefix?: string;
+    logId: string;
     onSizeUpdate: (totalBytes: number) => void;
     timeout?: number;
     variant: AttachmentVariant;
     abortSignal: AbortSignal;
   }
 ): Promise<ReencryptedAttachmentV2> {
-  const logId = `downloadAttachment/${options.logPrefix ?? ''}`;
-
   const { digest, plaintextHash, incrementalMac, chunkSize, key, size } =
     attachment;
-
+  const { logId } = options;
   try {
     strictAssert(
       digest || plaintextHash,
@@ -137,10 +137,15 @@ export async function downloadAttachment(
 
   let downloadResult: Awaited<ReturnType<typeof downloadToDisk>>;
 
-  let { downloadPath } = attachment;
+  let downloadPath =
+    options.variant === AttachmentVariant.Default
+      ? attachment.downloadPath
+      : undefined;
+
   const absoluteDownloadPath = downloadPath
     ? window.Signal.Migrations.getAbsoluteDownloadsPath(downloadPath)
     : undefined;
+
   let downloadOffset = 0;
 
   if (absoluteDownloadPath) {
@@ -162,7 +167,10 @@ export async function downloadAttachment(
   }
 
   // Start over if we go over the size
-  if (downloadOffset >= size && absoluteDownloadPath) {
+  if (
+    downloadOffset >= getAttachmentCiphertextLength(size) &&
+    absoluteDownloadPath
+  ) {
     log.warn('went over, retrying');
     await safeUnlink(absoluteDownloadPath);
     downloadOffset = 0;
@@ -194,9 +202,6 @@ export async function downloadAttachment(
         downloadOffset,
       },
     });
-    log.info(
-      `${logId}: calling downloadToDisk with ${downloadPath ? '' : 'no '}downloadPath`
-    );
     downloadResult = await downloadToDisk({
       downloadOffset,
       downloadPath,
@@ -222,17 +227,26 @@ export async function downloadAttachment(
     const backupDir = await backupsService.api.getBackupDir();
     const mediaDir = await backupsService.api.getMediaDir();
 
-    const downloadStream = await server.getAttachmentFromBackupTier({
-      mediaId: mediaId.string,
-      backupDir,
-      mediaDir,
-      headers: cdnCredentials.headers,
-      cdnNumber,
-      options: {
-        ...options,
-        downloadOffset,
-      },
-    });
+    let downloadStream: Readable;
+    try {
+      downloadStream = await server.getAttachmentFromBackupTier({
+        mediaId: mediaId.string,
+        backupDir,
+        mediaDir,
+        headers: cdnCredentials.headers,
+        cdnNumber,
+        options: {
+          ...options,
+          downloadOffset,
+        },
+      });
+    } catch (error) {
+      if (error instanceof HTTPError && error.code === 401) {
+        window.Signal.Services.backups.credentials.onCdnCredentialError();
+      }
+      throw error;
+    }
+
     downloadResult = await downloadToDisk({
       downloadStream,
       downloadPath,
@@ -299,7 +313,7 @@ export async function downloadAttachment(
         // backup thumbnails don't get trimmed, so we just calculate the size as the
         // ciphertextSize, less IV and MAC
         const calculatedSize = downloadSize - IV_LENGTH - MAC_LENGTH;
-        return decryptAndReencryptLocally({
+        return await decryptAndReencryptLocally({
           type: 'backupThumbnail',
           ciphertextPath: cipherTextAbsolutePath,
           idForLogging: logId,

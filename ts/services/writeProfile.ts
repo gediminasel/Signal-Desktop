@@ -50,6 +50,7 @@ export async function writeProfile(
     rawAvatarPath,
     familyName,
     firstName,
+    badges,
   } = conversation;
 
   strictAssert(
@@ -135,12 +136,13 @@ export async function writeProfile(
     maybeProfileAvatarUpdate = { profileAvatar: undefined };
   }
 
-  // Update backbone, update DB, run storage service upload
+  // Update model, update DB, run storage service upload
   model.set({
     about: aboutText,
     aboutEmoji,
     profileName: firstName,
     profileFamilyName: familyName,
+    badges: badges ? [...badges] : undefined,
     ...maybeProfileAvatarUpdate,
   });
 

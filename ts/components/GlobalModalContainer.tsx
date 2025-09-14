@@ -22,7 +22,6 @@ import { SignalConnectionsModal } from './SignalConnectionsModal';
 import { WhatsNewModal } from './WhatsNewModal';
 import { MediaPermissionsModal } from './MediaPermissionsModal';
 import type { StartCallData } from './ConfirmLeaveCallModal';
-import type { AttachmentNotAvailableModalType } from './AttachmentNotAvailableModal';
 import {
   TapToViewNotAvailableModal,
   type DataPropsType as TapToViewNotAvailablePropsType,
@@ -43,9 +42,6 @@ export type PropsType = {
   // AddUserToAnotherGroupModal
   addUserToAnotherGroupModalContactId: string | undefined;
   renderAddUserToAnotherGroup: () => JSX.Element;
-  // AttachmentNotAvailableModal
-  attachmentNotAvailableModalType: AttachmentNotAvailableModalType | undefined;
-  renderAttachmentNotAvailableModal: () => JSX.Element;
   // CallLinkAddNameModal
   callLinkAddNameModalRoomId: string | null;
   renderCallLinkAddNameModal: () => JSX.Element;
@@ -80,6 +76,13 @@ export type PropsType = {
     description?: string;
     title?: string | null;
   }) => JSX.Element;
+  // DebugLogErrorModal
+  debugLogErrorModalProps:
+    | {
+        description?: string;
+      }
+    | undefined;
+  renderDebugLogErrorModal: (opts: { description?: string }) => JSX.Element;
   // DeleteMessageModal
   deleteMessagesProps: DeleteMessagesPropsType | undefined;
   renderDeleteMessagesModal: () => JSX.Element;
@@ -156,9 +159,6 @@ export type PropsType = {
 
 export function GlobalModalContainer({
   i18n,
-  // AttachmentNotAvailableModal
-  attachmentNotAvailableModalType,
-  renderAttachmentNotAvailableModal,
   // AddUserToAnotherGroupModal
   addUserToAnotherGroupModalContactId,
   renderAddUserToAnotherGroup,
@@ -186,6 +186,9 @@ export function GlobalModalContainer({
   // ErrorModal
   errorModalProps,
   renderErrorModal,
+  // DebugLogErrorModal
+  debugLogErrorModalProps,
+  renderDebugLogErrorModal,
   // DeleteMessageModal
   deleteMessagesProps,
   renderDeleteMessagesModal,
@@ -261,6 +264,11 @@ export function GlobalModalContainer({
   // Errors
   if (errorModalProps) {
     return renderErrorModal(errorModalProps);
+  }
+
+  // Errors where we want them to submit a debug log
+  if (debugLogErrorModalProps) {
+    return renderDebugLogErrorModal(debugLogErrorModalProps);
   }
 
   // Safety Number
@@ -403,10 +411,6 @@ export function GlobalModalContainer({
         {content}
       </ConfirmationDialog>
     );
-  }
-
-  if (attachmentNotAvailableModalType) {
-    return renderAttachmentNotAvailableModal();
   }
 
   if (tapToViewNotAvailableModalProps) {
