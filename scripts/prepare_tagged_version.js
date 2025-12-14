@@ -1,10 +1,14 @@
 // Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-const fs = require('fs');
-const { execSync } = require('child_process');
+const fs = require('node:fs');
+const { execSync } = require('node:child_process');
 
 const _ = require('lodash');
+const {
+  default: packageJson,
+  version: currentVersion,
+} = require('./packageJson.js');
 
 const release = process.argv[2];
 if (release !== 'alpha' && release !== 'axolotl' && release !== 'adhoc') {
@@ -12,13 +16,9 @@ if (release !== 'alpha' && release !== 'axolotl' && release !== 'adhoc') {
   process.exit(1);
 }
 
-const { generateTaggedVersion } = require('../ts/util/version');
+const { generateTaggedVersion } = require('../ts/util/version.std.js');
 
-const packageJson = require('../package.json');
-
-const { version: currentVersion } = packageJson;
-
-const shortSha = execSync('git rev-parse --short HEAD')
+const shortSha = execSync('git rev-parse --short=9 HEAD')
   .toString('utf8')
   .replace(/[\n\r]/g, '');
 

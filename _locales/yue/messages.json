@@ -104,6 +104,15 @@
   "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
     "messageformat": "存取唔到資料庫加密金鑰，因為作業系統嘅加密金鑰環後端由 {previousBackend} 改咗做 {currentBackend}。如果桌面環境有變（例如由 GNOME 轉用 KDE，或者調返轉），就有可能發生呢種情況。\n\n請轉返去之前嘅桌面環境，或者試吓用命令列標幟 --password-store=\"{previousBackendFlag}\" 執行 Signal"
   },
+  "icu:systemEncryptionError": {
+    "messageformat": "System encryption error"
+  },
+  "icu:systemEncryptionError__linuxSafeStorageDecryptionError": {
+    "messageformat": "Unable to decrypt the database encryption key using the OS encryption keyring. This can occur in certain containerized environments such as Flatpak.\n\nWe recommend quitting and checking your OS encryption backend such as gnome-libsecret or kwallet, then trying again.\n\nYou may choose to continue anyway, however the database key will be stored in plaintext on the filesystem and other apps may be able to access it."
+  },
+  "icu:systemEncryptionError__continueWithPlaintextKey": {
+    "messageformat": "Continue with plaintext key"
+  },
   "icu:mainMenuFile": {
     "messageformat": "&File"
   },
@@ -233,6 +242,12 @@
   "icu:archivedConversations": {
     "messageformat": "封存咗嘅聊天"
   },
+  "icu:LeftPane__MoreActionsMenu__AddChatFolder": {
+    "messageformat": "加聊天資料夾"
+  },
+  "icu:LeftPane__MoreActionsMenu__FolderSettings": {
+    "messageformat": "資料夾設定"
+  },
   "icu:LeftPane--pinned": {
     "messageformat": "已經置頂"
   },
@@ -271,6 +286,45 @@
   },
   "icu:LeftPaneFindByHelper__description--findByUsername": {
     "messageformat": "輸入用戶名稱，後面加一點同埋指定嘅配對數字。"
+  },
+  "icu:LeftPane__EmptyView--WithSelectedChatFolder": {
+    "messageformat": "無聊天可以展示"
+  },
+  "icu:LeftPane__EmptyView--WithSelectedChatFolder__FolderSettings": {
+    "messageformat": "資料夾設定"
+  },
+  "icu:LeftPaneChatFolders__ItemLabel--All--Short": {
+    "messageformat": "全部"
+  },
+  "icu:LeftPaneChatFolders__ItemLabel--All": {
+    "messageformat": "全部聊天"
+  },
+  "icu:LeftPaneChatFolders__ItemUnreadBadge__MaxCount": {
+    "messageformat": "{maxCount,number}+"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__MarkAllRead": {
+    "messageformat": "全部剔低話睇咗"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__MuteNotifications": {
+    "messageformat": "將通知較做靜音"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__MuteNotifications__UnmuteAll": {
+    "messageformat": "全部取消靜音"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__UnmuteAll": {
+    "messageformat": "全部取消靜音"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__EditFolder": {
+    "messageformat": "編輯資料夾"
+  },
+  "icu:LeftPane__ConversationListItem__ContextMenu__ChatFolderToggleChatsItem": {
+    "messageformat": "加入資料夾"
+  },
+  "icu:LeftPane__ConversationListItem__ContextMenu__ChatFolderToggleChatsMenu__CreateFolderItem": {
+    "messageformat": "建立資料夾"
+  },
+  "icu:LeftPane__ConversationListItem__ContextMenu__ChatFolderRemoveChatItem": {
+    "messageformat": "喺資料夾度移除"
   },
   "icu:CountryCodeSelect__placeholder": {
     "messageformat": "國碼"
@@ -322,6 +376,9 @@
   },
   "icu:markUnread": {
     "messageformat": "標記做未讀"
+  },
+  "icu:markRead": {
+    "messageformat": "剔低話睇咗"
   },
   "icu:ConversationHeader__menu__selectMessages": {
     "messageformat": "揀選訊息"
@@ -607,6 +664,15 @@
   },
   "icu:Toast--ReceiptSaveFailed": {
     "messageformat": "儲存收據嘅時候出現錯誤。請你再試多次。"
+  },
+  "icu:Toast--ChatFolderAddedChat": {
+    "messageformat": "加咗去「{chatFolderName}」"
+  },
+  "icu:Toast--ChatFolderRemovedChat": {
+    "messageformat": "喺「{chatFolderName}」度踢走咗"
+  },
+  "icu:Toast--ChatFolderCreated": {
+    "messageformat": "加咗「 {chatFolderName} 」資料夾"
   },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "你唔可以同時揀選檔案同埋相片或者影片。"
@@ -1031,14 +1097,98 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "詳細"
   },
+  "icu:MessageContextMenu__PinMessage": {
+    "messageformat": "將訊息置頂"
+  },
+  "icu:MessageContextMenu__UnpinMessage": {
+    "messageformat": "Unpin message"
+  },
+  "icu:Poll__end-poll": {
+    "messageformat": "結束投票"
+  },
+  "icu:PollMessage--SelectOne": {
+    "messageformat": "投票 · 揀一項"
+  },
+  "icu:PollMessage--SelectMultiple": {
+    "messageformat": "投票 · 揀一項或者多項"
+  },
+  "icu:PollMessage--FinalResults": {
+    "messageformat": "投票 · 最後結果"
+  },
+  "icu:PollMessage__ViewVotesButton": {
+    "messageformat": "睇吓投票"
+  },
+  "icu:PollMessage--YouVoted": {
+    "messageformat": "你投咗呢項"
+  },
+  "icu:PollTerminate--you": {
+    "messageformat": "你摺咗個投票：{poll}"
+  },
+  "icu:PollTerminate--other": {
+    "messageformat": "{name} 摺咗個投票：{poll}"
+  },
+  "icu:PollTerminate__view-poll": {
+    "messageformat": "睇吓個投票"
+  },
+  "icu:PollVotesModal__title": {
+    "messageformat": "投票詳情"
+  },
+  "icu:PollVotesModal__questionLabel": {
+    "messageformat": "發問"
+  },
+  "icu:PollVotesModal__voteCount": {
+    "messageformat": "{count, plural, other {{count,number} 個投票}}"
+  },
+  "icu:PollVotesModal__noVotes": {
+    "messageformat": "未有人投票"
+  },
+  "icu:PollVotesModal__winningOption": {
+    "messageformat": "贏咗"
+  },
+  "icu:Toast--PinnedMessageNotFound": {
+    "messageformat": "搵唔到置頂嘅訊息"
+  },
+  "icu:Toast--PollNotFound": {
+    "messageformat": "搵唔到個投票"
+  },
+  "icu:PollCreateModal__title": {
+    "messageformat": "新嘅投票"
+  },
+  "icu:PollCreateModal__questionLabel": {
+    "messageformat": "發問"
+  },
+  "icu:PollCreateModal__questionPlaceholder": {
+    "messageformat": "問條問題"
+  },
+  "icu:PollCreateModal__optionsLabel": {
+    "messageformat": "選項"
+  },
+  "icu:PollCreateModal__optionPlaceholder": {
+    "messageformat": "選項 {number}"
+  },
+  "icu:PollCreateModal__allowMultipleVotes": {
+    "messageformat": "欽准投多幾票"
+  },
+  "icu:PollCreateModal__sendButton": {
+    "messageformat": "傳送"
+  },
+  "icu:PollCreateModal__Error--RequiresQuestion": {
+    "messageformat": "必須要有投票問題"
+  },
+  "icu:PollCreateModal__Error--RequiresTwoOptions": {
+    "messageformat": "投票最少要有 2 個選項"
+  },
+  "icu:PollCreateModal__Error--QuestionTooLong": {
+    "messageformat": "條問題太長"
+  },
+  "icu:PollCreateModal__Error--OptionTooLong": {
+    "messageformat": "個選項太長"
+  },
   "icu:deleteConversation": {
     "messageformat": "刪除"
   },
   "icu:ConversationHeader__DeleteConversationConfirmation__title": {
     "messageformat": "係咪要刪除聊天呀？"
-  },
-  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
-    "messageformat": "聊天入面嘅訊息會喺呢部機度刪除。"
   },
   "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
     "messageformat": "聊天入面嘅所有訊息會喺你全部裝置度刪除。"
@@ -1057,6 +1207,108 @@
   },
   "icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description": {
     "messageformat": "你一定要幫呢個群組至少揀咗一個管理員嚟接手，先至可以離開。"
+  },
+  "icu:PinnedMessageNotification__Message--You": {
+    "messageformat": "你已經將訊息置頂"
+  },
+  "icu:PinnedMessageNotification__Message--SomeoneElse": {
+    "messageformat": "{sender}已經將訊息置頂"
+  },
+  "icu:PinnedMessageNotification__Button": {
+    "messageformat": "跳去「訊息」"
+  },
+  "icu:PinMessageDialog__Title": {
+    "messageformat": "置頂訊息有效期..."
+  },
+  "icu:PinMessageDialog__Close": {
+    "messageformat": "關閉"
+  },
+  "icu:PinMessageDialog__Option--TIME_24_HOURS": {
+    "messageformat": "24 個鐘"
+  },
+  "icu:PinMessageDialog__Option--TIME_7_DAYS": {
+    "messageformat": "7 日"
+  },
+  "icu:PinMessageDialog__Option--TIME_30_DAYS": {
+    "messageformat": "30 日"
+  },
+  "icu:PinMessageDialog__Option--FOREVER": {
+    "messageformat": "永久"
+  },
+  "icu:PinMessageDialog__Cancel": {
+    "messageformat": "取消"
+  },
+  "icu:PinMessageDialog__Pin": {
+    "messageformat": "置頂"
+  },
+  "icu:PinnedMessagesBar__AccessibilityLabel": {
+    "messageformat": "{pinsCount, plural, other {置頂嘅訊息}}"
+  },
+  "icu:PinnedMessagesBar__Tab__AccessibilityLabel": {
+    "messageformat": "跳去置頂 {pinNumber,number}"
+  },
+  "icu:PinnedMessagesBar__GoToMessageClickableArea__AccessibilityLabel": {
+    "messageformat": "跳去「訊息」"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__Button__AccessibilityLabel": {
+    "messageformat": "其他操作"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__UnpinMessage": {
+    "messageformat": "取消訊息置頂"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__GoToMessage": {
+    "messageformat": "跳去「訊息」"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__SeeAllMessages": {
+    "messageformat": "睇晒全部訊息"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Address": {
+    "messageformat": "Address"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--VoiceMessage": {
+    "messageformat": "Voice message"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Gif": {
+    "messageformat": "GIF"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--File": {
+    "messageformat": "File"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Contact": {
+    "messageformat": "Contact"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Payment": {
+    "messageformat": "Payment"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Poll": {
+    "messageformat": "Poll"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Sticker": {
+    "messageformat": "Sticker"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Photo": {
+    "messageformat": "Photo"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Video": {
+    "messageformat": "Video"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--VoiceMessage": {
+    "messageformat": "Voice message"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Gif": {
+    "messageformat": "GIF"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Payment": {
+    "messageformat": "Payment"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Sticker": {
+    "messageformat": "Sticker"
+  },
+  "icu:PinnedMessagesPanel__Title": {
+    "messageformat": "Pinned messages"
+  },
+  "icu:PinnedMessagesPanel__UnpinAllMessages": {
+    "messageformat": "Unpin all messages"
   },
   "icu:sessionEnded": {
     "messageformat": "安全對話已經重設"
@@ -1175,36 +1427,6 @@
   "icu:attachmentNotAvailable__tapToViewCannotDownload": {
     "messageformat": "下載唔到閱後即焚媒體"
   },
-  "icu:AttachmentNotAvailableModal__title--file": {
-    "messageformat": "檔案已經冇咗"
-  },
-  "icu:AttachmentNotAvailableModal__title--long-text": {
-    "messageformat": "完整嘅訊息已經冇咗"
-  },
-  "icu:AttachmentNotAvailableModal__title--media": {
-    "messageformat": "媒體已經冇咗"
-  },
-  "icu:AttachmentNotAvailableModal__title--sticker": {
-    "messageformat": "貼圖已經冇咗"
-  },
-  "icu:AttachmentNotAvailableModal__title--voice-message": {
-    "messageformat": "語音訊息已經冇咗"
-  },
-  "icu:AttachmentNotAvailableModal__body--file": {
-    "messageformat": "連結呢部機嗰陣，呢個檔案冇喺你手機度轉移過嚟。連結裝置嗰陣，超過 45 日嘅媒體同檔案冇得同步。"
-  },
-  "icu:AttachmentNotAvailableModal__body--long-text": {
-    "messageformat": "連結呢部機嗰陣，呢個訊息嘅完整文字冇喺你手機度轉移過嚟。連結裝置嗰陣，超過 45 日嘅長文字訊息冇得同步。"
-  },
-  "icu:AttachmentNotAvailableModal__body--media": {
-    "messageformat": "連結呢部機嗰陣，呢個媒體冇喺你手機度轉移過嚟。連結裝置嗰陣，超過 45 日嘅媒體冇得同步。"
-  },
-  "icu:AttachmentNotAvailableModal__body--sticker": {
-    "messageformat": "連結呢部機嗰陣，呢個貼圖冇喺你手機度轉移過嚟。連結裝置嗰陣，超過 45 日嘅媒體同檔案冇得同步。"
-  },
-  "icu:AttachmentNotAvailableModal__body--voice-message": {
-    "messageformat": "連結呢部機嗰陣，呢個語音訊息冇喺你手機度轉移過嚟。連結裝置嗰陣，超過 45 日嘅媒體同檔案冇得同步。"
-  },
   "icu:TapToViewNotAvailableModal__body--expired": {
     "messageformat": "呢個閱後即焚媒體已經冇得下載。叫{name}再傳送多次啦。"
   },
@@ -1292,8 +1514,20 @@
   "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Title": {
     "messageformat": "加聊天資料夾"
   },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Title--WithChatFolders": {
+    "messageformat": "新增或者編輯資料夾"
+  },
   "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Description": {
     "messageformat": "將你嘅聊天整理成資料夾，然後响聊天清單上面快脆咁轉換。"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Description--WithChatFolders": {
+    "messageformat": "{chatFoldersCount, plural, other {{chatFoldersCount,number} 個資料夾}}"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Button": {
+    "messageformat": "設定"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Button--WithChatFolders": {
+    "messageformat": "管理"
   },
   "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__EditFolder": {
     "messageformat": "編輯資料夾"
@@ -1328,14 +1562,14 @@
   "icu:Preferences__ChatFoldersPage__FoldersSection__CreateAFolderButton": {
     "messageformat": "建立資料夾"
   },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__DragHandle__Label": {
+    "messageformat": "拖拉聊天資料夾嚟移動佢"
+  },
   "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__Title": {
     "messageformat": "建議嘅資料夾"
   },
   "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton": {
     "messageformat": "加入去"
-  },
-  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton__Toast": {
-    "messageformat": "加咗「 {chatFolderTitle} 」資料夾"
   },
   "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Title": {
     "messageformat": "未讀"
@@ -1357,6 +1591,9 @@
   },
   "icu:Preferences__EditChatFolderPage__Title": {
     "messageformat": "建立資料夾"
+  },
+  "icu:Preferences__EditChatFolderPage__Title--EditingExistingChatFolder": {
+    "messageformat": "編輯資料夾"
   },
   "icu:Preferences__EditChatFolderPage__FolderNameField__Label": {
     "messageformat": "資料夾個名"
@@ -1534,6 +1771,12 @@
   },
   "icu:calling__removed-from-call-title": {
     "messageformat": "喺通話度移除"
+  },
+  "icu:calling__has-max-devices": {
+    "messageformat": "呢次通話嘅參與者人數已經頂到盡爆晒棚。陣間再試下啦。"
+  },
+  "icu:calling__has-max-devices--title": {
+    "messageformat": "通話人數已經滿咗"
   },
   "icu:CallingLobby__CallLinkNotice": {
     "messageformat": "透過連結加入呢個通話嘅人會睇到你嘅名同相。"
@@ -1853,6 +2096,9 @@
   "icu:notificationReactionMessage": {
     "messageformat": "{sender} 用 {emoji} 回應咗：「{message}」"
   },
+  "icu:notificationPollVoteMessage": {
+    "messageformat": "{sender} 已經喺「{pollQuestion}」投咗票"
+  },
   "icu:sendFailed": {
     "messageformat": "傳送失敗"
   },
@@ -2070,13 +2316,16 @@
     "messageformat": "下載失敗"
   },
   "icu:Toast--unable-download-from-backup-tier": {
-    "messageformat": "Download of attachment from backup failed"
+    "messageformat": "Attachment missing from backup CDN"
   },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "你只可以喺傳送訊息後 24 個鐘內套用編輯。"
   },
   "icu:startConversation--username-not-found": {
     "messageformat": "{atUsername} 唔係 Signal 嘅用戶。請確認你輸入嘅用戶名稱係咪完整。"
+  },
+  "icu:startConversation--username-not-valid": {
+    "messageformat": "{atUsername} 唔係有效嘅用戶名稱。請確保你輸入咗完整嘅用戶名稱，後面加埋專屬嘅兩位數字。"
   },
   "icu:startConversation--phone-number-not-found": {
     "messageformat": "搵唔到呢個用戶。「{phoneNumber}」唔係 Signal 嘅用戶。"
@@ -2231,6 +2480,9 @@
   "icu:message--getNotificationText--stickers": {
     "messageformat": "貼圖訊息"
   },
+  "icu:Poll--preview": {
+    "messageformat": "投票：{pollQuestion}"
+  },
   "icu:message--getNotificationText--text-with-emoji": {
     "messageformat": "{emoji} {text}"
   },
@@ -2357,101 +2609,11 @@
   "icu:stickers--StickerManager--UninstallWarning": {
     "messageformat": "如果你冇咗原本嗰個訊息，就可能裝唔返呢個貼圖包喇。"
   },
-  "icu:stickers--StickerManager--Introduction--Image": {
-    "messageformat": "新推出嘅貼圖：Bandit the Cat"
-  },
-  "icu:stickers--StickerManager--Introduction--Title": {
-    "messageformat": "隆重介紹：貼圖功能"
-  },
-  "icu:stickers--StickerManager--Introduction--Body": {
-    "messageformat": "既然可以用貼圖，點解仲要打字呢？"
-  },
-  "icu:stickers--StickerPicker--Open": {
-    "messageformat": "打開貼圖選擇器"
-  },
-  "icu:stickers--StickerPicker--AddPack": {
-    "messageformat": "新增貼圖包"
-  },
-  "icu:stickers--StickerPicker--NextPage": {
-    "messageformat": "下一頁"
-  },
-  "icu:stickers--StickerPicker--PrevPage": {
-    "messageformat": "上一頁"
-  },
-  "icu:stickers--StickerPicker--Recents": {
-    "messageformat": "最近嘅貼圖"
-  },
-  "icu:stickers--StickerPicker--DownloadError": {
-    "messageformat": "有啲貼圖下載唔到呀。"
-  },
-  "icu:stickers--StickerPicker--DownloadPending": {
-    "messageformat": "安裝緊貼圖包..."
-  },
-  "icu:stickers--StickerPicker--Empty": {
-    "messageformat": "搵唔到貼圖"
-  },
-  "icu:stickers--StickerPicker--Hint": {
-    "messageformat": "你有嚟自訊息嘅新貼圖包可以安裝喎"
-  },
-  "icu:stickers--StickerPicker--NoPacks": {
-    "messageformat": "搵唔到貼圖包"
-  },
-  "icu:stickers--StickerPicker--NoRecents": {
-    "messageformat": "最近用過嘅貼圖會喺呢度顯示。"
-  },
-  "icu:stickers__StickerPicker__recent": {
-    "messageformat": "最近用過"
-  },
-  "icu:stickers__StickerPicker__featured": {
-    "messageformat": "精選"
-  },
-  "icu:stickers__StickerPicker__analog-time": {
-    "messageformat": "類比時間"
-  },
   "icu:stickers--StickerPreview--Title": {
     "messageformat": "貼圖包"
   },
   "icu:stickers--StickerPreview--Error": {
     "messageformat": "開唔到貼圖包。請檢查吓互聯網連線然後再試過啦。"
-  },
-  "icu:EmojiPicker--empty": {
-    "messageformat": "搵唔到表情符號"
-  },
-  "icu:EmojiPicker--search-close": {
-    "messageformat": "閂咗表情符號搜尋"
-  },
-  "icu:EmojiPicker--search-placeholder": {
-    "messageformat": "搵表情符號"
-  },
-  "icu:EmojiPicker--skin-tone": {
-    "messageformat": "膚色 {tone}"
-  },
-  "icu:EmojiPicker__button--recents": {
-    "messageformat": "最近用過"
-  },
-  "icu:EmojiPicker__button--emoji": {
-    "messageformat": "表情符號"
-  },
-  "icu:EmojiPicker__button--animal": {
-    "messageformat": "動物"
-  },
-  "icu:EmojiPicker__button--food": {
-    "messageformat": "食物"
-  },
-  "icu:EmojiPicker__button--activity": {
-    "messageformat": "活動"
-  },
-  "icu:EmojiPicker__button--travel": {
-    "messageformat": "旅行"
-  },
-  "icu:EmojiPicker__button--object": {
-    "messageformat": "物件"
-  },
-  "icu:EmojiPicker__button--symbol": {
-    "messageformat": "符號"
-  },
-  "icu:EmojiPicker__button--flag": {
-    "messageformat": "旗幟"
   },
   "icu:FunPicker__Tab--Emojis": {
     "messageformat": "表情符號"
@@ -2560,6 +2722,9 @@
   },
   "icu:FunPanelStickers__SubNavCategoryLabel--Recents": {
     "messageformat": "最近用過"
+  },
+  "icu:FunPanelStickers__SubNavButton--AddStickerPack": {
+    "messageformat": "新增貼圖包"
   },
   "icu:FunPanelStickers__SectionTitle--SearchResults": {
     "messageformat": "搵到嘅結果"
@@ -3527,9 +3692,6 @@
   "icu:muteExpirationLabel": {
     "messageformat": "靜咗音，直至 {duration}"
   },
-  "icu:EmojiButton__label": {
-    "messageformat": "表情符號"
-  },
   "icu:ErrorModal--title": {
     "messageformat": "系統出現咗啲問題！"
   },
@@ -4292,6 +4454,18 @@
   "icu:CompositionArea--attach-file": {
     "messageformat": "附加檔案"
   },
+  "icu:CompositionArea__AttachMenu__PhotosAndVideos": {
+    "messageformat": "相片同影片"
+  },
+  "icu:CompositionArea__AttachMenu__File": {
+    "messageformat": "檔案"
+  },
+  "icu:CompositionArea__AttachMenu__Poll": {
+    "messageformat": "投票"
+  },
+  "icu:CompositionArea--attach-plus": {
+    "messageformat": "加附件或者投票"
+  },
   "icu:CompositionArea--sms-only__title": {
     "messageformat": "呢個人冇用緊 Signal 喎"
   },
@@ -4442,8 +4616,8 @@
   "icu:ConversationDetailsActions--block-group-modal-confirm": {
     "messageformat": "封鎖"
   },
-  "icu:ConversationDetailsActions--unblock-group-modal-content": {
-    "messageformat": "您嘅聯絡人可以將您加入呢個群組。"
+  "icu:ConversationDetailsActions--unblock-group-modal-body": {
+    "messageformat": "你嘅聯絡人可以將你加入呢個谷。"
   },
   "icu:ConversationDetailsActions--unblock-group-modal-confirm": {
     "messageformat": "解除封鎖"
@@ -4451,11 +4625,8 @@
   "icu:ConversationDetailsHeader--members": {
     "messageformat": "{number, plural, other {{number,number} 位成員}}"
   },
-  "icu:ConversationDetailsMediaList--shared-media": {
-    "messageformat": "分享咗嘅媒體"
-  },
-  "icu:ConversationDetailsMediaList--show-all": {
-    "messageformat": "全部睇晒"
+  "icu:ConversationDetailsMediaList--title": {
+    "messageformat": "媒體、連結和檔案"
   },
   "icu:ConversationDetailsMembershipList--title": {
     "messageformat": "{number, plural, other {{number,number} 位成員}}"
@@ -4949,6 +5120,57 @@
   "icu:ConversationDetailsHeader--add-group-description": {
     "messageformat": "加入群組描述..."
   },
+  "icu:AudioListItem__subtitle--voice-message": {
+    "messageformat": "語音訊息"
+  },
+  "icu:AudioListItem__subtitle--audio": {
+    "messageformat": "音訊檔案"
+  },
+  "icu:LinkPreviewItem__alt": {
+    "messageformat": "喺瀏覽器度打開連結"
+  },
+  "icu:ListItem__show-message": {
+    "messageformat": "喺對話入面顯示訊息"
+  },
+  "icu:MediaGallery__tab__audio": {
+    "messageformat": "音訊檔案"
+  },
+  "icu:MediaGallery__tab__files": {
+    "messageformat": "檔案"
+  },
+  "icu:MediaGallery__tab__links": {
+    "messageformat": "連結"
+  },
+  "icu:MediaGallery__EmptyState__title--media": {
+    "messageformat": "冇任何媒體"
+  },
+  "icu:MediaGallery__EmptyState__description--media": {
+    "messageformat": "你收發嘅相、影片同 GIF 會喺呢度顯示"
+  },
+  "icu:MediaGallery__EmptyState__title--audio": {
+    "messageformat": "冇任何音訊"
+  },
+  "icu:MediaGallery__EmptyState__description--audio": {
+    "messageformat": "你收發嘅語音訊息同音訊檔案會喺呢度顯示"
+  },
+  "icu:MediaGallery__EmptyState__title--links": {
+    "messageformat": "冇連結"
+  },
+  "icu:MediaGallery__EmptyState__description--links-2": {
+    "messageformat": "你收發嘅連結會喺呢度顯示"
+  },
+  "icu:MediaGallery__EmptyState__description--documents": {
+    "messageformat": "你收發嘅連結會喺呢度顯示"
+  },
+  "icu:MediaGallery__EmptyState__title--documents": {
+    "messageformat": "冇檔案"
+  },
+  "icu:MediaGallery__EmptyState__description--documents-2": {
+    "messageformat": "你收發嘅檔案會喺呢度顯示"
+  },
+  "icu:MediaGallery__EmptyState__description--links": {
+    "messageformat": "你收發嘅檔案會喺呢度顯示"
+  },
   "icu:MediaQualitySelector--button": {
     "messageformat": "揀選媒體品質"
   },
@@ -5288,11 +5510,332 @@
   "icu:Preferences--notification-content": {
     "messageformat": "通知內容"
   },
+  "icu:PlaintextExport--PreferencesRow--Header": {
+    "messageformat": "匯出聊天紀錄"
+  },
+  "icu:PlaintextExport--PreferencesRow--Description": {
+    "messageformat": "匯出全部聊天內容嘅可機讀 JSON 副本。唔會匯出自動銷毀訊息。"
+  },
+  "icu:PlaintextExport--ActionButton": {
+    "messageformat": "匯出"
+  },
+  "icu:PlaintextExport--Confirmation--Header": {
+    "messageformat": "係咪要匯出聊天紀錄？"
+  },
+  "icu:PlaintextExport--Confirmation--Description": {
+    "messageformat": "<bold>小心呀！</bold>千祈唔好同任何人分享呢個檔案。你嘅聊天紀錄會儲存喺電腦度，視乎你嘅電腦權限，其他 APP 可能可以存取。"
+  },
+  "icu:PlaintextExport--Confirmation--IncludeMedia": {
+    "messageformat": "包括媒體<secondary>（檔案大細會大啲）</secondary>"
+  },
+  "icu:PlaintextExport--Confirmation--ContinueButton": {
+    "messageformat": "繼續"
+  },
+  "icu:PlaintextExport--Confirmation--WaitingLabel": {
+    "messageformat": "等緊輸入"
+  },
+  "icu:PlaintextExport--OSPrompt--Mac": {
+    "messageformat": "匯出你嘅聊天紀錄"
+  },
+  "icu:PlaintextExport--OSPrompt--Windows": {
+    "messageformat": "驗證你嘅身份嚟匯出聊天紀錄。"
+  },
+  "icu:PlaintextExport--OSPrompt--description--Linux": {
+    "messageformat": "匯出"
+  },
+  "icu:PlaintextExport--OSPrompt--message--Linux": {
+    "messageformat": "要驗證咗先可以匯出聊天紀錄。"
+  },
+  "icu:PlaintextExport--ProgressDialog--Header": {
+    "messageformat": "匯出緊聊天紀錄"
+  },
+  "icu:PlaintextExport--ProgressDialog--Progress": {
+    "messageformat": "匯出緊 {currentBytes} / {totalBytes} ({percentage,number,percent})..."
+  },
+  "icu:PlaintextExport--ProgressDialog--TimeWarning": {
+    "messageformat": "可能要幾分鐘時間"
+  },
+  "icu:PlaintextExport--CompleteDialog--Header": {
+    "messageformat": "匯出完成"
+  },
+  "icu:PlaintextExport--CompleteDialog--Description": {
+    "messageformat": "請<bold>小心</bold>存放你嘅聊天匯出檔案，千祈唔好同任何人分享。視乎你嘅電腦權限，其他 APP 可能可以存取。 "
+  },
+  "icu:PlaintextExport--CompleteDialog--ShowFiles--Mac": {
+    "messageformat": "喺 Finder 度顯示"
+  },
+  "icu:PlaintextExport--CompleteDialog--ShowFiles--Linux": {
+    "messageformat": "喺文件夾度顯示"
+  },
+  "icu:PlaintextExport--CompleteDialog--ShowFiles--Windows": {
+    "messageformat": "喺文件夾度顯示"
+  },
+  "icu:PlaintextExport--Error--General--Title": {
+    "messageformat": "匯出唔到個聊天紀錄"
+  },
+  "icu:PlaintextExport--Error--General--Description": {
+    "messageformat": "發生錯誤，匯出唔到聊天紀錄。"
+  },
+  "icu:PlaintextExport--Error--NotEnoughStorage--Title": {
+    "messageformat": "唔夠儲存空間"
+  },
+  "icu:PlaintextExport--Error--NotEnoughStorage--Detail": {
+    "messageformat": "匯出唔到聊天紀錄，因為你部電腦冇咁多儲存空間。請你搵多 {bytes} 嘅儲存空間然後再試。"
+  },
+  "icu:PlaintextExport--Error--RanOutOfStorage--Title": {
+    "messageformat": "匯出唔到聊天紀錄"
+  },
+  "icu:PlaintextExport--Error--RanOutOfStorage--Detail": {
+    "messageformat": "匯出唔到聊天紀錄，因為你部電腦冇咁多儲存空間。請你搵多 {bytes} 嘅儲存空間然後再試。"
+  },
+  "icu:PlaintextExport--Error--DiskPermssions--Title": {
+    "messageformat": "匯出唔到聊天紀錄"
+  },
+  "icu:PlaintextExport--Error--DiskPermssions--Detail": {
+    "messageformat": "匯出唔到聊天紀錄，因為 Signal 冇權限將檔案寫入磁碟。試下更改磁碟權限或者更新系統設定，然後再匯出。"
+  },
+  "icu:NotificationProfile--moon-icon": {
+    "messageformat": "月亮圖示"
+  },
+  "icu:NotificationProfile--copy-label": {
+    "messageformat": "{profileName} 嘅複製品"
+  },
+  "icu:NotificationProfile--am": {
+    "messageformat": "AM"
+  },
+  "icu:NotificationProfile--pm": {
+    "messageformat": "PM"
+  },
+  "icu:NotificationProfile--time-separator": {
+    "messageformat": ":"
+  },
+  "icu:NotificationProfileMenuItem": {
+    "messageformat": "通知吾揀單"
+  },
+  "icu:NotificationProfileMenu--header": {
+    "messageformat": "通知吾揀單"
+  },
+  "icu:NotificationProfileMenu--on": {
+    "messageformat": "開"
+  },
+  "icu:NotificationProfileMenu--on-with-end": {
+    "messageformat": "開到 {endTime}"
+  },
+  "icu:NotificationProfileMenu--for-one-hour": {
+    "messageformat": "一個鐘"
+  },
+  "icu:NotificationProfileMenu--until-time": {
+    "messageformat": "直至 {time}"
+  },
+  "icu:NotificationProfileMenu--settings": {
+    "messageformat": "設定"
+  },
+  "icu:NotificationProfilesToast--enabled": {
+    "messageformat": "開咗「{name}」"
+  },
+  "icu:NotificationProfilesToast--disabled": {
+    "messageformat": "閂咗「{name}」"
+  },
+  "icu:NotificationProfilesToast--enabled--label": {
+    "messageformat": "通知吾揀單已經啟用"
+  },
+  "icu:NotificationProfilesToast--disabled--label": {
+    "messageformat": "通知吾揀單已經停用"
+  },
+  "icu:NotificationProfiles--setting": {
+    "messageformat": "通知吾揀單"
+  },
+  "icu:NotificationProfiles--setup": {
+    "messageformat": "設定"
+  },
+  "icu:NotificationProfiles--title": {
+    "messageformat": "通知吾揀單"
+  },
+  "icu:NotificationProfiles--setup-description": {
+    "messageformat": "搞搞新揀單，淨係接收你揀選嘅人同谷嘅通知，好圓善五光十色嘅通知濟渡"
+  },
+  "icu:NotificationProfiles--setup-continue": {
+    "messageformat": "繼續"
+  },
+  "icu:NotificationProfiles--manage-description": {
+    "messageformat": "加或者編輯通知吾揀單"
+  },
+  "icu:NotificationProfiles--manage-profiles": {
+    "messageformat": "{profileCount, plural, other {{profileCount,number} 揀單}}"
+  },
+  "icu:NotificationProfiles--create": {
+    "messageformat": "搞搞新揀單"
+  },
+  "icu:NotificationProfiles--name-title": {
+    "messageformat": "改名吾揀單"
+  },
+  "icu:NotificationProfiles--name-title--editing": {
+    "messageformat": "姓名"
+  },
+  "icu:NotificationProfiles--name-placeholder": {
+    "messageformat": "個人檔名"
+  },
+  "icu:NotificationProfiles--sample-name__work": {
+    "messageformat": "公司"
+  },
+  "icu:NotificationProfiles--sample-name__sleep": {
+    "messageformat": "瞓覺"
+  },
+  "icu:NotificationProfiles--sample-name__driving": {
+    "messageformat": "揸車"
+  },
+  "icu:NotificationProfiles--sample-name__downtime": {
+    "messageformat": "攤唞"
+  },
+  "icu:NotificationProfiles--sample-name__focus": {
+    "messageformat": "專心"
+  },
+  "icu:NotificationProfiles--allowed-title": {
+    "messageformat": "欽准嘅通知"
+  },
+  "icu:NotificationProfiles--allowed-description": {
+    "messageformat": "呢壇吾揀單落實嘅時候，你想收到邊啲人同埋谷嘅通知，就喺度加入"
+  },
+  "icu:NotificationProfiles--allowed-add-label": {
+    "messageformat": "加人或者加谷"
+  },
+  "icu:NotificationProfiles--exceptions": {
+    "messageformat": "例外情況"
+  },
+  "icu:NotificationProfiles--exceptions--allow-all-calls": {
+    "messageformat": "批准所有通話"
+  },
+  "icu:NotificationProfiles--exceptions--notify-for-mentions": {
+    "messageformat": "所有提及都開啟通知"
+  },
+  "icu:NotificationProfiles--schedule-title": {
+    "messageformat": "加時間表"
+  },
+  "icu:NotificationProfiles--schedule-title--editing": {
+    "messageformat": "時間表"
+  },
+  "icu:NotificationProfiles--schedule-description": {
+    "messageformat": "啟用同編輯你嘅時間表，等你嘅通知吾揀單定時定候自動啟用。"
+  },
+  "icu:NotificationProfiles--schedule-enable": {
+    "messageformat": "自動啟用"
+  },
+  "icu:NotificationProfiles--schedule": {
+    "messageformat": "時間表"
+  },
+  "icu:NotificationProfiles--schedule-from": {
+    "messageformat": "由"
+  },
+  "icu:NotificationProfiles--schedule-until": {
+    "messageformat": "直至"
+  },
+  "icu:NotificationProfiles--open-time-picker": {
+    "messageformat": "打開時間選擇器"
+  },
+  "icu:NotificationProfiles--schedule-sunday": {
+    "messageformat": "星期日"
+  },
+  "icu:NotificationProfiles--schedule-monday": {
+    "messageformat": "星期一"
+  },
+  "icu:NotificationProfiles--schedule-tuesday": {
+    "messageformat": "星期二"
+  },
+  "icu:NotificationProfiles--schedule-wednesday": {
+    "messageformat": "星期三"
+  },
+  "icu:NotificationProfiles--schedule-thursday": {
+    "messageformat": "星期四"
+  },
+  "icu:NotificationProfiles--schedule-friday": {
+    "messageformat": "星期五"
+  },
+  "icu:NotificationProfiles--schedule-saturday": {
+    "messageformat": "星期六"
+  },
+  "icu:NotificationProfiles--done-title": {
+    "messageformat": "整咗壇吾揀單"
+  },
+  "icu:NotificationProfiles--done-description": {
+    "messageformat": "如果你加咗時間表，通知吾揀單會定時定候自動開閂。你都可以點擊聊天清單上面嘅 ··· 圖示嚟手動開閂。"
+  },
+  "icu:NotificationProfiles--schedule-sunday-short": {
+    "messageformat": "星期日"
+  },
+  "icu:NotificationProfiles--schedule-monday-short": {
+    "messageformat": "星期一"
+  },
+  "icu:NotificationProfiles--schedule-tuesday-short": {
+    "messageformat": "星期二"
+  },
+  "icu:NotificationProfiles--schedule-wednesday-short": {
+    "messageformat": "星期三"
+  },
+  "icu:NotificationProfiles--schedule-thursday-short": {
+    "messageformat": "星期四"
+  },
+  "icu:NotificationProfiles--schedule-friday-short": {
+    "messageformat": "星期五"
+  },
+  "icu:NotificationProfiles--schedule-saturday-short": {
+    "messageformat": "星期六"
+  },
+  "icu:NotificationProfiles--schedule-weekdays": {
+    "messageformat": "平日"
+  },
+  "icu:NotificationProfiles--schedule-weekends": {
+    "messageformat": "週末"
+  },
+  "icu:NotificationProfiles--schedule-daily": {
+    "messageformat": "每日"
+  },
+  "icu:NotificationProfiles--schedule-separator": {
+    "messageformat": "、 "
+  },
+  "icu:NotificationProfiles--list--header": {
+    "messageformat": "揀單"
+  },
+  "icu:NotificationProfiles--list--sync": {
+    "messageformat": "同步到其他裝置"
+  },
+  "icu:NotificationProfiles--list--sync--description": {
+    "messageformat": "通知吾揀單將會喺你唔同嘅裝置度同步。開咗一個裝置嘅吾揀單，就會開埋其他機嘅吾揀單。"
+  },
+  "icu:NotificationProfiles--delete": {
+    "messageformat": "刪除揀單"
+  },
+  "icu:NotificationProfiles--delete-confirmation": {
+    "messageformat": "係咪要永久刪除呢個通知吾揀單？"
+  },
+  "icu:NotificationProfiles--delete-button": {
+    "messageformat": "刪除"
+  },
+  "icu:NotificationProfiles--edit--is-active": {
+    "messageformat": "開"
+  },
+  "icu:NotificationProfiles--edit--is-not-active": {
+    "messageformat": "閂"
+  },
+  "icu:NotificationProfiles--edit--edit-name-label": {
+    "messageformat": "編輯吾揀單個名"
+  },
+  "icu:NotificationProfiles--edit--allowed": {
+    "messageformat": "欽准嘅通知"
+  },
+  "icu:NotificationProfiles--edit--schedule-timing": {
+    "messageformat": "{startTime} 至 {endTime}"
+  },
+  "icu:NotificationProfiles--edit--schedule-enabled": {
+    "messageformat": "開"
+  },
+  "icu:NotificationProfiles--edit--schedule-disabled": {
+    "messageformat": "閂"
+  },
   "icu:Preferences--blocked": {
     "messageformat": "封鎖咗"
   },
   "icu:Preferences--signal-backups": {
-    "messageformat": "Signal Secure Backups"
+    "messageformat": "Signal 安全備份"
   },
   "icu:Preferences--signal-backups-off-description": {
     "messageformat": "用 Signal 嘅端對端加密儲存服務安全自動備份。拎部你部手機出嚟開始備份。<learnMoreLink>了解詳情</learnMoreLink>。"
@@ -5307,7 +5850,10 @@
     "messageformat": "備份文字訊息 + 全部媒體"
   },
   "icu:Preferences--backup-plan-not-found__description": {
-    "messageformat": "Your subscription was not found. Renew to continue using Signal Secure Backups."
+    "messageformat": "搵唔到你嘅課金計劃。喺手機度睇吓備份資料。"
+  },
+  "icu:Preferences--backup-subscription-monthly-cost": {
+    "messageformat": "每月 {cost}"
   },
   "icu:Preferences--backup-messages-plan__description": {
     "messageformat": "{mediaDayCount, plural, other {備份文字訊息 + {mediaDayCount,number} 日嘅媒體}}"
@@ -5325,13 +5871,13 @@
     "messageformat": "取消咗課金計劃"
   },
   "icu:Preferences--backup-media-plan__note": {
-    "messageformat": "You can manage or cancel your Signal Secure Backups subscription on your phone."
+    "messageformat": "你可以喺手機度管理或者取消「Signal 安全備份」課金計劃。"
   },
   "icu:Preferences--backup-messages-plan__note": {
-    "messageformat": "You can manage or upgrade Signal Secure Backups on your phone."
+    "messageformat": "你可以喺手機度管理或者升級「Signal 安全備份」課金計劃。"
   },
   "icu:Preferences--backup-plan__not-found__note": {
-    "messageformat": "You can manage or renew your Signal Secure Backups subscription on your phone."
+    "messageformat": "你可以喺手機度管理「Signal 安全備份」課金計劃或者續期。"
   },
   "icu:Preferences--backup-created-at__label": {
     "messageformat": "上一次備份"
@@ -5362,6 +5908,18 @@
   },
   "icu:Preferences--local-backups-view-backup-key-done": {
     "messageformat": "完成"
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt--mac": {
+    "messageformat": "顯示你嘅備份金鑰"
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt--windows": {
+    "messageformat": "驗證你嘅身份嚟睇吓備份金鑰。"
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt-description--linux": {
+    "messageformat": "睇吓備份金鑰"
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt-message--linux": {
+    "messageformat": "要驗證咗先可以睇備份金鑰。"
   },
   "icu:Preferences--local-backups-backup-key-text-box": {
     "messageformat": "備份金鑰文字框"
@@ -5404,6 +5962,18 @@
   },
   "icu:Preferences__local-backups-copied-key": {
     "messageformat": "已經複製備份金鑰"
+  },
+  "icu:Preferences__local-backups--enable--os-prompt--mac": {
+    "messageformat": "啟用備份"
+  },
+  "icu:Preferences__local-backups--enable--os-prompt--windows": {
+    "messageformat": "驗證你嘅身份嚟啟用備份。"
+  },
+  "icu:Preferences__local-backups--enable--os-prompt-description--linux": {
+    "messageformat": "啟用備份"
+  },
+  "icu:Preferences__local-backups--enable--os-prompt-message--linux": {
+    "messageformat": "要驗證咗先可以啟用備份。"
   },
   "icu:Preferences__view-key": {
     "messageformat": "睇吓金鑰"
@@ -6393,6 +6963,9 @@
   "icu:MessageMetadata__edited": {
     "messageformat": "編輯咗"
   },
+  "icu:MessageMetadata__pinned": {
+    "messageformat": "Pinned"
+  },
   "icu:DraftGifMessageSendModal__Title": {
     "messageformat": "寫返句訊息"
   },
@@ -6404,6 +6977,9 @@
   },
   "icu:EditHistoryMessagesModal__title": {
     "messageformat": "編輯嘅記錄"
+  },
+  "icu:EditHistoryMessagesModal__Message__ContextMenu__CopyTimestamp": {
+    "messageformat": "複製時間標記"
   },
   "icu:ResendMessageEdit__body": {
     "messageformat": "傳送唔到呢個編輯。請你檢查吓網絡連線，然後再試過啦"
@@ -6699,9 +7275,6 @@
   "icu:PreferencesDonations--receiptList__empty-title": {
     "messageformat": "冇收據"
   },
-  "icu:PreferencesDonations__ReceiptModal--title": {
-    "messageformat": "詳情"
-  },
   "icu:PreferencesDonations__ReceiptModal--download": {
     "messageformat": "下載收據"
   },
@@ -6819,14 +7392,11 @@
   "icu:Donations__Toast__ConfirmationNeeded": {
     "messageformat": "你有一筆處理緊嘅捐贈需要確認。"
   },
-  "icu:Donations__Toast__DonationCompletedAndBadgeApplicationFailed": {
+  "icu:Donations__BadgeApplicationFailed__Title": {
     "messageformat": "成功捐款，但係我哋更新唔到你嘅徽章設定"
   },
-  "icu:Donations__BadgeApplicationFailed__Title": {
-    "messageformat": "Donation succeeded, but we could not update your badge settings"
-  },
   "icu:Donations__BadgeApplicationFailed__Description": {
-    "messageformat": "To update your badge settings on your mobile device, go to Settings → Donate to Signal → Badges."
+    "messageformat": "如果想更新流動裝置嘅徽章設定，請去「設定」→「捐款俾 Signal」→「徽章」。"
   },
   "icu:Donations__DonationInterrupted": {
     "messageformat": "捐款中斷"
@@ -6903,6 +7473,90 @@
   "icu:Donations__badge-modal--help-text": {
     "messageformat": "你可以喺流動裝置嘅「設定」→「捐款俾 Signal」→「徽章」度改改佢"
   },
+  "icu:CallQualitySurvey__CloseButton__AccessibilityLabel": {
+    "messageformat": "Close"
+  },
+  "icu:CallQualitySurvey__BackButton__AccessibilityLabel": {
+    "messageformat": "Back"
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__PageTitle": {
+    "messageformat": "How was your call?"
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__PageDescription": {
+    "messageformat": "This helps us improve calls in Signal. No personally identifiable information will be stored."
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__Response__HadIssues": {
+    "messageformat": "Had issues"
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__Response__Great": {
+    "messageformat": "Great"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__PageTitle": {
+    "messageformat": "What issues did you have?"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__IssuesList__Heading": {
+    "messageformat": "Select all that apply"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO": {
+    "messageformat": "Audio issue"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_STUTTERING": {
+    "messageformat": "Audio stuttering"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_LOCAL_ECHO": {
+    "messageformat": "I heard echo"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_REMOTE_ECHO": {
+    "messageformat": "Others heard echo"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_DROP": {
+    "messageformat": "Audio cut out"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO": {
+    "messageformat": "Video issue"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO_NO_CAMERA": {
+    "messageformat": "Camera didn't work"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO_LOW_QUALITY": {
+    "messageformat": "Poor video quality"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO_LOW_RESOLUTION": {
+    "messageformat": "Low resolution"
+  },
+  "icu:CallQualitySurvey__Issue--CALL_DROPPED": {
+    "messageformat": "Call dropped"
+  },
+  "icu:CallQualitySurvey__Issue--OTHER": {
+    "messageformat": "Something else"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__SomethingElse__TextArea__AccessibilityLabel": {
+    "messageformat": "Issues description"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__SomethingElse__TextArea__HelpText": {
+    "messageformat": "Please include any details relevant to the issue. Anything you share here will be kept private and will only be used to help improve calls in Signal."
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__ContinueButton": {
+    "messageformat": "Continue"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__PageTitle": {
+    "messageformat": "Help us improve"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__PageDescription": {
+    "messageformat": "This helps us learn more about calls and what is working or not working. You can view your debug log before submitting."
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__Label": {
+    "messageformat": "Share debug log"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__ViewButton": {
+    "messageformat": "View"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__HelpText": {
+    "messageformat": "Debug logs contain low level app information and do not reveal any of your message contents."
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__SubmitButton": {
+    "messageformat": "Submit"
+  },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "呢個版本包含咗少少調整同埋錯誤修復，等 Signal 可以順暢運作。",
     "ignoreUnused": true
@@ -6931,13 +7585,16 @@
     "messageformat": "我哋做咗啲調整、修復咗一啲錯誤，同埋加強咗程式功能。多謝你使用 Signal！",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.66--0": {
-    "messageformat": "呢次更新修正咗一啲小錯誤，包括表情符號心情回應嘅分類有時會出錯。"
+  "icu:WhatsNew__7.79-1": {
+    "messageformat": "我哋更新咗成個 APP 入面捲軸嘅外觀同風格，令佢哋睇落一致啲。通常如果碌得太快，可能會睇漏啲嘢，但今次改外觀就一定要碌先可以睇到。"
   },
-  "icu:WhatsNew__v7.67--0": {
-    "messageformat": "我們修正咗某啲用戶顯示唔到正確捐款徽章嘅錯誤。Signal 係屬於 501c3 嘅非牟利組織，我哋好多謝你嘅支持！"
+  "icu:WhatsNew__7.79-2": {
+    "messageformat": "改善咗個複製/貼上功能，令到你更容易揀晒全部文字同替換現有嘅文字，而且唔會保留舊格式。唔該晒，<brianHarder></brianHarder>！"
   },
-  "icu:WhatsNew__v7.70--0": {
-    "messageformat": "我們攪掂咗 Microsoft Windows 上面，將 Signal 桌面版標題欄由藍色變成橙色嘅錯誤。如果你已經習慣咗條橙色嘅標題欄，而呢次錯誤修正攪到你唔多習慣，你可以喺 Window 設定度改改個系統主題顏色。"
+  "icu:WhatsNew__7.80-1": {
+    "messageformat": "Signal 嘅投票功能登場啦！你班老友係同你企喺同一陣線，定係打對台？投票係個簡單嘅方法去知道聊天谷成員嘅真正諗法。搞個投票，問下今晚食咩好、去邊度渡假、自駕遊播咩歌，或者其他重要抉擇。聊天谷入面每個人都可以投票同埋睇到大家嘅回應，而你就可以決定係咪俾人投多幾個選項。"
+  },
+  "icu:WhatsNew__7.81-1": {
+    "messageformat": "媒體圖庫而家新加咗兩個選項標籤，分別用嚟顯示語音訊息同埋連結預覽。喺聊天谷度 send 條 link，都可以有「聲」有色啦！"
   }
 }

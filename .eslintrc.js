@@ -100,6 +100,14 @@ const rules = {
 
   // We prefer named exports
   'import/prefer-default-export': 'off',
+  'import/enforce-node-protocol-usage': ['error', 'always'],
+  'import/extensions': [
+    'error',
+    'ignorePackages',
+    {
+      checkTypeImports: true,
+    },
+  ],
 
   // Prefer functional components with default params
   'react/require-default-props': 'off',
@@ -185,6 +193,8 @@ const rules = {
 const typescriptRules = {
   ...rules,
 
+  'local-rules/file-suffix': 'error',
+
   // Override brace style to enable typescript-specific syntax
   'brace-style': 'off',
   '@typescript-eslint/brace-style': [
@@ -252,6 +262,18 @@ const typescriptRules = {
 
   // TODO: DESKTOP-4655
   'import/no-cycle': 'off',
+  'import/no-restricted-paths': [
+    'error',
+    {
+      zones: [
+        {
+          target: ['ts/util', 'ts/types'],
+          from: ['ts/components', 'ts/axo'],
+          message: 'Importing components is forbidden from ts/{util,types}',
+        },
+      ],
+    },
+  ],
 };
 
 const TAILWIND_REPLACEMENTS = [
@@ -310,6 +332,7 @@ module.exports = {
         'ts/**/*.ts',
         'ts/**/*.tsx',
         'app/**/*.ts',
+        'app/**/*.tsx',
         'build/intl-linter/**/*.ts',
       ],
       parser: '@typescript-eslint/parser',
@@ -350,7 +373,7 @@ module.exports = {
       },
     },
     {
-      files: ['ts/**/*_test.{ts,tsx}'],
+      files: ['ts/**/*_test.*.{ts,tsx}'],
       rules: {
         'func-names': 'off',
       },
@@ -424,6 +447,24 @@ module.exports = {
                 };
               }),
             ],
+          },
+        ],
+      },
+    },
+    {
+      files: ['ts/axo/**/*.tsx'],
+      rules: {
+        '@typescript-eslint/no-namespace': 'off',
+        '@typescript-eslint/no-redeclare': [
+          'error',
+          {
+            ignoreDeclarationMerge: true,
+          },
+        ],
+        '@typescript-eslint/explicit-module-boundary-types': [
+          'error',
+          {
+            allowHigherOrderFunctions: false,
           },
         ],
       },

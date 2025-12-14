@@ -104,6 +104,15 @@
   "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
     "messageformat": "Nije moguće pristupiti ključu za šifriranjenje baze podataka jer je pozadina ključeva za šifriranje OS promijenjena iz {previousBackend} u {currentBackend}. Ovo se može dogoditi ako se promijeni okruženje radne površine, na primjer između GNOME-a i KDE-a.\n\nPrebacite se na prethodno okruženje radne površine ili pokušajte pokrenuti Signal s oznakom naredbenog retka --password-store=\"{previousBackendFlag}\""
   },
+  "icu:systemEncryptionError": {
+    "messageformat": "System encryption error"
+  },
+  "icu:systemEncryptionError__linuxSafeStorageDecryptionError": {
+    "messageformat": "Unable to decrypt the database encryption key using the OS encryption keyring. This can occur in certain containerized environments such as Flatpak.\n\nWe recommend quitting and checking your OS encryption backend such as gnome-libsecret or kwallet, then trying again.\n\nYou may choose to continue anyway, however the database key will be stored in plaintext on the filesystem and other apps may be able to access it."
+  },
+  "icu:systemEncryptionError__continueWithPlaintextKey": {
+    "messageformat": "Continue with plaintext key"
+  },
   "icu:mainMenuFile": {
     "messageformat": "&Datoteka"
   },
@@ -233,6 +242,12 @@
   "icu:archivedConversations": {
     "messageformat": "Arhivirani chatovi"
   },
+  "icu:LeftPane__MoreActionsMenu__AddChatFolder": {
+    "messageformat": "Dodaj folder chata"
+  },
+  "icu:LeftPane__MoreActionsMenu__FolderSettings": {
+    "messageformat": "Postavke foldera"
+  },
   "icu:LeftPane--pinned": {
     "messageformat": "Prikvačeno"
   },
@@ -271,6 +286,45 @@
   },
   "icu:LeftPaneFindByHelper__description--findByUsername": {
     "messageformat": "Unesite korisničko ime praćeno tačkom i njenim skupom brojeva."
+  },
+  "icu:LeftPane__EmptyView--WithSelectedChatFolder": {
+    "messageformat": "Nema chatova za prikaz"
+  },
+  "icu:LeftPane__EmptyView--WithSelectedChatFolder__FolderSettings": {
+    "messageformat": "Postavke foldera"
+  },
+  "icu:LeftPaneChatFolders__ItemLabel--All--Short": {
+    "messageformat": "Sve"
+  },
+  "icu:LeftPaneChatFolders__ItemLabel--All": {
+    "messageformat": "Svi razgovori"
+  },
+  "icu:LeftPaneChatFolders__ItemUnreadBadge__MaxCount": {
+    "messageformat": "{maxCount,number}+"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__MarkAllRead": {
+    "messageformat": "Označi sve kao pročitano"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__MuteNotifications": {
+    "messageformat": "Isključi zvuk obavijesti"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__MuteNotifications__UnmuteAll": {
+    "messageformat": "Uključi zvuk za sve"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__UnmuteAll": {
+    "messageformat": "Uključi zvuk za sve"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__EditFolder": {
+    "messageformat": "Uredi folder"
+  },
+  "icu:LeftPane__ConversationListItem__ContextMenu__ChatFolderToggleChatsItem": {
+    "messageformat": "Dodaj u folder"
+  },
+  "icu:LeftPane__ConversationListItem__ContextMenu__ChatFolderToggleChatsMenu__CreateFolderItem": {
+    "messageformat": "Kreiraj folder"
+  },
+  "icu:LeftPane__ConversationListItem__ContextMenu__ChatFolderRemoveChatItem": {
+    "messageformat": "Ukloni iz foldera"
   },
   "icu:CountryCodeSelect__placeholder": {
     "messageformat": "Državni kōd"
@@ -322,6 +376,9 @@
   },
   "icu:markUnread": {
     "messageformat": "Označi kao nepročitano"
+  },
+  "icu:markRead": {
+    "messageformat": "Označi kao pročitano"
   },
   "icu:ConversationHeader__menu__selectMessages": {
     "messageformat": "Odaberite poruke"
@@ -607,6 +664,15 @@
   },
   "icu:Toast--ReceiptSaveFailed": {
     "messageformat": "Greška prilikom pohranjivanja računa. Molimo pokušajte ponovno."
+  },
+  "icu:Toast--ChatFolderAddedChat": {
+    "messageformat": "Dodano u \"{chatFolderName}\""
+  },
+  "icu:Toast--ChatFolderRemovedChat": {
+    "messageformat": "Uklonjeno iz \"{chatFolderName}\""
+  },
+  "icu:Toast--ChatFolderCreated": {
+    "messageformat": "Dodano foldera: {chatFolderName}."
   },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Ne možete odabrati fgotografije i videozapise zajedno s datotekama."
@@ -1031,14 +1097,98 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "Informacije"
   },
+  "icu:MessageContextMenu__PinMessage": {
+    "messageformat": "Zakači poruku"
+  },
+  "icu:MessageContextMenu__UnpinMessage": {
+    "messageformat": "Unpin message"
+  },
+  "icu:Poll__end-poll": {
+    "messageformat": "Završi anketu"
+  },
+  "icu:PollMessage--SelectOne": {
+    "messageformat": "Anketa · Odaberite jedno"
+  },
+  "icu:PollMessage--SelectMultiple": {
+    "messageformat": "Anketa · Odaberite jednu ili više"
+  },
+  "icu:PollMessage--FinalResults": {
+    "messageformat": "Anketa · Konačni rezultati"
+  },
+  "icu:PollMessage__ViewVotesButton": {
+    "messageformat": "Prikaži glasove"
+  },
+  "icu:PollMessage--YouVoted": {
+    "messageformat": "Glasali ste"
+  },
+  "icu:PollTerminate--you": {
+    "messageformat": "Završili ste anketu: {poll}"
+  },
+  "icu:PollTerminate--other": {
+    "messageformat": "{name} je završio/la anketu: {poll}"
+  },
+  "icu:PollTerminate__view-poll": {
+    "messageformat": "Prikaži anketu"
+  },
+  "icu:PollVotesModal__title": {
+    "messageformat": "Detalji ankete"
+  },
+  "icu:PollVotesModal__questionLabel": {
+    "messageformat": "Pitanje"
+  },
+  "icu:PollVotesModal__voteCount": {
+    "messageformat": "{count, plural, one {{count,number} glas} few {{count,number} glasa} many {{count,number} glasova} other {{count,number} glasa}}"
+  },
+  "icu:PollVotesModal__noVotes": {
+    "messageformat": "Nema glasova"
+  },
+  "icu:PollVotesModal__winningOption": {
+    "messageformat": "Pobjednička opcija"
+  },
+  "icu:Toast--PinnedMessageNotFound": {
+    "messageformat": "Zakačena poruka nije pronađena"
+  },
+  "icu:Toast--PollNotFound": {
+    "messageformat": "Anketa nije pronađena"
+  },
+  "icu:PollCreateModal__title": {
+    "messageformat": "Nova anketa"
+  },
+  "icu:PollCreateModal__questionLabel": {
+    "messageformat": "Pitanje"
+  },
+  "icu:PollCreateModal__questionPlaceholder": {
+    "messageformat": "Postavite pitanje"
+  },
+  "icu:PollCreateModal__optionsLabel": {
+    "messageformat": "Opcije"
+  },
+  "icu:PollCreateModal__optionPlaceholder": {
+    "messageformat": "Opcija {number}"
+  },
+  "icu:PollCreateModal__allowMultipleVotes": {
+    "messageformat": "Dozvoli više glasova"
+  },
+  "icu:PollCreateModal__sendButton": {
+    "messageformat": "Pošalji"
+  },
+  "icu:PollCreateModal__Error--RequiresQuestion": {
+    "messageformat": "Pitanje ankete je obavezno"
+  },
+  "icu:PollCreateModal__Error--RequiresTwoOptions": {
+    "messageformat": "Anketa zahtijeva najmanje 2 opcije"
+  },
+  "icu:PollCreateModal__Error--QuestionTooLong": {
+    "messageformat": "Pitanje je predugo"
+  },
+  "icu:PollCreateModal__Error--OptionTooLong": {
+    "messageformat": "Opcija je predugačka"
+  },
   "icu:deleteConversation": {
     "messageformat": "Izbriši"
   },
   "icu:ConversationHeader__DeleteConversationConfirmation__title": {
     "messageformat": "Izbrisati chat?"
-  },
-  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
-    "messageformat": "Poruke u ovom chatu će biti izbrisane s ovog uređaja."
   },
   "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
     "messageformat": "Sve poruke u ovom chatu će biti izbrisane sa svih vaših uređaja."
@@ -1057,6 +1207,108 @@
   },
   "icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description": {
     "messageformat": "Prije napuštanja, morate imenovati makar jednog novog administratora za grupu."
+  },
+  "icu:PinnedMessageNotification__Message--You": {
+    "messageformat": "Zakačili ste poruku"
+  },
+  "icu:PinnedMessageNotification__Message--SomeoneElse": {
+    "messageformat": "{sender} je zakačio/la poruku"
+  },
+  "icu:PinnedMessageNotification__Button": {
+    "messageformat": "Idi na poruku"
+  },
+  "icu:PinMessageDialog__Title": {
+    "messageformat": "Zakači poruku na..."
+  },
+  "icu:PinMessageDialog__Close": {
+    "messageformat": "Zatvori"
+  },
+  "icu:PinMessageDialog__Option--TIME_24_HOURS": {
+    "messageformat": "24 sata"
+  },
+  "icu:PinMessageDialog__Option--TIME_7_DAYS": {
+    "messageformat": "7 dana"
+  },
+  "icu:PinMessageDialog__Option--TIME_30_DAYS": {
+    "messageformat": "30 dana"
+  },
+  "icu:PinMessageDialog__Option--FOREVER": {
+    "messageformat": "Zauvijek"
+  },
+  "icu:PinMessageDialog__Cancel": {
+    "messageformat": "Otkaži"
+  },
+  "icu:PinMessageDialog__Pin": {
+    "messageformat": "Prikvači"
+  },
+  "icu:PinnedMessagesBar__AccessibilityLabel": {
+    "messageformat": "{pinsCount, plural, one {Zakačena poruka} few {Zakačene poruke} many {Zakačenih poruka} other {Zakačene poruke}}"
+  },
+  "icu:PinnedMessagesBar__Tab__AccessibilityLabel": {
+    "messageformat": "Idi na zakačenu poruku {pinNumber,number}"
+  },
+  "icu:PinnedMessagesBar__GoToMessageClickableArea__AccessibilityLabel": {
+    "messageformat": "Idi na poruku"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__Button__AccessibilityLabel": {
+    "messageformat": "Više radnji"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__UnpinMessage": {
+    "messageformat": "Otkači poruku"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__GoToMessage": {
+    "messageformat": "Idi na poruku"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__SeeAllMessages": {
+    "messageformat": "Pogledajte sve poruke"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Address": {
+    "messageformat": "Address"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--VoiceMessage": {
+    "messageformat": "Voice message"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Gif": {
+    "messageformat": "GIF"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--File": {
+    "messageformat": "File"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Contact": {
+    "messageformat": "Contact"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Payment": {
+    "messageformat": "Payment"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Poll": {
+    "messageformat": "Poll"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Sticker": {
+    "messageformat": "Sticker"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Photo": {
+    "messageformat": "Photo"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Video": {
+    "messageformat": "Video"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--VoiceMessage": {
+    "messageformat": "Voice message"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Gif": {
+    "messageformat": "GIF"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Payment": {
+    "messageformat": "Payment"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Sticker": {
+    "messageformat": "Sticker"
+  },
+  "icu:PinnedMessagesPanel__Title": {
+    "messageformat": "Pinned messages"
+  },
+  "icu:PinnedMessagesPanel__UnpinAllMessages": {
+    "messageformat": "Unpin all messages"
   },
   "icu:sessionEnded": {
     "messageformat": "Secure session reset"
@@ -1175,36 +1427,6 @@
   "icu:attachmentNotAvailable__tapToViewCannotDownload": {
     "messageformat": "Nije moguće preuzeti jednokratni medij"
   },
-  "icu:AttachmentNotAvailableModal__title--file": {
-    "messageformat": "Datoteka nije dostupna"
-  },
-  "icu:AttachmentNotAvailableModal__title--long-text": {
-    "messageformat": "Potpuna poruka nije dostupna"
-  },
-  "icu:AttachmentNotAvailableModal__title--media": {
-    "messageformat": "Medijski sadržaj nije dostupan"
-  },
-  "icu:AttachmentNotAvailableModal__title--sticker": {
-    "messageformat": "Naljepnica nije dostupna"
-  },
-  "icu:AttachmentNotAvailableModal__title--voice-message": {
-    "messageformat": "Glasovna poruka nije dostupna"
-  },
-  "icu:AttachmentNotAvailableModal__body--file": {
-    "messageformat": "Ova datoteka nije prenesena s vašeg telefona kada je ovaj uređaj povezan. Medijski sadržaji i fajlovi stariji od 45 dana u trenutku povezivanja uređaja ne mogu se sinhronizirati."
-  },
-  "icu:AttachmentNotAvailableModal__body--long-text": {
-    "messageformat": "Kompletan tekst u ovoj poruci nije prenesen s vašeg telefona kada je ovaj uređaj povezan. Duge tekstualne poruke starije od 45 dana u vrijeme povezivanja uređaja ne mogu se sinhronizirati."
-  },
-  "icu:AttachmentNotAvailableModal__body--media": {
-    "messageformat": "Ovaj medijski sadržaj nije prenesen s vašeg telefona kada je ovaj uređaj povezan. Medijski sadržaji stariji od 45 dana u vrijeme povezivanja uređaja ne mogu se sinhronizirati."
-  },
-  "icu:AttachmentNotAvailableModal__body--sticker": {
-    "messageformat": "Ova datoteka nije prenesena s vašeg telefona kada je ovaj uređaj povezan. Medijski sadržaji i datoteke stariji od 45 dana u trenutku povezivanja uređaja ne mogu se sinhronizirati."
-  },
-  "icu:AttachmentNotAvailableModal__body--voice-message": {
-    "messageformat": "Ova glasovna poruka nije prenesena s vašeg telefona kada je ovaj uređaj povezan. Medijski sadržaji i datoteke stariji od 45 dana u trenutku povezivanja uređaja ne mogu se sinhronizirati."
-  },
   "icu:TapToViewNotAvailableModal__body--expired": {
     "messageformat": "Ovaj jednokratni medij nije više dostupan za preuzimanje. Zatrži da ti ga {name} ponovo pošalje."
   },
@@ -1292,8 +1514,20 @@
   "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Title": {
     "messageformat": "Dodaj folder chata"
   },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Title--WithChatFolders": {
+    "messageformat": "Dodajte ili uredite foldere"
+  },
   "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Description": {
     "messageformat": "Organizirajte razgovore u foldere i brzo prelazite između njih na svojoj listi za chatove."
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Description--WithChatFolders": {
+    "messageformat": "{chatFoldersCount, plural, one {{chatFoldersCount,number} folder} few {{chatFoldersCount,number} foldera} many {{chatFoldersCount,number} foldera} other {{chatFoldersCount,number} foldera}}"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Button": {
+    "messageformat": "Postavi"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Button--WithChatFolders": {
+    "messageformat": "Upravljaj"
   },
   "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__EditFolder": {
     "messageformat": "Uredi folder"
@@ -1328,14 +1562,14 @@
   "icu:Preferences__ChatFoldersPage__FoldersSection__CreateAFolderButton": {
     "messageformat": "Kreiraj folder"
   },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__DragHandle__Label": {
+    "messageformat": "Prevucite da premjestite folder chata"
+  },
   "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__Title": {
     "messageformat": "Predloženi folderi"
   },
   "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton": {
     "messageformat": "Dodaj"
-  },
-  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton__Toast": {
-    "messageformat": "Dodano foldera: {chatFolderTitle}."
   },
   "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Title": {
     "messageformat": "Nepročitano"
@@ -1357,6 +1591,9 @@
   },
   "icu:Preferences__EditChatFolderPage__Title": {
     "messageformat": "Kreiraj folder"
+  },
+  "icu:Preferences__EditChatFolderPage__Title--EditingExistingChatFolder": {
+    "messageformat": "Uredi folder"
   },
   "icu:Preferences__EditChatFolderPage__FolderNameField__Label": {
     "messageformat": "Naziv foldera"
@@ -1534,6 +1771,12 @@
   },
   "icu:calling__removed-from-call-title": {
     "messageformat": "Korisnik je uklonjen iz poziva"
+  },
+  "icu:calling__has-max-devices": {
+    "messageformat": "Za ovaj poziv je dostignut maksimalan broj učesnika. Pokušajte ponovo kasnije."
+  },
+  "icu:calling__has-max-devices--title": {
+    "messageformat": "Poziv je popunjen"
   },
   "icu:CallingLobby__CallLinkNotice": {
     "messageformat": "Svako ko se pridruži ovom pozivu putem linka vidjet će vaše ime i fotografiju."
@@ -1853,6 +2096,9 @@
   "icu:notificationReactionMessage": {
     "messageformat": "Pošiljalac {sender} je reagirao sa {emoji} na: {message}"
   },
+  "icu:notificationPollVoteMessage": {
+    "messageformat": "{sender} je glasao/la u anketi: \"{pollQuestion}\""
+  },
   "icu:sendFailed": {
     "messageformat": "Neuspjelo slanje"
   },
@@ -2070,13 +2316,16 @@
     "messageformat": "Preuzimanje nije uspjelo"
   },
   "icu:Toast--unable-download-from-backup-tier": {
-    "messageformat": "Download of attachment from backup failed"
+    "messageformat": "Attachment missing from backup CDN"
   },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "Izmjene se mogu primijeniti samo u roku od 24 sata od trenutka kada ste poslali ovu poruku."
   },
   "icu:startConversation--username-not-found": {
     "messageformat": "{atUsername} ne koristi Signal. Provjerite jeste li unijeli potpuno korisničko ime."
+  },
+  "icu:startConversation--username-not-valid": {
+    "messageformat": "{atUsername} nije važeće korisničko ime. Provjerite jeste li unijeli cijelo korisničko ime praćeno njegovim skupom brojki."
   },
   "icu:startConversation--phone-number-not-found": {
     "messageformat": "Korisnik nije pronađen. \"{phoneNumber}\" nije korisnik/ca Signala."
@@ -2231,6 +2480,9 @@
   "icu:message--getNotificationText--stickers": {
     "messageformat": "Poruka s naljepnicom"
   },
+  "icu:Poll--preview": {
+    "messageformat": "Anketa: {pollQuestion}"
+  },
   "icu:message--getNotificationText--text-with-emoji": {
     "messageformat": "{emoji} {text}"
   },
@@ -2357,101 +2609,11 @@
   "icu:stickers--StickerManager--UninstallWarning": {
     "messageformat": "Možda nećete moći ponovo instalirati ovaj paket naljepnica ako više nemate izvornu poruku."
   },
-  "icu:stickers--StickerManager--Introduction--Image": {
-    "messageformat": "Predstavljamo naljepnice: Bandit Mačak"
-  },
-  "icu:stickers--StickerManager--Introduction--Title": {
-    "messageformat": "Predstavljamo naljepnice"
-  },
-  "icu:stickers--StickerManager--Introduction--Body": {
-    "messageformat": "Zašto pisati riječi kad možete koristiti naljepnice?"
-  },
-  "icu:stickers--StickerPicker--Open": {
-    "messageformat": "Otvorite alat za biranje naljepnica"
-  },
-  "icu:stickers--StickerPicker--AddPack": {
-    "messageformat": "Dodaj paket naljepnica"
-  },
-  "icu:stickers--StickerPicker--NextPage": {
-    "messageformat": "Sljedeća stranica"
-  },
-  "icu:stickers--StickerPicker--PrevPage": {
-    "messageformat": "Prethodna stranica"
-  },
-  "icu:stickers--StickerPicker--Recents": {
-    "messageformat": "Nedavna naljepnica"
-  },
-  "icu:stickers--StickerPicker--DownloadError": {
-    "messageformat": "Neke naljepnice nije bilo moguće preuzeti."
-  },
-  "icu:stickers--StickerPicker--DownloadPending": {
-    "messageformat": "Instaliranje paketa naljepnica…"
-  },
-  "icu:stickers--StickerPicker--Empty": {
-    "messageformat": "Nije pronađena nijedna naljepnica"
-  },
-  "icu:stickers--StickerPicker--Hint": {
-    "messageformat": "Novi paketi naljepnica iz vaših poruka su dostupni za instaliranje"
-  },
-  "icu:stickers--StickerPicker--NoPacks": {
-    "messageformat": "Nije pronađen nijedan paket naljepnica"
-  },
-  "icu:stickers--StickerPicker--NoRecents": {
-    "messageformat": "Nedavno korištene naljepnice će se pojaviti ovdje."
-  },
-  "icu:stickers__StickerPicker__recent": {
-    "messageformat": "Nedavno"
-  },
-  "icu:stickers__StickerPicker__featured": {
-    "messageformat": "Istaknuto"
-  },
-  "icu:stickers__StickerPicker__analog-time": {
-    "messageformat": "Analogno vrijeme"
-  },
   "icu:stickers--StickerPreview--Title": {
     "messageformat": "Paket naljepnica"
   },
   "icu:stickers--StickerPreview--Error": {
     "messageformat": "Greška prilikom otvaranja paketa naljepnica. Provjerite internetsku vezu i pokušajte ponovo."
-  },
-  "icu:EmojiPicker--empty": {
-    "messageformat": "Nije pronađena nijedna emoji sličica"
-  },
-  "icu:EmojiPicker--search-close": {
-    "messageformat": "Zatvorite pretragu emoji sličica"
-  },
-  "icu:EmojiPicker--search-placeholder": {
-    "messageformat": "Pretražite emoji sličice"
-  },
-  "icu:EmojiPicker--skin-tone": {
-    "messageformat": "Boja kože {tone}"
-  },
-  "icu:EmojiPicker__button--recents": {
-    "messageformat": "Nedavno"
-  },
-  "icu:EmojiPicker__button--emoji": {
-    "messageformat": "Emoji-sličice"
-  },
-  "icu:EmojiPicker__button--animal": {
-    "messageformat": "Životinja"
-  },
-  "icu:EmojiPicker__button--food": {
-    "messageformat": "Hrana"
-  },
-  "icu:EmojiPicker__button--activity": {
-    "messageformat": "Aktivnost"
-  },
-  "icu:EmojiPicker__button--travel": {
-    "messageformat": "Putovanje"
-  },
-  "icu:EmojiPicker__button--object": {
-    "messageformat": "Predmet"
-  },
-  "icu:EmojiPicker__button--symbol": {
-    "messageformat": "Simbol"
-  },
-  "icu:EmojiPicker__button--flag": {
-    "messageformat": "Zastava"
   },
   "icu:FunPicker__Tab--Emojis": {
     "messageformat": "Emoji-sličice"
@@ -2560,6 +2722,9 @@
   },
   "icu:FunPanelStickers__SubNavCategoryLabel--Recents": {
     "messageformat": "Nedavno korištene"
+  },
+  "icu:FunPanelStickers__SubNavButton--AddStickerPack": {
+    "messageformat": "Dodaj paket naljepnica"
   },
   "icu:FunPanelStickers__SectionTitle--SearchResults": {
     "messageformat": "Rezultati pretraživanja"
@@ -3527,9 +3692,6 @@
   "icu:muteExpirationLabel": {
     "messageformat": "Zvuk je isključen do {duration}"
   },
-  "icu:EmojiButton__label": {
-    "messageformat": "Emoji-sličice"
-  },
   "icu:ErrorModal--title": {
     "messageformat": "Nešto nije u redu!"
   },
@@ -4292,6 +4454,18 @@
   "icu:CompositionArea--attach-file": {
     "messageformat": "Priložite datoteku"
   },
+  "icu:CompositionArea__AttachMenu__PhotosAndVideos": {
+    "messageformat": "Fotografije i videozapisi"
+  },
+  "icu:CompositionArea__AttachMenu__File": {
+    "messageformat": "Datoteka"
+  },
+  "icu:CompositionArea__AttachMenu__Poll": {
+    "messageformat": "Anketa"
+  },
+  "icu:CompositionArea--attach-plus": {
+    "messageformat": "Dodaj prilog ili anketu"
+  },
   "icu:CompositionArea--sms-only__title": {
     "messageformat": "Ova osoba ne koristi Signal"
   },
@@ -4442,8 +4616,8 @@
   "icu:ConversationDetailsActions--block-group-modal-confirm": {
     "messageformat": "Blokiraj"
   },
-  "icu:ConversationDetailsActions--unblock-group-modal-content": {
-    "messageformat": "Vaši kontakti će vas moći dodati u ovu grupu"
+  "icu:ConversationDetailsActions--unblock-group-modal-body": {
+    "messageformat": "Vaši kontakti će vas moći dodati u ovu grupu."
   },
   "icu:ConversationDetailsActions--unblock-group-modal-confirm": {
     "messageformat": "Odblokiraj"
@@ -4451,11 +4625,8 @@
   "icu:ConversationDetailsHeader--members": {
     "messageformat": "{number, plural, one {{number,number} član} few {{number,number} člana} many {{number,number} članova} other {{number,number} članova}}"
   },
-  "icu:ConversationDetailsMediaList--shared-media": {
-    "messageformat": "Razmijenjene datoteke"
-  },
-  "icu:ConversationDetailsMediaList--show-all": {
-    "messageformat": "Vidi sve"
+  "icu:ConversationDetailsMediaList--title": {
+    "messageformat": "Mediji, linkovi i datoteke"
   },
   "icu:ConversationDetailsMembershipList--title": {
     "messageformat": "{number, plural, one {{number,number} član} few {{number,number} člana} many {{number,number} članova} other {{number,number} članova}}"
@@ -4949,6 +5120,57 @@
   "icu:ConversationDetailsHeader--add-group-description": {
     "messageformat": "Dodajte opis grupe…"
   },
+  "icu:AudioListItem__subtitle--voice-message": {
+    "messageformat": "Glasovna poruka"
+  },
+  "icu:AudioListItem__subtitle--audio": {
+    "messageformat": "Zvuk"
+  },
+  "icu:LinkPreviewItem__alt": {
+    "messageformat": "Otvorite link u pregledniku"
+  },
+  "icu:ListItem__show-message": {
+    "messageformat": "Prikaži poruku u razgovoru"
+  },
+  "icu:MediaGallery__tab__audio": {
+    "messageformat": "Zvuk"
+  },
+  "icu:MediaGallery__tab__files": {
+    "messageformat": "Datoteke"
+  },
+  "icu:MediaGallery__tab__links": {
+    "messageformat": "Linkovi"
+  },
+  "icu:MediaGallery__EmptyState__title--media": {
+    "messageformat": "Nema medijskih zapisa"
+  },
+  "icu:MediaGallery__EmptyState__description--media": {
+    "messageformat": "Fotografije, videozapisi i GIF-ovi koje šaljete i primate prikazivat će se ovdje"
+  },
+  "icu:MediaGallery__EmptyState__title--audio": {
+    "messageformat": "Nema zvučnih zapisa"
+  },
+  "icu:MediaGallery__EmptyState__description--audio": {
+    "messageformat": "Glasovne poruke i audio datoteke koje šaljete i primate prikazivat će se ovdje"
+  },
+  "icu:MediaGallery__EmptyState__title--links": {
+    "messageformat": "Nema linkova"
+  },
+  "icu:MediaGallery__EmptyState__description--links-2": {
+    "messageformat": "Linkovi koje šaljete i primate će se ovdje pojaviti"
+  },
+  "icu:MediaGallery__EmptyState__description--documents": {
+    "messageformat": "Linkovi koje šaljete i primate će se ovdje pojaviti"
+  },
+  "icu:MediaGallery__EmptyState__title--documents": {
+    "messageformat": "Nema datoteka"
+  },
+  "icu:MediaGallery__EmptyState__description--documents-2": {
+    "messageformat": "Datoteke koje šaljete i primate će se ovdje pojaviti"
+  },
+  "icu:MediaGallery__EmptyState__description--links": {
+    "messageformat": "Datoteke koje šaljete i primate će se ovdje pojaviti"
+  },
   "icu:MediaQualitySelector--button": {
     "messageformat": "Odaberite kvalitet medija"
   },
@@ -5288,11 +5510,332 @@
   "icu:Preferences--notification-content": {
     "messageformat": "Sadržaj obavještenja"
   },
+  "icu:PlaintextExport--PreferencesRow--Header": {
+    "messageformat": "Izvezi historiju chata"
+  },
+  "icu:PlaintextExport--PreferencesRow--Description": {
+    "messageformat": "Izvezite mašinski čitljivu JSON kopiju svih vaših chatova. Poruke koje nestaju neće biti izvezene."
+  },
+  "icu:PlaintextExport--ActionButton": {
+    "messageformat": "Izvoz"
+  },
+  "icu:PlaintextExport--Confirmation--Header": {
+    "messageformat": "Izvesti historiju chata?"
+  },
+  "icu:PlaintextExport--Confirmation--Description": {
+    "messageformat": "<bold>BUDITE OPREZNI!</bold> NE dijelite ovu datoteku ni sa kim. Vaša historija chata će biti sačuvana na vašem računaru, a druge aplikacije će joj moći pristupiti u zavisnosti od dozvola vašeg računara."
+  },
+  "icu:PlaintextExport--Confirmation--IncludeMedia": {
+    "messageformat": "Uključi medije <secondary>(veća veličina datoteke)</secondary>"
+  },
+  "icu:PlaintextExport--Confirmation--ContinueButton": {
+    "messageformat": "Nastavi"
+  },
+  "icu:PlaintextExport--Confirmation--WaitingLabel": {
+    "messageformat": "Čeka se unos"
+  },
+  "icu:PlaintextExport--OSPrompt--Mac": {
+    "messageformat": "izvezite svoju historiju chata"
+  },
+  "icu:PlaintextExport--OSPrompt--Windows": {
+    "messageformat": "Potvrdite identitet da biste izvezli historiju chata."
+  },
+  "icu:PlaintextExport--OSPrompt--description--Linux": {
+    "messageformat": "Izvoz"
+  },
+  "icu:PlaintextExport--OSPrompt--message--Linux": {
+    "messageformat": "Za izvoz historije chata potrebna je autentifikacija."
+  },
+  "icu:PlaintextExport--ProgressDialog--Header": {
+    "messageformat": "Izvoz historije chata"
+  },
+  "icu:PlaintextExport--ProgressDialog--Progress": {
+    "messageformat": "Izvoz {currentBytes} od {totalBytes} ({percentage,number,percent})..."
+  },
+  "icu:PlaintextExport--ProgressDialog--TimeWarning": {
+    "messageformat": "Ovo može potrajati nekoliko minuta"
+  },
+  "icu:PlaintextExport--CompleteDialog--Header": {
+    "messageformat": "Izvoz je završen"
+  },
+  "icu:PlaintextExport--CompleteDialog--Description": {
+    "messageformat": "<bold>BUDITE OPREZNI</bold> gdje pohranjujete svoju izvezenu datoteku za chat i ne dijelite je ni sa kim. Druge aplikacije na vašem računaru mogu joj pristupiti u zavisnosti od dozvola vašeg računara. "
+  },
+  "icu:PlaintextExport--CompleteDialog--ShowFiles--Mac": {
+    "messageformat": "Prikaži u Finderu"
+  },
+  "icu:PlaintextExport--CompleteDialog--ShowFiles--Linux": {
+    "messageformat": "Prikaži u folderu"
+  },
+  "icu:PlaintextExport--CompleteDialog--ShowFiles--Windows": {
+    "messageformat": "Prikaži u folderu"
+  },
+  "icu:PlaintextExport--Error--General--Title": {
+    "messageformat": "Nije moguće izvesti historiju chata"
+  },
+  "icu:PlaintextExport--Error--General--Description": {
+    "messageformat": "Došlo je do greške i vaša historija chata nije mogla biti izvezena."
+  },
+  "icu:PlaintextExport--Error--NotEnoughStorage--Title": {
+    "messageformat": "Nema dovoljno prostora za pohranu"
+  },
+  "icu:PlaintextExport--Error--NotEnoughStorage--Detail": {
+    "messageformat": "Vaša historija chata se ne može izvesti jer vaš računar nema dovoljno slobodnog prostora za pohranu. Oslobodite {bytes} prostora i pokušajte ponovo."
+  },
+  "icu:PlaintextExport--Error--RanOutOfStorage--Title": {
+    "messageformat": "Nije moguće izvesti historiju chata"
+  },
+  "icu:PlaintextExport--Error--RanOutOfStorage--Detail": {
+    "messageformat": "Vaša historija chata se nije mogla izvesti jer vaš računar nema dovoljno slobodnog prostora za pohranu. Oslobodite {bytes} prostora i pokušajte ponovo."
+  },
+  "icu:PlaintextExport--Error--DiskPermssions--Title": {
+    "messageformat": "Nije moguće izvesti historiju chata"
+  },
+  "icu:PlaintextExport--Error--DiskPermssions--Detail": {
+    "messageformat": "Vaša historija chata ne može biti izvezena jer Signal nema dozvolu za pisanje datoteka na disk. Pokušajte promijeniti dozvole diska ili ažurirati postavke sistema, a zatim ponovo izvezite."
+  },
+  "icu:NotificationProfile--moon-icon": {
+    "messageformat": "Ikona mjeseca"
+  },
+  "icu:NotificationProfile--copy-label": {
+    "messageformat": "Kopija {profileName}"
+  },
+  "icu:NotificationProfile--am": {
+    "messageformat": "AM"
+  },
+  "icu:NotificationProfile--pm": {
+    "messageformat": "PM"
+  },
+  "icu:NotificationProfile--time-separator": {
+    "messageformat": ":"
+  },
+  "icu:NotificationProfileMenuItem": {
+    "messageformat": "Profil obavještenja"
+  },
+  "icu:NotificationProfileMenu--header": {
+    "messageformat": "Profil obavijesti"
+  },
+  "icu:NotificationProfileMenu--on": {
+    "messageformat": "Uključeno"
+  },
+  "icu:NotificationProfileMenu--on-with-end": {
+    "messageformat": "Uključen do {endTime}"
+  },
+  "icu:NotificationProfileMenu--for-one-hour": {
+    "messageformat": "Jedan sat"
+  },
+  "icu:NotificationProfileMenu--until-time": {
+    "messageformat": "Do {time}"
+  },
+  "icu:NotificationProfileMenu--settings": {
+    "messageformat": "Podešavanja"
+  },
+  "icu:NotificationProfilesToast--enabled": {
+    "messageformat": "\"{name} \" uključeno"
+  },
+  "icu:NotificationProfilesToast--disabled": {
+    "messageformat": "\"{name} \" isključeno"
+  },
+  "icu:NotificationProfilesToast--enabled--label": {
+    "messageformat": "Profil za obavještenja je sada omogućen"
+  },
+  "icu:NotificationProfilesToast--disabled--label": {
+    "messageformat": "Profil za obavještenja je sada onemogućen"
+  },
+  "icu:NotificationProfiles--setting": {
+    "messageformat": "Profili obavještenja"
+  },
+  "icu:NotificationProfiles--setup": {
+    "messageformat": "Postavi"
+  },
+  "icu:NotificationProfiles--title": {
+    "messageformat": "Profili obavještenja"
+  },
+  "icu:NotificationProfiles--setup-description": {
+    "messageformat": "Kreirajte profil da biste primali obavještenja i pozive samo od osoba i grupa koje odaberete"
+  },
+  "icu:NotificationProfiles--setup-continue": {
+    "messageformat": "Nastavi"
+  },
+  "icu:NotificationProfiles--manage-description": {
+    "messageformat": "Dodajte ili uredite profile obavještenja"
+  },
+  "icu:NotificationProfiles--manage-profiles": {
+    "messageformat": "{profileCount, plural, one {Jedan profil} few {{profileCount,number} profila} many {{profileCount,number} profila} other {{profileCount,number} profila}}"
+  },
+  "icu:NotificationProfiles--create": {
+    "messageformat": "Kreiraj profil"
+  },
+  "icu:NotificationProfiles--name-title": {
+    "messageformat": "Naslovite profil"
+  },
+  "icu:NotificationProfiles--name-title--editing": {
+    "messageformat": "Name"
+  },
+  "icu:NotificationProfiles--name-placeholder": {
+    "messageformat": "Ime profila"
+  },
+  "icu:NotificationProfiles--sample-name__work": {
+    "messageformat": "Poslovni"
+  },
+  "icu:NotificationProfiles--sample-name__sleep": {
+    "messageformat": "Spavam"
+  },
+  "icu:NotificationProfiles--sample-name__driving": {
+    "messageformat": "Vozim"
+  },
+  "icu:NotificationProfiles--sample-name__downtime": {
+    "messageformat": "U zastoju"
+  },
+  "icu:NotificationProfiles--sample-name__focus": {
+    "messageformat": "Fokusiran/a"
+  },
+  "icu:NotificationProfiles--allowed-title": {
+    "messageformat": "Dopuštena obavještenja"
+  },
+  "icu:NotificationProfiles--allowed-description": {
+    "messageformat": "Dodajte osobe i grupe od kojih želite primati obavještenja kada je ovaj profil uključen"
+  },
+  "icu:NotificationProfiles--allowed-add-label": {
+    "messageformat": "Dodaj osobe ili grupe"
+  },
+  "icu:NotificationProfiles--exceptions": {
+    "messageformat": "Izuzeci"
+  },
+  "icu:NotificationProfiles--exceptions--allow-all-calls": {
+    "messageformat": "Dopusti sve pozive"
+  },
+  "icu:NotificationProfiles--exceptions--notify-for-mentions": {
+    "messageformat": "Obavijesti svaki put kad me neko spomene"
+  },
+  "icu:NotificationProfiles--schedule-title": {
+    "messageformat": "Rasporedi"
+  },
+  "icu:NotificationProfiles--schedule-title--editing": {
+    "messageformat": "Rasporedi"
+  },
+  "icu:NotificationProfiles--schedule-description": {
+    "messageformat": "Omogućite i uredite svoj raspored kako biste automatizirali svoj profil obavještenja."
+  },
+  "icu:NotificationProfiles--schedule-enable": {
+    "messageformat": "Automatski uključi"
+  },
+  "icu:NotificationProfiles--schedule": {
+    "messageformat": "Rasporedi"
+  },
+  "icu:NotificationProfiles--schedule-from": {
+    "messageformat": "Od"
+  },
+  "icu:NotificationProfiles--schedule-until": {
+    "messageformat": "Do"
+  },
+  "icu:NotificationProfiles--open-time-picker": {
+    "messageformat": "Otvori birač vremena"
+  },
+  "icu:NotificationProfiles--schedule-sunday": {
+    "messageformat": "Nedjelja"
+  },
+  "icu:NotificationProfiles--schedule-monday": {
+    "messageformat": "Ponedjeljak"
+  },
+  "icu:NotificationProfiles--schedule-tuesday": {
+    "messageformat": "Utorak"
+  },
+  "icu:NotificationProfiles--schedule-wednesday": {
+    "messageformat": "Srijeda"
+  },
+  "icu:NotificationProfiles--schedule-thursday": {
+    "messageformat": "Četvrtak"
+  },
+  "icu:NotificationProfiles--schedule-friday": {
+    "messageformat": "Petak"
+  },
+  "icu:NotificationProfiles--schedule-saturday": {
+    "messageformat": "Subota"
+  },
+  "icu:NotificationProfiles--done-title": {
+    "messageformat": "Profil je kreiran"
+  },
+  "icu:NotificationProfiles--done-description": {
+    "messageformat": "Ako ste dodali raspored, vaš profil će se automatski uključivati i isključivati. Također možete kliknuti na ikonu ··· na vrhu liste za chat da biste da ručno uključite ili isključite."
+  },
+  "icu:NotificationProfiles--schedule-sunday-short": {
+    "messageformat": "Ned"
+  },
+  "icu:NotificationProfiles--schedule-monday-short": {
+    "messageformat": "Pon"
+  },
+  "icu:NotificationProfiles--schedule-tuesday-short": {
+    "messageformat": "Uto"
+  },
+  "icu:NotificationProfiles--schedule-wednesday-short": {
+    "messageformat": "Sri"
+  },
+  "icu:NotificationProfiles--schedule-thursday-short": {
+    "messageformat": "Čet"
+  },
+  "icu:NotificationProfiles--schedule-friday-short": {
+    "messageformat": "Pet"
+  },
+  "icu:NotificationProfiles--schedule-saturday-short": {
+    "messageformat": "Sub"
+  },
+  "icu:NotificationProfiles--schedule-weekdays": {
+    "messageformat": "Radnim danima"
+  },
+  "icu:NotificationProfiles--schedule-weekends": {
+    "messageformat": "Vikendima"
+  },
+  "icu:NotificationProfiles--schedule-daily": {
+    "messageformat": "Dnevno"
+  },
+  "icu:NotificationProfiles--schedule-separator": {
+    "messageformat": ", "
+  },
+  "icu:NotificationProfiles--list--header": {
+    "messageformat": "Profili"
+  },
+  "icu:NotificationProfiles--list--sync": {
+    "messageformat": "Sinhronizacija na različitim uređajima"
+  },
+  "icu:NotificationProfiles--list--sync--description": {
+    "messageformat": "Vaši profili će se sinhronizirati na svim vašim uređajima. Uključivanjem profila za jedan uređaj, on će se aktivirati i za ostale."
+  },
+  "icu:NotificationProfiles--delete": {
+    "messageformat": "Izbriši profil"
+  },
+  "icu:NotificationProfiles--delete-confirmation": {
+    "messageformat": "Trajno izbrisati ovaj profil za obavještenja?"
+  },
+  "icu:NotificationProfiles--delete-button": {
+    "messageformat": "Izbriši"
+  },
+  "icu:NotificationProfiles--edit--is-active": {
+    "messageformat": "Uključeno"
+  },
+  "icu:NotificationProfiles--edit--is-not-active": {
+    "messageformat": "Isključeno"
+  },
+  "icu:NotificationProfiles--edit--edit-name-label": {
+    "messageformat": "Uredi ime ovog profila"
+  },
+  "icu:NotificationProfiles--edit--allowed": {
+    "messageformat": "Dopuštena obavještenja"
+  },
+  "icu:NotificationProfiles--edit--schedule-timing": {
+    "messageformat": "{startTime} šalje u grupu {endTime}"
+  },
+  "icu:NotificationProfiles--edit--schedule-enabled": {
+    "messageformat": "Uključeno"
+  },
+  "icu:NotificationProfiles--edit--schedule-disabled": {
+    "messageformat": "Isključeno"
+  },
   "icu:Preferences--blocked": {
     "messageformat": "Blokirani"
   },
   "icu:Preferences--signal-backups": {
-    "messageformat": "Signal Secure Backups"
+    "messageformat": "Zaštićene kopije podataka"
   },
   "icu:Preferences--signal-backups-off-description": {
     "messageformat": "Automatsko kreiranje rezervnih kopija sa Signalovom sigurnom sveobuhvatnom uslugom pohranjivanja. Započnite na svom telefonu. <learnMoreLink>Saznajte više.</learnMoreLink>"
@@ -5307,7 +5850,10 @@
     "messageformat": "Tekst + sigurnosna kopija svih medijskih sadržaja"
   },
   "icu:Preferences--backup-plan-not-found__description": {
-    "messageformat": "Your subscription was not found. Renew to continue using Signal Secure Backups."
+    "messageformat": "Vaša pretplata nije pronađena. Provjerite telefon da vidite detalje sigurnosne kopije."
+  },
+  "icu:Preferences--backup-subscription-monthly-cost": {
+    "messageformat": "{cost}/mjesečno"
   },
   "icu:Preferences--backup-messages-plan__description": {
     "messageformat": "{mediaDayCount, plural, one {Tekst + sigurnosna kopija medija od{mediaDayCount,number} dan} few {Tekst + sigurnosna kopija medija od{mediaDayCount,number} dana} many {Tekst + sigurnosna kopija medija od{mediaDayCount,number} dana} other {Tekst + sigurnosna kopija medija od{mediaDayCount,number} dana}}"
@@ -5325,13 +5871,13 @@
     "messageformat": "Pretplata je otkazana"
   },
   "icu:Preferences--backup-media-plan__note": {
-    "messageformat": "You can manage or cancel your Signal Secure Backups subscription on your phone."
+    "messageformat": "Možete upravljati pretplatom na zaštićene kopije podataka ili je otkazati na svom telefonu."
   },
   "icu:Preferences--backup-messages-plan__note": {
-    "messageformat": "You can manage or upgrade Signal Secure Backups on your phone."
+    "messageformat": "Možete upravljati zaštićenim kopijama podataka ili ih nadograditi na svom telefonu."
   },
   "icu:Preferences--backup-plan__not-found__note": {
-    "messageformat": "You can manage or renew your Signal Secure Backups subscription on your phone."
+    "messageformat": "Možete upravljati zaštićenim kopijama podataka ili ih obnoviti na svom telefonu."
   },
   "icu:Preferences--backup-created-at__label": {
     "messageformat": "Posljednja rezervna kopija"
@@ -5362,6 +5908,18 @@
   },
   "icu:Preferences--local-backups-view-backup-key-done": {
     "messageformat": "Uredu"
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt--mac": {
+    "messageformat": "pokažite vaš rezervni ključ"
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt--windows": {
+    "messageformat": "Potvrdite identitet da biste vidjeli vaš rezervni ključ."
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt-description--linux": {
+    "messageformat": "Pogledajte rezervni ključ"
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt-message--linux": {
+    "messageformat": "Za pregled vašeg sigurnosnog ključa potrebna je autentifikacija."
   },
   "icu:Preferences--local-backups-backup-key-text-box": {
     "messageformat": "Okvir za tekst rezervnog ključa"
@@ -5404,6 +5962,18 @@
   },
   "icu:Preferences__local-backups-copied-key": {
     "messageformat": "Vaš rezervni ključ je kopiran"
+  },
+  "icu:Preferences__local-backups--enable--os-prompt--mac": {
+    "messageformat": "Aktiviraj rezervne kopije"
+  },
+  "icu:Preferences__local-backups--enable--os-prompt--windows": {
+    "messageformat": "Potvrdite identitet da biste omogućili sigurnosne kopije."
+  },
+  "icu:Preferences__local-backups--enable--os-prompt-description--linux": {
+    "messageformat": "Aktiviraj rezervne kopije"
+  },
+  "icu:Preferences__local-backups--enable--os-prompt-message--linux": {
+    "messageformat": "Za omogućavanje sigurnosnih kopija potrebna je autentifikacija."
   },
   "icu:Preferences__view-key": {
     "messageformat": "Prikaži ključ"
@@ -6393,6 +6963,9 @@
   "icu:MessageMetadata__edited": {
     "messageformat": "Uređeno"
   },
+  "icu:MessageMetadata__pinned": {
+    "messageformat": "Pinned"
+  },
   "icu:DraftGifMessageSendModal__Title": {
     "messageformat": "Napiši poruku"
   },
@@ -6404,6 +6977,9 @@
   },
   "icu:EditHistoryMessagesModal__title": {
     "messageformat": "Historija uređivanja"
+  },
+  "icu:EditHistoryMessagesModal__Message__ContextMenu__CopyTimestamp": {
+    "messageformat": "Kopiraj vremensku oznaku"
   },
   "icu:ResendMessageEdit__body": {
     "messageformat": "Ovo uređivanje nije bilo moguće poslati. Provjerite vezu i pokušajte ponovno"
@@ -6699,9 +7275,6 @@
   "icu:PreferencesDonations--receiptList__empty-title": {
     "messageformat": "Nema potvrda"
   },
-  "icu:PreferencesDonations__ReceiptModal--title": {
-    "messageformat": "Detalji"
-  },
   "icu:PreferencesDonations__ReceiptModal--download": {
     "messageformat": "Preuzmi račun"
   },
@@ -6819,14 +7392,11 @@
   "icu:Donations__Toast__ConfirmationNeeded": {
     "messageformat": "Imate donaciju u toku za koju je potrebna potvrda."
   },
-  "icu:Donations__Toast__DonationCompletedAndBadgeApplicationFailed": {
+  "icu:Donations__BadgeApplicationFailed__Title": {
     "messageformat": "Donacija je uspjela, ali nismo mogli ažurirati postavke vaše značke"
   },
-  "icu:Donations__BadgeApplicationFailed__Title": {
-    "messageformat": "Donation succeeded, but we could not update your badge settings"
-  },
   "icu:Donations__BadgeApplicationFailed__Description": {
-    "messageformat": "To update your badge settings on your mobile device, go to Settings → Donate to Signal → Badges."
+    "messageformat": "Da biste ažurirali postavke značke na mobilnom uređaju, idite u Postavke → Doniraj za Signal → Značke."
   },
   "icu:Donations__DonationInterrupted": {
     "messageformat": "Donacija je prekinuta"
@@ -6903,6 +7473,90 @@
   "icu:Donations__badge-modal--help-text": {
     "messageformat": "Ovo možete podesiti na svom mobilnom uređaju u Postavkama → Doniraj Signalu → Značke"
   },
+  "icu:CallQualitySurvey__CloseButton__AccessibilityLabel": {
+    "messageformat": "Close"
+  },
+  "icu:CallQualitySurvey__BackButton__AccessibilityLabel": {
+    "messageformat": "Back"
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__PageTitle": {
+    "messageformat": "How was your call?"
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__PageDescription": {
+    "messageformat": "This helps us improve calls in Signal. No personally identifiable information will be stored."
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__Response__HadIssues": {
+    "messageformat": "Had issues"
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__Response__Great": {
+    "messageformat": "Great"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__PageTitle": {
+    "messageformat": "What issues did you have?"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__IssuesList__Heading": {
+    "messageformat": "Select all that apply"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO": {
+    "messageformat": "Audio issue"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_STUTTERING": {
+    "messageformat": "Audio stuttering"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_LOCAL_ECHO": {
+    "messageformat": "I heard echo"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_REMOTE_ECHO": {
+    "messageformat": "Others heard echo"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_DROP": {
+    "messageformat": "Audio cut out"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO": {
+    "messageformat": "Video issue"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO_NO_CAMERA": {
+    "messageformat": "Camera didn't work"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO_LOW_QUALITY": {
+    "messageformat": "Poor video quality"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO_LOW_RESOLUTION": {
+    "messageformat": "Low resolution"
+  },
+  "icu:CallQualitySurvey__Issue--CALL_DROPPED": {
+    "messageformat": "Call dropped"
+  },
+  "icu:CallQualitySurvey__Issue--OTHER": {
+    "messageformat": "Something else"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__SomethingElse__TextArea__AccessibilityLabel": {
+    "messageformat": "Issues description"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__SomethingElse__TextArea__HelpText": {
+    "messageformat": "Please include any details relevant to the issue. Anything you share here will be kept private and will only be used to help improve calls in Signal."
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__ContinueButton": {
+    "messageformat": "Continue"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__PageTitle": {
+    "messageformat": "Help us improve"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__PageDescription": {
+    "messageformat": "This helps us learn more about calls and what is working or not working. You can view your debug log before submitting."
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__Label": {
+    "messageformat": "Share debug log"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__ViewButton": {
+    "messageformat": "View"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__HelpText": {
+    "messageformat": "Debug logs contain low level app information and do not reveal any of your message contents."
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__SubmitButton": {
+    "messageformat": "Submit"
+  },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "Ova verzija sadrži brojna mala poboljšanja i ispravke grešaka kako bi Signal nesmetano funkcionirao.",
     "ignoreUnused": true
@@ -6931,13 +7585,16 @@
     "messageformat": "Mala podešavanja, otklanjanje grešaka i poboljšanja performansi. Hvala vam što koristite Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.66--0": {
-    "messageformat": "Ispravljanja nekoliko manjih grešaka."
+  "icu:WhatsNew__7.79-1": {
+    "messageformat": "Ažurirali smo izgled i stilsku konzistentnost traka za pomicanje u cijeloj aplikaciji. Obično ako prebrzo skrolate, možete nešto propustiti, ali u ovom slučaju skrolanje je jedini način da to vidite."
   },
-  "icu:WhatsNew__v7.67--0": {
-    "messageformat": "Ispravili smo grešku koja je sprječavala ispravno prikazivanje znački za donacije kod nekih korisnika. Signal je neprofitna organizacija 501c3 i cijenimo vašu podršku!"
+  "icu:WhatsNew__7.79-2": {
+    "messageformat": "Poboljšanja kopiranja i lijepljenja. Hvala, <brianHarder></brianHarder>!"
   },
-  "icu:WhatsNew__v7.70--0": {
-    "messageformat": "Ispravili smo grešku u Microsoft Windowsu zbog koje je naslovna traka Signal Desktopa bila narandžasta umjesto plave. Ako ste u proteklih nekoliko dana zavoljeli shemu boja s citrusnom tematikom i ova ispravka greške vas čini tužnim, možete prilagoditi boju sistemskog akcenta u postavkama Windowsa."
+  "icu:WhatsNew__7.80-1": {
+    "messageformat": "Ankete Signala su stigle! Ankete su jednostavan način da vidite šta vaš grupni chat zaista misli. Napravite anketu s konkurentnim opcijama za večeru ili bilo kojim drugim važnim izborima. Svi u grupi mogu glasati i vidjeti odgovore jedni drugih, a vi možete odlučiti hoćete li dozvoliti višestruko glasanje ili ne."
+  },
+  "icu:WhatsNew__7.81-1": {
+    "messageformat": "Galerija medija sada uključuje dvije nove kartice za audio poruke i preglede linkova."
   }
 }

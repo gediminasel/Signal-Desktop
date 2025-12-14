@@ -118,21 +118,6 @@
   user-select: none;
 }
 
-.CallsTab__ClearCallHistoryIcon {
-  @include mixins.light-theme {
-    @include mixins.color-svg(
-      '../images/icons/v3/trash/trash-compact.svg',
-      variables.$color-gray-90
-    );
-  }
-  @include mixins.dark-theme {
-    @include mixins.color-svg(
-      '../images/icons/v3/trash/trash-compact.svg',
-      variables.$color-white
-    );
-  }
-}
-
 .CallsList__Header {
   display: flex;
   gap: 0px;
@@ -224,7 +209,10 @@
 }
 
 .CallsList__List {
-  @include mixins.NavTabs__Scroller;
+  scrollbar-gutter: stable;
+  padding-inline-start: 11px;
+  padding-inline-end: calc(11px - var(--axo-scrollbar-gutter-thin-vertical));
+  @include mixins.scrollbar-on-hover;
 }
 
 .CallsList__List--disableScrolling {
@@ -325,6 +313,8 @@
 // Override .ListTile
 .ListTile.CallsList__ItemTile {
   padding-block: 10px;
+  border: none;
+  border-radius: 12px;
 
   // Override .ListTile__subtitle with correct font size
   .ListTile__subtitle {
@@ -357,7 +347,7 @@
 }
 
 .CallsNewCall__List {
-  @include mixins.NavTabs__Scroller;
+  @include mixins.scrollbar-on-hover;
 }
 
 .CallsNewCall__ListHeaderItem {

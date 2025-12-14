@@ -104,6 +104,15 @@
   "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
     "messageformat": "Kan geen toegang krijgen tot de database-encryptiesleutel omdat de back-end voor de keyring van het besturingssysteem is gewijzigd van {previousBackend} naar {currentBackend}. Dit kan gebeuren als de desktopomgeving verandert, bijvoorbeeld van GNOME naar KDE.\n\nSchakel over naar de vorige desktopomgeving of probeer Signal uit te voeren met de commandoregelvlag: --password-store=\"{previousBackendFlag}\""
   },
+  "icu:systemEncryptionError": {
+    "messageformat": "System encryption error"
+  },
+  "icu:systemEncryptionError__linuxSafeStorageDecryptionError": {
+    "messageformat": "Unable to decrypt the database encryption key using the OS encryption keyring. This can occur in certain containerized environments such as Flatpak.\n\nWe recommend quitting and checking your OS encryption backend such as gnome-libsecret or kwallet, then trying again.\n\nYou may choose to continue anyway, however the database key will be stored in plaintext on the filesystem and other apps may be able to access it."
+  },
+  "icu:systemEncryptionError__continueWithPlaintextKey": {
+    "messageformat": "Continue with plaintext key"
+  },
   "icu:mainMenuFile": {
     "messageformat": "&Bestand"
   },
@@ -233,6 +242,12 @@
   "icu:archivedConversations": {
     "messageformat": "Gearchiveerde chats"
   },
+  "icu:LeftPane__MoreActionsMenu__AddChatFolder": {
+    "messageformat": "Chatmap toevoegen"
+  },
+  "icu:LeftPane__MoreActionsMenu__FolderSettings": {
+    "messageformat": "Map-instellingen"
+  },
   "icu:LeftPane--pinned": {
     "messageformat": "Vastgezet"
   },
@@ -271,6 +286,45 @@
   },
   "icu:LeftPaneFindByHelper__description--findByUsername": {
     "messageformat": "Voer een gebruikersnaam in, gevolgd door een punt en de bijbehorende cijfercombinatie."
+  },
+  "icu:LeftPane__EmptyView--WithSelectedChatFolder": {
+    "messageformat": "Geen chats om weer te geven"
+  },
+  "icu:LeftPane__EmptyView--WithSelectedChatFolder__FolderSettings": {
+    "messageformat": "Map-instellingen"
+  },
+  "icu:LeftPaneChatFolders__ItemLabel--All--Short": {
+    "messageformat": "Alle"
+  },
+  "icu:LeftPaneChatFolders__ItemLabel--All": {
+    "messageformat": "Alle chats"
+  },
+  "icu:LeftPaneChatFolders__ItemUnreadBadge__MaxCount": {
+    "messageformat": "{maxCount,number}+"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__MarkAllRead": {
+    "messageformat": "Alles markeren als gelezen"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__MuteNotifications": {
+    "messageformat": "Meldingen dempen"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__MuteNotifications__UnmuteAll": {
+    "messageformat": "Niets dempen"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__UnmuteAll": {
+    "messageformat": "Niets dempen"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__EditFolder": {
+    "messageformat": "Map bewerken"
+  },
+  "icu:LeftPane__ConversationListItem__ContextMenu__ChatFolderToggleChatsItem": {
+    "messageformat": "Toevoegen aan map"
+  },
+  "icu:LeftPane__ConversationListItem__ContextMenu__ChatFolderToggleChatsMenu__CreateFolderItem": {
+    "messageformat": "Map aanmaken"
+  },
+  "icu:LeftPane__ConversationListItem__ContextMenu__ChatFolderRemoveChatItem": {
+    "messageformat": "Verwijderen uit map"
   },
   "icu:CountryCodeSelect__placeholder": {
     "messageformat": "Landcode"
@@ -322,6 +376,9 @@
   },
   "icu:markUnread": {
     "messageformat": "Markeren als ongelezen"
+  },
+  "icu:markRead": {
+    "messageformat": "Markeren als gelezen"
   },
   "icu:ConversationHeader__menu__selectMessages": {
     "messageformat": "Berichten selecteren"
@@ -516,7 +573,7 @@
     "messageformat": "Verificatie ongedaan maken"
   },
   "icu:SafetyNumberViewer__hint": {
-    "messageformat": "Om end-to-end-versleuteling met {name} te verifiëren, vergelijk je bovenstaande nummers met het apparaat van je contact. Je contacten kunnen ook jouw QR-code scannen met hun apparaat."
+    "messageformat": "Om end-to-end-versleuteling met {name} te verifiëren, vergelijk je bovenstaande nummers met die op het apparaat van je contact. Je contacten kunnen ook jouw code scannen met hun apparaat"
   },
   "icu:SafetyNumberViewer__learn_more": {
     "messageformat": "Meer informatie"
@@ -607,6 +664,15 @@
   },
   "icu:Toast--ReceiptSaveFailed": {
     "messageformat": "Fout bij het opslaan van je donatiebewijs. Probeer het opnieuw."
+  },
+  "icu:Toast--ChatFolderAddedChat": {
+    "messageformat": "Toegevoegd aan ‘{chatFolderName}’"
+  },
+  "icu:Toast--ChatFolderRemovedChat": {
+    "messageformat": "Verwijderd uit ‘{chatFolderName}’"
+  },
+  "icu:Toast--ChatFolderCreated": {
+    "messageformat": "Map {chatFolderName} toegevoegd"
   },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Je kunt geen foto's en video's samen met bestanden selecteren."
@@ -1031,14 +1097,98 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "Bericht­details"
   },
+  "icu:MessageContextMenu__PinMessage": {
+    "messageformat": "Bericht vastzetten"
+  },
+  "icu:MessageContextMenu__UnpinMessage": {
+    "messageformat": "Unpin message"
+  },
+  "icu:Poll__end-poll": {
+    "messageformat": "Peiling beëindigen"
+  },
+  "icu:PollMessage--SelectOne": {
+    "messageformat": "Peiling · Kies een optie"
+  },
+  "icu:PollMessage--SelectMultiple": {
+    "messageformat": "Peiling · Kies een of meerdere opties"
+  },
+  "icu:PollMessage--FinalResults": {
+    "messageformat": "Peiling · Eindresultaat"
+  },
+  "icu:PollMessage__ViewVotesButton": {
+    "messageformat": "Stemmen bekijken"
+  },
+  "icu:PollMessage--YouVoted": {
+    "messageformat": "Je hebt gestemd"
+  },
+  "icu:PollTerminate--you": {
+    "messageformat": "Je hebt de peiling ‘{poll}’ beëindigd"
+  },
+  "icu:PollTerminate--other": {
+    "messageformat": "{name} heeft de peiling ‘{poll}’ beëindigd"
+  },
+  "icu:PollTerminate__view-poll": {
+    "messageformat": "Peiling bekijken"
+  },
+  "icu:PollVotesModal__title": {
+    "messageformat": "Peilinggegevens"
+  },
+  "icu:PollVotesModal__questionLabel": {
+    "messageformat": "Vraag"
+  },
+  "icu:PollVotesModal__voteCount": {
+    "messageformat": "{count, plural, one {{count,number} stem} other {{count,number} stemmen}}"
+  },
+  "icu:PollVotesModal__noVotes": {
+    "messageformat": "Geen stemmen"
+  },
+  "icu:PollVotesModal__winningOption": {
+    "messageformat": "Meeste stemmen"
+  },
+  "icu:Toast--PinnedMessageNotFound": {
+    "messageformat": "Vastgezet bericht niet gevonden"
+  },
+  "icu:Toast--PollNotFound": {
+    "messageformat": "Peiling niet gevonden"
+  },
+  "icu:PollCreateModal__title": {
+    "messageformat": "Nieuwe peiling"
+  },
+  "icu:PollCreateModal__questionLabel": {
+    "messageformat": "Vraag"
+  },
+  "icu:PollCreateModal__questionPlaceholder": {
+    "messageformat": "Stel een vraag"
+  },
+  "icu:PollCreateModal__optionsLabel": {
+    "messageformat": "Opties"
+  },
+  "icu:PollCreateModal__optionPlaceholder": {
+    "messageformat": "Optie {number}"
+  },
+  "icu:PollCreateModal__allowMultipleVotes": {
+    "messageformat": "Meerdere antwoorden toestaan"
+  },
+  "icu:PollCreateModal__sendButton": {
+    "messageformat": "Verzenden"
+  },
+  "icu:PollCreateModal__Error--RequiresQuestion": {
+    "messageformat": "Voeg een vraag voor de peiling toe"
+  },
+  "icu:PollCreateModal__Error--RequiresTwoOptions": {
+    "messageformat": "Voor een peiling zijn minstens 2 opties nodig"
+  },
+  "icu:PollCreateModal__Error--QuestionTooLong": {
+    "messageformat": "Vraag is te lang"
+  },
+  "icu:PollCreateModal__Error--OptionTooLong": {
+    "messageformat": "Optie is te lang"
+  },
   "icu:deleteConversation": {
     "messageformat": "Verwijderen"
   },
   "icu:ConversationHeader__DeleteConversationConfirmation__title": {
     "messageformat": "Chat verwijderen?"
-  },
-  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
-    "messageformat": "Alle berichten in deze chat worden verwijderd van dit apparaat."
   },
   "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
     "messageformat": "Alle berichten in deze chat worden verwijderd van al je apparaten."
@@ -1057,6 +1207,108 @@
   },
   "icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description": {
     "messageformat": "Voordat je de groep verlaat moet je ten minste één beheerder aanwijzen voor deze groep."
+  },
+  "icu:PinnedMessageNotification__Message--You": {
+    "messageformat": "Je hebt een bericht vastgezet"
+  },
+  "icu:PinnedMessageNotification__Message--SomeoneElse": {
+    "messageformat": "{sender} heeft een bericht vastgezet"
+  },
+  "icu:PinnedMessageNotification__Button": {
+    "messageformat": "Naar bericht gaan"
+  },
+  "icu:PinMessageDialog__Title": {
+    "messageformat": "Dit bericht vastzetten voor…"
+  },
+  "icu:PinMessageDialog__Close": {
+    "messageformat": "Sluiten"
+  },
+  "icu:PinMessageDialog__Option--TIME_24_HOURS": {
+    "messageformat": "24 uur"
+  },
+  "icu:PinMessageDialog__Option--TIME_7_DAYS": {
+    "messageformat": "7 dagen"
+  },
+  "icu:PinMessageDialog__Option--TIME_30_DAYS": {
+    "messageformat": "30 dagen"
+  },
+  "icu:PinMessageDialog__Option--FOREVER": {
+    "messageformat": "Voor altijd"
+  },
+  "icu:PinMessageDialog__Cancel": {
+    "messageformat": "Annuleren"
+  },
+  "icu:PinMessageDialog__Pin": {
+    "messageformat": "Vastzetten"
+  },
+  "icu:PinnedMessagesBar__AccessibilityLabel": {
+    "messageformat": "{pinsCount, plural, one {Vastgezet bericht} other {Vastgezette berichten}}"
+  },
+  "icu:PinnedMessagesBar__Tab__AccessibilityLabel": {
+    "messageformat": "Ga naar vastgezet bericht {pinNumber,number}"
+  },
+  "icu:PinnedMessagesBar__GoToMessageClickableArea__AccessibilityLabel": {
+    "messageformat": "Naar bericht gaan"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__Button__AccessibilityLabel": {
+    "messageformat": "Meer acties"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__UnpinMessage": {
+    "messageformat": "Bericht losmaken"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__GoToMessage": {
+    "messageformat": "Naar bericht gaan"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__SeeAllMessages": {
+    "messageformat": "Alle berichten bekijken"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Address": {
+    "messageformat": "Address"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--VoiceMessage": {
+    "messageformat": "Voice message"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Gif": {
+    "messageformat": "GIF"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--File": {
+    "messageformat": "File"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Contact": {
+    "messageformat": "Contact"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Payment": {
+    "messageformat": "Payment"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Poll": {
+    "messageformat": "Poll"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Sticker": {
+    "messageformat": "Sticker"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Photo": {
+    "messageformat": "Photo"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Video": {
+    "messageformat": "Video"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--VoiceMessage": {
+    "messageformat": "Voice message"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Gif": {
+    "messageformat": "GIF"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Payment": {
+    "messageformat": "Payment"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Sticker": {
+    "messageformat": "Sticker"
+  },
+  "icu:PinnedMessagesPanel__Title": {
+    "messageformat": "Pinned messages"
+  },
+  "icu:PinnedMessagesPanel__UnpinAllMessages": {
+    "messageformat": "Unpin all messages"
   },
   "icu:sessionEnded": {
     "messageformat": "Beveiligde sessie opnieuw ingesteld"
@@ -1175,36 +1427,6 @@
   "icu:attachmentNotAvailable__tapToViewCannotDownload": {
     "messageformat": "Kan eenmaligeweergave-media niet downloaden."
   },
-  "icu:AttachmentNotAvailableModal__title--file": {
-    "messageformat": "Bestand niet beschikbaar"
-  },
-  "icu:AttachmentNotAvailableModal__title--long-text": {
-    "messageformat": "Volledig bericht niet beschikbaar"
-  },
-  "icu:AttachmentNotAvailableModal__title--media": {
-    "messageformat": "Media niet beschikbaar"
-  },
-  "icu:AttachmentNotAvailableModal__title--sticker": {
-    "messageformat": "Sticker niet beschikbaar"
-  },
-  "icu:AttachmentNotAvailableModal__title--voice-message": {
-    "messageformat": "Spraakbericht niet beschikbaar"
-  },
-  "icu:AttachmentNotAvailableModal__body--file": {
-    "messageformat": "Dit bestand is niet overgezet van je telefoon toen dit apparaat werd gekoppeld. Media en bestanden die ouder zijn dan 45 dagen op het moment dat het apparaat wordt gekoppeld, kunnen niet worden gesynchroniseerd."
-  },
-  "icu:AttachmentNotAvailableModal__body--long-text": {
-    "messageformat": "Van dit bericht is niet de volledige tekst overgezet van je telefoon toen dit apparaat werd gekoppeld. Lange tekstberichten die ouder zijn dan 45 dagen op het moment dat een apparaat wordt gekoppeld, kunnen niet worden gesynchroniseerd."
-  },
-  "icu:AttachmentNotAvailableModal__body--media": {
-    "messageformat": "Dit bestand is niet overgezet van je telefoon toen dit apparaat werd gekoppeld. Bestanden ouder dan 45 dagen op het moment dat het apparaat wordt gekoppeld, kunnen niet worden gesynchroniseerd."
-  },
-  "icu:AttachmentNotAvailableModal__body--sticker": {
-    "messageformat": "Deze sticker is niet overgezet van je telefoon toen dit apparaat werd gekoppeld. Media en bestanden die ouder zijn dan 45 dagen op het moment dat het apparaat wordt gekoppeld, kunnen niet worden gesynchroniseerd."
-  },
-  "icu:AttachmentNotAvailableModal__body--voice-message": {
-    "messageformat": "Dit spraakbericht is niet overgezet van je telefoon toen dit apparaat werd gekoppeld. Media en bestanden die ouder zijn dan 45 dagen op het moment dat het apparaat wordt gekoppeld, kunnen niet worden gesynchroniseerd."
-  },
   "icu:TapToViewNotAvailableModal__body--expired": {
     "messageformat": "Deze eenmaligeweergave-media is niet langer beschikbaar om te downloaden. Vraag {name} om het opnieuw te verzenden."
   },
@@ -1292,8 +1514,20 @@
   "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Title": {
     "messageformat": "Een chatmap toevoegen"
   },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Title--WithChatFolders": {
+    "messageformat": "Mappen toevoegen of bewerken"
+  },
   "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Description": {
     "messageformat": "Orden je chats in mappen en schakel snel tussen deze mappen in je chatlijst."
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Description--WithChatFolders": {
+    "messageformat": "{chatFoldersCount, plural, one {{chatFoldersCount,number} map} other {{chatFoldersCount,number} mappen}}"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Button": {
+    "messageformat": "Instellen"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Button--WithChatFolders": {
+    "messageformat": "Beheren"
   },
   "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__EditFolder": {
     "messageformat": "Map bewerken"
@@ -1328,14 +1562,14 @@
   "icu:Preferences__ChatFoldersPage__FoldersSection__CreateAFolderButton": {
     "messageformat": "Nieuwe map maken"
   },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__DragHandle__Label": {
+    "messageformat": "Sleep om de chatmap te verplaatsen"
+  },
   "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__Title": {
     "messageformat": "Voorgestelde mappen"
   },
   "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton": {
     "messageformat": "Toevoegen"
-  },
-  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton__Toast": {
-    "messageformat": "Map {chatFolderTitle} toegevoegd"
   },
   "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Title": {
     "messageformat": "Ongelezen"
@@ -1357,6 +1591,9 @@
   },
   "icu:Preferences__EditChatFolderPage__Title": {
     "messageformat": "Nieuwe map maken"
+  },
+  "icu:Preferences__EditChatFolderPage__Title--EditingExistingChatFolder": {
+    "messageformat": "Map bewerken"
   },
   "icu:Preferences__EditChatFolderPage__FolderNameField__Label": {
     "messageformat": "Naam van de map"
@@ -1534,6 +1771,12 @@
   },
   "icu:calling__removed-from-call-title": {
     "messageformat": "Verwijderd uit oproep"
+  },
+  "icu:calling__has-max-devices": {
+    "messageformat": "Je kunt niet deelnemen omdat deze groepsoproep het maximale aantal deelnemers heeft bereikt. Probeer het later opnieuw."
+  },
+  "icu:calling__has-max-devices--title": {
+    "messageformat": "De oproep is vol"
   },
   "icu:CallingLobby__CallLinkNotice": {
     "messageformat": "Iedereen die via de link aan deze oproep deelneemt, ziet je naam en profielfoto."
@@ -1853,6 +2096,9 @@
   "icu:notificationReactionMessage": {
     "messageformat": "{sender} reageerde met {emoji} op: {message}"
   },
+  "icu:notificationPollVoteMessage": {
+    "messageformat": "{sender} heeft gestemd in de peiling ‘{pollQuestion}’"
+  },
   "icu:sendFailed": {
     "messageformat": "Verzenden is mislukt"
   },
@@ -2070,13 +2316,16 @@
     "messageformat": "Downloaden mislukt"
   },
   "icu:Toast--unable-download-from-backup-tier": {
-    "messageformat": "Download of attachment from backup failed"
+    "messageformat": "Attachment missing from backup CDN"
   },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "Berichten kunnen alleen binnen 24 uur na verzenden bewerkt worden."
   },
   "icu:startConversation--username-not-found": {
     "messageformat": "{atUsername} is geen Signal-gebruiker. Controleer of je de volledige gebruikersnaam hebt ingevoerd."
+  },
+  "icu:startConversation--username-not-valid": {
+    "messageformat": "{atUsername} is geen geldige gebruikersnaam. Zorg ervoor dat je de volledige gebruikersnaam hebt ingevoerd, inclusief de punt en bijbehorende cijfercombinatie."
   },
   "icu:startConversation--phone-number-not-found": {
     "messageformat": "Gebruiker niet gevonden. ‘{phoneNumber}’ is geen Signal-gebruiker."
@@ -2231,6 +2480,9 @@
   "icu:message--getNotificationText--stickers": {
     "messageformat": "Stickerbericht"
   },
+  "icu:Poll--preview": {
+    "messageformat": "Peiling: {pollQuestion}"
+  },
   "icu:message--getNotificationText--text-with-emoji": {
     "messageformat": "{emoji} {text}"
   },
@@ -2357,101 +2609,11 @@
   "icu:stickers--StickerManager--UninstallWarning": {
     "messageformat": "Je kunt dit stickerpakket mogelijk niet opnieuw installeren als je het bronbericht niet langer bezit."
   },
-  "icu:stickers--StickerManager--Introduction--Image": {
-    "messageformat": "Signal introduceert: Stickers"
-  },
-  "icu:stickers--StickerManager--Introduction--Title": {
-    "messageformat": "We introduceren stickers"
-  },
-  "icu:stickers--StickerManager--Introduction--Body": {
-    "messageformat": "Waarom zou je woorden gebruiken als je ook stickers kunt gebruiken?"
-  },
-  "icu:stickers--StickerPicker--Open": {
-    "messageformat": "Open de stickerkiezer"
-  },
-  "icu:stickers--StickerPicker--AddPack": {
-    "messageformat": "Voeg een stickerpakket toe"
-  },
-  "icu:stickers--StickerPicker--NextPage": {
-    "messageformat": "Volgende blad"
-  },
-  "icu:stickers--StickerPicker--PrevPage": {
-    "messageformat": "Vorige blad"
-  },
-  "icu:stickers--StickerPicker--Recents": {
-    "messageformat": "Recente stickers"
-  },
-  "icu:stickers--StickerPicker--DownloadError": {
-    "messageformat": "Sommige stickers konden niet worden gedownload."
-  },
-  "icu:stickers--StickerPicker--DownloadPending": {
-    "messageformat": "Stickerpakket wordt geïnstalleerd…"
-  },
-  "icu:stickers--StickerPicker--Empty": {
-    "messageformat": "Geen stickers gevonden"
-  },
-  "icu:stickers--StickerPicker--Hint": {
-    "messageformat": "Vanuit je berichten zijn er nieuwe stickerpakketten beschikbaar om te installeren"
-  },
-  "icu:stickers--StickerPicker--NoPacks": {
-    "messageformat": "Geen stickerpakketten gevonden"
-  },
-  "icu:stickers--StickerPicker--NoRecents": {
-    "messageformat": "Onlangs gebruikte stickers verschijnen hier."
-  },
-  "icu:stickers__StickerPicker__recent": {
-    "messageformat": "Onlangs gebruikt"
-  },
-  "icu:stickers__StickerPicker__featured": {
-    "messageformat": "Uitgelicht"
-  },
-  "icu:stickers__StickerPicker__analog-time": {
-    "messageformat": "Analoge tijd"
-  },
   "icu:stickers--StickerPreview--Title": {
     "messageformat": "Stickerpakket"
   },
   "icu:stickers--StickerPreview--Error": {
     "messageformat": "Fout bij het openen van een stickerpakket. Controleer je internetverbinding en probeer het opnieuw."
-  },
-  "icu:EmojiPicker--empty": {
-    "messageformat": "Geen emoji gevonden"
-  },
-  "icu:EmojiPicker--search-close": {
-    "messageformat": "Emoji's zoekscherm sluiten"
-  },
-  "icu:EmojiPicker--search-placeholder": {
-    "messageformat": "Emoji zoeken"
-  },
-  "icu:EmojiPicker--skin-tone": {
-    "messageformat": "Huidskleur {tone}"
-  },
-  "icu:EmojiPicker__button--recents": {
-    "messageformat": "Onlangs gebruikt"
-  },
-  "icu:EmojiPicker__button--emoji": {
-    "messageformat": "Emoji"
-  },
-  "icu:EmojiPicker__button--animal": {
-    "messageformat": "Dieren"
-  },
-  "icu:EmojiPicker__button--food": {
-    "messageformat": "Voedsel"
-  },
-  "icu:EmojiPicker__button--activity": {
-    "messageformat": "Activiteiten"
-  },
-  "icu:EmojiPicker__button--travel": {
-    "messageformat": "Reizen"
-  },
-  "icu:EmojiPicker__button--object": {
-    "messageformat": "Objecten"
-  },
-  "icu:EmojiPicker__button--symbol": {
-    "messageformat": "Symbolen"
-  },
-  "icu:EmojiPicker__button--flag": {
-    "messageformat": "Vlaggen"
   },
   "icu:FunPicker__Tab--Emojis": {
     "messageformat": "Emoji"
@@ -2560,6 +2722,9 @@
   },
   "icu:FunPanelStickers__SubNavCategoryLabel--Recents": {
     "messageformat": "Onlangs gebruikt"
+  },
+  "icu:FunPanelStickers__SubNavButton--AddStickerPack": {
+    "messageformat": "Voeg een stickerpakket toe"
   },
   "icu:FunPanelStickers__SectionTitle--SearchResults": {
     "messageformat": "Zoekresultaten"
@@ -3527,9 +3692,6 @@
   "icu:muteExpirationLabel": {
     "messageformat": "Gedempt tot {duration}"
   },
-  "icu:EmojiButton__label": {
-    "messageformat": "Emoji"
-  },
   "icu:ErrorModal--title": {
     "messageformat": "Er ging iets mis!"
   },
@@ -4292,6 +4454,18 @@
   "icu:CompositionArea--attach-file": {
     "messageformat": "Bestand bijvoegen"
   },
+  "icu:CompositionArea__AttachMenu__PhotosAndVideos": {
+    "messageformat": "Foto's en video's"
+  },
+  "icu:CompositionArea__AttachMenu__File": {
+    "messageformat": "Bestand"
+  },
+  "icu:CompositionArea__AttachMenu__Poll": {
+    "messageformat": "Peiling"
+  },
+  "icu:CompositionArea--attach-plus": {
+    "messageformat": "Bijlage of peiling toevoegen"
+  },
   "icu:CompositionArea--sms-only__title": {
     "messageformat": "Deze persoon maakt geen gebruik van Signal"
   },
@@ -4299,10 +4473,10 @@
     "messageformat": "Signal Desktop biedt geen ondersteuning voor het verzenden van berichten naar personen die niet geregistreerd zijn bij Signal. Vraag deze persoon om Signal te installeren om zo beveiligde gesprekken te kunnen voeren."
   },
   "icu:CompositionArea--sms-only__spinner-label": {
-    "messageformat": "Controleren of deze persoon staat geregistreerd bij Signal"
+    "messageformat": "Controleren of deze persoon is geregistreerd bij Signal"
   },
   "icu:CompositionArea__edit-action--discard": {
-    "messageformat": "Bericht weggooien"
+    "messageformat": "Bewerking annuleren"
   },
   "icu:CompositionArea__edit-action--send": {
     "messageformat": "Bewerkt bericht versturen"
@@ -4442,7 +4616,7 @@
   "icu:ConversationDetailsActions--block-group-modal-confirm": {
     "messageformat": "Blokkeren"
   },
-  "icu:ConversationDetailsActions--unblock-group-modal-content": {
+  "icu:ConversationDetailsActions--unblock-group-modal-body": {
     "messageformat": "Je contacten zullen je kunnen toevoegen aan deze groep."
   },
   "icu:ConversationDetailsActions--unblock-group-modal-confirm": {
@@ -4451,11 +4625,8 @@
   "icu:ConversationDetailsHeader--members": {
     "messageformat": "{number, plural, one {{number,number} lid} other {{number,number} leden}}"
   },
-  "icu:ConversationDetailsMediaList--shared-media": {
-    "messageformat": "Uitgewisselde media"
-  },
-  "icu:ConversationDetailsMediaList--show-all": {
-    "messageformat": "Alles weergeven"
+  "icu:ConversationDetailsMediaList--title": {
+    "messageformat": "Media, links en documenten"
   },
   "icu:ConversationDetailsMembershipList--title": {
     "messageformat": "{number, plural, one {{number,number} lid} other {{number,number} leden}}"
@@ -4949,6 +5120,57 @@
   "icu:ConversationDetailsHeader--add-group-description": {
     "messageformat": "Voeg een groepsomschrijving toe…"
   },
+  "icu:AudioListItem__subtitle--voice-message": {
+    "messageformat": "Spraakbericht"
+  },
+  "icu:AudioListItem__subtitle--audio": {
+    "messageformat": "Audio"
+  },
+  "icu:LinkPreviewItem__alt": {
+    "messageformat": "Link openen in een browser"
+  },
+  "icu:ListItem__show-message": {
+    "messageformat": "Toon bericht in gesprek"
+  },
+  "icu:MediaGallery__tab__audio": {
+    "messageformat": "Audio"
+  },
+  "icu:MediaGallery__tab__files": {
+    "messageformat": "Documenten"
+  },
+  "icu:MediaGallery__tab__links": {
+    "messageformat": "Links"
+  },
+  "icu:MediaGallery__EmptyState__title--media": {
+    "messageformat": "Geen media"
+  },
+  "icu:MediaGallery__EmptyState__description--media": {
+    "messageformat": "Foto's, video's en GIF's die je verstuurt en ontvangt worden hier weergegeven"
+  },
+  "icu:MediaGallery__EmptyState__title--audio": {
+    "messageformat": "Geen audio"
+  },
+  "icu:MediaGallery__EmptyState__description--audio": {
+    "messageformat": "Spraakberichten en audiobestanden die je verstuurt en ontvangt worden hier weergegeven"
+  },
+  "icu:MediaGallery__EmptyState__title--links": {
+    "messageformat": "Geen links"
+  },
+  "icu:MediaGallery__EmptyState__description--links-2": {
+    "messageformat": "Links die je verstuurt en ontvangt worden hier weergegeven"
+  },
+  "icu:MediaGallery__EmptyState__description--documents": {
+    "messageformat": "Links die je verstuurt en ontvangt worden hier weergegeven"
+  },
+  "icu:MediaGallery__EmptyState__title--documents": {
+    "messageformat": "Geen documenten"
+  },
+  "icu:MediaGallery__EmptyState__description--documents-2": {
+    "messageformat": "Documenten die je verstuurt en ontvangt worden hier weergegeven"
+  },
+  "icu:MediaGallery__EmptyState__description--links": {
+    "messageformat": "Documenten die je verstuurt en ontvangt worden hier weergegeven"
+  },
   "icu:MediaQualitySelector--button": {
     "messageformat": "Mediakwaliteit kiezen"
   },
@@ -5288,6 +5510,327 @@
   "icu:Preferences--notification-content": {
     "messageformat": "Meldings­inhoud"
   },
+  "icu:PlaintextExport--PreferencesRow--Header": {
+    "messageformat": "Chatgeschiedenis exporteren"
+  },
+  "icu:PlaintextExport--PreferencesRow--Description": {
+    "messageformat": "Exporteer een kopie van al je chats in een machineleesbaar JSON-bestand. Verdwijnende berichten worden niet geëxporteerd."
+  },
+  "icu:PlaintextExport--ActionButton": {
+    "messageformat": "Exporteren"
+  },
+  "icu:PlaintextExport--Confirmation--Header": {
+    "messageformat": "Chatgeschiedenis exporteren?"
+  },
+  "icu:PlaintextExport--Confirmation--Description": {
+    "messageformat": "<bold>LET OP!</bold> Deel dit bestand met NIEMAND. Je chatgeschiedenis wordt opgeslagen op je computer. Andere apps hebben er toegang toe, afhankelijk van de rechten van je computer."
+  },
+  "icu:PlaintextExport--Confirmation--IncludeMedia": {
+    "messageformat": "Media bijvoegen <secondary>(groter bestandsformaat)</secondary>"
+  },
+  "icu:PlaintextExport--Confirmation--ContinueButton": {
+    "messageformat": "Doorgaan"
+  },
+  "icu:PlaintextExport--Confirmation--WaitingLabel": {
+    "messageformat": "Wachten op input"
+  },
+  "icu:PlaintextExport--OSPrompt--Mac": {
+    "messageformat": "je chatgeschiedenis te exporteren"
+  },
+  "icu:PlaintextExport--OSPrompt--Windows": {
+    "messageformat": "Verifieer je identiteit om je chatgeschiedenis te exporteren."
+  },
+  "icu:PlaintextExport--OSPrompt--description--Linux": {
+    "messageformat": "Exporteren"
+  },
+  "icu:PlaintextExport--OSPrompt--message--Linux": {
+    "messageformat": "Authenticatie is vereist om je chatgeschiedenis te exporteren."
+  },
+  "icu:PlaintextExport--ProgressDialog--Header": {
+    "messageformat": "Chatgeschiedenis exporteren"
+  },
+  "icu:PlaintextExport--ProgressDialog--Progress": {
+    "messageformat": "{currentBytes} van {totalBytes} ({percentage,number,percent}) aan het exporteren…"
+  },
+  "icu:PlaintextExport--ProgressDialog--TimeWarning": {
+    "messageformat": "Dit kan enkele minuten duren"
+  },
+  "icu:PlaintextExport--CompleteDialog--Header": {
+    "messageformat": "Exporteren voltooid"
+  },
+  "icu:PlaintextExport--CompleteDialog--Description": {
+    "messageformat": "<bold>LET GOED OP</bold> waar je je chatexportbestand opslaat en deel het met niemand. Andere apps op je computer hebben er toegang toe, afhankelijk van de rechten van je computer. "
+  },
+  "icu:PlaintextExport--CompleteDialog--ShowFiles--Mac": {
+    "messageformat": "In Finder weergeven"
+  },
+  "icu:PlaintextExport--CompleteDialog--ShowFiles--Linux": {
+    "messageformat": "In map weergeven"
+  },
+  "icu:PlaintextExport--CompleteDialog--ShowFiles--Windows": {
+    "messageformat": "In map weergeven"
+  },
+  "icu:PlaintextExport--Error--General--Title": {
+    "messageformat": "Kan chatgeschiedenis niet exporteren"
+  },
+  "icu:PlaintextExport--Error--General--Description": {
+    "messageformat": "Er is een fout opgetreden en je chatgeschiedenis kon niet worden geëxporteerd."
+  },
+  "icu:PlaintextExport--Error--NotEnoughStorage--Title": {
+    "messageformat": "Niet genoeg opslagruimte"
+  },
+  "icu:PlaintextExport--Error--NotEnoughStorage--Detail": {
+    "messageformat": "Je chatgeschiedenis kan niet worden geëxporteerd, omdat je computer niet genoeg vrije opslagruimte heeft. Maak {bytes} aan ruimte vrij en probeer het dan opnieuw."
+  },
+  "icu:PlaintextExport--Error--RanOutOfStorage--Title": {
+    "messageformat": "Kan chatgeschiedenis niet exporteren"
+  },
+  "icu:PlaintextExport--Error--RanOutOfStorage--Detail": {
+    "messageformat": "Je chatgeschiedenis kon niet worden geëxporteerd, omdat je computer niet genoeg vrije opslagruimte heeft. Maak {bytes} aan ruimte vrij en probeer het dan opnieuw."
+  },
+  "icu:PlaintextExport--Error--DiskPermssions--Title": {
+    "messageformat": "Kan chatgeschiedenis niet exporteren"
+  },
+  "icu:PlaintextExport--Error--DiskPermssions--Detail": {
+    "messageformat": "Je chatgeschiedenis kan niet worden geëxporteerd omdat Signal geen toestemming heeft om bestanden naar de schijf te schrijven. Probeer de rechten van je schijf te wijzigen of je systeeminstellingen bij te werken en exporteer dan opnieuw."
+  },
+  "icu:NotificationProfile--moon-icon": {
+    "messageformat": "Maanpictogram"
+  },
+  "icu:NotificationProfile--copy-label": {
+    "messageformat": "Kopie van {profileName}"
+  },
+  "icu:NotificationProfile--am": {
+    "messageformat": "AM"
+  },
+  "icu:NotificationProfile--pm": {
+    "messageformat": "PM"
+  },
+  "icu:NotificationProfile--time-separator": {
+    "messageformat": ":"
+  },
+  "icu:NotificationProfileMenuItem": {
+    "messageformat": "Meldingsprofiel"
+  },
+  "icu:NotificationProfileMenu--header": {
+    "messageformat": "Meldingsprofiel"
+  },
+  "icu:NotificationProfileMenu--on": {
+    "messageformat": "Ingeschakeld"
+  },
+  "icu:NotificationProfileMenu--on-with-end": {
+    "messageformat": "Ingeschakeld tot {endTime}"
+  },
+  "icu:NotificationProfileMenu--for-one-hour": {
+    "messageformat": "Een uur lang"
+  },
+  "icu:NotificationProfileMenu--until-time": {
+    "messageformat": "Tot {time}"
+  },
+  "icu:NotificationProfileMenu--settings": {
+    "messageformat": "Instellingen"
+  },
+  "icu:NotificationProfilesToast--enabled": {
+    "messageformat": "‘{name}’ ingeschakeld"
+  },
+  "icu:NotificationProfilesToast--disabled": {
+    "messageformat": "‘{name}’ uitgeschakeld"
+  },
+  "icu:NotificationProfilesToast--enabled--label": {
+    "messageformat": "Meldingsprofiel ingeschakeld"
+  },
+  "icu:NotificationProfilesToast--disabled--label": {
+    "messageformat": "Meldingsprofiel uitgeschakeld"
+  },
+  "icu:NotificationProfiles--setting": {
+    "messageformat": "Meldingsprofielen"
+  },
+  "icu:NotificationProfiles--setup": {
+    "messageformat": "Instellen"
+  },
+  "icu:NotificationProfiles--title": {
+    "messageformat": "Meldingsprofielen"
+  },
+  "icu:NotificationProfiles--setup-description": {
+    "messageformat": "Maak een meldingsprofiel aan om alleen van bepaalde personen of groepen meldingen en oproepen te ontvangen"
+  },
+  "icu:NotificationProfiles--setup-continue": {
+    "messageformat": "Doorgaan"
+  },
+  "icu:NotificationProfiles--manage-description": {
+    "messageformat": "Meldingsprofielen toevoegen of bewerken"
+  },
+  "icu:NotificationProfiles--manage-profiles": {
+    "messageformat": "{profileCount, plural, one {1 profiel} other {{profileCount,number} profielen}}"
+  },
+  "icu:NotificationProfiles--create": {
+    "messageformat": "Meldingsprofiel aanmaken"
+  },
+  "icu:NotificationProfiles--name-title": {
+    "messageformat": "Geef je meldingsprofiel een naam"
+  },
+  "icu:NotificationProfiles--name-title--editing": {
+    "messageformat": "Profielnaam"
+  },
+  "icu:NotificationProfiles--name-placeholder": {
+    "messageformat": "Profielnaam"
+  },
+  "icu:NotificationProfiles--sample-name__work": {
+    "messageformat": "Tijdens werk"
+  },
+  "icu:NotificationProfiles--sample-name__sleep": {
+    "messageformat": "Wanneer ik slaap"
+  },
+  "icu:NotificationProfiles--sample-name__driving": {
+    "messageformat": "Terwijl ik aan het rijden ben"
+  },
+  "icu:NotificationProfiles--sample-name__downtime": {
+    "messageformat": "Even nergens mee bezig"
+  },
+  "icu:NotificationProfiles--sample-name__focus": {
+    "messageformat": "Nu even focussen"
+  },
+  "icu:NotificationProfiles--allowed-title": {
+    "messageformat": "Meldingen doorlaten"
+  },
+  "icu:NotificationProfiles--allowed-description": {
+    "messageformat": "Voeg mensen en groepen toe waarvan je meldingen wilt ontvangen wanneer dit meldingsprofiel actief is"
+  },
+  "icu:NotificationProfiles--allowed-add-label": {
+    "messageformat": "Personen of groepen toevoegen"
+  },
+  "icu:NotificationProfiles--exceptions": {
+    "messageformat": "Uitzonderingen"
+  },
+  "icu:NotificationProfiles--exceptions--allow-all-calls": {
+    "messageformat": "Alle oproepen toestaan"
+  },
+  "icu:NotificationProfiles--exceptions--notify-for-mentions": {
+    "messageformat": "Alle vermeldingen melden"
+  },
+  "icu:NotificationProfiles--schedule-title": {
+    "messageformat": "Tijdsplanning toevoegen"
+  },
+  "icu:NotificationProfiles--schedule-title--editing": {
+    "messageformat": "Tijdsplanning"
+  },
+  "icu:NotificationProfiles--schedule-description": {
+    "messageformat": "Stel een tijdsplanning in zodat dit meldingsprofiel automatisch op bepaalde momenten wordt geactiveerd en gedeactiveerd."
+  },
+  "icu:NotificationProfiles--schedule-enable": {
+    "messageformat": "Tijdsplanning gebruiken"
+  },
+  "icu:NotificationProfiles--schedule": {
+    "messageformat": "Tijdsplanning"
+  },
+  "icu:NotificationProfiles--schedule-from": {
+    "messageformat": "Van"
+  },
+  "icu:NotificationProfiles--schedule-until": {
+    "messageformat": "Tot"
+  },
+  "icu:NotificationProfiles--open-time-picker": {
+    "messageformat": "Tijdkiezer openen"
+  },
+  "icu:NotificationProfiles--schedule-sunday": {
+    "messageformat": "Zondag"
+  },
+  "icu:NotificationProfiles--schedule-monday": {
+    "messageformat": "Maandag"
+  },
+  "icu:NotificationProfiles--schedule-tuesday": {
+    "messageformat": "Dinsdag"
+  },
+  "icu:NotificationProfiles--schedule-wednesday": {
+    "messageformat": "Woensdag"
+  },
+  "icu:NotificationProfiles--schedule-thursday": {
+    "messageformat": "Donderdag"
+  },
+  "icu:NotificationProfiles--schedule-friday": {
+    "messageformat": "Vrijdag"
+  },
+  "icu:NotificationProfiles--schedule-saturday": {
+    "messageformat": "Zaterdag"
+  },
+  "icu:NotificationProfiles--done-title": {
+    "messageformat": "Meldingsprofiel aangemaakt"
+  },
+  "icu:NotificationProfiles--done-description": {
+    "messageformat": "Als je een tijdsplanning hebt toegevoegd, wordt je profiel automatisch in- en uitgeschakeld. Je kunt ook op het icoon ··· bovenaan de chatlijst klikken om deze handmatig in of uit te schakelen."
+  },
+  "icu:NotificationProfiles--schedule-sunday-short": {
+    "messageformat": "zo"
+  },
+  "icu:NotificationProfiles--schedule-monday-short": {
+    "messageformat": "ma"
+  },
+  "icu:NotificationProfiles--schedule-tuesday-short": {
+    "messageformat": "di"
+  },
+  "icu:NotificationProfiles--schedule-wednesday-short": {
+    "messageformat": "wo"
+  },
+  "icu:NotificationProfiles--schedule-thursday-short": {
+    "messageformat": "do"
+  },
+  "icu:NotificationProfiles--schedule-friday-short": {
+    "messageformat": "vr"
+  },
+  "icu:NotificationProfiles--schedule-saturday-short": {
+    "messageformat": "za"
+  },
+  "icu:NotificationProfiles--schedule-weekdays": {
+    "messageformat": "Doordeweeks"
+  },
+  "icu:NotificationProfiles--schedule-weekends": {
+    "messageformat": "Weekend"
+  },
+  "icu:NotificationProfiles--schedule-daily": {
+    "messageformat": "Dagelijks"
+  },
+  "icu:NotificationProfiles--schedule-separator": {
+    "messageformat": ", "
+  },
+  "icu:NotificationProfiles--list--header": {
+    "messageformat": "Meldingsprofielen"
+  },
+  "icu:NotificationProfiles--list--sync": {
+    "messageformat": "Synchroniseren op alle apparaten"
+  },
+  "icu:NotificationProfiles--list--sync--description": {
+    "messageformat": "Hiermee worden je meldingsprofielen gesynchroniseerd op al je apparaten. Als je een profiel op één apparaat inschakelt, wordt het ook op je andere apparaten ingeschakeld."
+  },
+  "icu:NotificationProfiles--delete": {
+    "messageformat": "Meldingsprofiel verwijderen"
+  },
+  "icu:NotificationProfiles--delete-confirmation": {
+    "messageformat": "Dit meldingsprofiel permanent verwijderen?"
+  },
+  "icu:NotificationProfiles--delete-button": {
+    "messageformat": "Verwijderen"
+  },
+  "icu:NotificationProfiles--edit--is-active": {
+    "messageformat": "Aan"
+  },
+  "icu:NotificationProfiles--edit--is-not-active": {
+    "messageformat": "Uit"
+  },
+  "icu:NotificationProfiles--edit--edit-name-label": {
+    "messageformat": "De naam van dit profiel bewerken"
+  },
+  "icu:NotificationProfiles--edit--allowed": {
+    "messageformat": "Meldingen doorlaten"
+  },
+  "icu:NotificationProfiles--edit--schedule-timing": {
+    "messageformat": "{startTime} tot {endTime}"
+  },
+  "icu:NotificationProfiles--edit--schedule-enabled": {
+    "messageformat": "Aan"
+  },
+  "icu:NotificationProfiles--edit--schedule-disabled": {
+    "messageformat": "Uit"
+  },
   "icu:Preferences--blocked": {
     "messageformat": "Geblokkeerd"
   },
@@ -5307,7 +5850,10 @@
     "messageformat": "Tekstberichten + alle media"
   },
   "icu:Preferences--backup-plan-not-found__description": {
-    "messageformat": "Your subscription was not found. Renew to continue using Signal Secure Backups."
+    "messageformat": "Je abonnement is niet gevonden. Ga naar Signal op je telefoon om je back-upgegevens te bekijken."
+  },
+  "icu:Preferences--backup-subscription-monthly-cost": {
+    "messageformat": "{cost}/maand"
   },
   "icu:Preferences--backup-messages-plan__description": {
     "messageformat": "{mediaDayCount, plural, one {Tekstberichten + {mediaDayCount,number} dag media} other {Tekstberichten + {mediaDayCount,number} dagen media}}"
@@ -5325,13 +5871,13 @@
     "messageformat": "Abonnement opgezegd"
   },
   "icu:Preferences--backup-media-plan__note": {
-    "messageformat": "You can manage or cancel your Signal Secure Backups subscription on your phone."
+    "messageformat": "Je Signal Secure Backups-abonnement kun je beheren of opzeggen op je telefoon."
   },
   "icu:Preferences--backup-messages-plan__note": {
-    "messageformat": "You can manage or upgrade Signal Secure Backups on your phone."
+    "messageformat": "Signal Secure Backups kun je beheren of upgraden op je telefoon."
   },
   "icu:Preferences--backup-plan__not-found__note": {
-    "messageformat": "You can manage or renew your Signal Secure Backups subscription on your phone."
+    "messageformat": "Je Signal Secure Backups-abonnement kun je beheren of vernieuwen op je telefoon."
   },
   "icu:Preferences--backup-created-at__label": {
     "messageformat": "Laatste back-up"
@@ -5362,6 +5908,18 @@
   },
   "icu:Preferences--local-backups-view-backup-key-done": {
     "messageformat": "Klaar"
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt--mac": {
+    "messageformat": "je back-upsleutel weer te geven"
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt--windows": {
+    "messageformat": "Verifieer je identiteit om je back-upsleutel te bekijken."
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt-description--linux": {
+    "messageformat": "Back-upsleutel weergeven"
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt-message--linux": {
+    "messageformat": "Authenticatie is vereist om je back-upsleutel te bekijken."
   },
   "icu:Preferences--local-backups-backup-key-text-box": {
     "messageformat": "Tekstvak back-upsleutel"
@@ -5404,6 +5962,18 @@
   },
   "icu:Preferences__local-backups-copied-key": {
     "messageformat": "Back-upsleutel gekopieerd"
+  },
+  "icu:Preferences__local-backups--enable--os-prompt--mac": {
+    "messageformat": "back-ups in te schakelen"
+  },
+  "icu:Preferences__local-backups--enable--os-prompt--windows": {
+    "messageformat": "Verifieer je identiteit om back-ups in te schakelen."
+  },
+  "icu:Preferences__local-backups--enable--os-prompt-description--linux": {
+    "messageformat": "Back-ups inschakelen"
+  },
+  "icu:Preferences__local-backups--enable--os-prompt-message--linux": {
+    "messageformat": "Authenticatie is vereist om back-ups in te schakelen."
   },
   "icu:Preferences__view-key": {
     "messageformat": "Sleutel weergeven"
@@ -6393,6 +6963,9 @@
   "icu:MessageMetadata__edited": {
     "messageformat": "Bewerkt"
   },
+  "icu:MessageMetadata__pinned": {
+    "messageformat": "Pinned"
+  },
   "icu:DraftGifMessageSendModal__Title": {
     "messageformat": "Bericht toevoegen"
   },
@@ -6404,6 +6977,9 @@
   },
   "icu:EditHistoryMessagesModal__title": {
     "messageformat": "Bewerkingsgeschiedenis"
+  },
+  "icu:EditHistoryMessagesModal__Message__ContextMenu__CopyTimestamp": {
+    "messageformat": "Tijdstempel kopiëren"
   },
   "icu:ResendMessageEdit__body": {
     "messageformat": "Deze bewerking kan niet worden verzonden. Controleer je internetverbinding en probeer het opnieuw"
@@ -6699,9 +7275,6 @@
   "icu:PreferencesDonations--receiptList__empty-title": {
     "messageformat": "Geen donatiebewijzen"
   },
-  "icu:PreferencesDonations__ReceiptModal--title": {
-    "messageformat": "Details"
-  },
   "icu:PreferencesDonations__ReceiptModal--download": {
     "messageformat": "Donatiebewijs downloaden"
   },
@@ -6819,14 +7392,11 @@
   "icu:Donations__Toast__ConfirmationNeeded": {
     "messageformat": "Je donatie is nog niet afgerond en vereist bevestiging."
   },
-  "icu:Donations__Toast__DonationCompletedAndBadgeApplicationFailed": {
+  "icu:Donations__BadgeApplicationFailed__Title": {
     "messageformat": "Donatie is gelukt, maar we konden je badge-instellingen niet bijwerken"
   },
-  "icu:Donations__BadgeApplicationFailed__Title": {
-    "messageformat": "Donation succeeded, but we could not update your badge settings"
-  },
   "icu:Donations__BadgeApplicationFailed__Description": {
-    "messageformat": "To update your badge settings on your mobile device, go to Settings → Donate to Signal → Badges."
+    "messageformat": "Om je badge-instellingen op je mobiele apparaat aan te passen ga je naar Instellingen → Aan Signal doneren → Badges."
   },
   "icu:Donations__DonationInterrupted": {
     "messageformat": "Donatie nog niet voltooid"
@@ -6903,6 +7473,90 @@
   "icu:Donations__badge-modal--help-text": {
     "messageformat": "Je kunt dit op je mobiele apparaat aanpassen onder Instellingen → Aan Signal doneren → Badges"
   },
+  "icu:CallQualitySurvey__CloseButton__AccessibilityLabel": {
+    "messageformat": "Close"
+  },
+  "icu:CallQualitySurvey__BackButton__AccessibilityLabel": {
+    "messageformat": "Back"
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__PageTitle": {
+    "messageformat": "How was your call?"
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__PageDescription": {
+    "messageformat": "This helps us improve calls in Signal. No personally identifiable information will be stored."
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__Response__HadIssues": {
+    "messageformat": "Had issues"
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__Response__Great": {
+    "messageformat": "Great"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__PageTitle": {
+    "messageformat": "What issues did you have?"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__IssuesList__Heading": {
+    "messageformat": "Select all that apply"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO": {
+    "messageformat": "Audio issue"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_STUTTERING": {
+    "messageformat": "Audio stuttering"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_LOCAL_ECHO": {
+    "messageformat": "I heard echo"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_REMOTE_ECHO": {
+    "messageformat": "Others heard echo"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_DROP": {
+    "messageformat": "Audio cut out"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO": {
+    "messageformat": "Video issue"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO_NO_CAMERA": {
+    "messageformat": "Camera didn't work"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO_LOW_QUALITY": {
+    "messageformat": "Poor video quality"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO_LOW_RESOLUTION": {
+    "messageformat": "Low resolution"
+  },
+  "icu:CallQualitySurvey__Issue--CALL_DROPPED": {
+    "messageformat": "Call dropped"
+  },
+  "icu:CallQualitySurvey__Issue--OTHER": {
+    "messageformat": "Something else"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__SomethingElse__TextArea__AccessibilityLabel": {
+    "messageformat": "Issues description"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__SomethingElse__TextArea__HelpText": {
+    "messageformat": "Please include any details relevant to the issue. Anything you share here will be kept private and will only be used to help improve calls in Signal."
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__ContinueButton": {
+    "messageformat": "Continue"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__PageTitle": {
+    "messageformat": "Help us improve"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__PageDescription": {
+    "messageformat": "This helps us learn more about calls and what is working or not working. You can view your debug log before submitting."
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__Label": {
+    "messageformat": "Share debug log"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__ViewButton": {
+    "messageformat": "View"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__HelpText": {
+    "messageformat": "Debug logs contain low level app information and do not reveal any of your message contents."
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__SubmitButton": {
+    "messageformat": "Submit"
+  },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "Deze versie bevat een aantal kleine foutoplossingen waardoor Signal voor nog meer mensen goed werkt.",
     "ignoreUnused": true
@@ -6931,13 +7585,16 @@
     "messageformat": "Kleine aanpassingen, bugfixes en prestatieverbeteringen. Bedankt dat je Signal gebruikt!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.66--0": {
-    "messageformat": "Deze update lost een paar kleine fouten op, waaronder een fout waarbij emoji-reacties in sommige gevallen niet correct werden gegroepeerd."
+  "icu:WhatsNew__7.79-1": {
+    "messageformat": "We hebben het uiterlijk van de schuifbalken in de app vernieuwd zodat ze er overal hetzelfde uitzien."
   },
-  "icu:WhatsNew__v7.67--0": {
-    "messageformat": "We hebben een bug opgelost waardoor donatiebadges niet correct werden weergegeven voor sommige gebruikers. Signal is een non-profitorganisatie, we waarderen je steun!"
+  "icu:WhatsNew__7.79-2": {
+    "messageformat": "Verbeteringen voor kopiëren en plakken maken het gemakkelijker om alles te selecteren en bestaande tekst te vervangen zonder de oude opmaak over te nemen. Bedankt, <brianHarder></brianHarder>!"
   },
-  "icu:WhatsNew__v7.70--0": {
-    "messageformat": "We hebben een bug in Signal Desktop op Microsoft Windows opgelost waardoor de titelbalk oranje werd in plaats van de standaardkleur. Hou je net als wij van oranje, dan kun je de accentkleur aanpassen in Windows-instellingen."
+  "icu:WhatsNew__7.80-1": {
+    "messageformat": "★ Je kunt in Signal nu peilingen houden! Een peiling is een makkelijke manier om te zien wat je groepschat ergens van vindt. Maak een peiling voor de leukste restaurantopties, vakantiebestemmingen, muziekvoorkeuren voor een aanstaande roadtrip of andere belangrijke keuzes. Iedereen in de groep kan stemmen en elkaars antwoorden zien, en je kunt zelf bepalen of je meerdere stemmen wilt toestaan of niet."
+  },
+  "icu:WhatsNew__7.81-1": {
+    "messageformat": "De mediagalerij bevat nu twee nieuwe tabbladen voor spraakberichten en linkvoorbeelden."
   }
 }

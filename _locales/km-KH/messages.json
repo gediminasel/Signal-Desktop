@@ -39,7 +39,7 @@
     "messageformat": "មេឌៀគុណភាពល្អត្រូវបានផ្ញើចេញ"
   },
   "icu:Preferences__sent-media-quality__description": {
-    "messageformat": "ការផ្ញើឯកសារមេឌៀដែលមានគុណភាពខ្ពស់នឹងអស់ទិន្នន័យអុីនធឺណិតច្រើន"
+    "messageformat": "ការផ្ញើមេឌៀដែលមានគុណភាពខ្ពស់នឹងអស់ទិន្នន័យអុីនធឺណិតកាន់តែច្រើន។"
   },
   "icu:Preferences__DonateTitle": {
     "messageformat": "ឧបត្ថម្ភទៅ Signal"
@@ -103,6 +103,15 @@
   },
   "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
     "messageformat": "មិនអាចចូលប្រើកូដអ៊ីនគ្រីបមូលដ្ឋានទិន្នន័យបានទេ ដោយសារផ្នែកខាងក្រោយនៃកម្មវិធីឃីរីងអ៊ីនគ្រីប OS បានផ្លាស់ប្តូរពី {previousBackend} ទៅ {currentBackend}។ វាអាចកើតឡើងប្រសិនបើអ៊ីនធើហ្វេសរបស់ Desktop ផ្លាស់ប្តូរ ឧទាហរណ៍រវាង GNOME និង KDE។\n\nសូមប្តូរទៅអ៊ីនធើហ្វេសរបស់ Desktop ពីមុន ឬព្យាយាមដំណើរការ Signal ដោយឃ្លាបញ្ជា --password-store=\"{previousBackendFlag}\""
+  },
+  "icu:systemEncryptionError": {
+    "messageformat": "System encryption error"
+  },
+  "icu:systemEncryptionError__linuxSafeStorageDecryptionError": {
+    "messageformat": "Unable to decrypt the database encryption key using the OS encryption keyring. This can occur in certain containerized environments such as Flatpak.\n\nWe recommend quitting and checking your OS encryption backend such as gnome-libsecret or kwallet, then trying again.\n\nYou may choose to continue anyway, however the database key will be stored in plaintext on the filesystem and other apps may be able to access it."
+  },
+  "icu:systemEncryptionError__continueWithPlaintextKey": {
+    "messageformat": "Continue with plaintext key"
   },
   "icu:mainMenuFile": {
     "messageformat": "&ឯកសារ"
@@ -233,6 +242,12 @@
   "icu:archivedConversations": {
     "messageformat": "ការជជែកដែលបានទុកក្នុងបណ្ណសារ"
   },
+  "icu:LeftPane__MoreActionsMenu__AddChatFolder": {
+    "messageformat": "បញ្ចូលថតឯកសារជជែក"
+  },
+  "icu:LeftPane__MoreActionsMenu__FolderSettings": {
+    "messageformat": "ការកំណត់នៃថតឯកសារ"
+  },
   "icu:LeftPane--pinned": {
     "messageformat": "បានខ្ទាស់"
   },
@@ -271,6 +286,45 @@
   },
   "icu:LeftPaneFindByHelper__description--findByUsername": {
     "messageformat": "បញ្ចូលឈ្មោះអ្នកប្រើ រួចសញ្ញាចុចមួយ និងលេខពីរខ្ទង់។"
+  },
+  "icu:LeftPane__EmptyView--WithSelectedChatFolder": {
+    "messageformat": "មិនមានការជជែកដែលត្រូវបង្ហាញទេ"
+  },
+  "icu:LeftPane__EmptyView--WithSelectedChatFolder__FolderSettings": {
+    "messageformat": "ការកំណត់នៃថតឯកសារ"
+  },
+  "icu:LeftPaneChatFolders__ItemLabel--All--Short": {
+    "messageformat": "ទាំងអស់"
+  },
+  "icu:LeftPaneChatFolders__ItemLabel--All": {
+    "messageformat": "ការជជែកទាំងអស់"
+  },
+  "icu:LeftPaneChatFolders__ItemUnreadBadge__MaxCount": {
+    "messageformat": "{maxCount,number}+"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__MarkAllRead": {
+    "messageformat": "សម្គាល់ថាបានអានទាំងអស់"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__MuteNotifications": {
+    "messageformat": "បិទសំឡេងការជូនដំណឹង"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__MuteNotifications__UnmuteAll": {
+    "messageformat": "បើកសំឡេងទាំងអស់"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__UnmuteAll": {
+    "messageformat": "បើកសំឡេងទាំងអស់"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__EditFolder": {
+    "messageformat": "កែថតឯកសារ"
+  },
+  "icu:LeftPane__ConversationListItem__ContextMenu__ChatFolderToggleChatsItem": {
+    "messageformat": "បញ្ចូលទៅថតឯកសារ"
+  },
+  "icu:LeftPane__ConversationListItem__ContextMenu__ChatFolderToggleChatsMenu__CreateFolderItem": {
+    "messageformat": "បង្កើតថតឯកសារ"
+  },
+  "icu:LeftPane__ConversationListItem__ContextMenu__ChatFolderRemoveChatItem": {
+    "messageformat": "ដកចេញពីថតឯកសារ"
   },
   "icu:CountryCodeSelect__placeholder": {
     "messageformat": "កូដប្រទេស"
@@ -322,6 +376,9 @@
   },
   "icu:markUnread": {
     "messageformat": "ដាក់ថាមិនបានអាន"
+  },
+  "icu:markRead": {
+    "messageformat": "សម្គាល់ថាបានអាន"
   },
   "icu:ConversationHeader__menu__selectMessages": {
     "messageformat": "ជ្រើសរើសសារ"
@@ -607,6 +664,15 @@
   },
   "icu:Toast--ReceiptSaveFailed": {
     "messageformat": "មានបញ្ហាក្នុងការរក្សាទុកបង្កាន់ដៃ។ សូមព្យាយាមម្តងទៀត។"
+  },
+  "icu:Toast--ChatFolderAddedChat": {
+    "messageformat": "បានបញ្ចូលទៅ “{chatFolderName}”"
+  },
+  "icu:Toast--ChatFolderRemovedChat": {
+    "messageformat": "បានដកចេញពី “{chatFolderName}”"
+  },
+  "icu:Toast--ChatFolderCreated": {
+    "messageformat": "ថតឯកសារ {chatFolderName} ត្រូវបានបញ្ចូល"
   },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "អ្នកមិនអាចជ្រើសរើសរូបថត និងវីដេអូរួមជាមួយឯកសារបានទេ។"
@@ -1031,14 +1097,98 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "ព័ត៌មាន"
   },
+  "icu:MessageContextMenu__PinMessage": {
+    "messageformat": "ខ្ទាស់សារ"
+  },
+  "icu:MessageContextMenu__UnpinMessage": {
+    "messageformat": "Unpin message"
+  },
+  "icu:Poll__end-poll": {
+    "messageformat": "បញ្ចប់ការស្ទង់មតិ"
+  },
+  "icu:PollMessage--SelectOne": {
+    "messageformat": "ការស្ទង់មតិ · ជ្រើសរើសមួយ"
+  },
+  "icu:PollMessage--SelectMultiple": {
+    "messageformat": "ការស្ទង់មតិ · ជ្រើសរើសមួយ ឬច្រើន"
+  },
+  "icu:PollMessage--FinalResults": {
+    "messageformat": "ការស្ទង់មតិ · លទ្ធផលចុងក្រោយ"
+  },
+  "icu:PollMessage__ViewVotesButton": {
+    "messageformat": "មើលការបោះឆ្នោត"
+  },
+  "icu:PollMessage--YouVoted": {
+    "messageformat": "អ្នកបានបោះឆ្នោត"
+  },
+  "icu:PollTerminate--you": {
+    "messageformat": "អ្នកបានបញ្ចប់ការស្ទង់មតិ៖ {poll}"
+  },
+  "icu:PollTerminate--other": {
+    "messageformat": "{name} បានបញ្ចប់ការស្ទង់មតិ៖ {poll}"
+  },
+  "icu:PollTerminate__view-poll": {
+    "messageformat": "មើលការស្ទង់មតិ"
+  },
+  "icu:PollVotesModal__title": {
+    "messageformat": "ព័ត៌មានលម្អិតអំពីការស្ទង់មតិ"
+  },
+  "icu:PollVotesModal__questionLabel": {
+    "messageformat": "សំណួរ"
+  },
+  "icu:PollVotesModal__voteCount": {
+    "messageformat": "{count, plural, other {{count,number} សំឡេង}}"
+  },
+  "icu:PollVotesModal__noVotes": {
+    "messageformat": "គ្មានការបោះឆ្នោតទេ"
+  },
+  "icu:PollVotesModal__winningOption": {
+    "messageformat": "ឈ្នះ"
+  },
+  "icu:Toast--PinnedMessageNotFound": {
+    "messageformat": "រកមិនឃើញសារដែលបានខ្ទាស់ទេ"
+  },
+  "icu:Toast--PollNotFound": {
+    "messageformat": "រកមិនឃើញការស្ទង់មតិទេ"
+  },
+  "icu:PollCreateModal__title": {
+    "messageformat": "ការស្ទង់មតិថ្មី"
+  },
+  "icu:PollCreateModal__questionLabel": {
+    "messageformat": "សំណួរ"
+  },
+  "icu:PollCreateModal__questionPlaceholder": {
+    "messageformat": "សួរសំណួរ"
+  },
+  "icu:PollCreateModal__optionsLabel": {
+    "messageformat": "ជម្រើស"
+  },
+  "icu:PollCreateModal__optionPlaceholder": {
+    "messageformat": "ជម្រើស {number}"
+  },
+  "icu:PollCreateModal__allowMultipleVotes": {
+    "messageformat": "អនុញ្ញាតការបោះឆ្នោតជាច្រើន"
+  },
+  "icu:PollCreateModal__sendButton": {
+    "messageformat": "ផ្ញើ"
+  },
+  "icu:PollCreateModal__Error--RequiresQuestion": {
+    "messageformat": "ត្រូវមានសំណួរស្ទង់មតិ"
+  },
+  "icu:PollCreateModal__Error--RequiresTwoOptions": {
+    "messageformat": "ការស្ទង់មតិទាមទារយ៉ាងហោចណាស់ 2 ជម្រើស"
+  },
+  "icu:PollCreateModal__Error--QuestionTooLong": {
+    "messageformat": "សំណួរវែងពេក"
+  },
+  "icu:PollCreateModal__Error--OptionTooLong": {
+    "messageformat": "ជម្រើសវែងពេក"
+  },
   "icu:deleteConversation": {
     "messageformat": "លុប"
   },
   "icu:ConversationHeader__DeleteConversationConfirmation__title": {
     "messageformat": "លុបការជជែកឬ?"
-  },
-  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
-    "messageformat": "សារទាំងអស់នៅក្នុងការជជែកនេះនឹងត្រូវបានលុបចេញពីឧបករណ៍នេះ។"
   },
   "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
     "messageformat": "សារទាំងអស់នៅក្នុងការជជែកនេះនឹងត្រូវបានលុបចេញពីឧបករណ៍ទាំងអស់របស់អ្នក។"
@@ -1057,6 +1207,108 @@
   },
   "icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description": {
     "messageformat": "មុនពេលអ្នកចាកចេញ អ្នកត្រូវជ្រើសរើសអ្នកគ្រប់គ្រងថ្មីយ៉ាងហោចណាស់ម្នាក់សម្រាប់ក្រុមនេះ។"
+  },
+  "icu:PinnedMessageNotification__Message--You": {
+    "messageformat": "អ្នកបានខ្ទាស់សារមួយ"
+  },
+  "icu:PinnedMessageNotification__Message--SomeoneElse": {
+    "messageformat": "{sender} បានខ្ទាស់សារមួយ"
+  },
+  "icu:PinnedMessageNotification__Button": {
+    "messageformat": "ចូលទៅកាន់សារ"
+  },
+  "icu:PinMessageDialog__Title": {
+    "messageformat": "ខ្ទាស់សារសម្រាប់…"
+  },
+  "icu:PinMessageDialog__Close": {
+    "messageformat": "បិទ"
+  },
+  "icu:PinMessageDialog__Option--TIME_24_HOURS": {
+    "messageformat": "24 ម៉ោង"
+  },
+  "icu:PinMessageDialog__Option--TIME_7_DAYS": {
+    "messageformat": "7 ថ្ងៃ"
+  },
+  "icu:PinMessageDialog__Option--TIME_30_DAYS": {
+    "messageformat": "30 ថ្ងៃ"
+  },
+  "icu:PinMessageDialog__Option--FOREVER": {
+    "messageformat": "ជារៀងរហូត"
+  },
+  "icu:PinMessageDialog__Cancel": {
+    "messageformat": "បោះបង់"
+  },
+  "icu:PinMessageDialog__Pin": {
+    "messageformat": "ខ្ទាស់"
+  },
+  "icu:PinnedMessagesBar__AccessibilityLabel": {
+    "messageformat": "{pinsCount, plural, other {សារដែលបានខ្ទាស់}}"
+  },
+  "icu:PinnedMessagesBar__Tab__AccessibilityLabel": {
+    "messageformat": "ចូលទៅកាន់សារដែលបានខ្ទាស់លេខ {pinNumber,number}"
+  },
+  "icu:PinnedMessagesBar__GoToMessageClickableArea__AccessibilityLabel": {
+    "messageformat": "ចូលទៅកាន់សារ"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__Button__AccessibilityLabel": {
+    "messageformat": "សកម្មភាពច្រើនទៀត"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__UnpinMessage": {
+    "messageformat": "ឈប់ខ្ទាស់សារ"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__GoToMessage": {
+    "messageformat": "ចូលទៅកាន់សារ"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__SeeAllMessages": {
+    "messageformat": "មើលសារទាំងអស់"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Address": {
+    "messageformat": "Address"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--VoiceMessage": {
+    "messageformat": "Voice message"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Gif": {
+    "messageformat": "GIF"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--File": {
+    "messageformat": "File"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Contact": {
+    "messageformat": "Contact"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Payment": {
+    "messageformat": "Payment"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Poll": {
+    "messageformat": "Poll"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Sticker": {
+    "messageformat": "Sticker"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Photo": {
+    "messageformat": "Photo"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Video": {
+    "messageformat": "Video"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--VoiceMessage": {
+    "messageformat": "Voice message"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Gif": {
+    "messageformat": "GIF"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Payment": {
+    "messageformat": "Payment"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Sticker": {
+    "messageformat": "Sticker"
+  },
+  "icu:PinnedMessagesPanel__Title": {
+    "messageformat": "Pinned messages"
+  },
+  "icu:PinnedMessagesPanel__UnpinAllMessages": {
+    "messageformat": "Unpin all messages"
   },
   "icu:sessionEnded": {
     "messageformat": "កំណត់ការប្រើប្រាស់សុវត្ថិភាពឡើងវិញ"
@@ -1175,36 +1427,6 @@
   "icu:attachmentNotAvailable__tapToViewCannotDownload": {
     "messageformat": "មិនអាចទាញយកមេឌៀមើលបានតែម្តងទេ"
   },
-  "icu:AttachmentNotAvailableModal__title--file": {
-    "messageformat": "ឯកសារមិនមានទេ"
-  },
-  "icu:AttachmentNotAvailableModal__title--long-text": {
-    "messageformat": "សារពេញលេញមិនមានទេ"
-  },
-  "icu:AttachmentNotAvailableModal__title--media": {
-    "messageformat": "មេឌៀមិនមានទេ"
-  },
-  "icu:AttachmentNotAvailableModal__title--sticker": {
-    "messageformat": "ស្ទីកគ័រមិនមានទេ"
-  },
-  "icu:AttachmentNotAvailableModal__title--voice-message": {
-    "messageformat": "សារជាសំឡេងមិនមានទេ"
-  },
-  "icu:AttachmentNotAvailableModal__body--file": {
-    "messageformat": "ឯកសារនេះមិនត្រូវបានផ្ទេរពីទូរសព្ទរបស់អ្នកទេ នៅពេលដែលឧបករណ៍នេះត្រូវបានភ្ជាប់។ មេឌៀ និងឯកសារដែលយូរជាង 45 ថ្ងៃនៅពេលភ្ជាប់ឧបករណ៍ មិនអាចធ្វើសមកាលកម្មបានទេ។"
-  },
-  "icu:AttachmentNotAvailableModal__body--long-text": {
-    "messageformat": "អត្ថបទពេញលេញនៅក្នុងសារនេះមិនត្រូវបានផ្ទេរពីទូរសព្ទរបស់អ្នកទេ នៅពេលដែលឧបករណ៍នេះត្រូវបានភ្ជាប់។ សារជាអក្សរវែងៗដែលយូរជាង 45 ថ្ងៃនៅពេលភ្ជាប់ឧបករណ៍ មិនអាចធ្វើសមកាលកម្មបានទេ។"
-  },
-  "icu:AttachmentNotAvailableModal__body--media": {
-    "messageformat": "មេឌៀនេះមិនត្រូវបានផ្ទេរពីទូរសព្ទរបស់អ្នកទេ នៅពេលដែលឧបករណ៍នេះត្រូវបានភ្ជាប់។ មេឌៀដែលយូរជាង 45 ថ្ងៃនៅពេលភ្ជាប់ឧបករណ៍ មិនអាចធ្វើសមកាលកម្មបានទេ។"
-  },
-  "icu:AttachmentNotAvailableModal__body--sticker": {
-    "messageformat": "ស្ទីកគ័រនេះមិនត្រូវបានផ្ទេរពីទូរសព្ទរបស់អ្នកទេ នៅពេលដែលឧបករណ៍នេះត្រូវបានភ្ជាប់។ មេឌៀ និងឯកសារដែលយូរជាង 45 ថ្ងៃនៅពេលភ្ជាប់ឧបករណ៍ មិនអាចធ្វើសមកាលកម្មបានទេ។"
-  },
-  "icu:AttachmentNotAvailableModal__body--voice-message": {
-    "messageformat": "សារជាសំឡេងនេះមិនត្រូវបានផ្ទេរពីទូរសព្ទរបស់អ្នកទេ នៅពេលដែលឧបករណ៍នេះត្រូវបានភ្ជាប់។ មេឌៀ និងឯកសារដែលយូរជាង 45 ថ្ងៃនៅពេលភ្ជាប់ឧបករណ៍ មិនអាចធ្វើសមកាលកម្មបានទេ។"
-  },
   "icu:TapToViewNotAvailableModal__body--expired": {
     "messageformat": "មេឌៀមើលបានតែម្តងនេះមិនអាចទាញយកបានទៀតទេ។ សុំឱ្យ {name} ផ្ញើវាម្តងទៀត។"
   },
@@ -1292,8 +1514,20 @@
   "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Title": {
     "messageformat": "បញ្ចូលថតឯកសារជជែក"
   },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Title--WithChatFolders": {
+    "messageformat": "បញ្ចូល ឬកែថតឯកសារ"
+  },
   "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Description": {
     "messageformat": "រៀបចំការជជែករបស់អ្នកទៅក្នុងថតឯកសារ ហើយមើលពីមួយទៅមួយបានលឿននៅលើបញ្ជីជជែករបស់អ្នក។"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Description--WithChatFolders": {
+    "messageformat": "{chatFoldersCount, plural, other {{chatFoldersCount,number} ថតឯកសារ}}"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Button": {
+    "messageformat": "រៀបចំ"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Button--WithChatFolders": {
+    "messageformat": "គ្រប់គ្រង"
   },
   "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__EditFolder": {
     "messageformat": "កែថតឯកសារ"
@@ -1328,14 +1562,14 @@
   "icu:Preferences__ChatFoldersPage__FoldersSection__CreateAFolderButton": {
     "messageformat": "បង្កើតថតឯកសារ"
   },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__DragHandle__Label": {
+    "messageformat": "អូសដើម្បីផ្លាស់ទីថតឯកសារជជែក"
+  },
   "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__Title": {
     "messageformat": "ថតឯកសារដែលបានណែនាំ"
   },
   "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton": {
     "messageformat": "បញ្ចូល"
-  },
-  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton__Toast": {
-    "messageformat": "ថតឯកសារ {chatFolderTitle} ត្រូវបានបញ្ចូល"
   },
   "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Title": {
     "messageformat": "មិនទាន់អាន"
@@ -1357,6 +1591,9 @@
   },
   "icu:Preferences__EditChatFolderPage__Title": {
     "messageformat": "បង្កើតថតឯកសារ"
+  },
+  "icu:Preferences__EditChatFolderPage__Title--EditingExistingChatFolder": {
+    "messageformat": "កែថតឯកសារ"
   },
   "icu:Preferences__EditChatFolderPage__FolderNameField__Label": {
     "messageformat": "ឈ្មោះថតឯកសារ"
@@ -1534,6 +1771,12 @@
   },
   "icu:calling__removed-from-call-title": {
     "messageformat": "បានដកចេញពីការហៅ"
+  },
+  "icu:calling__has-max-devices": {
+    "messageformat": "អ្នកចូលរួមសម្រាប់ការហៅទូរសព្ទនេះបានដល់ចំនួនអតិបរមាហើយ។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។"
+  },
+  "icu:calling__has-max-devices--title": {
+    "messageformat": "ការហៅមានអ្នកចូលរួមពេញហើយ"
   },
   "icu:CallingLobby__CallLinkNotice": {
     "messageformat": "នរណាដែលចូលរួមការហៅទូរសព្ទនេះតាមរយៈតំណនឹងមើលឃើញឈ្មោះ និងរូបថតរបស់អ្នក។"
@@ -1853,6 +2096,9 @@
   "icu:notificationReactionMessage": {
     "messageformat": "{sender} បានប្រតិកម្ម {emoji} ទៅនឹង៖ {message}"
   },
+  "icu:notificationPollVoteMessage": {
+    "messageformat": "{sender} បានបោះឆ្នោតនៅក្នុងការស្ទង់មតិ \"{pollQuestion}\""
+  },
   "icu:sendFailed": {
     "messageformat": "ផ្ញើបរាជ័យ"
   },
@@ -2070,13 +2316,16 @@
     "messageformat": "ការទាញយកមិនបានជោគជ័យទេ"
   },
   "icu:Toast--unable-download-from-backup-tier": {
-    "messageformat": "Download of attachment from backup failed"
+    "messageformat": "Attachment missing from backup CDN"
   },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "ការកែសារអាចធ្វើបានតែក្នុងរយៈពេល 24 ម៉ោងគិតចាប់ពីពេលដែលអ្នកបានផ្ញើសារនេះប៉ុណ្ណោះ។"
   },
   "icu:startConversation--username-not-found": {
     "messageformat": "{atUsername} មិនមែនជាអ្នកប្រើ Signal ទេ។ ត្រូវប្រាកដថា អ្នកបានបញ្ចូលឈ្មោះអ្នកប្រើពេញលេញ។"
+  },
+  "icu:startConversation--username-not-valid": {
+    "messageformat": "{atUsername} មិនមែនជាឈ្មោះត្រឹមត្រូវទេ។ ត្រូវប្រាកដថាអ្នកបានបញ្ចូលឈ្មោះអ្នកប្រើពេញលេញជាមួយសញ្ញាចុចមួយ និងលេខពីរខ្ទង់។"
   },
   "icu:startConversation--phone-number-not-found": {
     "messageformat": "រកមិនឃើញអ្នកប្រើទេ។ \"{phoneNumber}\" មិនមែនជាអ្នកប្រើ Signal ទេ។"
@@ -2231,6 +2480,9 @@
   "icu:message--getNotificationText--stickers": {
     "messageformat": "សារស្ទីកគ័រ"
   },
+  "icu:Poll--preview": {
+    "messageformat": "ការស្ទង់មតិ៖ {pollQuestion}"
+  },
   "icu:message--getNotificationText--text-with-emoji": {
     "messageformat": "{emoji} {text}"
   },
@@ -2357,101 +2609,11 @@
   "icu:stickers--StickerManager--UninstallWarning": {
     "messageformat": "អ្នកប្រហែលមិនអាចដំឡើងកញ្ចប់ស្ទីកគ័រនេះឡើងវិញ ប្រសិនបើអ្នកមិនមានសារដើម។"
   },
-  "icu:stickers--StickerManager--Introduction--Image": {
-    "messageformat": "ការណែនាំ ស្ទីកគ័រ៖ សត្វឆ្មាមេចោរ"
-  },
-  "icu:stickers--StickerManager--Introduction--Title": {
-    "messageformat": "ការណែនាំ ស្ទីកគ័រ"
-  },
-  "icu:stickers--StickerManager--Introduction--Body": {
-    "messageformat": "ហេតុអ្វីបានជាប្រើប្រាស់ពាក្យ នៅពេលអ្នកអាចប្រើប្រាស់ស្ទីកគ័រ?"
-  },
-  "icu:stickers--StickerPicker--Open": {
-    "messageformat": "បើកកម្មវិធីជ្រើសរើសស្ទីគ័រ"
-  },
-  "icu:stickers--StickerPicker--AddPack": {
-    "messageformat": "បញ្ចូលកញ្ចប់ស្ទីគ័រ"
-  },
-  "icu:stickers--StickerPicker--NextPage": {
-    "messageformat": "ទំព័របន្ទាប់"
-  },
-  "icu:stickers--StickerPicker--PrevPage": {
-    "messageformat": "ទំព័រមុន"
-  },
-  "icu:stickers--StickerPicker--Recents": {
-    "messageformat": "ស្ទីគ័រថ្មីៗនេះ"
-  },
-  "icu:stickers--StickerPicker--DownloadError": {
-    "messageformat": "ស្ទីកគ័រមួយចំនួនមិនអាចទាញយកបាន។"
-  },
-  "icu:stickers--StickerPicker--DownloadPending": {
-    "messageformat": "កំពុងដំឡើងកញ្ចប់ស្ទីកគ័រ…"
-  },
-  "icu:stickers--StickerPicker--Empty": {
-    "messageformat": "ពុំមានស្ទីកគ័រ"
-  },
-  "icu:stickers--StickerPicker--Hint": {
-    "messageformat": "មានកញ្ចប់ស្ទីកគ័រថ្មីពីសាររបស់អ្នក សម្រាប់ដំឡើង"
-  },
-  "icu:stickers--StickerPicker--NoPacks": {
-    "messageformat": "ពុំមានកញ្ចប់ស្ទីកគ័រ"
-  },
-  "icu:stickers--StickerPicker--NoRecents": {
-    "messageformat": "ស្ទីកគ័រដែលបានប្រើប្រស់ថ្មីៗ នឹងបង្ហាញទីនេះ។"
-  },
-  "icu:stickers__StickerPicker__recent": {
-    "messageformat": "ថ្មីៗ"
-  },
-  "icu:stickers__StickerPicker__featured": {
-    "messageformat": "ពិសេស"
-  },
-  "icu:stickers__StickerPicker__analog-time": {
-    "messageformat": "ម៉ោងនាឡិកាទ្រនិច"
-  },
   "icu:stickers--StickerPreview--Title": {
     "messageformat": "កញ្ចប់ស្ទីកគ័រ"
   },
   "icu:stickers--StickerPreview--Error": {
     "messageformat": "បញ្ហាក្នុងការបើកកញ្ចប់ស្ទីកគ័រ។ សូមពិនិត្យការតភ្ជាប់បណ្តាញ ហើយព្យាយាមម្តងទៀត។"
-  },
-  "icu:EmojiPicker--empty": {
-    "messageformat": "ពុំមាន emoji"
-  },
-  "icu:EmojiPicker--search-close": {
-    "messageformat": "បិទការស្វែងរករូបអារម្មណ៍"
-  },
-  "icu:EmojiPicker--search-placeholder": {
-    "messageformat": "ស្វែងរកEmoji"
-  },
-  "icu:EmojiPicker--skin-tone": {
-    "messageformat": "ពណ៌ស្បែក {tone}"
-  },
-  "icu:EmojiPicker__button--recents": {
-    "messageformat": "ថ្មីៗ"
-  },
-  "icu:EmojiPicker__button--emoji": {
-    "messageformat": "រូបតំណាងអារម្មណ៍"
-  },
-  "icu:EmojiPicker__button--animal": {
-    "messageformat": "សត្វ"
-  },
-  "icu:EmojiPicker__button--food": {
-    "messageformat": "អាហារ"
-  },
-  "icu:EmojiPicker__button--activity": {
-    "messageformat": "សកម្មភាព"
-  },
-  "icu:EmojiPicker__button--travel": {
-    "messageformat": "ការធ្វើដំណើរ"
-  },
-  "icu:EmojiPicker__button--object": {
-    "messageformat": "វត្ថុ"
-  },
-  "icu:EmojiPicker__button--symbol": {
-    "messageformat": "និមិត្តសញ្ញា"
-  },
-  "icu:EmojiPicker__button--flag": {
-    "messageformat": "ទង់ជាតិ"
   },
   "icu:FunPicker__Tab--Emojis": {
     "messageformat": "រូបអារម្មណ៍"
@@ -2560,6 +2722,9 @@
   },
   "icu:FunPanelStickers__SubNavCategoryLabel--Recents": {
     "messageformat": "បានប្រើប្រាស់ថ្មីៗ"
+  },
+  "icu:FunPanelStickers__SubNavButton--AddStickerPack": {
+    "messageformat": "បញ្ចូលកញ្ចប់ស្ទីគ័រ"
   },
   "icu:FunPanelStickers__SectionTitle--SearchResults": {
     "messageformat": "លទ្ធផលស្វែងរក"
@@ -3527,9 +3692,6 @@
   "icu:muteExpirationLabel": {
     "messageformat": "បានបិទសំឡេងរហូតដល់ {duration}"
   },
-  "icu:EmojiButton__label": {
-    "messageformat": "រូបតំណាងអារម្មណ៍"
-  },
   "icu:ErrorModal--title": {
     "messageformat": "មានបញ្ហាខុសប្រក្រតី!"
   },
@@ -4292,6 +4454,18 @@
   "icu:CompositionArea--attach-file": {
     "messageformat": "ភ្ជាប់ឯកសារ"
   },
+  "icu:CompositionArea__AttachMenu__PhotosAndVideos": {
+    "messageformat": "រូបថត និងវីដេអូ"
+  },
+  "icu:CompositionArea__AttachMenu__File": {
+    "messageformat": "ឯកសារ"
+  },
+  "icu:CompositionArea__AttachMenu__Poll": {
+    "messageformat": "ការស្ទង់មតិ"
+  },
+  "icu:CompositionArea--attach-plus": {
+    "messageformat": "បញ្ចូលឯកសារភ្ជាប់ ឬការស្ទង់មតិ"
+  },
   "icu:CompositionArea--sms-only__title": {
     "messageformat": "បុគ្គលនេះមិនប្រើ Signal ទេ"
   },
@@ -4442,8 +4616,8 @@
   "icu:ConversationDetailsActions--block-group-modal-confirm": {
     "messageformat": "ទប់ស្កាត់"
   },
-  "icu:ConversationDetailsActions--unblock-group-modal-content": {
-    "messageformat": "ឈ្មោះទំនាក់ទំនងរបស់អ្នកនឹងអាចបញ្ចូលអ្នកទៅក្នុងក្រុមនេះបាន។"
+  "icu:ConversationDetailsActions--unblock-group-modal-body": {
+    "messageformat": "ទំនាក់ទំនងរបស់អ្នកនឹងអាចបញ្ចូលអ្នកទៅក្នុងក្រុមនេះបាន។"
   },
   "icu:ConversationDetailsActions--unblock-group-modal-confirm": {
     "messageformat": "ឈប់ទប់ស្កាត់"
@@ -4451,11 +4625,8 @@
   "icu:ConversationDetailsHeader--members": {
     "messageformat": "{number, plural, other {សមាជិក {number,number} នាក់}}"
   },
-  "icu:ConversationDetailsMediaList--shared-media": {
-    "messageformat": "ចែករំលែកព័ត៌មាន"
-  },
-  "icu:ConversationDetailsMediaList--show-all": {
-    "messageformat": "មើលទាំងអស់"
+  "icu:ConversationDetailsMediaList--title": {
+    "messageformat": "មេឌៀ តំណ និងឯកសារ"
   },
   "icu:ConversationDetailsMembershipList--title": {
     "messageformat": "{number, plural, other {សមាជិក {number,number} នាក់}}"
@@ -4949,6 +5120,57 @@
   "icu:ConversationDetailsHeader--add-group-description": {
     "messageformat": "បញ្ចូលការពណ៌នាក្រុម…"
   },
+  "icu:AudioListItem__subtitle--voice-message": {
+    "messageformat": "សារជាសំឡេង"
+  },
+  "icu:AudioListItem__subtitle--audio": {
+    "messageformat": "សំឡេង"
+  },
+  "icu:LinkPreviewItem__alt": {
+    "messageformat": "បើកតំណនៅក្នុងកម្មវិធីរុករក"
+  },
+  "icu:ListItem__show-message": {
+    "messageformat": "បង្ហាញសារនៅក្នុងការសន្ទនា"
+  },
+  "icu:MediaGallery__tab__audio": {
+    "messageformat": "សំឡេង"
+  },
+  "icu:MediaGallery__tab__files": {
+    "messageformat": "ឯកសារ"
+  },
+  "icu:MediaGallery__tab__links": {
+    "messageformat": "តំណ"
+  },
+  "icu:MediaGallery__EmptyState__title--media": {
+    "messageformat": "គ្មានមេឌៀ"
+  },
+  "icu:MediaGallery__EmptyState__description--media": {
+    "messageformat": "រូបថត វីដេអូ និងរូបមានចលនាដែលអ្នកផ្ញើ និងទទួលនឹងបង្ហាញនៅទីនេះ"
+  },
+  "icu:MediaGallery__EmptyState__title--audio": {
+    "messageformat": "គ្មានសំឡេង"
+  },
+  "icu:MediaGallery__EmptyState__description--audio": {
+    "messageformat": "សារជាសំឡេង និងឯកសារសំឡេងដែលអ្នកផ្ញើ និងទទួលនឹងបង្ហាញនៅទីនេះ"
+  },
+  "icu:MediaGallery__EmptyState__title--links": {
+    "messageformat": "គ្មានតំណ"
+  },
+  "icu:MediaGallery__EmptyState__description--links-2": {
+    "messageformat": "តំណដែលអ្នកផ្ញើ និងទទួលនឹងបង្ហាញនៅទីនេះ"
+  },
+  "icu:MediaGallery__EmptyState__description--documents": {
+    "messageformat": "តំណដែលអ្នកផ្ញើ និងទទួលនឹងបង្ហាញនៅទីនេះ"
+  },
+  "icu:MediaGallery__EmptyState__title--documents": {
+    "messageformat": "គ្មានឯកសារ"
+  },
+  "icu:MediaGallery__EmptyState__description--documents-2": {
+    "messageformat": "ឯកសារដែលអ្នកផ្ញើ និងទទួលនឹងបង្ហាញនៅទីនេះ"
+  },
+  "icu:MediaGallery__EmptyState__description--links": {
+    "messageformat": "ឯកសារដែលអ្នកផ្ញើ និងទទួលនឹងបង្ហាញនៅទីនេះ"
+  },
   "icu:MediaQualitySelector--button": {
     "messageformat": "ជ្រើសរើសគុណភាពមេឌៀ"
   },
@@ -5288,11 +5510,332 @@
   "icu:Preferences--notification-content": {
     "messageformat": "ខ្លឹមសារ​ជូន​ដំណឹង"
   },
+  "icu:PlaintextExport--PreferencesRow--Header": {
+    "messageformat": "នាំចេញប្រវត្តិជជែក"
+  },
+  "icu:PlaintextExport--PreferencesRow--Description": {
+    "messageformat": "នាំចេញច្បាប់ចម្លង JSON នៃការជជែករបស់អ្នកទាំងអស់ដែលអាចអានបានដោយម៉ាស៊ីន។ សារដែលបាត់ដោយស្វ័យប្រវត្តិនឹងមិនត្រូវបាននាំចេញទេ។"
+  },
+  "icu:PlaintextExport--ActionButton": {
+    "messageformat": "នាំចេញ"
+  },
+  "icu:PlaintextExport--Confirmation--Header": {
+    "messageformat": "នាំចេញប្រវត្តិជជែកឬ?"
+  },
+  "icu:PlaintextExport--Confirmation--Description": {
+    "messageformat": "<bold>សូមប្រុងប្រយ័ត្ន!</bold> កុំចែករំលែកឯកសារនេះជាមួយអ្នកផ្សេង។ ប្រវត្តិជជែករបស់អ្នកនឹងត្រូវបានរក្សាទុកក្នុងកុំព្យូទ័ររបស់អ្នក ហើយកម្មវិធីផ្សេងៗទៀតអាចចូលប្រើវាបាន អាស្រ័យលើការអនុញ្ញាតរបស់កុំព្យូទ័រអ្នក។"
+  },
+  "icu:PlaintextExport--Confirmation--IncludeMedia": {
+    "messageformat": "រួមបញ្ចូលមេឌៀ <secondary>(ទំហំឯកសារធំជាង)</secondary>"
+  },
+  "icu:PlaintextExport--Confirmation--ContinueButton": {
+    "messageformat": "បន្ត"
+  },
+  "icu:PlaintextExport--Confirmation--WaitingLabel": {
+    "messageformat": "កំពុងរង់ចាំការបញ្ចូល"
+  },
+  "icu:PlaintextExport--OSPrompt--Mac": {
+    "messageformat": "នាំចេញប្រវត្តិជជែករបស់អ្នក"
+  },
+  "icu:PlaintextExport--OSPrompt--Windows": {
+    "messageformat": "ផ្ទៀងផ្ទាត់អត្តសញ្ញាណរបស់អ្នក ដើម្បីនាំចេញប្រវត្តិជជែករបស់អ្នក។"
+  },
+  "icu:PlaintextExport--OSPrompt--description--Linux": {
+    "messageformat": "នាំចេញ"
+  },
+  "icu:PlaintextExport--OSPrompt--message--Linux": {
+    "messageformat": "ត្រូវមានការផ្ទៀងផ្ទាត់ដើម្បីនាំចេញប្រវត្តិជជែករបស់អ្នក។"
+  },
+  "icu:PlaintextExport--ProgressDialog--Header": {
+    "messageformat": "កំពុងនាំចេញប្រវត្តិជជែក"
+  },
+  "icu:PlaintextExport--ProgressDialog--Progress": {
+    "messageformat": "កំពុងនាំចេញ {currentBytes} លើ {totalBytes} ({percentage,number,percent})..."
+  },
+  "icu:PlaintextExport--ProgressDialog--TimeWarning": {
+    "messageformat": "វាអាចនឹងចំណាយពេលពីរបីនាទី"
+  },
+  "icu:PlaintextExport--CompleteDialog--Header": {
+    "messageformat": "ការនាំចេញបានបញ្ចប់"
+  },
+  "icu:PlaintextExport--CompleteDialog--Description": {
+    "messageformat": "<bold>សូមប្រុងប្រយ័ត្ន</bold>ចំពោះកន្លែងដែលអ្នករក្សាទុកឯកសារនាំចេញការជជែករបស់អ្នក ហើយកុំចែករំលែកវាជាមួយអ្នកផ្សេង។ កម្មវិធីផ្សេងទៀតនៅលើកុំព្យូទ័ររបស់អ្នកអាចចូលប្រើវាបាន អាស្រ័យលើការអនុញ្ញាតរបស់កុំព្យូទ័រអ្នក។ "
+  },
+  "icu:PlaintextExport--CompleteDialog--ShowFiles--Mac": {
+    "messageformat": "បង្ហាញនៅក្នុង Finder"
+  },
+  "icu:PlaintextExport--CompleteDialog--ShowFiles--Linux": {
+    "messageformat": "បង្ហាញក្នុងថតឯកសារ"
+  },
+  "icu:PlaintextExport--CompleteDialog--ShowFiles--Windows": {
+    "messageformat": "បង្ហាញក្នុងថតឯកសារ"
+  },
+  "icu:PlaintextExport--Error--General--Title": {
+    "messageformat": "មិនអាចនាំចេញប្រវត្តិជជែកបានទេ"
+  },
+  "icu:PlaintextExport--Error--General--Description": {
+    "messageformat": "បញ្ហាមួយបានកើតឡើង ហើយប្រវត្តិជជែករបស់អ្នកមិនអាចនាំចេញបានទេ។"
+  },
+  "icu:PlaintextExport--Error--NotEnoughStorage--Title": {
+    "messageformat": "ទំហំផ្ទុកមិនគ្រប់គ្រាន់ទេ"
+  },
+  "icu:PlaintextExport--Error--NotEnoughStorage--Detail": {
+    "messageformat": "ប្រវត្តិជជែករបស់អ្នកមិនអាចនាំចេញបានទេ ដោយសារកុំព្យូទ័ររបស់អ្នកមិនមានទំហំផ្ទុកទំនេរគ្រប់គ្រាន់។ បង្កើនទំហំទំនេរ {bytes} ហើយបន្ទាប់មកព្យាយាមម្តងទៀត។"
+  },
+  "icu:PlaintextExport--Error--RanOutOfStorage--Title": {
+    "messageformat": "មិនអាចនាំចេញប្រវត្តិជជែកបានទេ"
+  },
+  "icu:PlaintextExport--Error--RanOutOfStorage--Detail": {
+    "messageformat": "ប្រវត្តិជជែករបស់អ្នកមិនអាចនាំចេញបានទេ ដោយសារកុំព្យូទ័ររបស់អ្នកមិនមានទំហំផ្ទុកទំនេរគ្រប់គ្រាន់។ បង្កើនទំហំទំនេរ {bytes} ហើយបន្ទាប់មកព្យាយាមម្តងទៀត។"
+  },
+  "icu:PlaintextExport--Error--DiskPermssions--Title": {
+    "messageformat": "មិនអាចនាំចេញប្រវត្តិជជែកបានទេ។"
+  },
+  "icu:PlaintextExport--Error--DiskPermssions--Detail": {
+    "messageformat": "ប្រវត្តិជជែករបស់អ្នកមិនអាចនាំចេញបានទេព្រោះ Signal មិនមានការអនុញ្ញាតឱ្យសរសេរឯកសារទៅឌីសទេ។ សាកល្បងផ្លាស់ប្តូរការអនុញ្ញាតនៃឌីសរបស់អ្នក ឬធ្វើបច្ចុប្បន្នភាពការកំណត់ប្រព័ន្ធរបស់អ្នក រួចនាំចេញម្តងទៀត។"
+  },
+  "icu:NotificationProfile--moon-icon": {
+    "messageformat": "រូបព្រះចន្ទ"
+  },
+  "icu:NotificationProfile--copy-label": {
+    "messageformat": "ច្បាប់ចម្លងនៃ {profileName}"
+  },
+  "icu:NotificationProfile--am": {
+    "messageformat": "AM"
+  },
+  "icu:NotificationProfile--pm": {
+    "messageformat": "PM"
+  },
+  "icu:NotificationProfile--time-separator": {
+    "messageformat": ":"
+  },
+  "icu:NotificationProfileMenuItem": {
+    "messageformat": "ប្រូហ្វាល់សម្រាប់ការជូនដំណឹង"
+  },
+  "icu:NotificationProfileMenu--header": {
+    "messageformat": "ប្រូហ្វាល់សម្រាប់ការជូនដំណឹង"
+  },
+  "icu:NotificationProfileMenu--on": {
+    "messageformat": "បើក"
+  },
+  "icu:NotificationProfileMenu--on-with-end": {
+    "messageformat": "បើករហូតដល់ {endTime}"
+  },
+  "icu:NotificationProfileMenu--for-one-hour": {
+    "messageformat": "រយៈពេលមួយម៉ោង"
+  },
+  "icu:NotificationProfileMenu--until-time": {
+    "messageformat": "រហូតដល់ {time}"
+  },
+  "icu:NotificationProfileMenu--settings": {
+    "messageformat": "ការកំណត់"
+  },
+  "icu:NotificationProfilesToast--enabled": {
+    "messageformat": "“{name}” ត្រូវបានបើក"
+  },
+  "icu:NotificationProfilesToast--disabled": {
+    "messageformat": "“{name}” ត្រូវបានបិទ"
+  },
+  "icu:NotificationProfilesToast--enabled--label": {
+    "messageformat": "ប្រូហ្វាល់សម្រាប់ការជូនដំណឹងឥឡូវនេះត្រូវបានបើកហើយ"
+  },
+  "icu:NotificationProfilesToast--disabled--label": {
+    "messageformat": "ប្រូហ្វាល់សម្រាប់ការជូនដំណឹងឥឡូវនេះត្រូវបានបិទហើយ"
+  },
+  "icu:NotificationProfiles--setting": {
+    "messageformat": "ប្រូហ្វាល់សម្រាប់ការជូនដំណឹង"
+  },
+  "icu:NotificationProfiles--setup": {
+    "messageformat": "រៀបចំ"
+  },
+  "icu:NotificationProfiles--title": {
+    "messageformat": "ប្រូហ្វាល់សម្រាប់ការជូនដំណឹង"
+  },
+  "icu:NotificationProfiles--setup-description": {
+    "messageformat": "បង្កើតប្រូហ្វាល់ដើម្បីទទួលការជូនដំណឹង និងការហៅទូរសព្ទពីមនុស្ស និងក្រុមដែលអ្នកជ្រើសរើសប៉ុណ្ណោះ"
+  },
+  "icu:NotificationProfiles--setup-continue": {
+    "messageformat": "បន្ត"
+  },
+  "icu:NotificationProfiles--manage-description": {
+    "messageformat": "បញ្ចូល ឬកែប្រូហ្វាល់សម្រាប់ការជូនដំណឹង"
+  },
+  "icu:NotificationProfiles--manage-profiles": {
+    "messageformat": "{profileCount, plural, other {{profileCount,number} ប្រូហ្វាល់}}"
+  },
+  "icu:NotificationProfiles--create": {
+    "messageformat": "បង្កើតប្រូហ្វាល់"
+  },
+  "icu:NotificationProfiles--name-title": {
+    "messageformat": "ដាក់ឈ្មោះប្រូហ្វាល់អ្នក"
+  },
+  "icu:NotificationProfiles--name-title--editing": {
+    "messageformat": "ឈ្មោះ"
+  },
+  "icu:NotificationProfiles--name-placeholder": {
+    "messageformat": "ឈ្មោះប្រូហ្វាល់"
+  },
+  "icu:NotificationProfiles--sample-name__work": {
+    "messageformat": "ធ្វើការ"
+  },
+  "icu:NotificationProfiles--sample-name__sleep": {
+    "messageformat": "គេង"
+  },
+  "icu:NotificationProfiles--sample-name__driving": {
+    "messageformat": "បើកបរ"
+  },
+  "icu:NotificationProfiles--sample-name__downtime": {
+    "messageformat": "ម៉ោងសម្រាក"
+  },
+  "icu:NotificationProfiles--sample-name__focus": {
+    "messageformat": "ផ្ដោតអារម្មណ៍"
+  },
+  "icu:NotificationProfiles--allowed-title": {
+    "messageformat": "ការជូនដំណឹងដែលត្រូវបានអនុញាត"
+  },
+  "icu:NotificationProfiles--allowed-description": {
+    "messageformat": "បញ្ចូលមនុស្ស និងក្រុមដែលអ្នកចង់ទទួលបានការជូនដំណឹងពីពួកគេ នៅពេលប្រូហ្វាល់នេះបើក"
+  },
+  "icu:NotificationProfiles--allowed-add-label": {
+    "messageformat": "បញ្ចូលមនុស្ស ឬក្រុម"
+  },
+  "icu:NotificationProfiles--exceptions": {
+    "messageformat": "ការមិនរាប់បញ្ចូល"
+  },
+  "icu:NotificationProfiles--exceptions--allow-all-calls": {
+    "messageformat": "អនុញ្ញាតការហៅទាំងអស់"
+  },
+  "icu:NotificationProfiles--exceptions--notify-for-mentions": {
+    "messageformat": "ជូនដំណឹងអ្នកដែលត្រូវបានលើកឈ្មោះទាំងអស់"
+  },
+  "icu:NotificationProfiles--schedule-title": {
+    "messageformat": "បញ្ចូលកាលវិភាគមួយ"
+  },
+  "icu:NotificationProfiles--schedule-title--editing": {
+    "messageformat": "កាលវិភាគ"
+  },
+  "icu:NotificationProfiles--schedule-description": {
+    "messageformat": "បើក និងកែកាលវិភាគរបស់អ្នក ដើម្បីធ្វើស្វ័យប្រវត្តិកម្មប្រូហ្វាល់សម្រាប់ការជូនដំណឹងរបស់អ្នក។"
+  },
+  "icu:NotificationProfiles--schedule-enable": {
+    "messageformat": "បើកដោយស្វ័យប្រវត្តិ"
+  },
+  "icu:NotificationProfiles--schedule": {
+    "messageformat": "កាលវិភាគ"
+  },
+  "icu:NotificationProfiles--schedule-from": {
+    "messageformat": "ពី"
+  },
+  "icu:NotificationProfiles--schedule-until": {
+    "messageformat": "រហូតដល់"
+  },
+  "icu:NotificationProfiles--open-time-picker": {
+    "messageformat": "បើកមុខងារជ្រើសរើសពេលវេលា"
+  },
+  "icu:NotificationProfiles--schedule-sunday": {
+    "messageformat": "ថ្ងៃអាទិត្យ"
+  },
+  "icu:NotificationProfiles--schedule-monday": {
+    "messageformat": "ថ្ងៃចន្ទ"
+  },
+  "icu:NotificationProfiles--schedule-tuesday": {
+    "messageformat": "ថ្ងៃអង្គារ"
+  },
+  "icu:NotificationProfiles--schedule-wednesday": {
+    "messageformat": "ថ្ងៃពុធ"
+  },
+  "icu:NotificationProfiles--schedule-thursday": {
+    "messageformat": "ថ្ងៃព្រហស្បតិ៍"
+  },
+  "icu:NotificationProfiles--schedule-friday": {
+    "messageformat": "ថ្ងៃសុក្រ"
+  },
+  "icu:NotificationProfiles--schedule-saturday": {
+    "messageformat": "ថ្ងៃសៅរ៍"
+  },
+  "icu:NotificationProfiles--done-title": {
+    "messageformat": "ប្រូហ្វាល់ត្រូវបានបង្កើត"
+  },
+  "icu:NotificationProfiles--done-description": {
+    "messageformat": "ប្រសិនបើអ្នកបានបញ្ចូលកាលវិភាគ ប្រូហ្វាល់របស់អ្នកនឹងបើកបិទដោយស្វ័យប្រវត្តិ។ អ្នកក៏អាចចុចលើរូប ··· នៅផ្នែកខាងលើបំផុតនៃបញ្ជីជជែក ដើម្បីបើក ឬបិទវាដោយដៃបានដែរ។"
+  },
+  "icu:NotificationProfiles--schedule-sunday-short": {
+    "messageformat": "អាទិ"
+  },
+  "icu:NotificationProfiles--schedule-monday-short": {
+    "messageformat": "ចន្ទ"
+  },
+  "icu:NotificationProfiles--schedule-tuesday-short": {
+    "messageformat": "អង្គារ"
+  },
+  "icu:NotificationProfiles--schedule-wednesday-short": {
+    "messageformat": "ពុធ"
+  },
+  "icu:NotificationProfiles--schedule-thursday-short": {
+    "messageformat": "ព្រហ"
+  },
+  "icu:NotificationProfiles--schedule-friday-short": {
+    "messageformat": "សុក្រ"
+  },
+  "icu:NotificationProfiles--schedule-saturday-short": {
+    "messageformat": "សៅរ៍"
+  },
+  "icu:NotificationProfiles--schedule-weekdays": {
+    "messageformat": "ថ្ងៃក្នុងសប្តាហ៍"
+  },
+  "icu:NotificationProfiles--schedule-weekends": {
+    "messageformat": "ចុងសប្តាហ៍"
+  },
+  "icu:NotificationProfiles--schedule-daily": {
+    "messageformat": "រាល់ថ្ងៃ"
+  },
+  "icu:NotificationProfiles--schedule-separator": {
+    "messageformat": ", "
+  },
+  "icu:NotificationProfiles--list--header": {
+    "messageformat": "ប្រូហ្វាល់"
+  },
+  "icu:NotificationProfiles--list--sync": {
+    "messageformat": "ធ្វើសមកាលកម្មនៅលើឧបករណ៍នានា"
+  },
+  "icu:NotificationProfiles--list--sync--description": {
+    "messageformat": "ប្រូហ្វាល់របស់អ្នកនឹងត្រូវបានធ្វើសមកាលកម្មនៅលើឧបករណ៍របស់អ្នក។ ការបើកប្រូហ្វាល់សម្រាប់ឧបករណ៍មួយនឹងបើកវាសម្រាប់ឧបករណ៍ផ្សេងទៀត។"
+  },
+  "icu:NotificationProfiles--delete": {
+    "messageformat": "លុបប្រូហ្វាល់"
+  },
+  "icu:NotificationProfiles--delete-confirmation": {
+    "messageformat": "លុបប្រូហ្វាល់សម្រាប់ការជូនដំណឹងនេះជារៀងរហូត?"
+  },
+  "icu:NotificationProfiles--delete-button": {
+    "messageformat": "លុប"
+  },
+  "icu:NotificationProfiles--edit--is-active": {
+    "messageformat": "បើក"
+  },
+  "icu:NotificationProfiles--edit--is-not-active": {
+    "messageformat": "បិទ"
+  },
+  "icu:NotificationProfiles--edit--edit-name-label": {
+    "messageformat": "កែឈ្មោះប្រូហ្វាល់នេះ"
+  },
+  "icu:NotificationProfiles--edit--allowed": {
+    "messageformat": "ការជូនដំណឹងដែលត្រូវបានអនុញ្ញាត"
+  },
+  "icu:NotificationProfiles--edit--schedule-timing": {
+    "messageformat": "{startTime} ដល់ {endTime}"
+  },
+  "icu:NotificationProfiles--edit--schedule-enabled": {
+    "messageformat": "បើក"
+  },
+  "icu:NotificationProfiles--edit--schedule-disabled": {
+    "messageformat": "បិទ"
+  },
   "icu:Preferences--blocked": {
     "messageformat": "បានទប់ស្កាត់"
   },
   "icu:Preferences--signal-backups": {
-    "messageformat": "Signal Secure Backups"
+    "messageformat": "ការបម្រុងទុកសុវត្ថិភាព Signal"
   },
   "icu:Preferences--signal-backups-off-description": {
     "messageformat": "ការបម្រុងទុកដោយស្វ័យប្រវត្តិជាមួយនឹងសេវាកម្មផ្ទុកទិន្នន័យដែលបានអ៊ីនគ្រីបទាំងសងខាងដ៏មានសុវត្ថិភាពរបស់ Signal។ ចាប់ផ្តើមនៅលើទូរសព្ទរបស់អ្នក។ <learnMoreLink>ស្វែងយល់បន្ថែម</learnMoreLink>។"
@@ -5307,7 +5850,10 @@
     "messageformat": "សារជាអក្សរ + ការបម្រុងទុកមេឌៀទាំងអស់"
   },
   "icu:Preferences--backup-plan-not-found__description": {
-    "messageformat": "Your subscription was not found. Renew to continue using Signal Secure Backups."
+    "messageformat": "រកមិនឃើញការជាវរបស់អ្នកទេ។ សូមពិនិត្យមើលទូរសព្ទរបស់អ្នកដើម្បីមើលព័ត៌មានលម្អិតអំពីការបម្រុងទុករបស់អ្នក។"
+  },
+  "icu:Preferences--backup-subscription-monthly-cost": {
+    "messageformat": "{cost}/ខែ"
   },
   "icu:Preferences--backup-messages-plan__description": {
     "messageformat": "{mediaDayCount, plural, other {សារជាអក្សរ + ការបម្រុងទុកមេឌៀ {mediaDayCount,number} ថ្ងៃ}}"
@@ -5325,13 +5871,13 @@
     "messageformat": "ការជាវត្រូវបានបោះបង់"
   },
   "icu:Preferences--backup-media-plan__note": {
-    "messageformat": "You can manage or cancel your Signal Secure Backups subscription on your phone."
+    "messageformat": "អ្នកអាចគ្រប់គ្រង ឬបោះបង់នូវការជាវការបម្រុងទុកសុវត្ថិភាព Signal របស់អ្នកនៅលើទូរសព្ទរបស់អ្នក។"
   },
   "icu:Preferences--backup-messages-plan__note": {
-    "messageformat": "You can manage or upgrade Signal Secure Backups on your phone."
+    "messageformat": "អ្នកអាចគ្រប់គ្រង ឬដំឡើងកម្រិតនៃការបម្រុងទុកសុវត្ថិភាព Signal នៅលើទូរសព្ទរបស់អ្នក។"
   },
   "icu:Preferences--backup-plan__not-found__note": {
-    "messageformat": "You can manage or renew your Signal Secure Backups subscription on your phone."
+    "messageformat": "អ្នកអាចគ្រប់គ្រង ឬបន្តនូវការជាវការបម្រុងទុកសុវត្ថិភាព Signal របស់អ្នកនៅលើទូរសព្ទរបស់អ្នក។"
   },
   "icu:Preferences--backup-created-at__label": {
     "messageformat": "ការបម្រុងទុកចុងក្រោយ"
@@ -5362,6 +5908,18 @@
   },
   "icu:Preferences--local-backups-view-backup-key-done": {
     "messageformat": "រួចរាល់"
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt--mac": {
+    "messageformat": "បង្ហាញសោបម្រុងទុករបស់អ្នក"
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt--windows": {
+    "messageformat": "ផ្ទៀងផ្ទាត់អត្តសញ្ញាណរបស់អ្នក ដើម្បីមើលសោបម្រុងទុករបស់អ្នក។"
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt-description--linux": {
+    "messageformat": "មើលសោបម្រុងទុក"
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt-message--linux": {
+    "messageformat": "ត្រូវមានការផ្ទៀងផ្ទាត់ដើម្បីមើលសោបម្រុងទុករបស់អ្នក។"
   },
   "icu:Preferences--local-backups-backup-key-text-box": {
     "messageformat": "ប្រអប់អក្សរសោបម្រុងទុក"
@@ -5404,6 +5962,18 @@
   },
   "icu:Preferences__local-backups-copied-key": {
     "messageformat": "សោបម្រុងទុកត្រូវបានចម្លង"
+  },
+  "icu:Preferences__local-backups--enable--os-prompt--mac": {
+    "messageformat": "បើកការបម្រុងទុក"
+  },
+  "icu:Preferences__local-backups--enable--os-prompt--windows": {
+    "messageformat": "ផ្ទៀងផ្ទាត់អត្តសញ្ញាណរបស់អ្នក ដើម្បីបើកការបម្រុងទុក។"
+  },
+  "icu:Preferences__local-backups--enable--os-prompt-description--linux": {
+    "messageformat": "បើកការបម្រុងទុក"
+  },
+  "icu:Preferences__local-backups--enable--os-prompt-message--linux": {
+    "messageformat": "ត្រូវមានការផ្ទៀងផ្ទាត់ ដើម្បីបើកការបម្រុងទុក។"
   },
   "icu:Preferences__view-key": {
     "messageformat": "មើលសោ"
@@ -6393,6 +6963,9 @@
   "icu:MessageMetadata__edited": {
     "messageformat": "បានកែ"
   },
+  "icu:MessageMetadata__pinned": {
+    "messageformat": "Pinned"
+  },
   "icu:DraftGifMessageSendModal__Title": {
     "messageformat": "បន្ថែមសារមួយ"
   },
@@ -6404,6 +6977,9 @@
   },
   "icu:EditHistoryMessagesModal__title": {
     "messageformat": "កែប្រវត្តិ"
+  },
+  "icu:EditHistoryMessagesModal__Message__ContextMenu__CopyTimestamp": {
+    "messageformat": "ចម្លងត្រាពេលវេលា"
   },
   "icu:ResendMessageEdit__body": {
     "messageformat": "មិនអាចផ្ញើសារកែនេះបានទេ។ សូមពិនិត្យមើលសេវាអ៊ីនធឺណិតរបស់អ្នក រួចព្យាយាមម្តងទៀត។"
@@ -6699,9 +7275,6 @@
   "icu:PreferencesDonations--receiptList__empty-title": {
     "messageformat": "មិនមានបង្កាន់ដៃ"
   },
-  "icu:PreferencesDonations__ReceiptModal--title": {
-    "messageformat": "លម្អិត"
-  },
   "icu:PreferencesDonations__ReceiptModal--download": {
     "messageformat": "ទាញយកបង្កាន់ដៃ"
   },
@@ -6819,14 +7392,11 @@
   "icu:Donations__Toast__ConfirmationNeeded": {
     "messageformat": "អ្នកមានការបរិច្ចាគមួយដែលកំពុងដំណើរការដែលត្រូវការការបញ្ជាក់។"
   },
-  "icu:Donations__Toast__DonationCompletedAndBadgeApplicationFailed": {
+  "icu:Donations__BadgeApplicationFailed__Title": {
     "messageformat": "ការបរិច្ចាគបានជោគជ័យ ប៉ុន្តែយើងមិនអាចធ្វើបច្ចុប្បន្នភាពការកំណត់ស្លាករបស់អ្នកបានទេ"
   },
-  "icu:Donations__BadgeApplicationFailed__Title": {
-    "messageformat": "Donation succeeded, but we could not update your badge settings"
-  },
   "icu:Donations__BadgeApplicationFailed__Description": {
-    "messageformat": "To update your badge settings on your mobile device, go to Settings → Donate to Signal → Badges."
+    "messageformat": "ដើម្បីធ្វើបច្ចុប្បន្នភាពការកំណត់ស្លាករបស់អ្នកនៅលើឧបករណ៍ចល័តរបស់អ្នក សូមចូលទៅកាន់ការកំណត់ → បរិច្ចាគទៅ Signal → ស្លាក។"
   },
   "icu:Donations__DonationInterrupted": {
     "messageformat": "ការបរិច្ចាគត្រូវបានរំខាន"
@@ -6903,6 +7473,90 @@
   "icu:Donations__badge-modal--help-text": {
     "messageformat": "អ្នកអាចកែតម្រូវវានៅលើឧបករណ៍ចល័តរបស់អ្នកនៅក្រោមការកំណត់ → បរិច្ចាគទៅ Signal → ស្លាក"
   },
+  "icu:CallQualitySurvey__CloseButton__AccessibilityLabel": {
+    "messageformat": "Close"
+  },
+  "icu:CallQualitySurvey__BackButton__AccessibilityLabel": {
+    "messageformat": "Back"
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__PageTitle": {
+    "messageformat": "How was your call?"
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__PageDescription": {
+    "messageformat": "This helps us improve calls in Signal. No personally identifiable information will be stored."
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__Response__HadIssues": {
+    "messageformat": "Had issues"
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__Response__Great": {
+    "messageformat": "Great"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__PageTitle": {
+    "messageformat": "What issues did you have?"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__IssuesList__Heading": {
+    "messageformat": "Select all that apply"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO": {
+    "messageformat": "Audio issue"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_STUTTERING": {
+    "messageformat": "Audio stuttering"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_LOCAL_ECHO": {
+    "messageformat": "I heard echo"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_REMOTE_ECHO": {
+    "messageformat": "Others heard echo"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_DROP": {
+    "messageformat": "Audio cut out"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO": {
+    "messageformat": "Video issue"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO_NO_CAMERA": {
+    "messageformat": "Camera didn't work"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO_LOW_QUALITY": {
+    "messageformat": "Poor video quality"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO_LOW_RESOLUTION": {
+    "messageformat": "Low resolution"
+  },
+  "icu:CallQualitySurvey__Issue--CALL_DROPPED": {
+    "messageformat": "Call dropped"
+  },
+  "icu:CallQualitySurvey__Issue--OTHER": {
+    "messageformat": "Something else"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__SomethingElse__TextArea__AccessibilityLabel": {
+    "messageformat": "Issues description"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__SomethingElse__TextArea__HelpText": {
+    "messageformat": "Please include any details relevant to the issue. Anything you share here will be kept private and will only be used to help improve calls in Signal."
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__ContinueButton": {
+    "messageformat": "Continue"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__PageTitle": {
+    "messageformat": "Help us improve"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__PageDescription": {
+    "messageformat": "This helps us learn more about calls and what is working or not working. You can view your debug log before submitting."
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__Label": {
+    "messageformat": "Share debug log"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__ViewButton": {
+    "messageformat": "View"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__HelpText": {
+    "messageformat": "Debug logs contain low level app information and do not reveal any of your message contents."
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__SubmitButton": {
+    "messageformat": "Submit"
+  },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "កំណែ​នេះ​មាន​ការ​កែ​សម្រួល និង​ការកែបញ្ហាតូចៗ​មួយ​ចំនួន ដើម្បី​ឲ្យ​ Signal បន្ត​ដំណើរការ​ដោយ​រលូន។",
     "ignoreUnused": true
@@ -6931,13 +7585,16 @@
     "messageformat": "ការកែប្រែបន្តិចបន្តួច ការដោះស្រាយបញ្ហា និងការបង្កើនប្រតិបត្តិការ។ សូមអរគុណចំពោះការប្រើប្រាស់ Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.66--0": {
-    "messageformat": "កំណែថ្មីនេះដោះស្រាយបញ្ហាតូចៗមួយចំនួន រួមទាំងបញ្ហាដែលប្រតិកម្មតាមរូបអារម្មណ៍មិនត្រូវបានដាក់ជាក្រុមជាមួយគ្នាឱ្យបានត្រឹមត្រូវនៅក្នុងករណីខ្លះៗ។"
+  "icu:WhatsNew__7.79-1": {
+    "messageformat": "យើងបានធ្វើបច្ចុប្បន្នភាពរូបរាង និងភាពស៊ីសង្វាក់គ្នានៃរចនាប័ទ្មរបស់របារអូសទូទាំងកម្មវិធី។ ជាធម្មតា ប្រសិនបើអ្នកអូសលឿនពេក អ្នកអាចនឹងរំលងអ្វីមួយ ប៉ុន្តែក្នុងករណីនេះ សូមអូសរំកិលមើលវាកុំលឿនពេក។"
   },
-  "icu:WhatsNew__v7.67--0": {
-    "messageformat": "យើងបានដោះស្រាយបញ្ហាមួយដែលធ្វើឱ្យស្លាកបរិច្ចាគមិនអាចបង្ហាញបានត្រឹមត្រូវសម្រាប់អ្នកប្រើមួយចំនួន។ Signal គឺជាអង្គការមិនរកប្រាក់ចំណេញ 501c3 ហើយយើងសូមអរគុណចំពោះការគាំទ្ររបស់អ្នក!"
+  "icu:WhatsNew__7.79-2": {
+    "messageformat": "ការកែលម្អការចម្លង/បិទភ្ជាប់ធ្វើឱ្យការជ្រើសរើសទាំងអស់ និងប្តូរអក្សរដែលមានស្រាប់កាន់តែងាយស្រួល ដោយមិនចាំបាច់យកពីទម្រង់ចាស់។ អរគុណ <brianHarder></brianHarder>!"
   },
-  "icu:WhatsNew__v7.70--0": {
-    "messageformat": "យើងបានដោះស្រាយបញ្ហាមួយនៅលើ Microsoft Windows ដែលបានធ្វើឱ្យរបារចំណងជើង Signal Desktop ទៅជាពណ៌ទឹកក្រូច មិនមែនពណ៌ខៀវ។ ប្រសិនបើអ្នកបែរជាចូលចិត្តផ្ទៃពណ៌ទឹកក្រូចក្នុងរយៈពេលប៉ុន្មានថ្ងៃនេះទៅវិញ ហើយការដោះស្រាយបញ្ហានេះធ្វើឱ្យអ្នកមានអារម្មណ៍មិនល្អ អ្នកអាចកែពណ៌បន្ទាប់បន្សំរបស់ប្រព័ន្ធអ្នកនៅក្នុងការកំណត់វីនដូរបស់អ្នក។"
+  "icu:WhatsNew__7.80-1": {
+    "messageformat": "នៅទីនេះមានការស្ទង់មតិ Signal! តើអ្នក និងមិត្តភក្តិរបស់អ្នកមានគំនិតដូចគ្នាឬទេ ឬអ្នកមានទស្សនៈផ្ទុយគ្នាទាំងស្រុង? ការស្ទង់មតិគឺជាវិធីងាយស្រួលមួយដើម្បីមើលថាតើសមាជិកក្នុងការជជែកជាក្រុមរបស់អ្នកគិតយ៉ាងណាដែរ។ បង្កើតការស្ទង់មតិជាមួយនឹងជម្រើសអាហារពេលល្ងាច គោលដៅវិស្សមកាល ចំណូលចិត្តតន្ត្រីជាច្រើនសម្រាប់ការធ្វើដំណើរតាមផ្លូវនាពេលខាងមុខ ឬជម្រើសសំខាន់ៗផ្សេងទៀត។ អ្នកគ្រប់គ្នានៅក្នុងក្រុមអាចបោះឆ្នោត និងមើលឃើញការឆ្លើយតបរបស់គ្នាទៅវិញទៅមក ហើយអ្នកអាចសម្រេចចិត្តថាតើគួរអនុញ្ញាតឱ្យមានការបោះឆ្នោតជាច្រើនឬអត់។"
+  },
+  "icu:WhatsNew__7.81-1": {
+    "messageformat": "ឥឡូវនេះ វិចិត្រសាលមេឌៀមានផ្ទាំងថ្មីពីរសម្រាប់សារជាសំឡេង និងការមើលតំណជាមុន។ ប្រសិនបើតំណមួយស្ថិតនៅក្នុងការជជែកជាក្រុម តើវាបញ្ចេញសំឡេងឬទេ?"
   }
 }

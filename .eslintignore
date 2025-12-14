@@ -13,7 +13,7 @@ js/util_worker.js
 libtextsecure/components.js
 libtextsecure/test/test.js
 test/test.js
-ts/protobuf/compiled.d.ts
+ts/protobuf/compiled.std.d.ts
 storybook-static/**
 build/ICUMessageParams.d.ts
 
@@ -23,6 +23,7 @@ js/WebAudioRecorderMp3.js
 js/calling-tools/**
 
 # TypeScript generated files
+build/**/*.js
 app/**/*.js
 ts/**/*.js
 

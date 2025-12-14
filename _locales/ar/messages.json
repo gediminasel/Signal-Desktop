@@ -104,6 +104,15 @@
   "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
     "messageformat": "تعذّر الوصول إلى مفتاح تشفير قاعدة البيانات لأن الواجهة الخلفية لِحلقة مفاتيح تشفير نظام التشغيل تغيَّرت من {previousBackend} إلى {currentBackend}. يُمكن أن يَحدث هذا إذا تغيَّرت بيئة سطح المكتب، مثلًا بين GNOME وKDE.\n\nيُرجى الرجوع إلى بيئة سطح المكتب السابقة أو حاوِل تشغيل سيجنال باستخدام علامة سطر الأوامر --password-store=\"{previousBackendFlag}\""
   },
+  "icu:systemEncryptionError": {
+    "messageformat": "System encryption error"
+  },
+  "icu:systemEncryptionError__linuxSafeStorageDecryptionError": {
+    "messageformat": "Unable to decrypt the database encryption key using the OS encryption keyring. This can occur in certain containerized environments such as Flatpak.\n\nWe recommend quitting and checking your OS encryption backend such as gnome-libsecret or kwallet, then trying again.\n\nYou may choose to continue anyway, however the database key will be stored in plaintext on the filesystem and other apps may be able to access it."
+  },
+  "icu:systemEncryptionError__continueWithPlaintextKey": {
+    "messageformat": "Continue with plaintext key"
+  },
   "icu:mainMenuFile": {
     "messageformat": "&ملف"
   },
@@ -233,6 +242,12 @@
   "icu:archivedConversations": {
     "messageformat": "الدردشات المؤرشَفة"
   },
+  "icu:LeftPane__MoreActionsMenu__AddChatFolder": {
+    "messageformat": "إضافة مجلد دردشة"
+  },
+  "icu:LeftPane__MoreActionsMenu__FolderSettings": {
+    "messageformat": "إعدادات المجلد"
+  },
   "icu:LeftPane--pinned": {
     "messageformat": "الدردشات المُثبَّتة"
   },
@@ -271,6 +286,45 @@
   },
   "icu:LeftPaneFindByHelper__description--findByUsername": {
     "messageformat": "أدخِل اسم مُستخدِم متبوعًا بنقطة ومجموعة من الأرقام الخاصة به."
+  },
+  "icu:LeftPane__EmptyView--WithSelectedChatFolder": {
+    "messageformat": "لا توجد أي دردشات للعرض"
+  },
+  "icu:LeftPane__EmptyView--WithSelectedChatFolder__FolderSettings": {
+    "messageformat": "إعدادات المجلد"
+  },
+  "icu:LeftPaneChatFolders__ItemLabel--All--Short": {
+    "messageformat": "الجميع"
+  },
+  "icu:LeftPaneChatFolders__ItemLabel--All": {
+    "messageformat": "جميع الدردشات"
+  },
+  "icu:LeftPaneChatFolders__ItemUnreadBadge__MaxCount": {
+    "messageformat": "{maxCount,number}+"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__MarkAllRead": {
+    "messageformat": "اعتبار كل الرسائل مقروءة"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__MuteNotifications": {
+    "messageformat": "كتم الإشعارات"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__MuteNotifications__UnmuteAll": {
+    "messageformat": "إلغاء كتم الصوت للجميع"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__UnmuteAll": {
+    "messageformat": "إلغاء كتم الصوت للجميع"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__EditFolder": {
+    "messageformat": "تعديل المجلد"
+  },
+  "icu:LeftPane__ConversationListItem__ContextMenu__ChatFolderToggleChatsItem": {
+    "messageformat": "إضافة إلى المجلد"
+  },
+  "icu:LeftPane__ConversationListItem__ContextMenu__ChatFolderToggleChatsMenu__CreateFolderItem": {
+    "messageformat": "إنشاء مجلد"
+  },
+  "icu:LeftPane__ConversationListItem__ContextMenu__ChatFolderRemoveChatItem": {
+    "messageformat": "حذف من المجلد"
   },
   "icu:CountryCodeSelect__placeholder": {
     "messageformat": "كود الدولة"
@@ -322,6 +376,9 @@
   },
   "icu:markUnread": {
     "messageformat": "تحديد كغير مقروءة"
+  },
+  "icu:markRead": {
+    "messageformat": "تحديد كمقروءة"
   },
   "icu:ConversationHeader__menu__selectMessages": {
     "messageformat": "تحديد الرسائل"
@@ -607,6 +664,15 @@
   },
   "icu:Toast--ReceiptSaveFailed": {
     "messageformat": "حدث خطأ أثناء حفظ الإيصال. يُرجى المُحاولة مرّة أخرى."
+  },
+  "icu:Toast--ChatFolderAddedChat": {
+    "messageformat": "تمَّت الإضافة إلى \"{chatFolderName}\""
+  },
+  "icu:Toast--ChatFolderRemovedChat": {
+    "messageformat": "تمَّت الإزالة من \"{chatFolderName}\""
+  },
+  "icu:Toast--ChatFolderCreated": {
+    "messageformat": "مجلد {chatFolderName} مُضَاف"
   },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "لا يُمكنك تحديد الصور ومقاطع الفيديو مع الملفات."
@@ -1031,14 +1097,98 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "معلومات"
   },
+  "icu:MessageContextMenu__PinMessage": {
+    "messageformat": "تثبيت رسالة"
+  },
+  "icu:MessageContextMenu__UnpinMessage": {
+    "messageformat": "Unpin message"
+  },
+  "icu:Poll__end-poll": {
+    "messageformat": "إنهاء الاستطلاع"
+  },
+  "icu:PollMessage--SelectOne": {
+    "messageformat": "استطلاع · اختر خيارًا واحدًا"
+  },
+  "icu:PollMessage--SelectMultiple": {
+    "messageformat": "استطلاع · اختِر واحدًا أو أكثر"
+  },
+  "icu:PollMessage--FinalResults": {
+    "messageformat": "استطلاع · النتائج النهائية"
+  },
+  "icu:PollMessage__ViewVotesButton": {
+    "messageformat": "عرض الأصوات"
+  },
+  "icu:PollMessage--YouVoted": {
+    "messageformat": "قُمتَ بالتصويت"
+  },
+  "icu:PollTerminate--you": {
+    "messageformat": "أنهيتَ الاستطلاع: {poll}"
+  },
+  "icu:PollTerminate--other": {
+    "messageformat": "{name} أنهى الاستطلاع: \"{poll}\""
+  },
+  "icu:PollTerminate__view-poll": {
+    "messageformat": "عرض الاستطلاع"
+  },
+  "icu:PollVotesModal__title": {
+    "messageformat": "تفاصيل الاستطلاع"
+  },
+  "icu:PollVotesModal__questionLabel": {
+    "messageformat": "سؤال"
+  },
+  "icu:PollVotesModal__voteCount": {
+    "messageformat": "{count, plural, zero {{count,number} أصوات} one {{count,number} صوت} two {{count,number} صوتين} few {{count,number} أصوات} many {{count,number} صوت} other {{count,number} صوت}}"
+  },
+  "icu:PollVotesModal__noVotes": {
+    "messageformat": "لا أصوات"
+  },
+  "icu:PollVotesModal__winningOption": {
+    "messageformat": "فائز"
+  },
+  "icu:Toast--PinnedMessageNotFound": {
+    "messageformat": "تعذَّر العثور على الرسالة المُثبَّتة"
+  },
+  "icu:Toast--PollNotFound": {
+    "messageformat": "لم يتم العثور على الاستطلاع"
+  },
+  "icu:PollCreateModal__title": {
+    "messageformat": "استطلاع جديد"
+  },
+  "icu:PollCreateModal__questionLabel": {
+    "messageformat": "سؤال"
+  },
+  "icu:PollCreateModal__questionPlaceholder": {
+    "messageformat": "اطرَح سؤالًا"
+  },
+  "icu:PollCreateModal__optionsLabel": {
+    "messageformat": "الخيارات"
+  },
+  "icu:PollCreateModal__optionPlaceholder": {
+    "messageformat": "خيار {number}"
+  },
+  "icu:PollCreateModal__allowMultipleVotes": {
+    "messageformat": "السماح بالتصويت عدة مرّات"
+  },
+  "icu:PollCreateModal__sendButton": {
+    "messageformat": "إرسال"
+  },
+  "icu:PollCreateModal__Error--RequiresQuestion": {
+    "messageformat": "سؤال الاستطلاع ضروري"
+  },
+  "icu:PollCreateModal__Error--RequiresTwoOptions": {
+    "messageformat": "يتطلب الاستطلاع خيارين على الأقل"
+  },
+  "icu:PollCreateModal__Error--QuestionTooLong": {
+    "messageformat": "السؤال طويل جدًا"
+  },
+  "icu:PollCreateModal__Error--OptionTooLong": {
+    "messageformat": "الخيار طويل جدًا"
+  },
   "icu:deleteConversation": {
     "messageformat": "حذف"
   },
   "icu:ConversationHeader__DeleteConversationConfirmation__title": {
     "messageformat": "هل ترغبُ بحذف الدردشة؟"
-  },
-  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
-    "messageformat": "ستُحذَف جميع رسائل هذه المُحادثة من هذا الجهاز."
   },
   "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
     "messageformat": "ستُحذَف جميع رسائل هذه المُحادثة من جميع أجهزتك."
@@ -1057,6 +1207,108 @@
   },
   "icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description": {
     "messageformat": "قبل المغادرة، يجب عليك أن تختار مُشرِفًا واحدًا على الأقل لهذه المجموعة."
+  },
+  "icu:PinnedMessageNotification__Message--You": {
+    "messageformat": "قُمتَ بتثبيت رسالة"
+  },
+  "icu:PinnedMessageNotification__Message--SomeoneElse": {
+    "messageformat": "قام {sender} بتثبيت رسالة"
+  },
+  "icu:PinnedMessageNotification__Button": {
+    "messageformat": "انتقل إلى الرسالة"
+  },
+  "icu:PinMessageDialog__Title": {
+    "messageformat": "تثبيت الرسالة لمدة…"
+  },
+  "icu:PinMessageDialog__Close": {
+    "messageformat": "إغلاق"
+  },
+  "icu:PinMessageDialog__Option--TIME_24_HOURS": {
+    "messageformat": "24 ساعة"
+  },
+  "icu:PinMessageDialog__Option--TIME_7_DAYS": {
+    "messageformat": "7 أيام"
+  },
+  "icu:PinMessageDialog__Option--TIME_30_DAYS": {
+    "messageformat": "30 يومًا"
+  },
+  "icu:PinMessageDialog__Option--FOREVER": {
+    "messageformat": "بشكل دائم"
+  },
+  "icu:PinMessageDialog__Cancel": {
+    "messageformat": "إلغاء"
+  },
+  "icu:PinMessageDialog__Pin": {
+    "messageformat": "تثبيت"
+  },
+  "icu:PinnedMessagesBar__AccessibilityLabel": {
+    "messageformat": "{pinsCount, plural, zero {رسائل مُثبَّتة} one {رسالة مُثبَّتة} two {رسالتان مُثبَّتتان} few {رسائل مُثبَّتة} many {رسائل مُثبَّتة} other {رسائل مُثبَّتة}}"
+  },
+  "icu:PinnedMessagesBar__Tab__AccessibilityLabel": {
+    "messageformat": "الانتقال إلى الرقم التعريفي الشخصي {pinNumber,number}"
+  },
+  "icu:PinnedMessagesBar__GoToMessageClickableArea__AccessibilityLabel": {
+    "messageformat": "انتقل إلى الرسالة"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__Button__AccessibilityLabel": {
+    "messageformat": "إجراءات أخرى"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__UnpinMessage": {
+    "messageformat": "إلغاء تثبيت الرسالة"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__GoToMessage": {
+    "messageformat": "انتقل إلى الرسالة"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__SeeAllMessages": {
+    "messageformat": "مشاهدة جميع الرسائل"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Address": {
+    "messageformat": "Address"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--VoiceMessage": {
+    "messageformat": "Voice message"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Gif": {
+    "messageformat": "GIF"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--File": {
+    "messageformat": "File"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Contact": {
+    "messageformat": "Contact"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Payment": {
+    "messageformat": "Payment"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Poll": {
+    "messageformat": "Poll"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Sticker": {
+    "messageformat": "Sticker"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Photo": {
+    "messageformat": "Photo"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Video": {
+    "messageformat": "Video"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--VoiceMessage": {
+    "messageformat": "Voice message"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Gif": {
+    "messageformat": "GIF"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Payment": {
+    "messageformat": "Payment"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Sticker": {
+    "messageformat": "Sticker"
+  },
+  "icu:PinnedMessagesPanel__Title": {
+    "messageformat": "Pinned messages"
+  },
+  "icu:PinnedMessagesPanel__UnpinAllMessages": {
+    "messageformat": "Unpin all messages"
   },
   "icu:sessionEnded": {
     "messageformat": "إعادة تعيين جلسة آمنة"
@@ -1175,36 +1427,6 @@
   "icu:attachmentNotAvailable__tapToViewCannotDownload": {
     "messageformat": "لا يُمكن تنزيل ملف الوسائط الذي يُعرَض لمرّة واحدة"
   },
-  "icu:AttachmentNotAvailableModal__title--file": {
-    "messageformat": "الملف غير مُتوفِّر"
-  },
-  "icu:AttachmentNotAvailableModal__title--long-text": {
-    "messageformat": "الرسالة الكاملة غير مُتوفِّرة"
-  },
-  "icu:AttachmentNotAvailableModal__title--media": {
-    "messageformat": "الوسائط غير متوفرة"
-  },
-  "icu:AttachmentNotAvailableModal__title--sticker": {
-    "messageformat": "المُلصَق غير مُتوفِّر"
-  },
-  "icu:AttachmentNotAvailableModal__title--voice-message": {
-    "messageformat": "الرسالة الصوتية غير مُتوفِّرة"
-  },
-  "icu:AttachmentNotAvailableModal__body--file": {
-    "messageformat": "لم يتم نقل هذا الملف من هاتفك عندما تمَّ ربط هذا الجهاز. لا يمكن مُزامنة الملفات والوسائط التي تعود إلى أكثر من 45 يوم منذ الوقت الذي تمَّ فيه ربط الجهاز."
-  },
-  "icu:AttachmentNotAvailableModal__body--long-text": {
-    "messageformat": "لم يتم نقل النص الكامل في هذه الرسالة من هاتفك عند ربط هذا الجهاز. لا يُمكن مزامنة الرسائل النصية الطويلة التي مضى عليها أكثر من 45 يومًا من الوقت الذي تمَّ فيه ربط الجهاز."
-  },
-  "icu:AttachmentNotAvailableModal__body--media": {
-    "messageformat": "لم يتم نقل ملف الوسائط هذا من هاتفك عندما تمَّ ربط هذا الجهاز. لا يمكن مُزامنة الوسائط التي تعود إلى أكثر من 45 يومًا منذ الوقت الذي تمَّ فيه ربط الجهاز."
-  },
-  "icu:AttachmentNotAvailableModal__body--sticker": {
-    "messageformat": "هذا المُلصَق لم يتم تحويله من هاتفك عندما كان هذا الجهاز مُرتبِطًا. لا يمكن مُزامنة الملفات والوسائط التي تعود إلى أكثر من 45 يوم منذ الوقت الذي تمَّ فيه ربط الجهاز."
-  },
-  "icu:AttachmentNotAvailableModal__body--voice-message": {
-    "messageformat": "لم يتم تحويل هذه الرسالة الصوتية من هاتفك عندما تمَّ ربط هذا الجهاز. لا يمكن مُزامنة الملفات والوسائط التي تعود إلى أكثر من 45 يوم منذ الوقت الذي تمَّ فيه ربط الجهاز."
-  },
   "icu:TapToViewNotAvailableModal__body--expired": {
     "messageformat": "لم يعد ملف الوسائط الذي يُعرَض لمرّة واحدة متوفرًا للتنزيل. اسأل {name} أن يُرسله من جديد."
   },
@@ -1292,8 +1514,20 @@
   "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Title": {
     "messageformat": "إضافة مجلد دردشة"
   },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Title--WithChatFolders": {
+    "messageformat": "إضافة مجلدات أو تعديلها"
+  },
   "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Description": {
     "messageformat": "نظّم دردشاتك في مجلدات وقُم بالتبديل بينها بسرعة في قائمة الدردشة لديك."
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Description--WithChatFolders": {
+    "messageformat": "{chatFoldersCount, plural, zero {{chatFoldersCount,number} مجلدات} one {{chatFoldersCount,number} مجلد} two {{chatFoldersCount,number} مجلدين} few {{chatFoldersCount,number} مجلدات} many {{chatFoldersCount,number} مجلدًا} other {{chatFoldersCount,number} مجلد}}"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Button": {
+    "messageformat": "إعداد"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Button--WithChatFolders": {
+    "messageformat": "إدارة"
   },
   "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__EditFolder": {
     "messageformat": "تعديل المجلد"
@@ -1328,14 +1562,14 @@
   "icu:Preferences__ChatFoldersPage__FoldersSection__CreateAFolderButton": {
     "messageformat": "إنشاء مجلد"
   },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__DragHandle__Label": {
+    "messageformat": "اسحب لنقل مجلد الدردشة"
+  },
   "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__Title": {
     "messageformat": "المجلدات المُقترَحة"
   },
   "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton": {
     "messageformat": "إضافة"
-  },
-  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton__Toast": {
-    "messageformat": "مجلد {chatFolderTitle} مُضَاف"
   },
   "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Title": {
     "messageformat": "الرسائل غير المقروءة"
@@ -1357,6 +1591,9 @@
   },
   "icu:Preferences__EditChatFolderPage__Title": {
     "messageformat": "إنشاء مجلد"
+  },
+  "icu:Preferences__EditChatFolderPage__Title--EditingExistingChatFolder": {
+    "messageformat": "تعديل المجلد"
   },
   "icu:Preferences__EditChatFolderPage__FolderNameField__Label": {
     "messageformat": "اسم المجلد"
@@ -1534,6 +1771,12 @@
   },
   "icu:calling__removed-from-call-title": {
     "messageformat": "تمَّت الإزالة من المكالمة"
+  },
+  "icu:calling__has-max-devices": {
+    "messageformat": "وصلَ عدد المُشاركين إلى الحد الأقصى في هذه المكالمة. يُرجى المُحاولة مرّة أُخرى لاحقًا."
+  },
+  "icu:calling__has-max-devices--title": {
+    "messageformat": "المكالمة ممتلئة"
   },
   "icu:CallingLobby__CallLinkNotice": {
     "messageformat": "سَيرى أي شخص انضم إلى هذه المكالمة عبر الرابط اسمك وصورتك."
@@ -1853,6 +2096,9 @@
   "icu:notificationReactionMessage": {
     "messageformat": "تفاعَلَ {sender} مع الرسالة {message} باستخدام {emoji}"
   },
+  "icu:notificationPollVoteMessage": {
+    "messageformat": "{sender} صوّت في الاستطلاع: \"{pollQuestion}\""
+  },
   "icu:sendFailed": {
     "messageformat": "فشل الإرسال"
   },
@@ -2070,13 +2316,16 @@
     "messageformat": "تعذَّر التنزيل"
   },
   "icu:Toast--unable-download-from-backup-tier": {
-    "messageformat": "Download of attachment from backup failed"
+    "messageformat": "Attachment missing from backup CDN"
   },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "لا يُمكن إحداث التعديلات إلاّ في غضون 24 ساعة من وقت إرسال هذه الرسالة."
   },
   "icu:startConversation--username-not-found": {
     "messageformat": "لم يعُد {atUsername} من مُستخدِمي سيجنال. تأكَّد من إدخالك لاسم المُستخدِم الكامل."
+  },
+  "icu:startConversation--username-not-valid": {
+    "messageformat": "{atUsername} ليس اسم مُستخدِم صالح. تأكَّد من أنك أدخلت اسم المُستخدم كاملًا متبوعًا بمجموعة الأرقام الخاصة به."
   },
   "icu:startConversation--phone-number-not-found": {
     "messageformat": "‫لم يُعثَر على المُستخدِم. إن « {phoneNumber} » ليس مُستخدِمًا لسيجنال."
@@ -2231,6 +2480,9 @@
   "icu:message--getNotificationText--stickers": {
     "messageformat": "رسالة مُلصَق"
   },
+  "icu:Poll--preview": {
+    "messageformat": "استطلاع: {pollQuestion}"
+  },
   "icu:message--getNotificationText--text-with-emoji": {
     "messageformat": "{emoji} {text}"
   },
@@ -2357,101 +2609,11 @@
   "icu:stickers--StickerManager--UninstallWarning": {
     "messageformat": "قد يتعذَّر عليك إعادة تثبيت هذه المجموعة من المُلصَقات إذا لم تعد لديك الرسالة الأصلية."
   },
-  "icu:stickers--StickerManager--Introduction--Image": {
-    "messageformat": "‫نُقدِّم لكم المُلصَقات: القطة Bandit‬"
-  },
-  "icu:stickers--StickerManager--Introduction--Title": {
-    "messageformat": "‫نُقدِّم لكم المُلصَقات"
-  },
-  "icu:stickers--StickerManager--Introduction--Body": {
-    "messageformat": "ما الذي يدعوك لاستخدام الكلمات بينما يمكنك استخدام المُلصَقات؟"
-  },
-  "icu:stickers--StickerPicker--Open": {
-    "messageformat": "فتح مُنتقي المُلصَقات"
-  },
-  "icu:stickers--StickerPicker--AddPack": {
-    "messageformat": "إضافة مجموعة مُلصَقات"
-  },
-  "icu:stickers--StickerPicker--NextPage": {
-    "messageformat": "الصفحة التالية"
-  },
-  "icu:stickers--StickerPicker--PrevPage": {
-    "messageformat": "الصفحة السابقة"
-  },
-  "icu:stickers--StickerPicker--Recents": {
-    "messageformat": "المُلصَق السابق"
-  },
-  "icu:stickers--StickerPicker--DownloadError": {
-    "messageformat": "فشل تنزيل بعض المُلصَقات."
-  },
-  "icu:stickers--StickerPicker--DownloadPending": {
-    "messageformat": "جارٍ تثبيت مجموعة المُلصَقات…"
-  },
-  "icu:stickers--StickerPicker--Empty": {
-    "messageformat": "لم يُعثَر على أي مُلصَقات."
-  },
-  "icu:stickers--StickerPicker--Hint": {
-    "messageformat": "هناك مجموعات مُلصَقات جديدة متاحة للاستخدام مع رسائلك، وهي جاهزة للتثبيت"
-  },
-  "icu:stickers--StickerPicker--NoPacks": {
-    "messageformat": "لم يُعثَر على أي مجموعات مُلصَقات"
-  },
-  "icu:stickers--StickerPicker--NoRecents": {
-    "messageformat": "ستظهر المُلصَقات المُستخدَمة مؤخرًا هنا."
-  },
-  "icu:stickers__StickerPicker__recent": {
-    "messageformat": "الأحدث"
-  },
-  "icu:stickers__StickerPicker__featured": {
-    "messageformat": "المُميَّزة"
-  },
-  "icu:stickers__StickerPicker__analog-time": {
-    "messageformat": "وقت تناظري"
-  },
   "icu:stickers--StickerPreview--Title": {
     "messageformat": "مجموعة المُلصَقات"
   },
   "icu:stickers--StickerPreview--Error": {
     "messageformat": "حدث خطأ عند فتح مجموعة المُلصَقات. تحقَّق من اتصالك بالإنترنت ثم حاوِل مرّة أخرى."
-  },
-  "icu:EmojiPicker--empty": {
-    "messageformat": "لم يُعثَر على رموز تعبيرية (إيموجي)"
-  },
-  "icu:EmojiPicker--search-close": {
-    "messageformat": "إغلاق البحث عن الرموز التعبيرية (الإيموجي)"
-  },
-  "icu:EmojiPicker--search-placeholder": {
-    "messageformat": "البحث في الرموز التعبيرية (الإيموجي)"
-  },
-  "icu:EmojiPicker--skin-tone": {
-    "messageformat": "لون البشرة {tone}"
-  },
-  "icu:EmojiPicker__button--recents": {
-    "messageformat": "الأحدث"
-  },
-  "icu:EmojiPicker__button--emoji": {
-    "messageformat": "الإيموجي"
-  },
-  "icu:EmojiPicker__button--animal": {
-    "messageformat": "الحيوانات"
-  },
-  "icu:EmojiPicker__button--food": {
-    "messageformat": "الطعام"
-  },
-  "icu:EmojiPicker__button--activity": {
-    "messageformat": "الأنشطة"
-  },
-  "icu:EmojiPicker__button--travel": {
-    "messageformat": "السفر"
-  },
-  "icu:EmojiPicker__button--object": {
-    "messageformat": "الأشياء"
-  },
-  "icu:EmojiPicker__button--symbol": {
-    "messageformat": "الرموز الخاصة"
-  },
-  "icu:EmojiPicker__button--flag": {
-    "messageformat": "الأعلام"
   },
   "icu:FunPicker__Tab--Emojis": {
     "messageformat": "الإيموجي"
@@ -2560,6 +2722,9 @@
   },
   "icu:FunPanelStickers__SubNavCategoryLabel--Recents": {
     "messageformat": "تمَّ الاستخدام مُؤخَّرًا"
+  },
+  "icu:FunPanelStickers__SubNavButton--AddStickerPack": {
+    "messageformat": "إضافة مجموعة مُلصَقات"
   },
   "icu:FunPanelStickers__SectionTitle--SearchResults": {
     "messageformat": "نتائج البحث"
@@ -3021,13 +3186,13 @@
     "messageformat": "تمّ"
   },
   "icu:MessageRequests--message-direct": {
-    "messageformat": "هل ترغبُ بالسماح لـ {name} بمراسلتك، وهل ترغبُ بمشاركة اسمك وصورتك معه؟ لن يعرف أنك قرأتَ رسالته إلّا إذا سمحتَ بذلك."
+    "messageformat": "هل ترغبُ بالسماح لجهة الاتصال {name} بمراسلتك، وهل ترغبُ بمشاركة اسمك وصورتك معها؟ لن تعرف أنك قرأتَ رسالتها إلّا إذا سمحتَ بذلك."
   },
   "icu:MessageRequests--message-direct-hidden": {
-    "messageformat": "هل ترغبُ بالسماح لـ {name} بمراسلتك وهل ترغبُ بمشاركة اسمك وصورتك معه؟ حذفتَ هذا الشخص في الماضي."
+    "messageformat": "هل ترغبُ بالسماح لجهة الاتصال {name} بمراسلتك وهل ترغبُ بمشاركة اسمك وصورتك معها؟ حذفتَ هذا الشخص في الماضي."
   },
   "icu:MessageRequests--message-direct-blocked": {
-    "messageformat": "هل ترغبُ بالسماح لـ {name} بمراسلتك وهل ترغبُ بمشاركة اسمك وصورتك معه؟ لن تستقبل أي رسائل حتى تزيل الحظر عنه."
+    "messageformat": "هل ترغبُ بالسماح لجهة الاتصال {name} بمراسلتك وهل ترغبُ بمشاركة اسمك وصورتك معها؟ لن تستقبل أي رسائل حتى تزيل الحظر عنها."
   },
   "icu:MessageRequests--message-group": {
     "messageformat": "هل ترغبُ بالانضمام لهذه المجموعة ومشاركة اسمك وصورتك مع أعضائها؟ لن يعلموا أنك شاهدت رسائلهم إلّا بعد قبولك دعوة الانضمام إليهم."
@@ -3526,9 +3691,6 @@
   },
   "icu:muteExpirationLabel": {
     "messageformat": "مكتومة حتى {duration}"
-  },
-  "icu:EmojiButton__label": {
-    "messageformat": "رمز تعبيري (إيموجي)"
   },
   "icu:ErrorModal--title": {
     "messageformat": "حدث خطأ ما!"
@@ -4292,6 +4454,18 @@
   "icu:CompositionArea--attach-file": {
     "messageformat": "إرفاق ملف"
   },
+  "icu:CompositionArea__AttachMenu__PhotosAndVideos": {
+    "messageformat": "الصور والفيديوهات"
+  },
+  "icu:CompositionArea__AttachMenu__File": {
+    "messageformat": "ملف"
+  },
+  "icu:CompositionArea__AttachMenu__Poll": {
+    "messageformat": "استطلاع"
+  },
+  "icu:CompositionArea--attach-plus": {
+    "messageformat": "إضافة مرفق أو استطلاع"
+  },
   "icu:CompositionArea--sms-only__title": {
     "messageformat": "‫لا يستخدم هذا الشخص سيجنال"
   },
@@ -4442,8 +4616,8 @@
   "icu:ConversationDetailsActions--block-group-modal-confirm": {
     "messageformat": "حظر"
   },
-  "icu:ConversationDetailsActions--unblock-group-modal-content": {
-    "messageformat": "ستتمكن جهات الاتصال الخاصة بك من إضافتك إلى هذه المجموعة."
+  "icu:ConversationDetailsActions--unblock-group-modal-body": {
+    "messageformat": "ستتمكّن جهات الاتصال الخاصة بك من إضافتك إلى هذه المجموعة."
   },
   "icu:ConversationDetailsActions--unblock-group-modal-confirm": {
     "messageformat": "رفع الحظر"
@@ -4451,11 +4625,8 @@
   "icu:ConversationDetailsHeader--members": {
     "messageformat": "{number, plural, zero {{number,number} عضو} one {{number,number} عضو} two {{number,number} عضوان} few {{number,number} أعضاء} many {{number,number} عضوًا} other {{number,number} عضوٍ}}"
   },
-  "icu:ConversationDetailsMediaList--shared-media": {
-    "messageformat": "الوسائط المُشاركَة"
-  },
-  "icu:ConversationDetailsMediaList--show-all": {
-    "messageformat": "مشاهدة الكل"
+  "icu:ConversationDetailsMediaList--title": {
+    "messageformat": "ملفات الوسائط والروابط والملفات"
   },
   "icu:ConversationDetailsMembershipList--title": {
     "messageformat": "{number, plural, zero {{number,number} عضو} one {{number,number} عضو} two {{number,number} عضوان} few {{number,number} أعضاء} many {{number,number} عضوًا} other {{number,number} عضوٍ}}"
@@ -4949,6 +5120,57 @@
   "icu:ConversationDetailsHeader--add-group-description": {
     "messageformat": "إضافة وصف للمجموعة…"
   },
+  "icu:AudioListItem__subtitle--voice-message": {
+    "messageformat": "رسالة صوتية"
+  },
+  "icu:AudioListItem__subtitle--audio": {
+    "messageformat": "الملفات الصوتية"
+  },
+  "icu:LinkPreviewItem__alt": {
+    "messageformat": "افتح الرابط في مُتصفِّح"
+  },
+  "icu:ListItem__show-message": {
+    "messageformat": "عرض الرسالة في المحادثة"
+  },
+  "icu:MediaGallery__tab__audio": {
+    "messageformat": "الملفات الصوتية"
+  },
+  "icu:MediaGallery__tab__files": {
+    "messageformat": "الملفات"
+  },
+  "icu:MediaGallery__tab__links": {
+    "messageformat": "الروابط"
+  },
+  "icu:MediaGallery__EmptyState__title--media": {
+    "messageformat": "لا يوجد ملف وسائط"
+  },
+  "icu:MediaGallery__EmptyState__description--media": {
+    "messageformat": "ستظهر الصور والفيديوهات والصور المتحركة التي تُرسلها وتستقبلها هنا."
+  },
+  "icu:MediaGallery__EmptyState__title--audio": {
+    "messageformat": "لا يوجد صوت"
+  },
+  "icu:MediaGallery__EmptyState__description--audio": {
+    "messageformat": "سَتظهر الرسائل الصوتية والملفات الصوتية التي تُرسلها وتستقبلها هنا"
+  },
+  "icu:MediaGallery__EmptyState__title--links": {
+    "messageformat": "لا توجد روابط"
+  },
+  "icu:MediaGallery__EmptyState__description--links-2": {
+    "messageformat": "سَتظهر الروابط التي تُرسِلها وتستقبلها هنا"
+  },
+  "icu:MediaGallery__EmptyState__description--documents": {
+    "messageformat": "سَتظهر الروابط التي تُرسِلها وتستقبلها هنا"
+  },
+  "icu:MediaGallery__EmptyState__title--documents": {
+    "messageformat": "لا تُوجد ملفات"
+  },
+  "icu:MediaGallery__EmptyState__description--documents-2": {
+    "messageformat": "سَتظهر الملفات التي تُرسِلها وتستقبلها هنا"
+  },
+  "icu:MediaGallery__EmptyState__description--links": {
+    "messageformat": "سَتظهر الملفات التي تُرسِلها وتستقبلها هنا"
+  },
   "icu:MediaQualitySelector--button": {
     "messageformat": "تحديد جودة الوسائط"
   },
@@ -5288,11 +5510,332 @@
   "icu:Preferences--notification-content": {
     "messageformat": "محتوى الإشعار"
   },
+  "icu:PlaintextExport--PreferencesRow--Header": {
+    "messageformat": "هل ترغبُ بتصدير سجل الدردشة؟"
+  },
+  "icu:PlaintextExport--PreferencesRow--Description": {
+    "messageformat": "تصدير نسخة JSON قابلة للقراءة آليًا لجميع دردشاتك. لن يتم تصدير الرسائل المؤقَّتة."
+  },
+  "icu:PlaintextExport--ActionButton": {
+    "messageformat": "تصدير"
+  },
+  "icu:PlaintextExport--Confirmation--Header": {
+    "messageformat": "هل ترغبُ بتصدير سِجل الدردشة؟"
+  },
+  "icu:PlaintextExport--Confirmation--Description": {
+    "messageformat": "<bold>انتبه!</bold> لا تشارِك هذا الملف مع أي أحد. سيتم حفظ سِجل الدردشة الخاص بك في حاسوبك وقد تتمكن التطبيقات الأخرى من الوصول إليه حسب أذونات حاسوبك."
+  },
+  "icu:PlaintextExport--Confirmation--IncludeMedia": {
+    "messageformat": "تضمين الوسائط <secondary>(حجم ملف أكبر)</secondary>"
+  },
+  "icu:PlaintextExport--Confirmation--ContinueButton": {
+    "messageformat": "متابعة"
+  },
+  "icu:PlaintextExport--Confirmation--WaitingLabel": {
+    "messageformat": "في انتظار الإدخال"
+  },
+  "icu:PlaintextExport--OSPrompt--Mac": {
+    "messageformat": "تصدير سِجل الدردشة الخاص بك"
+  },
+  "icu:PlaintextExport--OSPrompt--Windows": {
+    "messageformat": "تحقَّق من هويتك لتصدير سجل الدردشة الخاص بك."
+  },
+  "icu:PlaintextExport--OSPrompt--description--Linux": {
+    "messageformat": "تصدير"
+  },
+  "icu:PlaintextExport--OSPrompt--message--Linux": {
+    "messageformat": "يجب المصادقة لتصدير سجال الدردشة الخاص بك."
+  },
+  "icu:PlaintextExport--ProgressDialog--Header": {
+    "messageformat": "جارٍ تصدير سجل الدردشة"
+  },
+  "icu:PlaintextExport--ProgressDialog--Progress": {
+    "messageformat": "جارٍ تصدير {currentBytes} من {totalBytes} ({percentage,number,percent})…"
+  },
+  "icu:PlaintextExport--ProgressDialog--TimeWarning": {
+    "messageformat": "قد يَستغرق هذا بعض الدقائق."
+  },
+  "icu:PlaintextExport--CompleteDialog--Header": {
+    "messageformat": "اِكتمل التصدير"
+  },
+  "icu:PlaintextExport--CompleteDialog--Description": {
+    "messageformat": "<bold>انتبه</bold> أين تخزن ملف تصدير دردشتك ولا تشاركه مع أي أحد. قد تتمكّن تطبيقات أخرى من الوصول إليها حسب الأذونات في حاسوبك. "
+  },
+  "icu:PlaintextExport--CompleteDialog--ShowFiles--Mac": {
+    "messageformat": "العرض في برنامج \"فايندر\" (مدير الملفات)"
+  },
+  "icu:PlaintextExport--CompleteDialog--ShowFiles--Linux": {
+    "messageformat": "أظهرِ ذلك في الملف"
+  },
+  "icu:PlaintextExport--CompleteDialog--ShowFiles--Windows": {
+    "messageformat": "أظهرِ ذلك في الملف"
+  },
+  "icu:PlaintextExport--Error--General--Title": {
+    "messageformat": "تعذَّر تصدير سجل الدردشة"
+  },
+  "icu:PlaintextExport--Error--General--Description": {
+    "messageformat": "حدث خطأ وتعذَّر تصدير سِجل الدردشة الخاص بك."
+  },
+  "icu:PlaintextExport--Error--NotEnoughStorage--Title": {
+    "messageformat": "لا توجد مساحة تخزين كافية."
+  },
+  "icu:PlaintextExport--Error--NotEnoughStorage--Detail": {
+    "messageformat": "لا يمكن تصدير سجل الدردشة الخاص بك لأن حاسوبك لا يحتوي على مساحة تخزين كافية. قُم بتحرير {bytes} من المساحة وحاوِل من جديد."
+  },
+  "icu:PlaintextExport--Error--RanOutOfStorage--Title": {
+    "messageformat": "تعذَّر تصدير سِجل الدردشة"
+  },
+  "icu:PlaintextExport--Error--RanOutOfStorage--Detail": {
+    "messageformat": "تعذَّر تصدير سِجل الدردشة الخاص بك لأن حاسوبك لا يحتوي على مساحة تخزين كافية. قُم بتحرير {bytes} من المساحة وحاوِل من جديد."
+  },
+  "icu:PlaintextExport--Error--DiskPermssions--Title": {
+    "messageformat": "يتعذَّر تصدير سجل الدردشة"
+  },
+  "icu:PlaintextExport--Error--DiskPermssions--Detail": {
+    "messageformat": "يتعذَّر تصدير سجل الدردشة الخاص بك لأن سيجنال ليس لديه الإذن لكتابة الملفات على القرص. حاوِل تغيير أذونات قرصك أو حدِّث إعدادات نظامك ثم حاوِل التصدير من جديد."
+  },
+  "icu:NotificationProfile--moon-icon": {
+    "messageformat": "أيقونة القمر"
+  },
+  "icu:NotificationProfile--copy-label": {
+    "messageformat": "نسخة من {profileName}"
+  },
+  "icu:NotificationProfile--am": {
+    "messageformat": "صباحًا"
+  },
+  "icu:NotificationProfile--pm": {
+    "messageformat": "مساء"
+  },
+  "icu:NotificationProfile--time-separator": {
+    "messageformat": ":"
+  },
+  "icu:NotificationProfileMenuItem": {
+    "messageformat": "مركز الإشعارات"
+  },
+  "icu:NotificationProfileMenu--header": {
+    "messageformat": "مركز الإشعارات"
+  },
+  "icu:NotificationProfileMenu--on": {
+    "messageformat": "في حالة تشغيل"
+  },
+  "icu:NotificationProfileMenu--on-with-end": {
+    "messageformat": "مُشغَّلة حتى {endTime}"
+  },
+  "icu:NotificationProfileMenu--for-one-hour": {
+    "messageformat": "لمدة ساعة واحدة"
+  },
+  "icu:NotificationProfileMenu--until-time": {
+    "messageformat": "حتى {time}"
+  },
+  "icu:NotificationProfileMenu--settings": {
+    "messageformat": "الإعدادات"
+  },
+  "icu:NotificationProfilesToast--enabled": {
+    "messageformat": "\"{name}\" مُفعَّل"
+  },
+  "icu:NotificationProfilesToast--disabled": {
+    "messageformat": "\"{name}\" غير مُفعَّل"
+  },
+  "icu:NotificationProfilesToast--enabled--label": {
+    "messageformat": "الملف الشخصي للإشعارات مُفعَّل الآن"
+  },
+  "icu:NotificationProfilesToast--disabled--label": {
+    "messageformat": "ملف الإشعار الشخصي غير مُفعَّل الآن"
+  },
+  "icu:NotificationProfiles--setting": {
+    "messageformat": "ملفات الإشعارات"
+  },
+  "icu:NotificationProfiles--setup": {
+    "messageformat": "إعداد"
+  },
+  "icu:NotificationProfiles--title": {
+    "messageformat": "ملفات الإشعارات"
+  },
+  "icu:NotificationProfiles--setup-description": {
+    "messageformat": "أنشِئ ملفًا شخصيًا لاستلام إشعارات ومكالمات من الأشخاص والمجموعات التي تختارها فقط."
+  },
+  "icu:NotificationProfiles--setup-continue": {
+    "messageformat": "متابعة"
+  },
+  "icu:NotificationProfiles--manage-description": {
+    "messageformat": "إضافة أو تعديل ملفات الإشعارات الشخصية"
+  },
+  "icu:NotificationProfiles--manage-profiles": {
+    "messageformat": "{profileCount, plural, zero {{profileCount,number} ملف شخصي} one {ملف شخصي واحد} two {{profileCount,number} ملفان شخصيان} few {{profileCount,number} ملفات شخصية} many {{profileCount,number} ملف شخصي} other {{profileCount,number} ملف شخصي}}"
+  },
+  "icu:NotificationProfiles--create": {
+    "messageformat": "إنشاء ملف للإشعارات"
+  },
+  "icu:NotificationProfiles--name-title": {
+    "messageformat": "تسمية ملف الإشعارات لديك"
+  },
+  "icu:NotificationProfiles--name-title--editing": {
+    "messageformat": "اِسم"
+  },
+  "icu:NotificationProfiles--name-placeholder": {
+    "messageformat": "اسم الحساب الشخصي"
+  },
+  "icu:NotificationProfiles--sample-name__work": {
+    "messageformat": "العمل"
+  },
+  "icu:NotificationProfiles--sample-name__sleep": {
+    "messageformat": "فترة النوم"
+  },
+  "icu:NotificationProfiles--sample-name__driving": {
+    "messageformat": "قيادة السيارة"
+  },
+  "icu:NotificationProfiles--sample-name__downtime": {
+    "messageformat": "وقت الاستراحة"
+  },
+  "icu:NotificationProfiles--sample-name__focus": {
+    "messageformat": "فترة التركيز"
+  },
+  "icu:NotificationProfiles--allowed-title": {
+    "messageformat": "الإشعارات المسموح بها"
+  },
+  "icu:NotificationProfiles--allowed-description": {
+    "messageformat": "أضِف الأشخاص والمجموعات التي تريد أن تستلم إشعارات من طرفهم عند تفعيل هذا الحساب الشخصي."
+  },
+  "icu:NotificationProfiles--allowed-add-label": {
+    "messageformat": "إضافة اﻷفراد أو المجموعات"
+  },
+  "icu:NotificationProfiles--exceptions": {
+    "messageformat": "الاستثناءات"
+  },
+  "icu:NotificationProfiles--exceptions--allow-all-calls": {
+    "messageformat": "السماح لِجميع المكالمات"
+  },
+  "icu:NotificationProfiles--exceptions--notify-for-mentions": {
+    "messageformat": "الإشعار عن كل الإشارات للأفراد"
+  },
+  "icu:NotificationProfiles--schedule-title": {
+    "messageformat": "إضافة جدولة"
+  },
+  "icu:NotificationProfiles--schedule-title--editing": {
+    "messageformat": "الجدولة"
+  },
+  "icu:NotificationProfiles--schedule-description": {
+    "messageformat": "قُم بتفعيل وتعديل جدولك الزمني لأتمتة ملف الإشعارات الشخصي الخاص بك."
+  },
+  "icu:NotificationProfiles--schedule-enable": {
+    "messageformat": "التفعيل تلقائيًا"
+  },
+  "icu:NotificationProfiles--schedule": {
+    "messageformat": "الجدولة"
+  },
+  "icu:NotificationProfiles--schedule-from": {
+    "messageformat": "مِن"
+  },
+  "icu:NotificationProfiles--schedule-until": {
+    "messageformat": "إلى غاية"
+  },
+  "icu:NotificationProfiles--open-time-picker": {
+    "messageformat": "فتح مُحدِّد الوقت"
+  },
+  "icu:NotificationProfiles--schedule-sunday": {
+    "messageformat": "الأحد"
+  },
+  "icu:NotificationProfiles--schedule-monday": {
+    "messageformat": "الاثنين"
+  },
+  "icu:NotificationProfiles--schedule-tuesday": {
+    "messageformat": "الثلاثاء"
+  },
+  "icu:NotificationProfiles--schedule-wednesday": {
+    "messageformat": "الأربعاء"
+  },
+  "icu:NotificationProfiles--schedule-thursday": {
+    "messageformat": "الخميس"
+  },
+  "icu:NotificationProfiles--schedule-friday": {
+    "messageformat": "الجمعة"
+  },
+  "icu:NotificationProfiles--schedule-saturday": {
+    "messageformat": "السبت"
+  },
+  "icu:NotificationProfiles--done-title": {
+    "messageformat": "أُنشِئ ملف الإشعارات"
+  },
+  "icu:NotificationProfiles--done-description": {
+    "messageformat": "إذا أضفت جدولًا زمنيًا، سيتم تشغيل ملفك التعريفي وتوقيفه تلقائيًا. يمكنك أيضًا النقر على أيقونة \"···\" في أعلى قائمة الدردشة لتشغيله أو إيقافه يدويًا."
+  },
+  "icu:NotificationProfiles--schedule-sunday-short": {
+    "messageformat": "الأحد"
+  },
+  "icu:NotificationProfiles--schedule-monday-short": {
+    "messageformat": "الاثنين"
+  },
+  "icu:NotificationProfiles--schedule-tuesday-short": {
+    "messageformat": "الثلاثاء"
+  },
+  "icu:NotificationProfiles--schedule-wednesday-short": {
+    "messageformat": "الأربعاء"
+  },
+  "icu:NotificationProfiles--schedule-thursday-short": {
+    "messageformat": "الخميس"
+  },
+  "icu:NotificationProfiles--schedule-friday-short": {
+    "messageformat": "الجمعة"
+  },
+  "icu:NotificationProfiles--schedule-saturday-short": {
+    "messageformat": "السبت"
+  },
+  "icu:NotificationProfiles--schedule-weekdays": {
+    "messageformat": "أيام الأسبوع"
+  },
+  "icu:NotificationProfiles--schedule-weekends": {
+    "messageformat": "عطلات نهاية الأسبوع"
+  },
+  "icu:NotificationProfiles--schedule-daily": {
+    "messageformat": "يوميًا"
+  },
+  "icu:NotificationProfiles--schedule-separator": {
+    "messageformat": "، "
+  },
+  "icu:NotificationProfiles--list--header": {
+    "messageformat": "ملفات الإشعارات"
+  },
+  "icu:NotificationProfiles--list--sync": {
+    "messageformat": "المزامنة عبر الأجهزة"
+  },
+  "icu:NotificationProfiles--list--sync--description": {
+    "messageformat": "ستتم مزامنة ملفاتك الشخصية عبر أجهزتك. تفعيل ملف شخصي لِجهاز ما سَيؤدي إلى تفعيله بالنسبة للأجهزة الأخرى."
+  },
+  "icu:NotificationProfiles--delete": {
+    "messageformat": "حذف ملف الإشعارات"
+  },
+  "icu:NotificationProfiles--delete-confirmation": {
+    "messageformat": "هل ترغب بحذف ملف الإشعارات هذا نهائيًا؟"
+  },
+  "icu:NotificationProfiles--delete-button": {
+    "messageformat": "حذف"
+  },
+  "icu:NotificationProfiles--edit--is-active": {
+    "messageformat": "في حالة تشغيل"
+  },
+  "icu:NotificationProfiles--edit--is-not-active": {
+    "messageformat": "مُعطَّلة"
+  },
+  "icu:NotificationProfiles--edit--edit-name-label": {
+    "messageformat": "تعديل اسم هذا الملف الشخصي"
+  },
+  "icu:NotificationProfiles--edit--allowed": {
+    "messageformat": "الإشعارات المسموح بها"
+  },
+  "icu:NotificationProfiles--edit--schedule-timing": {
+    "messageformat": "‫من {startTime} إلى {endTime}"
+  },
+  "icu:NotificationProfiles--edit--schedule-enabled": {
+    "messageformat": "في حالة تشغيل"
+  },
+  "icu:NotificationProfiles--edit--schedule-disabled": {
+    "messageformat": "مُعطَّلة"
+  },
   "icu:Preferences--blocked": {
     "messageformat": "الجهات المحظورة"
   },
   "icu:Preferences--signal-backups": {
-    "messageformat": "Signal Secure Backups"
+    "messageformat": "النسخ الاحتياطية الآمنة على سيجنال"
   },
   "icu:Preferences--signal-backups-off-description": {
     "messageformat": "نسخ احتياطية تلقائية باستخدام خدمة التخزين المُشفَّرة من طرف لِطرف التي يوفّرها سيجنال. ابدأ العملية على هاتفك. <learnMoreLink>اعرف المزيد.</learnMoreLink>"
@@ -5307,7 +5850,10 @@
     "messageformat": "النسخ الاحتياطي للنص وكل الوسائط"
   },
   "icu:Preferences--backup-plan-not-found__description": {
-    "messageformat": "Your subscription was not found. Renew to continue using Signal Secure Backups."
+    "messageformat": "تعذَّر العثور على اشتراكك. تفقّد هاتفك لعرض تفاصيل النسخ الاحتياطي الخاصة بك."
+  },
+  "icu:Preferences--backup-subscription-monthly-cost": {
+    "messageformat": "{cost}/شهريًا"
   },
   "icu:Preferences--backup-messages-plan__description": {
     "messageformat": "{mediaDayCount, plural, zero {النسخ الاحتياطي للنص و{mediaDayCount,number} يوم من الوسائط} one {النسخ الاحتياطي للنص و{mediaDayCount,number} يوم من الوسائط} two {النسخ الاحتياطي للنص و{mediaDayCount,number} يومين من الوسائط} few {النسخ الاحتياطي للنص و{mediaDayCount,number} أيام من الوسائط} many {النسخ الاحتياطي للنص و{mediaDayCount,number} يومًا من الوسائط} other {النسخ الاحتياطي للنص و{mediaDayCount,number} يومٍ من الوسائط}}"
@@ -5325,13 +5871,13 @@
     "messageformat": "تمَّ إلغاء الاشتراك"
   },
   "icu:Preferences--backup-media-plan__note": {
-    "messageformat": "You can manage or cancel your Signal Secure Backups subscription on your phone."
+    "messageformat": "يُمكنك إدارة أو إلغاء اشتراكك في النسخ الاحتياطية الآمنة على سيجنال من هاتفك."
   },
   "icu:Preferences--backup-messages-plan__note": {
-    "messageformat": "You can manage or upgrade Signal Secure Backups on your phone."
+    "messageformat": "يُمكنك إدارة أو ترقية النسخ الاحتياطية الآمنة على سيجنال من هاتفك."
   },
   "icu:Preferences--backup-plan__not-found__note": {
-    "messageformat": "You can manage or renew your Signal Secure Backups subscription on your phone."
+    "messageformat": "يُمكنك إدارة أو تجديد اشتراك نسخك الاحتياطية الآمنة على سيجنال من هاتفك."
   },
   "icu:Preferences--backup-created-at__label": {
     "messageformat": "آخِر نسخة احتياطية"
@@ -5362,6 +5908,18 @@
   },
   "icu:Preferences--local-backups-view-backup-key-done": {
     "messageformat": "تمّ"
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt--mac": {
+    "messageformat": "عرض مفتاح النسخ الاحتياطي"
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt--windows": {
+    "messageformat": "تحقَّق من هويتك لعرض مفتاح النسخ الاحتياطي الخاص بك."
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt-description--linux": {
+    "messageformat": "عرض مفتاح النسخة الاحتياطية"
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt-message--linux": {
+    "messageformat": "المصادقة مطلوبة لعرض مفتاح النسخ الاحتياطي."
   },
   "icu:Preferences--local-backups-backup-key-text-box": {
     "messageformat": "مربع نص مفتاح النسخة الاحتياطية"
@@ -5404,6 +5962,18 @@
   },
   "icu:Preferences__local-backups-copied-key": {
     "messageformat": "تمَّ نسخ مفتاح النسخ الاحتياطي"
+  },
+  "icu:Preferences__local-backups--enable--os-prompt--mac": {
+    "messageformat": "تفعيل النسخ الاحتياطية"
+  },
+  "icu:Preferences__local-backups--enable--os-prompt--windows": {
+    "messageformat": "تحقَّق من هويتك لتفعيل النسخ الاحتياطية."
+  },
+  "icu:Preferences__local-backups--enable--os-prompt-description--linux": {
+    "messageformat": "تفعيل النسخ الاحتياطية"
+  },
+  "icu:Preferences__local-backups--enable--os-prompt-message--linux": {
+    "messageformat": "المصادقة مطلوبة لتفعيل النسخ الاحتياطية."
   },
   "icu:Preferences__view-key": {
     "messageformat": "عرض المفتاح"
@@ -6393,6 +6963,9 @@
   "icu:MessageMetadata__edited": {
     "messageformat": "تمَّ التعديل"
   },
+  "icu:MessageMetadata__pinned": {
+    "messageformat": "Pinned"
+  },
   "icu:DraftGifMessageSendModal__Title": {
     "messageformat": "إضافة نص"
   },
@@ -6404,6 +6977,9 @@
   },
   "icu:EditHistoryMessagesModal__title": {
     "messageformat": "سجل التعديلات"
+  },
+  "icu:EditHistoryMessagesModal__Message__ContextMenu__CopyTimestamp": {
+    "messageformat": "نسخ السجل الزمني"
   },
   "icu:ResendMessageEdit__body": {
     "messageformat": "تعذَّر إرسال هذا التعديل. تحقّق من اتصالك بالشبكة ثم حاوِل مُجدَّدًا."
@@ -6699,9 +7275,6 @@
   "icu:PreferencesDonations--receiptList__empty-title": {
     "messageformat": "لا توجد إيصالات"
   },
-  "icu:PreferencesDonations__ReceiptModal--title": {
-    "messageformat": "التفاصيل"
-  },
   "icu:PreferencesDonations__ReceiptModal--download": {
     "messageformat": "تنزيل الإيصال"
   },
@@ -6819,14 +7392,11 @@
   "icu:Donations__Toast__ConfirmationNeeded": {
     "messageformat": "لديك تبرُّع قيد المعالجة يتطلب تأكيدًا."
   },
-  "icu:Donations__Toast__DonationCompletedAndBadgeApplicationFailed": {
-    "messageformat": "تبرَّعتَ بنجاح، لكن تعذّر علينا تحديث إعدادات شارتك."
-  },
   "icu:Donations__BadgeApplicationFailed__Title": {
-    "messageformat": "Donation succeeded, but we could not update your badge settings"
+    "messageformat": "تبرَّعتَ بنجاح، لكن تعذَّر علينا تحديث إعدادات شارتك."
   },
   "icu:Donations__BadgeApplicationFailed__Description": {
-    "messageformat": "To update your badge settings on your mobile device, go to Settings → Donate to Signal → Badges."
+    "messageformat": "لِتحديث إعدادات شارتك على جهازك المحمول، انتقل إلى: \"الإعدادات\" ← \"تبرَّع لسيجنال\" ← الشارات."
   },
   "icu:Donations__DonationInterrupted": {
     "messageformat": "تمَّت مقاطعة التبرُّع"
@@ -6903,6 +7473,90 @@
   "icu:Donations__badge-modal--help-text": {
     "messageformat": "يُمكنك تعديلُها على جهازك المحمول في: الإعدادات ← تبرَّع لسيجنال ← الشارات."
   },
+  "icu:CallQualitySurvey__CloseButton__AccessibilityLabel": {
+    "messageformat": "Close"
+  },
+  "icu:CallQualitySurvey__BackButton__AccessibilityLabel": {
+    "messageformat": "Back"
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__PageTitle": {
+    "messageformat": "How was your call?"
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__PageDescription": {
+    "messageformat": "This helps us improve calls in Signal. No personally identifiable information will be stored."
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__Response__HadIssues": {
+    "messageformat": "Had issues"
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__Response__Great": {
+    "messageformat": "Great"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__PageTitle": {
+    "messageformat": "What issues did you have?"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__IssuesList__Heading": {
+    "messageformat": "Select all that apply"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO": {
+    "messageformat": "Audio issue"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_STUTTERING": {
+    "messageformat": "Audio stuttering"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_LOCAL_ECHO": {
+    "messageformat": "I heard echo"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_REMOTE_ECHO": {
+    "messageformat": "Others heard echo"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_DROP": {
+    "messageformat": "Audio cut out"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO": {
+    "messageformat": "Video issue"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO_NO_CAMERA": {
+    "messageformat": "Camera didn't work"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO_LOW_QUALITY": {
+    "messageformat": "Poor video quality"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO_LOW_RESOLUTION": {
+    "messageformat": "Low resolution"
+  },
+  "icu:CallQualitySurvey__Issue--CALL_DROPPED": {
+    "messageformat": "Call dropped"
+  },
+  "icu:CallQualitySurvey__Issue--OTHER": {
+    "messageformat": "Something else"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__SomethingElse__TextArea__AccessibilityLabel": {
+    "messageformat": "Issues description"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__SomethingElse__TextArea__HelpText": {
+    "messageformat": "Please include any details relevant to the issue. Anything you share here will be kept private and will only be used to help improve calls in Signal."
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__ContinueButton": {
+    "messageformat": "Continue"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__PageTitle": {
+    "messageformat": "Help us improve"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__PageDescription": {
+    "messageformat": "This helps us learn more about calls and what is working or not working. You can view your debug log before submitting."
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__Label": {
+    "messageformat": "Share debug log"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__ViewButton": {
+    "messageformat": "View"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__HelpText": {
+    "messageformat": "Debug logs contain low level app information and do not reveal any of your message contents."
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__SubmitButton": {
+    "messageformat": "Submit"
+  },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "يحتوي هذا الإصدار على عدد من التعديلات الصغيرة وإصلاحات الأخطاء للحفاظ على عمل سيجنال بسلاسة.",
     "ignoreUnused": true
@@ -6931,13 +7585,16 @@
     "messageformat": "تعديلات صغيرة، وإصلاح أعطال، وتحسينات للأداء. شكرًا على استخدامك سيجنال!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.66--0": {
-    "messageformat": "تمَّ إصلاح بعض الأخطاء البسيطة."
+  "icu:WhatsNew__7.79-1": {
+    "messageformat": "قُمنا بتحديث مظهر وأسلوب أشرطة التمرير عبر التطبيق لتعزيز الاتساق. عادةً، إذا قُمتَ بالتمرير بسرعة كبيرة، قد يفوتك شيء ما، ولكن في هذه الحالة، فإن التمرير هو الطريقة الوحيدة لرؤيته."
   },
-  "icu:WhatsNew__v7.67--0": {
-    "messageformat": "أصلحنا خطأ يحول دون ظهور شارات التبرُّع بشكلٍ صحيح لبعض المُستخدِمين. تطبيق سيجنال هو مؤسَّسة غير ربحية بتصنيف 501c3، ويعتمد بالكامل على دعمك!"
+  "icu:WhatsNew__7.79-2": {
+    "messageformat": "تحسينات النسخ/اللصق تُسهِّل تحديد النص بالكامل واستبداله دون اكتساب التنسيق القديم. شكرًا، <brianHarder></brianHarder>!"
   },
-  "icu:WhatsNew__v7.70--0": {
-    "messageformat": "قُمنا بإصلاح خلل في نظام Microsoft Windows كان يتسبَّب أحيانًا في ظهور لون غير صحيح في شريط العنوان. إذا أحببتَ نظام الألوان المُستوحى من الحِمضيات خلال الأيام القليلة الماضية وأزعجك هذا الإصلاح، يُمكنك تعديل لون التمييز في نظامك من خلال إعدادات Windows."
+  "icu:WhatsNew__7.80-1": {
+    "messageformat": "• استطلاعات سيجنال قد بدأت! هل أنت وأصدقاؤك متفقون تمامًا أم أن كلًا منكم له رأي مختلف؟ الاستطلاعات طريقة سهلة لِمعرفة رأي مجموعة الدردشة التي أنت جزءٌ منها. أنشِئ استطلاعًا يتضمن خيارات مختلفة للعشاء، أو وجهات للسفر، أو تفضيلات موسيقية لرحلة قادمة، أو أي اختيارات مهمة أخرى. يمكن للجميع في الدردشة الجماعية التصويت ورؤية أجوبة الآخرين، ويمكنك اختيار ما إذا كُنتَ تريد السماح بتصويتات متعددة أم لا."
+  },
+  "icu:WhatsNew__7.81-1": {
+    "messageformat": "يتضمَّن معرض الوسائط الآن علامتي تبويب جديدتين للرسائل الصوتية ومعاينات الروابط. إذا وقع رابط في الدردشة الجماعية، فهل سينتبه له أحد؟"
   }
 }

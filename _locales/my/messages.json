@@ -104,6 +104,15 @@
   "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
     "messageformat": "OS ကုဒ်ပြောင်းဝှက်ခြင်း Keyring backend သည် {previousBackend} မှ {currentBackend} သို့ ပြောင်းသွားသောကြောင့် ဒေတာဘေ့စ် ကုဒ်ဝှက်ခြင်းကီးကို ဝင်သုံး၍မရပါ။ ဥပမာအားဖြင့် GNOME နှင့် KDE အကြား Desktop အခြေအနေ ပြောင်းလဲပါက ၎င်းသည် ဖြစ်ပေါ်နိုင်သည်။\n\nယခင် Desktop အခြေအနေသို့ ပြောင်းပါ သို့မဟုတ် Signal ကို command line flag --password-store=\"{previousBackendFlag}\" ဖြင့် လည်ပတ်ကြည့်ပါ"
   },
+  "icu:systemEncryptionError": {
+    "messageformat": "System encryption error"
+  },
+  "icu:systemEncryptionError__linuxSafeStorageDecryptionError": {
+    "messageformat": "Unable to decrypt the database encryption key using the OS encryption keyring. This can occur in certain containerized environments such as Flatpak.\n\nWe recommend quitting and checking your OS encryption backend such as gnome-libsecret or kwallet, then trying again.\n\nYou may choose to continue anyway, however the database key will be stored in plaintext on the filesystem and other apps may be able to access it."
+  },
+  "icu:systemEncryptionError__continueWithPlaintextKey": {
+    "messageformat": "Continue with plaintext key"
+  },
   "icu:mainMenuFile": {
     "messageformat": "&ဖိုင်"
   },
@@ -233,6 +242,12 @@
   "icu:archivedConversations": {
     "messageformat": "မှတ်တမ်းတင်ထားသော ချက်(တ်)များ"
   },
+  "icu:LeftPane__MoreActionsMenu__AddChatFolder": {
+    "messageformat": "ချက်(တ်)ဖိုင်တွဲ ထည့်သွင်းရန်"
+  },
+  "icu:LeftPane__MoreActionsMenu__FolderSettings": {
+    "messageformat": "ဖိုင်တွဲ ဆက်တင်"
+  },
   "icu:LeftPane--pinned": {
     "messageformat": "ပင်မှတ်ထားသည်"
   },
@@ -271,6 +286,45 @@
   },
   "icu:LeftPaneFindByHelper__description--findByUsername": {
     "messageformat": "သုံးစွဲသူအမည်ကို ၎င်း၏နောက်တွင် အစက်တစ်စက်နှင့် ကိန်းဂဏန်းတွဲတစ်ခုနှင့်အတူ ရိုက်ထည့်ပါ။"
+  },
+  "icu:LeftPane__EmptyView--WithSelectedChatFolder": {
+    "messageformat": "ပြသရန် ချက်(တ်)မရှိပါ"
+  },
+  "icu:LeftPane__EmptyView--WithSelectedChatFolder__FolderSettings": {
+    "messageformat": "ဖိုင်တွဲ ဆက်တင်"
+  },
+  "icu:LeftPaneChatFolders__ItemLabel--All--Short": {
+    "messageformat": "အားလုံး"
+  },
+  "icu:LeftPaneChatFolders__ItemLabel--All": {
+    "messageformat": "ချက်(တ်)အားလုံး"
+  },
+  "icu:LeftPaneChatFolders__ItemUnreadBadge__MaxCount": {
+    "messageformat": "{maxCount,number}+"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__MarkAllRead": {
+    "messageformat": "အားလုံးကို ဖတ်ပြီးသားအဖြစ် မှတ်ပါ"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__MuteNotifications": {
+    "messageformat": "အသိပေးချက် အသံပိတ်ရန်"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__MuteNotifications__UnmuteAll": {
+    "messageformat": "အားလုံး အသံဖွင့်ရန်"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__UnmuteAll": {
+    "messageformat": "အားလုံး အသံဖွင့်ရန်"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__EditFolder": {
+    "messageformat": "ဖိုင်တွဲကို တည်းဖြတ်ရန်"
+  },
+  "icu:LeftPane__ConversationListItem__ContextMenu__ChatFolderToggleChatsItem": {
+    "messageformat": "ဖိုင်တွဲထဲထည့်သွင်းရန်"
+  },
+  "icu:LeftPane__ConversationListItem__ContextMenu__ChatFolderToggleChatsMenu__CreateFolderItem": {
+    "messageformat": "ဖိုင်တွဲ ဖန်တီးမည်"
+  },
+  "icu:LeftPane__ConversationListItem__ContextMenu__ChatFolderRemoveChatItem": {
+    "messageformat": "ဖိုင်တွဲမှဖယ်ရှားရန်"
   },
   "icu:CountryCodeSelect__placeholder": {
     "messageformat": "နိုင်ငံ ကုဒ်"
@@ -322,6 +376,9 @@
   },
   "icu:markUnread": {
     "messageformat": "ဖတ်ပြီးပြီဟုမှတ်ပါ"
+  },
+  "icu:markRead": {
+    "messageformat": "ဖတ်ပြီးသား"
   },
   "icu:ConversationHeader__menu__selectMessages": {
     "messageformat": "မက်ဆေ့ချ်များ ရွေးချယ်ခြင်း"
@@ -607,6 +664,15 @@
   },
   "icu:Toast--ReceiptSaveFailed": {
     "messageformat": "ပြေစာကို သိမ်းဆည်းရာတွင် အမှားအယွင်းရှိနေသည်။ ထပ်ကြိုးစားကြည့်ပါ။"
+  },
+  "icu:Toast--ChatFolderAddedChat": {
+    "messageformat": "“{chatFolderName}” သို့ ထည့်ထားသည်"
+  },
+  "icu:Toast--ChatFolderRemovedChat": {
+    "messageformat": "“{chatFolderName}” မှ ဖယ်ရှားထားသည်"
+  },
+  "icu:Toast--ChatFolderCreated": {
+    "messageformat": "{chatFolderName} ဖိုင်တွဲကို ထည့်ထားသည်"
   },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "ဖိုင်များနှင့်အတူ ဓာတ်ပုံများနှင့် ဗီဒီယိုများကို ရွေး၍ မရနိုင်ပါ။"
@@ -1031,14 +1097,98 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "အချက်အလက်"
   },
+  "icu:MessageContextMenu__PinMessage": {
+    "messageformat": "မက်ဆေ့ချ်ကို ပင်တွဲရန်"
+  },
+  "icu:MessageContextMenu__UnpinMessage": {
+    "messageformat": "Unpin message"
+  },
+  "icu:Poll__end-poll": {
+    "messageformat": "စစ်တမ်း အဆုံးသတ်"
+  },
+  "icu:PollMessage--SelectOne": {
+    "messageformat": "စစ်တမ်း · တစ်ခုရွေးချယ်ပါ"
+  },
+  "icu:PollMessage--SelectMultiple": {
+    "messageformat": "စစ်တမ်း · တစ်ခု သို့မဟုတ် တစ်ခုထက်ပို ရွေးချယ်ပါ"
+  },
+  "icu:PollMessage--FinalResults": {
+    "messageformat": "စစ်တမ်း · နောက်ဆုံးရလဒ်များ"
+  },
+  "icu:PollMessage__ViewVotesButton": {
+    "messageformat": "မဲများကိုကြည့်ရန်"
+  },
+  "icu:PollMessage--YouVoted": {
+    "messageformat": "သင်မဲပေးခဲ့သည်"
+  },
+  "icu:PollTerminate--you": {
+    "messageformat": "သင်သည် \"{poll}\"စစ်တမ်းကို အဆုံးသတ်လိုက်သည်-"
+  },
+  "icu:PollTerminate--other": {
+    "messageformat": "{name} သည် {poll} စစ်တမ်းကို အဆုံးသတ်ခဲ့သည်-"
+  },
+  "icu:PollTerminate__view-poll": {
+    "messageformat": "စစ်တမ်းကို ကြည့်ရန်"
+  },
+  "icu:PollVotesModal__title": {
+    "messageformat": "စစ်တမ်းအသေးစိတ်"
+  },
+  "icu:PollVotesModal__questionLabel": {
+    "messageformat": "မေးခွန်း"
+  },
+  "icu:PollVotesModal__voteCount": {
+    "messageformat": "{count, plural, other {{count,number} မဲ}}"
+  },
+  "icu:PollVotesModal__noVotes": {
+    "messageformat": "မဲပေးထားခြင်းမရှိပါ"
+  },
+  "icu:PollVotesModal__winningOption": {
+    "messageformat": "အနိုင်ရသည်"
+  },
+  "icu:Toast--PinnedMessageNotFound": {
+    "messageformat": "ပင်တွဲထားသော မက်ဆေ့ချ်ကိုမတွေ့ပါ"
+  },
+  "icu:Toast--PollNotFound": {
+    "messageformat": "စစ်တမ်း မတွေ့ပါ"
+  },
+  "icu:PollCreateModal__title": {
+    "messageformat": "စစ်တမ်းအသစ်"
+  },
+  "icu:PollCreateModal__questionLabel": {
+    "messageformat": "မေးခွန်း"
+  },
+  "icu:PollCreateModal__questionPlaceholder": {
+    "messageformat": "မေးခွန်းတစ်ခုမေးပါ"
+  },
+  "icu:PollCreateModal__optionsLabel": {
+    "messageformat": "ရွေးချယ်စရာများ"
+  },
+  "icu:PollCreateModal__optionPlaceholder": {
+    "messageformat": "ရွေးချယ်မှု {number}"
+  },
+  "icu:PollCreateModal__allowMultipleVotes": {
+    "messageformat": "တစ်ခုထက်ပိုသော မဲများကို ခွင့်ပြုမည်"
+  },
+  "icu:PollCreateModal__sendButton": {
+    "messageformat": "ပေးပို့ရန်"
+  },
+  "icu:PollCreateModal__Error--RequiresQuestion": {
+    "messageformat": "စစ်တမ်းမေးခွန်း လိုအပ်ပါသည်"
+  },
+  "icu:PollCreateModal__Error--RequiresTwoOptions": {
+    "messageformat": "စစ်တမ်းတွင် အနည်းဆုံး ရွေးချယ်စရာ 2 ခု လိုအပ်သည်"
+  },
+  "icu:PollCreateModal__Error--QuestionTooLong": {
+    "messageformat": "မေးခွန်းသည် ရှည်လွန်းပါသည်"
+  },
+  "icu:PollCreateModal__Error--OptionTooLong": {
+    "messageformat": "ရွေးစရာသည် ရှည်လွန်းပါသည်"
+  },
   "icu:deleteConversation": {
     "messageformat": "ဖျက်ရန်"
   },
   "icu:ConversationHeader__DeleteConversationConfirmation__title": {
     "messageformat": "ချက်(တ်)ကို ဖျက်မည်လား။"
-  },
-  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
-    "messageformat": "ဤချက်(တ်)မှ မက်ဆေ့ချ်များအားလုံးကို ယခုစက်မှ ဖျက်လိုက်ပါမည်။"
   },
   "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
     "messageformat": "ဤချက်(တ်)ရှိ မက်ဆေ့ချ်များအားလုံးကို သင်၏စက်များအားလုံးမှ ဖျက်လိုက်ပါမည်။"
@@ -1057,6 +1207,108 @@
   },
   "icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description": {
     "messageformat": "သင် မထွက်ခွာမီ ဤအဖွဲ့အတွက် အနည်းဆုံး အက်ဒ်မင်အသစ်တစ်ယောက်ကို ရွေးချယ်ရပါမည်။"
+  },
+  "icu:PinnedMessageNotification__Message--You": {
+    "messageformat": "သင်သည် မက်ဆေ့ချ်တစ်ခုကို ပင်တွဲထားသည်"
+  },
+  "icu:PinnedMessageNotification__Message--SomeoneElse": {
+    "messageformat": "{sender} သည် မက်ဆေ့ချ်တစ်ခုကို ပင်တွဲထားသည်"
+  },
+  "icu:PinnedMessageNotification__Button": {
+    "messageformat": "မက်ဆေ့ချ်သို့ သွားပါ"
+  },
+  "icu:PinMessageDialog__Title": {
+    "messageformat": "မက်ဆေ့ချ်ကို ပင်တွဲရန်..."
+  },
+  "icu:PinMessageDialog__Close": {
+    "messageformat": "ပိတ်မယ်"
+  },
+  "icu:PinMessageDialog__Option--TIME_24_HOURS": {
+    "messageformat": "24 နာရီ"
+  },
+  "icu:PinMessageDialog__Option--TIME_7_DAYS": {
+    "messageformat": "7 ရက်"
+  },
+  "icu:PinMessageDialog__Option--TIME_30_DAYS": {
+    "messageformat": "30 ရက်"
+  },
+  "icu:PinMessageDialog__Option--FOREVER": {
+    "messageformat": "အမြဲတမ်း"
+  },
+  "icu:PinMessageDialog__Cancel": {
+    "messageformat": "မလုပ်တော့ပါ"
+  },
+  "icu:PinMessageDialog__Pin": {
+    "messageformat": "ပင်တွဲရန်"
+  },
+  "icu:PinnedMessagesBar__AccessibilityLabel": {
+    "messageformat": "{pinsCount, plural, other {ပင်တွဲထားသော မက်ဆေ့ချ်များ}}"
+  },
+  "icu:PinnedMessagesBar__Tab__AccessibilityLabel": {
+    "messageformat": "ပင်နံပါတ် {pinNumber,number} သို့သွားပါ"
+  },
+  "icu:PinnedMessagesBar__GoToMessageClickableArea__AccessibilityLabel": {
+    "messageformat": "မက်ဆေ့ချ်သို့ သွားပါ"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__Button__AccessibilityLabel": {
+    "messageformat": "နောက်ထပ် လုပ်ဆောင်မှုများ"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__UnpinMessage": {
+    "messageformat": "မက်ဆေ့ချ်ကို ပင်ဖြုတ်ရန်"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__GoToMessage": {
+    "messageformat": "မက်ဆေ့ချ်သို့ သွားပါ"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__SeeAllMessages": {
+    "messageformat": "မက်ဆေ့ချ်အားလုံးကို ကြည့်ရှုရန်"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Address": {
+    "messageformat": "Address"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--VoiceMessage": {
+    "messageformat": "Voice message"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Gif": {
+    "messageformat": "GIF"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--File": {
+    "messageformat": "File"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Contact": {
+    "messageformat": "Contact"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Payment": {
+    "messageformat": "Payment"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Poll": {
+    "messageformat": "Poll"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Sticker": {
+    "messageformat": "Sticker"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Photo": {
+    "messageformat": "Photo"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Video": {
+    "messageformat": "Video"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--VoiceMessage": {
+    "messageformat": "Voice message"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Gif": {
+    "messageformat": "GIF"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Payment": {
+    "messageformat": "Payment"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Sticker": {
+    "messageformat": "Sticker"
+  },
+  "icu:PinnedMessagesPanel__Title": {
+    "messageformat": "Pinned messages"
+  },
+  "icu:PinnedMessagesPanel__UnpinAllMessages": {
+    "messageformat": "Unpin all messages"
   },
   "icu:sessionEnded": {
     "messageformat": "Secure session reset"
@@ -1175,36 +1427,6 @@
   "icu:attachmentNotAvailable__tapToViewCannotDownload": {
     "messageformat": "တစ်ခါကြည့် မီဒီယာကို ဒေါင်းလုဒ်လုပ်၍မရပါ။"
   },
-  "icu:AttachmentNotAvailableModal__title--file": {
-    "messageformat": "ဖိုင်ကို မရရှိနိုင်ပါ"
-  },
-  "icu:AttachmentNotAvailableModal__title--long-text": {
-    "messageformat": "မက်ဆေ့ချ် အပြည့်အစုံ မရရှိနိုင်ပါ"
-  },
-  "icu:AttachmentNotAvailableModal__title--media": {
-    "messageformat": "မီဒီယာကို မရရှိနိုင်ပါ"
-  },
-  "icu:AttachmentNotAvailableModal__title--sticker": {
-    "messageformat": "စတစ်ကာ မရနိုင်ပါ"
-  },
-  "icu:AttachmentNotAvailableModal__title--voice-message": {
-    "messageformat": "အသံမက်ဆေ့ချ်ကို မရရှိနိုင်ပါ"
-  },
-  "icu:AttachmentNotAvailableModal__body--file": {
-    "messageformat": "ဤစက်ကို လင့်ခ်ချိတ်ထားချိန်တွင် ယခုဖိုင်ကို သင့်ဖုန်းမှ မလွှဲပြောင်းထားပါ။ လင့်ခ်ချိတ်ချိန်တွင် 45 ရက်ထက်ကြာသော မီဒီယာနှင့် ဖိုင်များကို တူအောင်ညှိ၍မရပါ။"
-  },
-  "icu:AttachmentNotAvailableModal__body--long-text": {
-    "messageformat": "ဤစက်ကို လင့်ခ်ချိတ်ထားချိန်တွင် မက်ဆေ့ချ်ပါ စာသားအပြည့်အစုံကို သင့်ဖုန်းမှ မလွှဲပြောင်းထားပါ။ လင့်ခ်ချိတ်ထားချိန်တွင် 45 ရက်ထက်ကြာသော စာသားမက်ဆေ့ချ် အရှည်များကို တူအောင်ညှိ၍မရပါ။"
-  },
-  "icu:AttachmentNotAvailableModal__body--media": {
-    "messageformat": "ဤစက်ကို လင့်ခ်ချိတ်ထားချိန်တွင် ယခုမီဒီယာကို သင့်ဖုန်းမှ လွှဲပြောင်းမထားပါ။ လင့်ခ်ချိတ်ချိန်တွင် 45 ရက်ထက်ကြာသော မီဒီယာကို တူအောင်ညှိ၍မရပါ။"
-  },
-  "icu:AttachmentNotAvailableModal__body--sticker": {
-    "messageformat": "ဤစက်ကို လင့်ခ်ချိတ်ထားချိန်တွင် ယခုစတစ်ကာကို သင့်ဖုန်းမှ လွှဲပြောင်းမထားပါ။ လင့်ခ်ချိတ်ချိန်တွင် 45 ရက်ထက်ကြာသော မီဒီယာနှင့် ဖိုင်များကို တူအောင်ညှိ၍မရပါ။"
-  },
-  "icu:AttachmentNotAvailableModal__body--voice-message": {
-    "messageformat": "ဤစက်ကို လင့်ခ်ချိတ်ထားချိန်တွင် ယခုအသံမက်ဆေ့(ချ်)ကို သင့်ဖုန်းမှ မလွှဲပြောင်းထားပါ။ လင့်ခ်ချိတ်ချိန်တွင် 45 ရက်ထက်ကြာသော မီဒီယာနှင့် ဖိုင်များကို တူအောင်ညှိ၍မရပါ။"
-  },
   "icu:TapToViewNotAvailableModal__body--expired": {
     "messageformat": "ဤတစ်ခါကြည့် မီဒီယာကို ဒေါင်းလုဒ်လုပ်၍မရတော့ပါ။ ထပ်မံပေးပို့ရန် {name} ကို တောင်းဆိုပါ။"
   },
@@ -1292,8 +1514,20 @@
   "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Title": {
     "messageformat": "ချက်(တ်)ဖိုင်တွဲတစ်ခု ပေါင်းထည့်ရန်"
   },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Title--WithChatFolders": {
+    "messageformat": "ဖိုင်တွဲများ ထည့်သွင်းရန် သို့မဟုတ် တည်းဖြတ်ရန်"
+  },
   "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Description": {
     "messageformat": "သင့်ချက်(တ်)များကို ဖိုင်တွဲများတွင် စုစည်းပြီး သင့်ချက်(တ်)စာရင်းတွင် အမြန်ပြောင်းပါ။"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Description--WithChatFolders": {
+    "messageformat": "{chatFoldersCount, plural, other {ဖိုင်တွဲ {chatFoldersCount,number} ခု}}"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Button": {
+    "messageformat": "သတ်မှတ်ရန်"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Button--WithChatFolders": {
+    "messageformat": "စီမံရန်"
   },
   "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__EditFolder": {
     "messageformat": "ဖိုင်တွဲကို တည်းဖြတ်ရန်"
@@ -1328,14 +1562,14 @@
   "icu:Preferences__ChatFoldersPage__FoldersSection__CreateAFolderButton": {
     "messageformat": "ဖိုင်တွဲတစ်ခု ဖန်တီးရန်"
   },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__DragHandle__Label": {
+    "messageformat": "ချက်(တ်)ဖိုင်တွဲကိုရွှေ့ရန် ဖိဆွဲပါ"
+  },
   "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__Title": {
     "messageformat": "အကြံပြုထားသောဖိုင်တွဲများ"
   },
   "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton": {
     "messageformat": "ပေါင်းထည့်မယ်"
-  },
-  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton__Toast": {
-    "messageformat": "{chatFolderTitle} ဖိုင်တွဲကို ထည့်ထားသည်"
   },
   "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Title": {
     "messageformat": "မဖတ်ရသေး"
@@ -1357,6 +1591,9 @@
   },
   "icu:Preferences__EditChatFolderPage__Title": {
     "messageformat": "ဖိုင်တွဲတစ်ခု ဖန်တီးရန်"
+  },
+  "icu:Preferences__EditChatFolderPage__Title--EditingExistingChatFolder": {
+    "messageformat": "ဖိုင်တွဲကို တည်းဖြတ်ရန်"
   },
   "icu:Preferences__EditChatFolderPage__FolderNameField__Label": {
     "messageformat": "ဖိုင်တွဲအမည်"
@@ -1534,6 +1771,12 @@
   },
   "icu:calling__removed-from-call-title": {
     "messageformat": "ကောလ်မှ ဖယ်ရှားခံရခြင်း"
+  },
+  "icu:calling__has-max-devices": {
+    "messageformat": "ဤခေါ်ဆိုမှုအတွက် အများဆုံးပါဝင်နိုင်သူ အရေအတွက် ပြည့်သွားပါပြီ။ နောက်မှပြန်စမ်းကြည့်ပါ။"
+  },
+  "icu:calling__has-max-devices--title": {
+    "messageformat": "ခေါ်ဆိုမှု ပြည့်နေသည်"
   },
   "icu:CallingLobby__CallLinkNotice": {
     "messageformat": "လင့်ခ်မှတစ်ဆင့် ဤကောလ်တွင် ပါဝင်လာသူတိုင်းသည် သင့်အမည်နှင့် ဓာတ်ပုံကို မြင်တွေ့ရပါမည်။"
@@ -1853,6 +2096,9 @@
   "icu:notificationReactionMessage": {
     "messageformat": "{sender} သည် ဖော်ပြပါကို {emoji} တုံ့ပြန်မှု ပေးခဲ့သည်- {message}"
   },
+  "icu:notificationPollVoteMessage": {
+    "messageformat": "{sender} သည် \"{pollQuestion}\" စစ်တမ်းတွင် မဲပေးခဲ့သည်"
+  },
   "icu:sendFailed": {
     "messageformat": "ပေးပို့ခြင်း မအောင်မြင်ပါ"
   },
@@ -2070,13 +2316,16 @@
     "messageformat": "ဒေါင်းလုဒ် မအောင်မြင်ပါ"
   },
   "icu:Toast--unable-download-from-backup-tier": {
-    "messageformat": "Download of attachment from backup failed"
+    "messageformat": "Attachment missing from backup CDN"
   },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "ထိုမက်ဆေ့ချ်ကို ပေးပို့ခဲ့ချိန်မှ 24 နာရီအတွင်း၌သာ တည်းဖြတ်မှု လုပ်နိုင်ပါသည်။"
   },
   "icu:startConversation--username-not-found": {
     "messageformat": "{atUsername} သည် Signal သုံးစွဲသူ မဟုတ်ပါ။ သုံးစွဲသူအမည်အပြည့်အစုံကို ရိုက်ထည့်ထားခြင်းဖြစ်ကြောင်း သေချာအောင်လုပ်ပါ။"
+  },
+  "icu:startConversation--username-not-valid": {
+    "messageformat": "{atUsername} သည် မှန်ကန်သော သုံးစွဲသူအမည်တစ်ခု မဟုတ်ပါ။ သုံးစွဲသူအမည် အပြည့်အစုံကို ၎င်း၏နောက်တွင် ဂဏန်းနှစ်လုံးတွဲနှင့်အတူ ရိုက်ထည့်ထားကြောင်း သေချာပါစေ။"
   },
   "icu:startConversation--phone-number-not-found": {
     "messageformat": "သုံးစွဲသူ ရှာမတွေ့ပါ။ \"{phoneNumber}\" သည် Signal သုံးစွဲသူ မဟုတ်ပါ။"
@@ -2231,6 +2480,9 @@
   "icu:message--getNotificationText--stickers": {
     "messageformat": "စတစ်ကာ မက်ဆေ့ချ်"
   },
+  "icu:Poll--preview": {
+    "messageformat": "စစ်တမ်း- {pollQuestion}"
+  },
   "icu:message--getNotificationText--text-with-emoji": {
     "messageformat": "{emoji} {text}"
   },
@@ -2357,101 +2609,11 @@
   "icu:stickers--StickerManager--UninstallWarning": {
     "messageformat": "သင့်တွင် မူရင်းမက်ဆေ့ချ် မရှိတော့ပါက ဤစတစ်ကာတွဲကို ပြန်ထည့်သွင်းနိုင်မည် မဟုတ်ပါ။"
   },
-  "icu:stickers--StickerManager--Introduction--Image": {
-    "messageformat": "စတစ်ကာ မိတ်ဆက်- Bandit the Cat"
-  },
-  "icu:stickers--StickerManager--Introduction--Title": {
-    "messageformat": "စတစ်ကာ မိတ်ဆက်"
-  },
-  "icu:stickers--StickerManager--Introduction--Body": {
-    "messageformat": "စတစ်ကာ သုံးနိုင်လျက် အဘယ်ကြောင့် စကားလုံးများ သုံးမည်နည်း။"
-  },
-  "icu:stickers--StickerPicker--Open": {
-    "messageformat": "ရွေးချယ်ထားသည့် စတစ်ကာကို ဖွင့်ရန်"
-  },
-  "icu:stickers--StickerPicker--AddPack": {
-    "messageformat": "စတစ်ကာတွဲ ပေါင်းထည့်ရန်"
-  },
-  "icu:stickers--StickerPicker--NextPage": {
-    "messageformat": "နောက်စာမျက်နှာ"
-  },
-  "icu:stickers--StickerPicker--PrevPage": {
-    "messageformat": "ယခင် စာမျက်နှာ"
-  },
-  "icu:stickers--StickerPicker--Recents": {
-    "messageformat": "မကြာမီက စတစ်ကာ"
-  },
-  "icu:stickers--StickerPicker--DownloadError": {
-    "messageformat": "အချို့စတစ်ကာများကို ဒေါင်းလုဒ် လုပ်မရပါ။"
-  },
-  "icu:stickers--StickerPicker--DownloadPending": {
-    "messageformat": "စတစ်ကာတွဲ ထည့်သွင်းနေဆဲ..."
-  },
-  "icu:stickers--StickerPicker--Empty": {
-    "messageformat": "စတစ်ကာများ ရှာမတွေ့ပါ"
-  },
-  "icu:stickers--StickerPicker--Hint": {
-    "messageformat": "သင့်မက်ဆေ့ချ်မှ စတစ်ကာတွဲ အသစ်ကို ထည့်သွင်းရန် ရရှိပါပြီ"
-  },
-  "icu:stickers--StickerPicker--NoPacks": {
-    "messageformat": "စတစ်ကာတွဲများ ရှာမတွေ့ပါ"
-  },
-  "icu:stickers--StickerPicker--NoRecents": {
-    "messageformat": "မကြာမီက သုံးထား‌သော စတစ်ကာများသည် ဤနေရာတွင် ပေါ်ပါမည်။"
-  },
-  "icu:stickers__StickerPicker__recent": {
-    "messageformat": "နောက်ဆုံး"
-  },
-  "icu:stickers__StickerPicker__featured": {
-    "messageformat": "အသားပေးထားသည်များ"
-  },
-  "icu:stickers__StickerPicker__analog-time": {
-    "messageformat": "လက်တံဖြင့်ပြသော အချိန်"
-  },
   "icu:stickers--StickerPreview--Title": {
     "messageformat": "စတစ်ကာတွဲ"
   },
   "icu:stickers--StickerPreview--Error": {
     "messageformat": "စတစ်ကာတွဲ ဖွင့်ရာတွင် ချို့ယွင်းချက်။ သင့်အင်တာနက် ချိတ်ဆက်မှုကို စစ်ဆေးပြီး ထပ်ကြိုးစားပါ။"
-  },
-  "icu:EmojiPicker--empty": {
-    "messageformat": "အီမိုဂျိ ရှာမတွေ့ပါ"
-  },
-  "icu:EmojiPicker--search-close": {
-    "messageformat": "အီမိုဂျီ ရှာဖွေမှုကို ပိတ်ရန်"
-  },
-  "icu:EmojiPicker--search-placeholder": {
-    "messageformat": "အီမိုဂျိ ရှာရန်"
-  },
-  "icu:EmojiPicker--skin-tone": {
-    "messageformat": "အသားအရောင် {tone}"
-  },
-  "icu:EmojiPicker__button--recents": {
-    "messageformat": "နောက်ဆုံး"
-  },
-  "icu:EmojiPicker__button--emoji": {
-    "messageformat": "အီမိုဂျိ"
-  },
-  "icu:EmojiPicker__button--animal": {
-    "messageformat": "တိရစ္ဆာန်"
-  },
-  "icu:EmojiPicker__button--food": {
-    "messageformat": "အစားအစာ"
-  },
-  "icu:EmojiPicker__button--activity": {
-    "messageformat": "လှုပ်ရှားမှု"
-  },
-  "icu:EmojiPicker__button--travel": {
-    "messageformat": "ခရီးသွား"
-  },
-  "icu:EmojiPicker__button--object": {
-    "messageformat": "အရာဝတ္ထု"
-  },
-  "icu:EmojiPicker__button--symbol": {
-    "messageformat": "သင်္ကေတ"
-  },
-  "icu:EmojiPicker__button--flag": {
-    "messageformat": "အလံ"
   },
   "icu:FunPicker__Tab--Emojis": {
     "messageformat": "အီမိုဂျီ"
@@ -2560,6 +2722,9 @@
   },
   "icu:FunPanelStickers__SubNavCategoryLabel--Recents": {
     "messageformat": "နောက်ဆုံးသုံးခဲ့သော"
+  },
+  "icu:FunPanelStickers__SubNavButton--AddStickerPack": {
+    "messageformat": "စတစ်ကာတွဲ ပေါင်းထည့်ရန်"
   },
   "icu:FunPanelStickers__SectionTitle--SearchResults": {
     "messageformat": "ရှာဖွေမှုရလဒ်များ"
@@ -3527,9 +3692,6 @@
   "icu:muteExpirationLabel": {
     "messageformat": "{duration} အထိ အသံပိတ်ထားပြီး"
   },
-  "icu:EmojiButton__label": {
-    "messageformat": "အီမိုဂျိ"
-  },
   "icu:ErrorModal--title": {
     "messageformat": "Something went wrong!"
   },
@@ -4292,6 +4454,18 @@
   "icu:CompositionArea--attach-file": {
     "messageformat": "ဖိုင် တွဲရန်"
   },
+  "icu:CompositionArea__AttachMenu__PhotosAndVideos": {
+    "messageformat": "ဓာတ်ပုံနှင့် ဗီဒီယိုများ"
+  },
+  "icu:CompositionArea__AttachMenu__File": {
+    "messageformat": "ဖိုင်"
+  },
+  "icu:CompositionArea__AttachMenu__Poll": {
+    "messageformat": "စစ်တမ်း"
+  },
+  "icu:CompositionArea--attach-plus": {
+    "messageformat": "ပူးတွဲပါဖိုင် သို့မဟုတ် စစ်တမ်းကို ထည့်ပါ"
+  },
   "icu:CompositionArea--sms-only__title": {
     "messageformat": "ဤပုဂ္ဂိုလ်သည် Signal မသုံးနေပါ။"
   },
@@ -4442,8 +4616,8 @@
   "icu:ConversationDetailsActions--block-group-modal-confirm": {
     "messageformat": "ဘလော့ခ်ရန်"
   },
-  "icu:ConversationDetailsActions--unblock-group-modal-content": {
-    "messageformat": "သင့်အဆက်အသွယ်များသည် သင့်ကို ဤအဖွဲ့ထဲသို့ ထပ်မံ ထည့်သွင်းနိုင်ပါသည်။"
+  "icu:ConversationDetailsActions--unblock-group-modal-body": {
+    "messageformat": "သင့်အဆက်အသွယ်များသည် သင့်ကို ဤအဖွဲ့ထဲသို့ ထည့်သွင်းနိုင်ပါသည်။"
   },
   "icu:ConversationDetailsActions--unblock-group-modal-confirm": {
     "messageformat": "ဘလော့ခ်ဖြေရန်"
@@ -4451,11 +4625,8 @@
   "icu:ConversationDetailsHeader--members": {
     "messageformat": "{number, plural, other {မန်ဘာ {number,number} ဦး}}"
   },
-  "icu:ConversationDetailsMediaList--shared-media": {
-    "messageformat": "မျှဝေပြီးသား ရုပ်/သံ/ပုံများ"
-  },
-  "icu:ConversationDetailsMediaList--show-all": {
-    "messageformat": "အားလုံးကြည့်မည်"
+  "icu:ConversationDetailsMediaList--title": {
+    "messageformat": "မီဒီယာ၊ လင့်ခ်များနှင့် ဖိုင်များ"
   },
   "icu:ConversationDetailsMembershipList--title": {
     "messageformat": "{number, plural, other {မန်ဘာ {number,number} ဦး}}"
@@ -4949,6 +5120,57 @@
   "icu:ConversationDetailsHeader--add-group-description": {
     "messageformat": "အဖွဲ့ ဖော်ပြချက် ပေါင်းထည့်ရန်…"
   },
+  "icu:AudioListItem__subtitle--voice-message": {
+    "messageformat": "အသံမက်ဆေ့(ချ်)"
+  },
+  "icu:AudioListItem__subtitle--audio": {
+    "messageformat": "အော်ဒီယို"
+  },
+  "icu:LinkPreviewItem__alt": {
+    "messageformat": "လင့်ခ်ကို Browser တွင်ဖွင့်ပါ"
+  },
+  "icu:ListItem__show-message": {
+    "messageformat": "စကားဝိုင်းတွင် မက်ဆေ့ချ်ကို ပြပါ"
+  },
+  "icu:MediaGallery__tab__audio": {
+    "messageformat": "အသံ"
+  },
+  "icu:MediaGallery__tab__files": {
+    "messageformat": "ဖိုင်များ"
+  },
+  "icu:MediaGallery__tab__links": {
+    "messageformat": "လင့်ခ်များ"
+  },
+  "icu:MediaGallery__EmptyState__title--media": {
+    "messageformat": "မီဒီယာမရှိပါ"
+  },
+  "icu:MediaGallery__EmptyState__description--media": {
+    "messageformat": "သင် ပေးပို့၊ လက်ခံခဲ့သော ဓာတ်ပုံများ၊ ဗီဒီယိုများနှင့် GIF များ ဤနေရာတွင် ပေါ်လာပါမည်"
+  },
+  "icu:MediaGallery__EmptyState__title--audio": {
+    "messageformat": "အသံမပါပါ"
+  },
+  "icu:MediaGallery__EmptyState__description--audio": {
+    "messageformat": "သင် ပေးပို့၊ လက်ခံခဲ့သော အသံမက်ဆေ့(ချ်)နှင့် အော်ဒီယို ဖိုင်များ ဤနေရာတွင် ပေါ်လာပါမည်"
+  },
+  "icu:MediaGallery__EmptyState__title--links": {
+    "messageformat": "လင့်ခ်များမရှိပါ"
+  },
+  "icu:MediaGallery__EmptyState__description--links-2": {
+    "messageformat": "သင် ပေးပို့၊ လက်ခံခဲ့သော လင့်ခ်များ ဤနေရာတွင် ပေါ်လာပါမည်"
+  },
+  "icu:MediaGallery__EmptyState__description--documents": {
+    "messageformat": "သင် ပေးပို့၊ လက်ခံခဲ့သော လင့်ခ်များ ဤနေရာတွင် ပေါ်လာပါမည်"
+  },
+  "icu:MediaGallery__EmptyState__title--documents": {
+    "messageformat": "ဖိုင်များမရှိပါ"
+  },
+  "icu:MediaGallery__EmptyState__description--documents-2": {
+    "messageformat": "သင် ပေးပို့၊ လက်ခံခဲ့သော ဖိုင်များ ဤနေရာတွင် ပေါ်လာပါမည်"
+  },
+  "icu:MediaGallery__EmptyState__description--links": {
+    "messageformat": "သင် ပေးပို့၊ လက်ခံခဲ့သော ဖိုင်များ ဤနေရာတွင် ပေါ်လာပါမည်"
+  },
   "icu:MediaQualitySelector--button": {
     "messageformat": "မီဒီယာ အရည်အသွေး ရွေးချယ်ရန်"
   },
@@ -5288,11 +5510,332 @@
   "icu:Preferences--notification-content": {
     "messageformat": "အသိပေးချက် အကြောင်းအရာ"
   },
+  "icu:PlaintextExport--PreferencesRow--Header": {
+    "messageformat": "ချက်(တ်)မှတ်တမ်းကို ထုတ်ယူပါ"
+  },
+  "icu:PlaintextExport--PreferencesRow--Description": {
+    "messageformat": "သင့်ချက်(တ်)အားလုံး၏ စက်ဖြင့်ဖတ်နိုင်သော JSON မိတ္တူကို ထုတ်ယူပါ။ ပျောက်သွားမည့် မက်ဆေ့ချ်များကို ထုတ်ယူမည်မဟုတ်ပါ။"
+  },
+  "icu:PlaintextExport--ActionButton": {
+    "messageformat": "ထုတ်ယူရန်"
+  },
+  "icu:PlaintextExport--Confirmation--Header": {
+    "messageformat": "ချက်(တ်)မှတ်တမ်းကို ထုတ်ယူမလား။"
+  },
+  "icu:PlaintextExport--Confirmation--Description": {
+    "messageformat": "<bold>သတိထားပါ။</bold> ဤဖိုင်ကို မည်သူနှင့်မျှ မမျှဝေပါနှင့်။ သင့်ချက်(တ်)မှတ်တမ်းကို သင့်ကွန်ပျူတာတွင် သိမ်းဆည်းမည်ဖြစ်ပြီး သင့်ကွန်ပျူတာ၏ ခွင့်ပြုချက်များပေါ်မူတည်၍ အခြားအက်ပ်များက ဝင်ရောက်ကြည့်ရှုနိုင်ပါသည်။"
+  },
+  "icu:PlaintextExport--Confirmation--IncludeMedia": {
+    "messageformat": "မီဒီယာ ထည့်သွင်းရန် <secondary>(ဖိုင်အရွယ်အစား ပိုကြီးသည်)</secondary>"
+  },
+  "icu:PlaintextExport--Confirmation--ContinueButton": {
+    "messageformat": "ဆက်လုပ်ရန်"
+  },
+  "icu:PlaintextExport--Confirmation--WaitingLabel": {
+    "messageformat": "ထည့်သွင်းမှုကို စောင့်နေသည်"
+  },
+  "icu:PlaintextExport--OSPrompt--Mac": {
+    "messageformat": "သင့်ချက်(တ်)မှတ်တမ်းကို ထုတ်ယူပါ"
+  },
+  "icu:PlaintextExport--OSPrompt--Windows": {
+    "messageformat": "သင့် ချက်(တ်)မှတ်တမ်းကို ထုတ်ယူရန် သင်၏အထောက်အထားကို အတည်ပြုပါ။"
+  },
+  "icu:PlaintextExport--OSPrompt--description--Linux": {
+    "messageformat": "ထုတ်ယူရန်"
+  },
+  "icu:PlaintextExport--OSPrompt--message--Linux": {
+    "messageformat": "သင့်ချက်(တ်)မှတ်တမ်းကို ထုတ်ယူရန် စစ်မှန်ကြောင်းအတည်ပြုချက် လိုအပ်သည်။"
+  },
+  "icu:PlaintextExport--ProgressDialog--Header": {
+    "messageformat": "ချက်(တ်)တ်မှတ်တမ်းကို ထုတ်ယူနေသည်"
+  },
+  "icu:PlaintextExport--ProgressDialog--Progress": {
+    "messageformat": "{totalBytes} မှ {currentBytes} ({percentage,number,percent}) ကို ထုတ်ယူနေသည်..."
+  },
+  "icu:PlaintextExport--ProgressDialog--TimeWarning": {
+    "messageformat": "မိနစ်အနည်းငယ် ကြာနိုင်ပါသည်"
+  },
+  "icu:PlaintextExport--CompleteDialog--Header": {
+    "messageformat": "ထုတ်သိမ်းမှု ပြီးပါပြီ"
+  },
+  "icu:PlaintextExport--CompleteDialog--Description": {
+    "messageformat": "<bold>သတိထားပါ</bold> သင်ထုတ်ယူထားသော ချက်(တ်)ဖိုင်ကို သိမ်းဆည်းထားရာ နေရာကိုသတိထားပါ။ မည်သူနှင့်မျှ မမျှဝေပါနှင့်။ သင့်ကွန်ပျူတာရှိ အခြားသောအက်ပ်များသည် သင့်ကွန်ပျူတာ၏ခွင့်ပြုချက်များပေါ်မူတည်၍ ၎င်းကိုဝင်ရောက်နိုင်သည်။ "
+  },
+  "icu:PlaintextExport--CompleteDialog--ShowFiles--Mac": {
+    "messageformat": "ရှာဖွေမှုတွင် ပြပါ"
+  },
+  "icu:PlaintextExport--CompleteDialog--ShowFiles--Linux": {
+    "messageformat": "ဖိုင်တွဲတွင် ပြရန်"
+  },
+  "icu:PlaintextExport--CompleteDialog--ShowFiles--Windows": {
+    "messageformat": "ဖိုင်တွဲတွင် ပြရန်"
+  },
+  "icu:PlaintextExport--Error--General--Title": {
+    "messageformat": "ချက်(တ်)မှတ်တမ်းကို ထုတ်ယူ၍မရပါ"
+  },
+  "icu:PlaintextExport--Error--General--Description": {
+    "messageformat": "ချို့ယွင်းချက်တစ်ခု ဖြစ်ပွားခဲ့ပြီး သင်၏ချက်(တ်)မှတ်တမ်းကို မထုတ်ယူနိုင်ခဲ့ပါ။"
+  },
+  "icu:PlaintextExport--Error--NotEnoughStorage--Title": {
+    "messageformat": "သိုလှောင်ရန်နေရာ မလုံလောက်ပါ"
+  },
+  "icu:PlaintextExport--Error--NotEnoughStorage--Detail": {
+    "messageformat": "သင့်ကွန်ပျူတာတွင် သိုလှောင်ရန်နေရာ မလုံလောက်သောကြောင့် သင့်ချက်(တ်)မှတ်တမ်းကို ထုတ်ယူ၍မရပါ။ နေရာလွတ် {bytes} ကို ရှင်းပြီး ထပ်စမ်းကြည့်ပါ။"
+  },
+  "icu:PlaintextExport--Error--RanOutOfStorage--Title": {
+    "messageformat": "ချက်(တ်)မှတ်တမ်းကို ထုတ်ယူ၍မရပါ"
+  },
+  "icu:PlaintextExport--Error--RanOutOfStorage--Detail": {
+    "messageformat": "သင့်ကွန်ပျူတာတွင် အခမဲ့သိုလှောင်ရန်နေရာ မလုံလောက်သောကြောင့် သင့်ချက်(တ်)မှတ်တမ်းကို ထုတ်ယူ၍မရပါ။ နေရာလွတ် {bytes} ကို ရှင်းပြီး ထပ်စမ်းကြည့်ပါ။"
+  },
+  "icu:PlaintextExport--Error--DiskPermssions--Title": {
+    "messageformat": "ချက်(တ်)မှတ်တမ်းကို ထုတ်ယူ၍မရပါ"
+  },
+  "icu:PlaintextExport--Error--DiskPermssions--Detail": {
+    "messageformat": "Signal တွင် ဖိုင်များရေးရန် ခွင့်ပြုချက်မရှိသောကြောင့် သင့်ချက်(တ်)မှတ်တမ်းကို ထုတ်ယူ၍မရပါ။ သင့်ဒစ်ခ်၏ ခွင့်ပြုချက်များကို ပြောင်းလဲကြည့်ပါ သို့မဟုတ် သင့်စနစ်ဆက်တင်ကို အပ်ဒိတ်လုပ်ပြီး ထပ်မံထုတ်ယူကြည့်ပါ။"
+  },
+  "icu:NotificationProfile--moon-icon": {
+    "messageformat": "လပုံစံ အိုင်ကွန်"
+  },
+  "icu:NotificationProfile--copy-label": {
+    "messageformat": "{profileName}၏ မိတ္တူ"
+  },
+  "icu:NotificationProfile--am": {
+    "messageformat": "မနက်"
+  },
+  "icu:NotificationProfile--pm": {
+    "messageformat": "ညနေ"
+  },
+  "icu:NotificationProfile--time-separator": {
+    "messageformat": "-"
+  },
+  "icu:NotificationProfileMenuItem": {
+    "messageformat": "အသိပေးချက် ပရိုဖိုင်"
+  },
+  "icu:NotificationProfileMenu--header": {
+    "messageformat": "အသိပေးချက် ပရိုဖိုင်"
+  },
+  "icu:NotificationProfileMenu--on": {
+    "messageformat": "ဖွင့်မည်"
+  },
+  "icu:NotificationProfileMenu--on-with-end": {
+    "messageformat": "{endTime} အထိ ဖွင့်မည်"
+  },
+  "icu:NotificationProfileMenu--for-one-hour": {
+    "messageformat": "တစ်နာရီကြာ"
+  },
+  "icu:NotificationProfileMenu--until-time": {
+    "messageformat": "{time} အထိ"
+  },
+  "icu:NotificationProfileMenu--settings": {
+    "messageformat": "ဆက်တင်များ"
+  },
+  "icu:NotificationProfilesToast--enabled": {
+    "messageformat": "“{name}” ဖွင့်ထားသည်"
+  },
+  "icu:NotificationProfilesToast--disabled": {
+    "messageformat": "“{name}” ပိတ်ထားသည်"
+  },
+  "icu:NotificationProfilesToast--enabled--label": {
+    "messageformat": "အသိပေးချက်ပရိုဖိုင်ကို ယခုဖွင့်ထားသည်"
+  },
+  "icu:NotificationProfilesToast--disabled--label": {
+    "messageformat": "အသိပေးချက်ပရိုဖိုင်ကို ယခု ပိတ်ထားသည်"
+  },
+  "icu:NotificationProfiles--setting": {
+    "messageformat": "အသိပေးချက် ပရိုဖိုင်များ"
+  },
+  "icu:NotificationProfiles--setup": {
+    "messageformat": "သတ်မှတ်ရန်"
+  },
+  "icu:NotificationProfiles--title": {
+    "messageformat": "အသိပေးချက် ပရိုဖိုင်များ"
+  },
+  "icu:NotificationProfiles--setup-description": {
+    "messageformat": "သင်ရွေးချယ်ထားသော လူများနှင့် အဖွဲ့များထံမှ အသိပေးချက်များနှင့် ခေါ်ဆိုမှုများကိုသာ လက်ခံရရှိရန် ပရိုဖိုင်တစ်ခု ဖန်တီးပါ"
+  },
+  "icu:NotificationProfiles--setup-continue": {
+    "messageformat": "ဆက်လုပ်ရန်"
+  },
+  "icu:NotificationProfiles--manage-description": {
+    "messageformat": "အသိပေးချက်ပရိုဖိုင်များကို ထည့်သွင်းရန် သို့မဟုတ် တည်းဖြတ်ရန်"
+  },
+  "icu:NotificationProfiles--manage-profiles": {
+    "messageformat": "{profileCount, plural, other {ပရိုဖိုင် {profileCount,number} ခု}}"
+  },
+  "icu:NotificationProfiles--create": {
+    "messageformat": "ပရိုဖိုင် ဖန်တီးရန်"
+  },
+  "icu:NotificationProfiles--name-title": {
+    "messageformat": "သင့်ပရိုဖိုင်ကို အမည်ပေးရန်"
+  },
+  "icu:NotificationProfiles--name-title--editing": {
+    "messageformat": "အမည်"
+  },
+  "icu:NotificationProfiles--name-placeholder": {
+    "messageformat": "ပရိုဖိုင်း အမည်"
+  },
+  "icu:NotificationProfiles--sample-name__work": {
+    "messageformat": "အလုပ်"
+  },
+  "icu:NotificationProfiles--sample-name__sleep": {
+    "messageformat": "အိပ်ချိန်"
+  },
+  "icu:NotificationProfiles--sample-name__driving": {
+    "messageformat": "ကားမောင်းချိန်"
+  },
+  "icu:NotificationProfiles--sample-name__downtime": {
+    "messageformat": "အနားယူချိန်"
+  },
+  "icu:NotificationProfiles--sample-name__focus": {
+    "messageformat": "အာရုံစိုက်ချိန်"
+  },
+  "icu:NotificationProfiles--allowed-title": {
+    "messageformat": "ခွင့်ပြုထားသော အသိပေးချက်များ"
+  },
+  "icu:NotificationProfiles--allowed-description": {
+    "messageformat": "ဤပရိုဖိုင်ဖွင့်ထားချိန်တွင် သင့်အနေဖြင့် အသိပေးချက်များ ရယူလိုသည့် လူများနှင့် အဖွဲ့များကိုထည့်သွင်းပါ"
+  },
+  "icu:NotificationProfiles--allowed-add-label": {
+    "messageformat": "လူများနှင့် အဖွဲ့များကို ပေါင်းထည့်ရန်"
+  },
+  "icu:NotificationProfiles--exceptions": {
+    "messageformat": "ခြွင်းချက်များ"
+  },
+  "icu:NotificationProfiles--exceptions--allow-all-calls": {
+    "messageformat": "ကောလ်အားလုံး ခွင့်ပြုရန်"
+  },
+  "icu:NotificationProfiles--exceptions--notify-for-mentions": {
+    "messageformat": "မန်းရှင်းခေါ်မှုများအားလုံးအတွက် အသိပေးရန်"
+  },
+  "icu:NotificationProfiles--schedule-title": {
+    "messageformat": "အချိန်ဇယား ပေါင်းထည့်ရန်"
+  },
+  "icu:NotificationProfiles--schedule-title--editing": {
+    "messageformat": "အချိန်ဇယား"
+  },
+  "icu:NotificationProfiles--schedule-description": {
+    "messageformat": "သင့်အသိပေးချက်ပရိုဖိုင်ကို အလိုအလျောက်လုပ်ဆောင်ရန် သင့်အချိန်ဇယားကို ဖွင့်ပြီး တည်းဖြတ်ပါ။"
+  },
+  "icu:NotificationProfiles--schedule-enable": {
+    "messageformat": "အလိုအလျောက်ဖွင့်ရန်"
+  },
+  "icu:NotificationProfiles--schedule": {
+    "messageformat": "အချိန်ဇယား"
+  },
+  "icu:NotificationProfiles--schedule-from": {
+    "messageformat": "မှ"
+  },
+  "icu:NotificationProfiles--schedule-until": {
+    "messageformat": "တိုင်အောင်"
+  },
+  "icu:NotificationProfiles--open-time-picker": {
+    "messageformat": "အချိန်ရွေးချယ်မှုကို ဖွင့်ရန်"
+  },
+  "icu:NotificationProfiles--schedule-sunday": {
+    "messageformat": "တနင်္ဂနွေ"
+  },
+  "icu:NotificationProfiles--schedule-monday": {
+    "messageformat": "တနင်္လာ"
+  },
+  "icu:NotificationProfiles--schedule-tuesday": {
+    "messageformat": "အင်္ဂါ"
+  },
+  "icu:NotificationProfiles--schedule-wednesday": {
+    "messageformat": "ဗုဒ္ဓဟူး"
+  },
+  "icu:NotificationProfiles--schedule-thursday": {
+    "messageformat": "ကြာသပတေး"
+  },
+  "icu:NotificationProfiles--schedule-friday": {
+    "messageformat": "သောကြာ"
+  },
+  "icu:NotificationProfiles--schedule-saturday": {
+    "messageformat": "စနေ"
+  },
+  "icu:NotificationProfiles--done-title": {
+    "messageformat": "ပရိုဖိုင် ဖန်တီးပြီး"
+  },
+  "icu:NotificationProfiles--done-description": {
+    "messageformat": "အချိန်ဇယားကို ထည့်ထားလျှင် သင့်ပရိုဖိုင်သည် အလိုအလျောက် ဖွင့်ပိတ်ပါမည်။ ၎င်းကို ကိုယ်တိုင်ဖွင့်ရန် သို့မဟုတ် ပိတ်ရန် ချက်(တ်)စာရင်း၏ထိပ်ရှိ ··· အိုင်ကွန်ကို နှိပ်နိုင်သည်။"
+  },
+  "icu:NotificationProfiles--schedule-sunday-short": {
+    "messageformat": "တနင်္ဂနွေ"
+  },
+  "icu:NotificationProfiles--schedule-monday-short": {
+    "messageformat": "တနင်္လာ"
+  },
+  "icu:NotificationProfiles--schedule-tuesday-short": {
+    "messageformat": "အင်္ဂါ"
+  },
+  "icu:NotificationProfiles--schedule-wednesday-short": {
+    "messageformat": "ဗုဒ္ဓဟူး"
+  },
+  "icu:NotificationProfiles--schedule-thursday-short": {
+    "messageformat": "ကြာသပတေး"
+  },
+  "icu:NotificationProfiles--schedule-friday-short": {
+    "messageformat": "သောကြာ"
+  },
+  "icu:NotificationProfiles--schedule-saturday-short": {
+    "messageformat": "စနေ"
+  },
+  "icu:NotificationProfiles--schedule-weekdays": {
+    "messageformat": "ကြားရက်များ"
+  },
+  "icu:NotificationProfiles--schedule-weekends": {
+    "messageformat": "စနေ၊ တနင်္ဂနွေ"
+  },
+  "icu:NotificationProfiles--schedule-daily": {
+    "messageformat": "နေ့စဉ်"
+  },
+  "icu:NotificationProfiles--schedule-separator": {
+    "messageformat": "၊ "
+  },
+  "icu:NotificationProfiles--list--header": {
+    "messageformat": "ပရိုဖိုင်များ"
+  },
+  "icu:NotificationProfiles--list--sync": {
+    "messageformat": "စက်များတွင် ချိန်ကိုက်ရန်"
+  },
+  "icu:NotificationProfiles--list--sync--description": {
+    "messageformat": "သင့် ပရိုဖိုင်သည် သင်ချိတ်ထားသော စက်များနှင့် ချိန်ကိုက်ထားပါမည်။ စက်ပစ္စည်းတစ်ခုအတွက် ပရိုဖိုင်ကိုဖွင့်ခြင်းသည် အခြားစက်များတွင်လည်း ၎င်းကိုဖွင့်ပေးမည်ဖြစ်သည်။"
+  },
+  "icu:NotificationProfiles--delete": {
+    "messageformat": "ပရိုဖိုင်ကို ဖျက်ရန်"
+  },
+  "icu:NotificationProfiles--delete-confirmation": {
+    "messageformat": "ဤအသိပေးချက်ပရိုဖိုင်ကို အပြီးဖျက်မလား။"
+  },
+  "icu:NotificationProfiles--delete-button": {
+    "messageformat": "ဖျက်ရန်"
+  },
+  "icu:NotificationProfiles--edit--is-active": {
+    "messageformat": "ဖွင့်မည်"
+  },
+  "icu:NotificationProfiles--edit--is-not-active": {
+    "messageformat": "ပိတ်မည်"
+  },
+  "icu:NotificationProfiles--edit--edit-name-label": {
+    "messageformat": "ဤပရိုဖိုင်၏အမည်ကို တည်းဖြတ်ပါ"
+  },
+  "icu:NotificationProfiles--edit--allowed": {
+    "messageformat": "ခွင့်ပြုထားသော အသိပေးချက်များ"
+  },
+  "icu:NotificationProfiles--edit--schedule-timing": {
+    "messageformat": "{startTime} မှ {endTime} အထိ"
+  },
+  "icu:NotificationProfiles--edit--schedule-enabled": {
+    "messageformat": "ဖွင့်မည်"
+  },
+  "icu:NotificationProfiles--edit--schedule-disabled": {
+    "messageformat": "ပိတ်မည်"
+  },
   "icu:Preferences--blocked": {
     "messageformat": "ဘလော့ခ်ထားပြီး"
   },
   "icu:Preferences--signal-backups": {
-    "messageformat": "Signal Secure Backups"
+    "messageformat": "Signal လုံခြုံရေးဘက်ခ်အပ်"
   },
   "icu:Preferences--signal-backups-off-description": {
     "messageformat": "Signal ၏ လုံခြုံသော ဟိုဘက်သည်ဘက် ကုဒ်ပြောင်းဝှက်ထားသည့် သိုလှောင်ရေးဝန်ဆောင်မှုဖြင့် ဆောင်ရွက်သော အလိုအလျောက် ဘက်ခ်အပ်လုပ်ခြင်းများ။ သင့်ဖုန်းတွင် စတင်လိုက်ပါ။ <learnMoreLink>ပိုမိုလေ့လာရန်</learnMoreLink>။"
@@ -5307,7 +5850,10 @@
     "messageformat": "စာတို + မီဒီယာအားလုံးဘက်ခ်အပ်"
   },
   "icu:Preferences--backup-plan-not-found__description": {
-    "messageformat": "Your subscription was not found. Renew to continue using Signal Secure Backups."
+    "messageformat": "သင်၏ ပုံမှန်လှူဒါန်းမှုကို ရှာမတွေ့ပါ။ သင်၏ ဘက်ခ်အပ်အသေးစိတ်အချက်အလက်များကို ကြည့်ရှုရန် သင့်ဖုန်းကို စစ်ဆေးပါ။"
+  },
+  "icu:Preferences--backup-subscription-monthly-cost": {
+    "messageformat": "တစ်လလျှင် {cost}"
   },
   "icu:Preferences--backup-messages-plan__description": {
     "messageformat": "{mediaDayCount, plural, other {စာတို + {mediaDayCount,number} ရက် မီဒီယာဘက်ခ်အပ်}}"
@@ -5325,13 +5871,13 @@
     "messageformat": "ပုံမှန်လှူဒါန်းငွေကို ပယ်ဖျက်လိုက်ပါပြီ"
   },
   "icu:Preferences--backup-media-plan__note": {
-    "messageformat": "You can manage or cancel your Signal Secure Backups subscription on your phone."
+    "messageformat": "သင့်ဖုန်းတွင် သင်၏ Signal လုံခြုံရေးဘက်ခ်အပ် ပုံမှန်လှူဒါန်းငွေကို စီမံခန့်ခွဲနိုင် သို့မဟုတ် ပယ်ဖျက်နိုင်ပါသည်။"
   },
   "icu:Preferences--backup-messages-plan__note": {
-    "messageformat": "You can manage or upgrade Signal Secure Backups on your phone."
+    "messageformat": "သင့်ဖုန်းတွင် သင်၏ Signal လုံခြုံရေးဘက်ခ်အပ်ကို စီမံခန့်ခွဲနိုင် သို့မဟုတ် အဆင့်မြှင့်နိုင်ပါသည်။"
   },
   "icu:Preferences--backup-plan__not-found__note": {
-    "messageformat": "You can manage or renew your Signal Secure Backups subscription on your phone."
+    "messageformat": "သင့်ဖုန်းတွင် သင်၏ Signal လုံခြုံရေးဘက်ခ်အပ် ပုံမှန်လှူဒါန်းငွေကို စီမံခန့်ခွဲနိုင် သို့မဟုတ် သက်တမ်းတိုးနိုင်ပါသည်။"
   },
   "icu:Preferences--backup-created-at__label": {
     "messageformat": "နောက်ဆုံး ဘက်ခ်အပ်"
@@ -5362,6 +5908,18 @@
   },
   "icu:Preferences--local-backups-view-backup-key-done": {
     "messageformat": "ပြီးပါပြီ"
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt--mac": {
+    "messageformat": "သင့် ဘက်ခ်အပ်ကီးကိုပြပါ"
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt--windows": {
+    "messageformat": "သင့် ဘက်ခ်အပ်ကီးကို ကြည့်ရှုရန် သင်၏အထောက်အထားကို အတည်ပြုပါ။"
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt-description--linux": {
+    "messageformat": "ဘက်ခ်အပ်ကီးကိုကြည့်ရန်"
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt-message--linux": {
+    "messageformat": "သင့် ဘက်ခ်အပ်ကီးကို ကြည့်ရှုရန် စစ်မှန်ကြောင်းအတည်ပြုချက် လိုအပ်သည်။"
   },
   "icu:Preferences--local-backups-backup-key-text-box": {
     "messageformat": "ဘက်ခ်အပ်ကီး စာသားအကွက်"
@@ -5404,6 +5962,18 @@
   },
   "icu:Preferences__local-backups-copied-key": {
     "messageformat": "ဘက်ခ်အပ်ကီးကို ကူးယူပြီး"
+  },
+  "icu:Preferences__local-backups--enable--os-prompt--mac": {
+    "messageformat": "ဘက်ခ်အပ် လုပ်ဆောင်မည်"
+  },
+  "icu:Preferences__local-backups--enable--os-prompt--windows": {
+    "messageformat": "ဘက်ခ်အပ်ကိုဖွင့်ရန် သင့်အထောက်အထားကို အတည်ပြုပါ။"
+  },
+  "icu:Preferences__local-backups--enable--os-prompt-description--linux": {
+    "messageformat": "ဘက်ခ်အပ် လုပ်ဆောင်မည်"
+  },
+  "icu:Preferences__local-backups--enable--os-prompt-message--linux": {
+    "messageformat": "ဘက်ခ်အပ်ပြုလုပ်ရန် စစ်မှန်ကြောင်းအတည်ပြုချက် လိုအပ်သည်။"
   },
   "icu:Preferences__view-key": {
     "messageformat": "ကီးကိုကြည့်ရန်"
@@ -6393,6 +6963,9 @@
   "icu:MessageMetadata__edited": {
     "messageformat": "တည်းဖြတ်ပြီး"
   },
+  "icu:MessageMetadata__pinned": {
+    "messageformat": "Pinned"
+  },
   "icu:DraftGifMessageSendModal__Title": {
     "messageformat": "မက်ဆေ့ချ် ပေါင်းထည့်ရန်"
   },
@@ -6404,6 +6977,9 @@
   },
   "icu:EditHistoryMessagesModal__title": {
     "messageformat": "တည်းဖြတ်မှု မှတ်တမ်း"
+  },
+  "icu:EditHistoryMessagesModal__Message__ContextMenu__CopyTimestamp": {
+    "messageformat": "Timestamp ကူးရန်"
   },
   "icu:ResendMessageEdit__body": {
     "messageformat": "ထိုတည်းဖြတ်မှုကို ပေးပို့၍ မရနိုင်ပါ။ ချိတ်ဆက်မှုကို စစ်ဆေးပြီး ထပ်ကြိုးစားကြည့်ပါ"
@@ -6699,9 +7275,6 @@
   "icu:PreferencesDonations--receiptList__empty-title": {
     "messageformat": "ပြေစာများ မရှိပါ"
   },
-  "icu:PreferencesDonations__ReceiptModal--title": {
-    "messageformat": "အသေးစိတ်အချက်အလက်များ"
-  },
   "icu:PreferencesDonations__ReceiptModal--download": {
     "messageformat": "ပြေစာကို ဒေါင်းလုဒ်လုပ်ပါ"
   },
@@ -6819,14 +7392,11 @@
   "icu:Donations__Toast__ConfirmationNeeded": {
     "messageformat": "အတည်ပြုရန် လိုအပ်သော လှူဒါန်းမှုတစ်ခုရှိနေသည်။"
   },
-  "icu:Donations__Toast__DonationCompletedAndBadgeApplicationFailed": {
+  "icu:Donations__BadgeApplicationFailed__Title": {
     "messageformat": "လှူဒါန်းမှုအောင်မြင်သော်လည်း သင့်ဘဲ့ဂျ်ဆက်တင်ကို ကျွန်ုပ်တို့အပ်ဒိတ်မလုပ်နိုင်ခဲ့ပါ"
   },
-  "icu:Donations__BadgeApplicationFailed__Title": {
-    "messageformat": "Donation succeeded, but we could not update your badge settings"
-  },
   "icu:Donations__BadgeApplicationFailed__Description": {
-    "messageformat": "To update your badge settings on your mobile device, go to Settings → Donate to Signal → Badges."
+    "messageformat": "သင့်မိုဘိုင်းစက်တွင် သင့်ဘဲ့ဂျ်ဆက်တင်ကို အပ်ဒိတ်လုပ်ရန် ဆက်တင် → Signal သို့လှူဒါန်းရန် → ဘဲ့ဂျ်များသို့ သွားပါ။"
   },
   "icu:Donations__DonationInterrupted": {
     "messageformat": "လှူဒါန်းမှု ပြတ်တောက်ခဲ့သည်"
@@ -6903,6 +7473,90 @@
   "icu:Donations__badge-modal--help-text": {
     "messageformat": "၎င်းကို ဆက်တင် → Signal သို့ လှူဒါန်းမှု → ဘဲ့ဂျ်များထဲမှ သင့်မိုဘိုင်းစက်တွင် ၎င်းကို ချိန်ညှိနိုင်သည်။"
   },
+  "icu:CallQualitySurvey__CloseButton__AccessibilityLabel": {
+    "messageformat": "Close"
+  },
+  "icu:CallQualitySurvey__BackButton__AccessibilityLabel": {
+    "messageformat": "Back"
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__PageTitle": {
+    "messageformat": "How was your call?"
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__PageDescription": {
+    "messageformat": "This helps us improve calls in Signal. No personally identifiable information will be stored."
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__Response__HadIssues": {
+    "messageformat": "Had issues"
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__Response__Great": {
+    "messageformat": "Great"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__PageTitle": {
+    "messageformat": "What issues did you have?"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__IssuesList__Heading": {
+    "messageformat": "Select all that apply"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO": {
+    "messageformat": "Audio issue"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_STUTTERING": {
+    "messageformat": "Audio stuttering"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_LOCAL_ECHO": {
+    "messageformat": "I heard echo"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_REMOTE_ECHO": {
+    "messageformat": "Others heard echo"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_DROP": {
+    "messageformat": "Audio cut out"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO": {
+    "messageformat": "Video issue"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO_NO_CAMERA": {
+    "messageformat": "Camera didn't work"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO_LOW_QUALITY": {
+    "messageformat": "Poor video quality"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO_LOW_RESOLUTION": {
+    "messageformat": "Low resolution"
+  },
+  "icu:CallQualitySurvey__Issue--CALL_DROPPED": {
+    "messageformat": "Call dropped"
+  },
+  "icu:CallQualitySurvey__Issue--OTHER": {
+    "messageformat": "Something else"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__SomethingElse__TextArea__AccessibilityLabel": {
+    "messageformat": "Issues description"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__SomethingElse__TextArea__HelpText": {
+    "messageformat": "Please include any details relevant to the issue. Anything you share here will be kept private and will only be used to help improve calls in Signal."
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__ContinueButton": {
+    "messageformat": "Continue"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__PageTitle": {
+    "messageformat": "Help us improve"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__PageDescription": {
+    "messageformat": "This helps us learn more about calls and what is working or not working. You can view your debug log before submitting."
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__Label": {
+    "messageformat": "Share debug log"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__ViewButton": {
+    "messageformat": "View"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__HelpText": {
+    "messageformat": "Debug logs contain low level app information and do not reveal any of your message contents."
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__SubmitButton": {
+    "messageformat": "Submit"
+  },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "ဤဗားရှင်းတွင် Signal အား အထစ်အငေါ့မရှိ လုပ်ဆောင်နိုင်စေရန် ချို့ယွင်းချက် ပြင်ဆင်မှုများနှင့် အနေအထား ပြုပြင်မှု အသေးလေးများ ပါဝင်ပါသည်။",
     "ignoreUnused": true
@@ -6931,13 +7585,16 @@
     "messageformat": "အနေအထား ပြုပြင်မှုလေးများ၊ ချို့ယွင်းချက် ပြင်ဆင်မှုများနှင့် စွမ်းဆောင်ရည် မြှင့်တင်မှုများ။ Signal ကို သုံးသည့်အတွက် ကျေးဇူးတင်ပါသည်။",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.66--0": {
-    "messageformat": "ချို့ယွင်းချက် အသေးစားအချို့ကို ပြင်ဆင်ပေးထားသည်။"
+  "icu:WhatsNew__7.79-1": {
+    "messageformat": "အမြင်တသမတ်တည်းဖြစ်စေရန်အတွက် အက်ပ်တစ်ခုလုံးရှိ Scrollbar များ၏ အသွင်အပြင်ကို အပ်ဒိတ်လုပ်ထားပါသည်။"
   },
-  "icu:WhatsNew__v7.67--0": {
-    "messageformat": "အချို့သောအသုံးပြုသူများအတွက် လှူဒါန်းမှုဘဲ့ဂျ်များ မှန်ကန်စွာမပေါ်စေရန် တားဆီးထားသော ချွတ်ယွင်းချက်တစ်ခုကို ပြင်ဆင်ထားပါသည်။"
+  "icu:WhatsNew__7.79-2": {
+    "messageformat": "ကူးယူ/ကူးထည့်ခြင်း ဖော်မတ်ကို မြှင့်တင်ထားပါသည်။ @brianHarder ကို ကျေးဇူးတင်ပါသည်။ ကျေးဇူးပါ <brianHarder></brianHarder>။"
   },
-  "icu:WhatsNew__v7.70--0": {
-    "messageformat": "Microsoft Window ရှိ ခေါင်းစဉ်ဘားတွင် အရောင်မှား၍ဖော်ပြသည့် ချွတ်ယွင်းချက်တစ်ခုကို ပြင်ဆင်ခဲ့သည်။"
+  "icu:WhatsNew__7.80-1": {
+    "messageformat": "Signal စစ်တမ်းများ ဤနေရာတွင်ရှိသည်။ စစ်တမ်းများသည် သင့်အဖွဲ့ချက်(တ်)အတွင်း အမှန်တကယ်ထင်မြင်ယူဆချက်ကို သိရန် လွယ်ကူသောနည်းလမ်းတစ်ခုဖြစ်သည်။ ညစာအတွက် မတူညီသောရွေးချယ်စရာများ သို့မဟုတ် အခြားအရေးကြီးသော ရွေးချယ်စရာများဖြင့် စစ်တမ်းတစ်ခုဖန်တီးပါ။ အဖွဲ့ရှိလူတိုင်းသည် မဲပေးနိုင်ပြီး အချင်းချင်း၏ တုံ့ပြန်မှုများကို ကြည့်ရှုနိုင်ကာ တစ်ခုထက်ပိုသော မဲပေးခွင့်ပြုမပြု သင် ဆုံးဖြတ်နိုင်သည်။"
+  },
+  "icu:WhatsNew__7.81-1": {
+    "messageformat": "ယခုအခါ မီဒီယာပြခန်းတွင် အော်ဒီယို မက်ဆေ့ချ်များနှင့် လင့်ခ်ကြိုတင်ကြည့်ရှုမှုများအတွက် တက်ဘ်အသစ်နှစ်ခု ပါဝင်သည်။"
   }
 }

@@ -4,6 +4,7 @@ node_modules_bkp
 coverage/*
 build/curve25519_compiled.js
 build/compact-locales
+build/*.policy
 stylesheets/*.css.map
 /dist
 .DS_Store
@@ -36,6 +37,7 @@ ts/sql/mainWorker.bundle.js.LICENSE.txt
 build/ICUMessageParams.d.ts
 
 # React / TypeScript
+build/**/*.js
 app/*.js
 ts/**/*.js
 ts/protobuf/*.d.ts

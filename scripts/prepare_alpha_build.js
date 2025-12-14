@@ -1,13 +1,11 @@
 // Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-const fs = require('fs');
+const fs = require('node:fs');
 const _ = require('lodash');
 
-const packageJson = require('../package.json');
-const { isAlpha } = require('../ts/util/version');
-
-const { version } = packageJson;
+const { isAlpha } = require('../ts/util/version.std.js');
+const { default: packageJson, version } = require('./packageJson.js');
 
 // You might be wondering why this file is necessary. It comes down to our desire to allow
 //   side-by-side installation of production and alpha builds. Electron-Builder uses
@@ -36,12 +34,20 @@ const APP_ID_PATH = 'build.appId';
 const PRODUCTION_APP_ID = 'org.whispersystems.signal-desktop';
 const ALPHA_APP_ID = 'org.whispersystems.signal-desktop-alpha';
 
+const STARTUP_WM_CLASS_PATH = 'build.linux.desktop.entry.StartupWMClass';
+const PRODUCTION_WM_CLASS = 'signal';
+const ALPHA_WM_CLASS = 'signal alpha';
+
 const DESKTOP_NAME_PATH = 'desktopName';
 
 // Note: we're avoiding dashes in our .desktop name due to xdg-settings behavior
 //   https://github.com/signalapp/Signal-Desktop/issues/3602
 const PRODUCTION_DESKTOP_NAME = 'signal.desktop';
-const ALPHA_DESKTOP_NAME = 'signalalpha.desktop';
+const ALPHA_DESKTOP_NAME = 'signal alpha.desktop';
+
+const EXECUTABLE_NAME_PATH = 'build.linux.executableName';
+const PRODUCTION_EXECUTABLE_NAME = 'signal-desktop';
+const ALPHA_EXECUTABLE_NAME = 'signal-desktop-alpha';
 
 // -------
 
@@ -57,14 +63,18 @@ function checkValue(object, objectPath, expected) {
 checkValue(packageJson, NAME_PATH, PRODUCTION_NAME);
 checkValue(packageJson, PRODUCT_NAME_PATH, PRODUCTION_PRODUCT_NAME);
 checkValue(packageJson, APP_ID_PATH, PRODUCTION_APP_ID);
+checkValue(packageJson, STARTUP_WM_CLASS_PATH, PRODUCTION_WM_CLASS);
 checkValue(packageJson, DESKTOP_NAME_PATH, PRODUCTION_DESKTOP_NAME);
+checkValue(packageJson, EXECUTABLE_NAME_PATH, PRODUCTION_EXECUTABLE_NAME);
 
 // -------
 
 _.set(packageJson, NAME_PATH, ALPHA_NAME);
 _.set(packageJson, PRODUCT_NAME_PATH, ALPHA_PRODUCT_NAME);
 _.set(packageJson, APP_ID_PATH, ALPHA_APP_ID);
+_.set(packageJson, STARTUP_WM_CLASS_PATH, ALPHA_WM_CLASS);
 _.set(packageJson, DESKTOP_NAME_PATH, ALPHA_DESKTOP_NAME);
+_.set(packageJson, EXECUTABLE_NAME_PATH, ALPHA_EXECUTABLE_NAME);
 
 // -------
 

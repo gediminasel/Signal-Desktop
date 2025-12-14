@@ -1,14 +1,11 @@
 // Copyright 2024 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-const fs = require('fs');
+const fs = require('node:fs');
 const _ = require('lodash');
-const { execSync } = require('child_process');
-
-const packageJson = require('../package.json');
-const { isAdhoc } = require('../ts/util/version');
-
-const { version } = packageJson;
+const { execSync } = require('node:child_process');
+const { isAdhoc } = require('../ts/util/version.std.js');
+const { default: packageJson, version } = require('./packageJson.js');
 
 // You might be wondering why this file is necessary. It comes down to our desire to allow
 //   side-by-side installation of production and adhoc builds. Electron-Builder uses
@@ -59,12 +56,20 @@ const APP_ID_PATH = 'build.appId';
 const PRODUCTION_APP_ID = 'org.whispersystems.signal-desktop';
 const ADHOC_APP_ID = `org.whispersystems.signal-desktop-adhoc-${formattedDate}-${shortSha}`;
 
+const STARTUP_WM_CLASS_PATH = 'build.linux.desktop.entry.StartupWMClass';
+const PRODUCTION_WM_CLASS = 'signal';
+const ADHOC_WM_CLASS = `signal adhoc ${formattedDate} ${shortSha}`;
+
 const DESKTOP_NAME_PATH = 'desktopName';
 
 // Note: we're avoiding dashes in our .desktop name due to xdg-settings behavior
 //   https://github.com/signalapp/Signal-Desktop/issues/3602
 const PRODUCTION_DESKTOP_NAME = 'signal.desktop';
-const ADHOC_DESKTOP_NAME = `signaladhoc.${formattedDate}.${shortSha}.desktop`;
+const ADHOC_DESKTOP_NAME = `signal adhoc ${formattedDate} ${shortSha}.desktop`;
+
+const EXECUTABLE_NAME_PATH = 'build.linux.executableName';
+const PRODUCTION_EXECUTABLE_NAME = 'signal-desktop';
+const ADHOC_EXECUTABLE_NAME = `signal-desktop-adhoc-${formattedDate}-${shortSha}`;
 
 // -------
 
@@ -80,14 +85,18 @@ function checkValue(object, objectPath, expected) {
 checkValue(packageJson, NAME_PATH, PRODUCTION_NAME);
 checkValue(packageJson, PRODUCT_NAME_PATH, PRODUCTION_PRODUCT_NAME);
 checkValue(packageJson, APP_ID_PATH, PRODUCTION_APP_ID);
+checkValue(packageJson, STARTUP_WM_CLASS_PATH, PRODUCTION_WM_CLASS);
 checkValue(packageJson, DESKTOP_NAME_PATH, PRODUCTION_DESKTOP_NAME);
+checkValue(packageJson, EXECUTABLE_NAME_PATH, PRODUCTION_EXECUTABLE_NAME);
 
 // -------
 
 _.set(packageJson, NAME_PATH, ADHOC_NAME);
 _.set(packageJson, PRODUCT_NAME_PATH, ADHOC_PRODUCT_NAME);
 _.set(packageJson, APP_ID_PATH, ADHOC_APP_ID);
+_.set(packageJson, STARTUP_WM_CLASS_PATH, ADHOC_WM_CLASS);
 _.set(packageJson, DESKTOP_NAME_PATH, ADHOC_DESKTOP_NAME);
+_.set(packageJson, EXECUTABLE_NAME_PATH, ADHOC_EXECUTABLE_NAME);
 
 // -------
 

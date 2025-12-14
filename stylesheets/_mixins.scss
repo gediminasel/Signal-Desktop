@@ -248,18 +248,6 @@
 }
 
 $rtl-icon-map: (
-  'chevron-left-16.svg': 'chevron-right-16.svg',
-  'chevron-right-16.svg': 'chevron-left-16.svg',
-
-  'chevron-left-20.svg': 'chevron-right-20.svg',
-  'chevron-right-20.svg': 'chevron-left-20.svg',
-
-  'chevron-left-24.svg': 'chevron-right-24.svg',
-  'chevron-right-24.svg': 'chevron-left-24.svg',
-
-  'arrow-left-32.svg': 'arrow-right-32.svg',
-  'arrow-right-32.svg': 'arrow-left-32.svg',
-
   // v3 icons
   'chevron-left.svg': 'chevron-right.svg',
   'chevron-right.svg': 'chevron-left.svg',
@@ -269,11 +257,7 @@ $rtl-icon-map: (
   'chevron-right-compact-bold.svg': 'chevron-left-compact-bold.svg',
   'chevron-right-bold.svg': 'chevron-left-bold.svg',
   'arrow-left.svg': 'arrow-right.svg',
-  'arrow-right.svg': 'arrow-left.svg',
-
-  // Ignored cases:
-  'phone-right-outline-24.svg': '',
-  'phone-right-solid-24.svg': '',
+  'arrow-right.svg': 'arrow-left.svg'
 );
 
 @function get-rtl-svg($svg) {
@@ -869,33 +853,6 @@ $rtl-icon-map: (
   }
 }
 
-@mixin scrollbar {
-  &::-webkit-scrollbar-thumb {
-    border-radius: 4px;
-    visibility: hidden;
-    width: 6px;
-
-    @include light-theme {
-      background: variables.$color-black-alpha-40;
-    }
-    @include dark-theme {
-      background: variables.$color-white-alpha-40;
-    }
-  }
-
-  &::-webkit-scrollbar {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &:hover::-webkit-scrollbar-thumb {
-    visibility: visible;
-  }
-}
-
 @mixin normal-input {
   @include font-body-1;
   padding-block: 8px;
@@ -1029,18 +986,9 @@ $rtl-icon-map: (
   transform: translateY(-50%);
 }
 
-@mixin NavTabs__Scroller {
-  padding-bottom: 8px;
-  @include scrollbar;
-  &::-webkit-scrollbar-thumb {
-    @include light-theme {
-      background: variables.$color-gray-25;
-      border-color: variables.$color-gray-04;
-    }
-    @include dark-theme {
-      background: variables.$color-gray-45;
-      border-color: variables.$color-gray-80;
-    }
+@mixin scrollbar-on-hover {
+  &:not(:hover, :focus-within) {
+    scrollbar-color: transparent transparent;
   }
 }
 
@@ -1198,16 +1146,10 @@ $rtl-icon-map: (
   & {
     @include light-theme {
       background: variables.$color-gray-02;
-      ::-webkit-scrollbar-thumb {
-        border: 2px solid variables.$color-gray-02;
-      }
     }
 
     @include dark-theme {
       background: variables.$color-gray-75;
-      ::-webkit-scrollbar-thumb {
-        border: 2px solid variables.$color-gray-75;
-      }
     }
   }
 }

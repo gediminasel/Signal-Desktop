@@ -104,6 +104,15 @@
   "icu:databaseError__safeStorageBackendChangeWithPreviousFlag": {
     "messageformat": "OS шифрлөө ачкычтарынын топтому мурун {previousBackend} болсо, эми {currentBackend} болуп өзгөргөндүктөн, маалыматтар базасын шифрлөө ачкычын колдоно албайсыз. Компьютердин иш чөйрөсү, мисалы, GNOME менен KDE'нин ортосунда өзгөргөндө ушундай болот.\n\nSignal'ды буйрук сабы менен иштетип көрүңүз же компьютердин мурунку иш чөйрөсүнө өтүңүз --password-store=\"{previousBackendFlag}\""
   },
+  "icu:systemEncryptionError": {
+    "messageformat": "System encryption error"
+  },
+  "icu:systemEncryptionError__linuxSafeStorageDecryptionError": {
+    "messageformat": "Unable to decrypt the database encryption key using the OS encryption keyring. This can occur in certain containerized environments such as Flatpak.\n\nWe recommend quitting and checking your OS encryption backend such as gnome-libsecret or kwallet, then trying again.\n\nYou may choose to continue anyway, however the database key will be stored in plaintext on the filesystem and other apps may be able to access it."
+  },
+  "icu:systemEncryptionError__continueWithPlaintextKey": {
+    "messageformat": "Continue with plaintext key"
+  },
   "icu:mainMenuFile": {
     "messageformat": "&Файл"
   },
@@ -233,6 +242,12 @@
   "icu:archivedConversations": {
     "messageformat": "Архивделген маектер"
   },
+  "icu:LeftPane__MoreActionsMenu__AddChatFolder": {
+    "messageformat": "Маек папкасын кошуу"
+  },
+  "icu:LeftPane__MoreActionsMenu__FolderSettings": {
+    "messageformat": "Папканын параметрлери"
+  },
   "icu:LeftPane--pinned": {
     "messageformat": "Кадалган"
   },
@@ -271,6 +286,45 @@
   },
   "icu:LeftPaneFindByHelper__description--findByUsername": {
     "messageformat": "Аягында сандар жазылып, чекит коюлган колдонуучу атын киргизиңиз."
+  },
+  "icu:LeftPane__EmptyView--WithSelectedChatFolder": {
+    "messageformat": "Эч нерсе жок"
+  },
+  "icu:LeftPane__EmptyView--WithSelectedChatFolder__FolderSettings": {
+    "messageformat": "Папканын параметрлери"
+  },
+  "icu:LeftPaneChatFolders__ItemLabel--All--Short": {
+    "messageformat": "Баары"
+  },
+  "icu:LeftPaneChatFolders__ItemLabel--All": {
+    "messageformat": "Бардык маектер"
+  },
+  "icu:LeftPaneChatFolders__ItemUnreadBadge__MaxCount": {
+    "messageformat": "{maxCount,number}+"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__MarkAllRead": {
+    "messageformat": "Баарын окулду деп белгилөө"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__MuteNotifications": {
+    "messageformat": "Билдирмелердин үнүн басуу"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__MuteNotifications__UnmuteAll": {
+    "messageformat": "Баарынын үнүн чыгаруу"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__UnmuteAll": {
+    "messageformat": "Баарынын үнүн чыгаруу"
+  },
+  "icu:LeftPaneChatFolders__Item__ContextMenu__EditFolder": {
+    "messageformat": "Папканы оңдоо"
+  },
+  "icu:LeftPane__ConversationListItem__ContextMenu__ChatFolderToggleChatsItem": {
+    "messageformat": "Папкага кошуу"
+  },
+  "icu:LeftPane__ConversationListItem__ContextMenu__ChatFolderToggleChatsMenu__CreateFolderItem": {
+    "messageformat": "Ооба"
+  },
+  "icu:LeftPane__ConversationListItem__ContextMenu__ChatFolderRemoveChatItem": {
+    "messageformat": "Папкадан алып салуу"
   },
   "icu:CountryCodeSelect__placeholder": {
     "messageformat": "Өлкөнүн коду"
@@ -322,6 +376,9 @@
   },
   "icu:markUnread": {
     "messageformat": "Окула элек деп белгилөө"
+  },
+  "icu:markRead": {
+    "messageformat": "Окулду деп белгилөө"
   },
   "icu:ConversationHeader__menu__selectMessages": {
     "messageformat": "Билдирүүлөрдү тандоо"
@@ -607,6 +664,15 @@
   },
   "icu:Toast--ReceiptSaveFailed": {
     "messageformat": "Дүмүрчөк сакталып жатканда ката кетти. Кайталап көрүңүз."
+  },
+  "icu:Toast--ChatFolderAddedChat": {
+    "messageformat": "“{chatFolderName}” папкасына кошулду"
+  },
+  "icu:Toast--ChatFolderRemovedChat": {
+    "messageformat": "“{chatFolderName}” папкасынан өчүрүлдү"
+  },
+  "icu:Toast--ChatFolderCreated": {
+    "messageformat": "{chatFolderName} папкасы кошулду"
   },
   "icu:cannotSelectPhotosAndVideosAlongWithFiles": {
     "messageformat": "Файлдар менен кошо сүрөттөрдү жана видеолорду тандай албайсыз."
@@ -1031,14 +1097,98 @@
   "icu:MessageContextMenu__info": {
     "messageformat": "Маалымат"
   },
+  "icu:MessageContextMenu__PinMessage": {
+    "messageformat": "Билдирүүнү кадоо"
+  },
+  "icu:MessageContextMenu__UnpinMessage": {
+    "messageformat": "Unpin message"
+  },
+  "icu:Poll__end-poll": {
+    "messageformat": "Добуш берүүнү бүтүрүү"
+  },
+  "icu:PollMessage--SelectOne": {
+    "messageformat": "Добуш берүү · Бирөөсүн тандаңыз"
+  },
+  "icu:PollMessage--SelectMultiple": {
+    "messageformat": "Добуш берүү · Бир же бир нече жооп тандаңыз"
+  },
+  "icu:PollMessage--FinalResults": {
+    "messageformat": "Добуш берүү · Соңку жыйынтык"
+  },
+  "icu:PollMessage__ViewVotesButton": {
+    "messageformat": "Добуштарды карап көрүү"
+  },
+  "icu:PollMessage--YouVoted": {
+    "messageformat": "Сиз добуш бердиңиз"
+  },
+  "icu:PollTerminate--you": {
+    "messageformat": "Сурамжылоону бүтүрдүңүз: {poll}"
+  },
+  "icu:PollTerminate--other": {
+    "messageformat": "{name} сурамжылоону бүтүрдү: {poll}"
+  },
+  "icu:PollTerminate__view-poll": {
+    "messageformat": "Добуш берүүнү карап көрүү"
+  },
+  "icu:PollVotesModal__title": {
+    "messageformat": "Добуш берүү чоо-жайы"
+  },
+  "icu:PollVotesModal__questionLabel": {
+    "messageformat": "Суроо берүү"
+  },
+  "icu:PollVotesModal__voteCount": {
+    "messageformat": "{count, plural, other {{count,number} добуш}}"
+  },
+  "icu:PollVotesModal__noVotes": {
+    "messageformat": "Эч ким добуш бере элек"
+  },
+  "icu:PollVotesModal__winningOption": {
+    "messageformat": "Алдыда келатат"
+  },
+  "icu:Toast--PinnedMessageNotFound": {
+    "messageformat": "Кадалган билдирүү табылган жок"
+  },
+  "icu:Toast--PollNotFound": {
+    "messageformat": "Табылган жок"
+  },
+  "icu:PollCreateModal__title": {
+    "messageformat": "Жаңы добуш берүү"
+  },
+  "icu:PollCreateModal__questionLabel": {
+    "messageformat": "Суроо берүү"
+  },
+  "icu:PollCreateModal__questionPlaceholder": {
+    "messageformat": "Суроо"
+  },
+  "icu:PollCreateModal__optionsLabel": {
+    "messageformat": "Параметрлер"
+  },
+  "icu:PollCreateModal__optionPlaceholder": {
+    "messageformat": "{number}-вариант"
+  },
+  "icu:PollCreateModal__allowMultipleVotes": {
+    "messageformat": "Бир нече добушка уруксат берүү"
+  },
+  "icu:PollCreateModal__sendButton": {
+    "messageformat": "Жөнөтүү"
+  },
+  "icu:PollCreateModal__Error--RequiresQuestion": {
+    "messageformat": "Суроо беришиңиз керек"
+  },
+  "icu:PollCreateModal__Error--RequiresTwoOptions": {
+    "messageformat": "Сурамжылоодо кеминде 2 вариант болушу керек"
+  },
+  "icu:PollCreateModal__Error--QuestionTooLong": {
+    "messageformat": "Суроо өтө узун болуп калды"
+  },
+  "icu:PollCreateModal__Error--OptionTooLong": {
+    "messageformat": "Вариант өтө узун болуп калды"
+  },
   "icu:deleteConversation": {
     "messageformat": "Өчүрүү"
   },
   "icu:ConversationHeader__DeleteConversationConfirmation__title": {
     "messageformat": "Маекти өчүрөсүзбү?"
-  },
-  "icu:ConversationHeader__DeleteConversationConfirmation__description": {
-    "messageformat": "Ушул маектеги бардык билдирүүлөр бул түзмөктөн өчүрүлөт."
   },
   "icu:ConversationHeader__DeleteConversationConfirmation__description-with-sync": {
     "messageformat": "Бул маектеги билдирүүлөрдүн баары бардык түзмөктөрүңүздөн өчүрүлөт."
@@ -1057,6 +1207,108 @@
   },
   "icu:ConversationHeader__CannotLeaveGroupBecauseYouAreLastAdminAlert__description": {
     "messageformat": "Топтон чыгардан мурун, бул топко кеминде бир жаңы администратор дайындап кетиңиз."
+  },
+  "icu:PinnedMessageNotification__Message--You": {
+    "messageformat": "Билдирүүнү кададыңыз"
+  },
+  "icu:PinnedMessageNotification__Message--SomeoneElse": {
+    "messageformat": "{sender} билдирүү кадады"
+  },
+  "icu:PinnedMessageNotification__Button": {
+    "messageformat": "Билдирүүгө өтүү"
+  },
+  "icu:PinMessageDialog__Title": {
+    "messageformat": "Билдирүү канча убакытка кадалат..."
+  },
+  "icu:PinMessageDialog__Close": {
+    "messageformat": "Жабуу"
+  },
+  "icu:PinMessageDialog__Option--TIME_24_HOURS": {
+    "messageformat": "24 саат"
+  },
+  "icu:PinMessageDialog__Option--TIME_7_DAYS": {
+    "messageformat": "7 күн"
+  },
+  "icu:PinMessageDialog__Option--TIME_30_DAYS": {
+    "messageformat": "30 күнгө"
+  },
+  "icu:PinMessageDialog__Option--FOREVER": {
+    "messageformat": "Биротоло"
+  },
+  "icu:PinMessageDialog__Cancel": {
+    "messageformat": "Жок"
+  },
+  "icu:PinMessageDialog__Pin": {
+    "messageformat": "Кадоо"
+  },
+  "icu:PinnedMessagesBar__AccessibilityLabel": {
+    "messageformat": "{pinsCount, plural, other {Кадалган билдирүүлөр}}"
+  },
+  "icu:PinnedMessagesBar__Tab__AccessibilityLabel": {
+    "messageformat": "Кадалган {pinNumber,number} билдирүүгө өтүү"
+  },
+  "icu:PinnedMessagesBar__GoToMessageClickableArea__AccessibilityLabel": {
+    "messageformat": "Билдирүүгө өтүү"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__Button__AccessibilityLabel": {
+    "messageformat": "Дагы"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__UnpinMessage": {
+    "messageformat": "Билдирүүнү бошотуу"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__GoToMessage": {
+    "messageformat": "Билдирүүгө өтүү"
+  },
+  "icu:PinnedMessagesBar__ActionsMenu__SeeAllMessages": {
+    "messageformat": "Бардык билдирүүлөрдү көрүү"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Address": {
+    "messageformat": "Address"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--VoiceMessage": {
+    "messageformat": "Voice message"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Gif": {
+    "messageformat": "GIF"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--File": {
+    "messageformat": "File"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Contact": {
+    "messageformat": "Contact"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Payment": {
+    "messageformat": "Payment"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Poll": {
+    "messageformat": "Poll"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Sticker": {
+    "messageformat": "Sticker"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Photo": {
+    "messageformat": "Photo"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Video": {
+    "messageformat": "Video"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--VoiceMessage": {
+    "messageformat": "Voice message"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Gif": {
+    "messageformat": "GIF"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Payment": {
+    "messageformat": "Payment"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--Sticker": {
+    "messageformat": "Sticker"
+  },
+  "icu:PinnedMessagesPanel__Title": {
+    "messageformat": "Pinned messages"
+  },
+  "icu:PinnedMessagesPanel__UnpinAllMessages": {
+    "messageformat": "Unpin all messages"
   },
   "icu:sessionEnded": {
     "messageformat": "Коопсуз сеанс баштапкы абалга келтирилди"
@@ -1175,36 +1427,6 @@
   "icu:attachmentNotAvailable__tapToViewCannotDownload": {
     "messageformat": "Бир жолу көрүлүүчү медиа файлды жүктөп алуу мүмкүн эмес"
   },
-  "icu:AttachmentNotAvailableModal__title--file": {
-    "messageformat": "Файл жок"
-  },
-  "icu:AttachmentNotAvailableModal__title--long-text": {
-    "messageformat": "Билдирүү толук эмес"
-  },
-  "icu:AttachmentNotAvailableModal__title--media": {
-    "messageformat": "Медиа файл жок"
-  },
-  "icu:AttachmentNotAvailableModal__title--sticker": {
-    "messageformat": "Стикер жок"
-  },
-  "icu:AttachmentNotAvailableModal__title--voice-message": {
-    "messageformat": "Үн билдирүүсү жок"
-  },
-  "icu:AttachmentNotAvailableModal__body--file": {
-    "messageformat": "Бул түзмөк байланышып турганда бул файл телефонуңуздан өткөн жок. Түзмөк байланышкандан 45 күн мурунку медиа файлдар жана башка нерселер шайкештирилбейт."
-  },
-  "icu:AttachmentNotAvailableModal__body--long-text": {
-    "messageformat": "Бул түзмөк байланышкандан кийин бул билдирүүдөгү текст телефонуңузга толук өткөн жок. Түзмөк байланышкандан 45 күн мурунку узун билдирүүлөр шайкештирилбейт."
-  },
-  "icu:AttachmentNotAvailableModal__body--media": {
-    "messageformat": "Бул түзмөк байланышып турганда бул медиа файл телефонуңуздан өткөн жок. Түзмөк байланышкандан 45 күн мурунку медиа файлдар шайкештирилбейт."
-  },
-  "icu:AttachmentNotAvailableModal__body--sticker": {
-    "messageformat": "Бул түзмөк байланышып турганда бул стикер телефонуңуздан өткөн жок. Түзмөк байланышкандан 45 күн мурунку медиа файлдар жана башка нерселер шайкештирилбейт."
-  },
-  "icu:AttachmentNotAvailableModal__body--voice-message": {
-    "messageformat": "Бул түзмөк байланышып турганда бул үн билдирүүсү телефонуңуздан өткөн жок. Түзмөк байланышкандан 45 күн мурунку медиа файлдар жана башка нерселер шайкештирилбейт."
-  },
   "icu:TapToViewNotAvailableModal__body--expired": {
     "messageformat": "Бир жолу көрүлүүчү бул медиа файлды жүктөп ала албайсыз. {name} аны кайра жөнөтүшү керек."
   },
@@ -1292,8 +1514,20 @@
   "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Title": {
     "messageformat": "Маек папкасын кошуу"
   },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Title--WithChatFolders": {
+    "messageformat": "Папкаларды кошуу же оңдоо"
+  },
   "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Description": {
     "messageformat": "Маектериңизди папкаларга салып, керектүүлөрүн оңой тапкыдай кылыңыз."
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Description--WithChatFolders": {
+    "messageformat": "{chatFoldersCount, plural, other {{chatFoldersCount,number} папка}}"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Button": {
+    "messageformat": "Коюу"
+  },
+  "icu:Preferences__ChatsPage__ChatFoldersSection__AddChatFolderItem__Button--WithChatFolders": {
+    "messageformat": "Өзгөртүү"
   },
   "icu:Preferences__ChatsPage__ChatFoldersSection__ChatFolderItem__ContextMenu__EditFolder": {
     "messageformat": "Папканы оңдоо"
@@ -1328,14 +1562,14 @@
   "icu:Preferences__ChatFoldersPage__FoldersSection__CreateAFolderButton": {
     "messageformat": "Папка түзүү"
   },
+  "icu:Preferences__ChatFoldersPage__FoldersSection__DragHandle__Label": {
+    "messageformat": "Сүйрөп, маектер папкасына жылдырыңыз"
+  },
   "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__Title": {
     "messageformat": "Сунушталган папкалар"
   },
   "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton": {
     "messageformat": "Кошуу"
-  },
-  "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__AddButton__Toast": {
-    "messageformat": "{chatFolderTitle} папкасы кошулду"
   },
   "icu:Preferences__ChatFoldersPage__SuggestedFoldersSection__UnreadFolder__Title": {
     "messageformat": "Окула элек"
@@ -1357,6 +1591,9 @@
   },
   "icu:Preferences__EditChatFolderPage__Title": {
     "messageformat": "Папка түзүү"
+  },
+  "icu:Preferences__EditChatFolderPage__Title--EditingExistingChatFolder": {
+    "messageformat": "Папканы оңдоо"
   },
   "icu:Preferences__EditChatFolderPage__FolderNameField__Label": {
     "messageformat": "Папканын аталышы"
@@ -1534,6 +1771,12 @@
   },
   "icu:calling__removed-from-call-title": {
     "messageformat": "Чалуудан чыгарылды"
+  },
+  "icu:calling__has-max-devices": {
+    "messageformat": "Бул чалууда жаңы катышуучуларга орун жок. Бир аздан соң кайталаңыз."
+  },
+  "icu:calling__has-max-devices--title": {
+    "messageformat": "Орун жок"
   },
   "icu:CallingLobby__CallLinkNotice": {
     "messageformat": "Шилтеме аркылуу бул чалууга кошулган адам атыңызды жана сүрөтүңүздү көрөт."
@@ -1853,6 +2096,9 @@
   "icu:notificationReactionMessage": {
     "messageformat": "{sender} {emoji} деген сезимин {message} үчүн билдирди"
   },
+  "icu:notificationPollVoteMessage": {
+    "messageformat": "{sender} \"{pollQuestion}\" деген суроого добуш берди"
+  },
   "icu:sendFailed": {
     "messageformat": "Жөнөтүлбөй калды"
   },
@@ -2070,13 +2316,16 @@
     "messageformat": "Жүктөлүп алынган жок"
   },
   "icu:Toast--unable-download-from-backup-tier": {
-    "messageformat": "Download of attachment from backup failed"
+    "messageformat": "Attachment missing from backup CDN"
   },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "Оңдоолор бул билдирүү жөнөтүлгөндөн кийин 3 сааттын ичинде күчүнө кирет."
   },
   "icu:startConversation--username-not-found": {
     "messageformat": "{atUsername} Signal колдонуучусу эмес. Колдонуучу атын толук киргизиңиз."
+  },
+  "icu:startConversation--username-not-valid": {
+    "messageformat": "{atUsername} жараксыз колдонуучунун аты. Колдонуучунун аты эки сан менен аякташы керек."
   },
   "icu:startConversation--phone-number-not-found": {
     "messageformat": "Колдонуучу табылган жок. \"{phoneNumber}\" Signal колдонуучусу эмес."
@@ -2231,6 +2480,9 @@
   "icu:message--getNotificationText--stickers": {
     "messageformat": "Стикер-билдирүүсү"
   },
+  "icu:Poll--preview": {
+    "messageformat": "Добуш бергиле: {pollQuestion}"
+  },
   "icu:message--getNotificationText--text-with-emoji": {
     "messageformat": "{emoji} {text}"
   },
@@ -2357,101 +2609,11 @@
   "icu:stickers--StickerManager--UninstallWarning": {
     "messageformat": "Эгер сизде баштапкы билдирүү жок болсо, бул стикер топтомун кайра орното албай каласыз."
   },
-  "icu:stickers--StickerManager--Introduction--Image": {
-    "messageformat": "Стикерлер менен тааныштыруу: Бандит мышык"
-  },
-  "icu:stickers--StickerManager--Introduction--Title": {
-    "messageformat": "Стикерлер менен тааныштыруу"
-  },
-  "icu:stickers--StickerManager--Introduction--Body": {
-    "messageformat": "Стикерлерди колдонсоңуз, сөздөрдү колдонууга кереги жок."
-  },
-  "icu:stickers--StickerPicker--Open": {
-    "messageformat": "Стикер тандагычты ачуу"
-  },
-  "icu:stickers--StickerPicker--AddPack": {
-    "messageformat": "Стикерлер топтомун кошуу"
-  },
-  "icu:stickers--StickerPicker--NextPage": {
-    "messageformat": "Кийинки бет"
-  },
-  "icu:stickers--StickerPicker--PrevPage": {
-    "messageformat": "Мурунку бет"
-  },
-  "icu:stickers--StickerPicker--Recents": {
-    "messageformat": "Акыркы стикер"
-  },
-  "icu:stickers--StickerPicker--DownloadError": {
-    "messageformat": "Кээ бир стикерлер жүктөлүп алынбай койду."
-  },
-  "icu:stickers--StickerPicker--DownloadPending": {
-    "messageformat": "Стикерлер топтому орнотулууда..."
-  },
-  "icu:stickers--StickerPicker--Empty": {
-    "messageformat": "Стикерлер табылган жок"
-  },
-  "icu:stickers--StickerPicker--Hint": {
-    "messageformat": "Билдирүүлөрүңүздөн жаңы стикерлер топтомдорун орнотууга болот"
-  },
-  "icu:stickers--StickerPicker--NoPacks": {
-    "messageformat": "Стикерлер топтомдору табылган жок"
-  },
-  "icu:stickers--StickerPicker--NoRecents": {
-    "messageformat": "Бул жерде жакында колдонулган стикерлер пайда болот."
-  },
-  "icu:stickers__StickerPicker__recent": {
-    "messageformat": "Соңкулар"
-  },
-  "icu:stickers__StickerPicker__featured": {
-    "messageformat": "Өзгөчөлөнгөндөр"
-  },
-  "icu:stickers__StickerPicker__analog-time": {
-    "messageformat": "Аналог убакыты"
-  },
   "icu:stickers--StickerPreview--Title": {
     "messageformat": "Стикерлер топтому"
   },
   "icu:stickers--StickerPreview--Error": {
     "messageformat": "Стикерлер топтомун ачуу катасы. Интернет туташууңузду текшерип, кайра аракет кылыңыз."
-  },
-  "icu:EmojiPicker--empty": {
-    "messageformat": "Быйтыкчалар табылган жок"
-  },
-  "icu:EmojiPicker--search-close": {
-    "messageformat": "Быйтыкчаларды издөөнү жабуу"
-  },
-  "icu:EmojiPicker--search-placeholder": {
-    "messageformat": "Быйтыкчаларды издөө"
-  },
-  "icu:EmojiPicker--skin-tone": {
-    "messageformat": "Теринин өңү {tone}"
-  },
-  "icu:EmojiPicker__button--recents": {
-    "messageformat": "Соңкулар"
-  },
-  "icu:EmojiPicker__button--emoji": {
-    "messageformat": "Быйтыкча"
-  },
-  "icu:EmojiPicker__button--animal": {
-    "messageformat": "Жаныбар"
-  },
-  "icu:EmojiPicker__button--food": {
-    "messageformat": "Тамак-аш"
-  },
-  "icu:EmojiPicker__button--activity": {
-    "messageformat": "Активдүүлүк"
-  },
-  "icu:EmojiPicker__button--travel": {
-    "messageformat": "Саякат"
-  },
-  "icu:EmojiPicker__button--object": {
-    "messageformat": "Объект"
-  },
-  "icu:EmojiPicker__button--symbol": {
-    "messageformat": "Символ"
-  },
-  "icu:EmojiPicker__button--flag": {
-    "messageformat": "Желек"
   },
   "icu:FunPicker__Tab--Emojis": {
     "messageformat": "Быйтыкча"
@@ -2560,6 +2722,9 @@
   },
   "icu:FunPanelStickers__SubNavCategoryLabel--Recents": {
     "messageformat": "Жакында колдонулгандар"
+  },
+  "icu:FunPanelStickers__SubNavButton--AddStickerPack": {
+    "messageformat": "Стикерлер топтомун кошуу"
   },
   "icu:FunPanelStickers__SectionTitle--SearchResults": {
     "messageformat": "Табылган нерселер"
@@ -3527,9 +3692,6 @@
   "icu:muteExpirationLabel": {
     "messageformat": "{duration} чейин үнү басылды"
   },
-  "icu:EmojiButton__label": {
-    "messageformat": "Быйтыкча"
-  },
   "icu:ErrorModal--title": {
     "messageformat": "Бир жерден ката кетти!"
   },
@@ -4292,6 +4454,18 @@
   "icu:CompositionArea--attach-file": {
     "messageformat": "Файлды тиркөө"
   },
+  "icu:CompositionArea__AttachMenu__PhotosAndVideos": {
+    "messageformat": "Сүрөттөр/Видеолор"
+  },
+  "icu:CompositionArea__AttachMenu__File": {
+    "messageformat": "Файл"
+  },
+  "icu:CompositionArea__AttachMenu__Poll": {
+    "messageformat": "Добуш берүү"
+  },
+  "icu:CompositionArea--attach-plus": {
+    "messageformat": "Тиркеме же сурамжылоо кошуу"
+  },
   "icu:CompositionArea--sms-only__title": {
     "messageformat": "Бул адам Signal колдонбойт"
   },
@@ -4442,7 +4616,7 @@
   "icu:ConversationDetailsActions--block-group-modal-confirm": {
     "messageformat": "Бөгөттөө"
   },
-  "icu:ConversationDetailsActions--unblock-group-modal-content": {
+  "icu:ConversationDetailsActions--unblock-group-modal-body": {
     "messageformat": "Байланыштарыңыз сизди ушул топко кошо алышат."
   },
   "icu:ConversationDetailsActions--unblock-group-modal-confirm": {
@@ -4451,11 +4625,8 @@
   "icu:ConversationDetailsHeader--members": {
     "messageformat": "{number, plural, other {{number,number} мүчө}}"
   },
-  "icu:ConversationDetailsMediaList--shared-media": {
-    "messageformat": "Жалпы медиафайлдар"
-  },
-  "icu:ConversationDetailsMediaList--show-all": {
-    "messageformat": "Баарын көрүү"
+  "icu:ConversationDetailsMediaList--title": {
+    "messageformat": "Медиа файлдар, шилтемелер жана башка нерселер"
   },
   "icu:ConversationDetailsMembershipList--title": {
     "messageformat": "{number, plural, other {{number,number} мүчө}}"
@@ -4949,6 +5120,57 @@
   "icu:ConversationDetailsHeader--add-group-description": {
     "messageformat": "Топ тууралуу учкай маалымат кошуу…"
   },
+  "icu:AudioListItem__subtitle--voice-message": {
+    "messageformat": "Үн билдирүүсү"
+  },
+  "icu:AudioListItem__subtitle--audio": {
+    "messageformat": "Аудио"
+  },
+  "icu:LinkPreviewItem__alt": {
+    "messageformat": "Серепчидеги шилтемени ачуу"
+  },
+  "icu:ListItem__show-message": {
+    "messageformat": "Сүйлөшүүдөгү билдирүүнү көрсөтүү"
+  },
+  "icu:MediaGallery__tab__audio": {
+    "messageformat": "Аудио"
+  },
+  "icu:MediaGallery__tab__files": {
+    "messageformat": "Файлдар"
+  },
+  "icu:MediaGallery__tab__links": {
+    "messageformat": "Шилтемелер"
+  },
+  "icu:MediaGallery__EmptyState__title--media": {
+    "messageformat": "Эч нерсе жок"
+  },
+  "icu:MediaGallery__EmptyState__description--media": {
+    "messageformat": "Жөнөтүлгөн жана алынган сүрөттөр, видеолор жана GIFтер ушул жерде көрүнөт"
+  },
+  "icu:MediaGallery__EmptyState__title--audio": {
+    "messageformat": "Аудио файлдар жок"
+  },
+  "icu:MediaGallery__EmptyState__description--audio": {
+    "messageformat": "Жөнөтүлгөн жана алынган үн билдирүүлөрү жана аудио файлдар ушул жерде көрүнөт"
+  },
+  "icu:MediaGallery__EmptyState__title--links": {
+    "messageformat": "Шилтемелер жок"
+  },
+  "icu:MediaGallery__EmptyState__description--links-2": {
+    "messageformat": "Жөнөтүлгөн жана алынган шилтемелер ушул жерде көрүнөт"
+  },
+  "icu:MediaGallery__EmptyState__description--documents": {
+    "messageformat": "Жөнөтүлгөн жана алынган шилтемелер ушул жерде көрүнөт"
+  },
+  "icu:MediaGallery__EmptyState__title--documents": {
+    "messageformat": "Файлдар жок"
+  },
+  "icu:MediaGallery__EmptyState__description--documents-2": {
+    "messageformat": "Жөнөтүлгөн жана алынган файлдар ушул жерде көрүнөт"
+  },
+  "icu:MediaGallery__EmptyState__description--links": {
+    "messageformat": "Жөнөтүлгөн жана алынган файлдар ушул жерде көрүнөт"
+  },
   "icu:MediaQualitySelector--button": {
     "messageformat": "Медиа сапатын тандоо"
   },
@@ -5288,11 +5510,332 @@
   "icu:Preferences--notification-content": {
     "messageformat": "Билдирмелер мазмуну"
   },
+  "icu:PlaintextExport--PreferencesRow--Header": {
+    "messageformat": "Маек таржымалын экспорттоо"
+  },
+  "icu:PlaintextExport--PreferencesRow--Description": {
+    "messageformat": "Бардык маектериңиздин машина окуган JSON көчүрмөсүн экспорттойсуз. Жоголуп кетүүчү билдирүүлөр экспорттолбойт."
+  },
+  "icu:PlaintextExport--ActionButton": {
+    "messageformat": "Экспорттоо"
+  },
+  "icu:PlaintextExport--Confirmation--Header": {
+    "messageformat": "Маек таржымалын экспорттойсузбу?"
+  },
+  "icu:PlaintextExport--Confirmation--Description": {
+    "messageformat": "<bold>ЭТИЯТ БОЛУҢУЗ!</bold> Бул файлды эч ким менен БӨЛҮШПӨҢҮЗ. Таржымал компьютериңизге сакталып, башка колдонмолорго компьютериңиздин уруксаттарына жараша жеткиликтүү болот."
+  },
+  "icu:PlaintextExport--Confirmation--IncludeMedia": {
+    "messageformat": "Медиа файл кошуу <secondary>(чоңураак көлөмдөгү файл)</secondary>"
+  },
+  "icu:PlaintextExport--Confirmation--ContinueButton": {
+    "messageformat": "Улантуу"
+  },
+  "icu:PlaintextExport--Confirmation--WaitingLabel": {
+    "messageformat": "Күтүлүүдө"
+  },
+  "icu:PlaintextExport--OSPrompt--Mac": {
+    "messageformat": "маек таржымалын экспорттоо"
+  },
+  "icu:PlaintextExport--OSPrompt--Windows": {
+    "messageformat": "Маек таржымалын экспорттоо үчүн өздүгүңүздү ырастаңыз."
+  },
+  "icu:PlaintextExport--OSPrompt--description--Linux": {
+    "messageformat": "Экспорттоо"
+  },
+  "icu:PlaintextExport--OSPrompt--message--Linux": {
+    "messageformat": "Маек таржымалын экспорттоо үчүн аутентификациядан өтүшүңүз керек."
+  },
+  "icu:PlaintextExport--ProgressDialog--Header": {
+    "messageformat": "Маек таржымалы экспорттолууда"
+  },
+  "icu:PlaintextExport--ProgressDialog--Progress": {
+    "messageformat": "{totalBytes} ичинен {currentBytes} ({percentage,number,percent}) экспорттолду..."
+  },
+  "icu:PlaintextExport--ProgressDialog--TimeWarning": {
+    "messageformat": "Бир аз убакыт кетиши мүмкүн"
+  },
+  "icu:PlaintextExport--CompleteDialog--Header": {
+    "messageformat": "Өткөрүлдү"
+  },
+  "icu:PlaintextExport--CompleteDialog--Description": {
+    "messageformat": "Маегиңиз сакталчу жерди <bold>ЭТИЯТ</bold> тандап, аны эч ким менен бөлүшпөңүз. Башка колдонмолорго ал компьютериңиздин уруксаттарына жараша жеткиликтүү болот. "
+  },
+  "icu:PlaintextExport--CompleteDialog--ShowFiles--Mac": {
+    "messageformat": "Finder'де көрсөтүү"
+  },
+  "icu:PlaintextExport--CompleteDialog--ShowFiles--Linux": {
+    "messageformat": "Папкада көрсөтүү"
+  },
+  "icu:PlaintextExport--CompleteDialog--ShowFiles--Windows": {
+    "messageformat": "Папкада көрсөтүү"
+  },
+  "icu:PlaintextExport--Error--General--Title": {
+    "messageformat": "Маек таржымалы экспорттолбой жатат"
+  },
+  "icu:PlaintextExport--Error--General--Description": {
+    "messageformat": "Ката кетип, маек таржымалыңыз экспорттолгон жок."
+  },
+  "icu:PlaintextExport--Error--NotEnoughStorage--Title": {
+    "messageformat": "Сактагычта орун жетишсиз"
+  },
+  "icu:PlaintextExport--Error--NotEnoughStorage--Detail": {
+    "messageformat": "Компьютериңизде орун калбай бараткандыктан, маек таржымалы экспорттолбой жатат. {bytes} чейин орун бошотуп, кайталап көрүңүз."
+  },
+  "icu:PlaintextExport--Error--RanOutOfStorage--Title": {
+    "messageformat": "Маек таржымалы экспорттолбой жатат"
+  },
+  "icu:PlaintextExport--Error--RanOutOfStorage--Detail": {
+    "messageformat": "Компьютериңизде орун калбай бараткандыктан, маек таржымалы экспорттолбой жатат. {bytes} чейин орун бошотуп, кайталап көрүңүз."
+  },
+  "icu:PlaintextExport--Error--DiskPermssions--Title": {
+    "messageformat": "Маек таржымалы экспорттолгон жок"
+  },
+  "icu:PlaintextExport--Error--DiskPermssions--Detail": {
+    "messageformat": "Signal'га файлдарды дискке жазганга уруксат берилбегендиктен, маек таржымалын экспорттой албайсыз. Уруксат берип же системанын параметрлерин өзгөртүп, кайра экспорттоп көрүңүз."
+  },
+  "icu:NotificationProfile--moon-icon": {
+    "messageformat": "Айдын сүрөтчөсү"
+  },
+  "icu:NotificationProfile--copy-label": {
+    "messageformat": "{profileName} көчүрмөсү"
+  },
+  "icu:NotificationProfile--am": {
+    "messageformat": "AM"
+  },
+  "icu:NotificationProfile--pm": {
+    "messageformat": "PM"
+  },
+  "icu:NotificationProfile--time-separator": {
+    "messageformat": ":"
+  },
+  "icu:NotificationProfileMenuItem": {
+    "messageformat": "Билдирмелер профили"
+  },
+  "icu:NotificationProfileMenu--header": {
+    "messageformat": "Билдирмелер профили"
+  },
+  "icu:NotificationProfileMenu--on": {
+    "messageformat": "Күйүк"
+  },
+  "icu:NotificationProfileMenu--on-with-end": {
+    "messageformat": "{endTime} чейин күйүк"
+  },
+  "icu:NotificationProfileMenu--for-one-hour": {
+    "messageformat": "Бир саатка"
+  },
+  "icu:NotificationProfileMenu--until-time": {
+    "messageformat": "{time} чейин"
+  },
+  "icu:NotificationProfileMenu--settings": {
+    "messageformat": "Тууралоо"
+  },
+  "icu:NotificationProfilesToast--enabled": {
+    "messageformat": "“{name}” күйүк"
+  },
+  "icu:NotificationProfilesToast--disabled": {
+    "messageformat": "“{name}” өчүк"
+  },
+  "icu:NotificationProfilesToast--enabled--label": {
+    "messageformat": "Билдирмелер профили күйгүзүлдү"
+  },
+  "icu:NotificationProfilesToast--disabled--label": {
+    "messageformat": "Билдирмелер профили өчүрүлдү"
+  },
+  "icu:NotificationProfiles--setting": {
+    "messageformat": "Билдирме профилдери"
+  },
+  "icu:NotificationProfiles--setup": {
+    "messageformat": "Коюу"
+  },
+  "icu:NotificationProfiles--title": {
+    "messageformat": "Билдирме профилдери"
+  },
+  "icu:NotificationProfiles--setup-description": {
+    "messageformat": "Профиль түзүп, тандалган адамдар менен топтордон гана билдирмелерди алыңыз"
+  },
+  "icu:NotificationProfiles--setup-continue": {
+    "messageformat": "Улантуу"
+  },
+  "icu:NotificationProfiles--manage-description": {
+    "messageformat": "Билдирмелер профилдерин кошосуз же өзгөртөсүз"
+  },
+  "icu:NotificationProfiles--manage-profiles": {
+    "messageformat": "{profileCount, plural, other {{profileCount,number} профиль}}"
+  },
+  "icu:NotificationProfiles--create": {
+    "messageformat": "Профиль түзүү"
+  },
+  "icu:NotificationProfiles--name-title": {
+    "messageformat": "Профилиңизге ат коюңуз"
+  },
+  "icu:NotificationProfiles--name-title--editing": {
+    "messageformat": "Ысым"
+  },
+  "icu:NotificationProfiles--name-placeholder": {
+    "messageformat": "Профилдин аталышы"
+  },
+  "icu:NotificationProfiles--sample-name__work": {
+    "messageformat": "Жумуш"
+  },
+  "icu:NotificationProfiles--sample-name__sleep": {
+    "messageformat": "Уйку"
+  },
+  "icu:NotificationProfiles--sample-name__driving": {
+    "messageformat": "Айдоо"
+  },
+  "icu:NotificationProfiles--sample-name__downtime": {
+    "messageformat": "Эс алууда"
+  },
+  "icu:NotificationProfiles--sample-name__focus": {
+    "messageformat": "Фокус"
+  },
+  "icu:NotificationProfiles--allowed-title": {
+    "messageformat": "Уруксат берилген билдирмелер"
+  },
+  "icu:NotificationProfiles--allowed-description": {
+    "messageformat": "Бул профиль күйүп турганда, билдирмелерине уруксат берилген адамдар менен топторду кошосуз"
+  },
+  "icu:NotificationProfiles--allowed-add-label": {
+    "messageformat": "Адамдарды же топторду кошуу"
+  },
+  "icu:NotificationProfiles--exceptions": {
+    "messageformat": "Өзгөчө учурлар"
+  },
+  "icu:NotificationProfiles--exceptions--allow-all-calls": {
+    "messageformat": "Бардык чалууларга уруксат берүү"
+  },
+  "icu:NotificationProfiles--exceptions--notify-for-mentions": {
+    "messageformat": "Бардык эскертмелер жөнүндө кабарлоо"
+  },
+  "icu:NotificationProfiles--schedule-title": {
+    "messageformat": "График кошуу"
+  },
+  "icu:NotificationProfiles--schedule-title--editing": {
+    "messageformat": "График"
+  },
+  "icu:NotificationProfiles--schedule-description": {
+    "messageformat": "Билдирмелер профилин автоматташтыруу үчүн график түзүп, тийиштүү өзгөрүүлөрдү киргизиңиз."
+  },
+  "icu:NotificationProfiles--schedule-enable": {
+    "messageformat": "Автоматтык түрдө күйгүзүү"
+  },
+  "icu:NotificationProfiles--schedule": {
+    "messageformat": "График"
+  },
+  "icu:NotificationProfiles--schedule-from": {
+    "messageformat": "Жөнөтүүчү"
+  },
+  "icu:NotificationProfiles--schedule-until": {
+    "messageformat": "Качанкыга чейин"
+  },
+  "icu:NotificationProfiles--open-time-picker": {
+    "messageformat": "Убакыт тандагычты ачуу"
+  },
+  "icu:NotificationProfiles--schedule-sunday": {
+    "messageformat": "Жекшемби"
+  },
+  "icu:NotificationProfiles--schedule-monday": {
+    "messageformat": "Дүйшөмбү"
+  },
+  "icu:NotificationProfiles--schedule-tuesday": {
+    "messageformat": "Шейшемби"
+  },
+  "icu:NotificationProfiles--schedule-wednesday": {
+    "messageformat": "Шаршемби"
+  },
+  "icu:NotificationProfiles--schedule-thursday": {
+    "messageformat": "Бейшемби"
+  },
+  "icu:NotificationProfiles--schedule-friday": {
+    "messageformat": "Жума"
+  },
+  "icu:NotificationProfiles--schedule-saturday": {
+    "messageformat": "Ишемби"
+  },
+  "icu:NotificationProfiles--done-title": {
+    "messageformat": "Профиль түзүлдү"
+  },
+  "icu:NotificationProfiles--done-description": {
+    "messageformat": "График кошсоңуз, профилиңиз автоматтык түрдө күйүп өчөт. Кааласаңыз, маектер тизмесинин өйдө жагындагы  ···  деген сүрөтчөнү кол менен күйгүзүп өчүрсөңүз болот."
+  },
+  "icu:NotificationProfiles--schedule-sunday-short": {
+    "messageformat": "Жекш"
+  },
+  "icu:NotificationProfiles--schedule-monday-short": {
+    "messageformat": "Дүйш"
+  },
+  "icu:NotificationProfiles--schedule-tuesday-short": {
+    "messageformat": "Шейш"
+  },
+  "icu:NotificationProfiles--schedule-wednesday-short": {
+    "messageformat": "Шарш"
+  },
+  "icu:NotificationProfiles--schedule-thursday-short": {
+    "messageformat": "Бейш"
+  },
+  "icu:NotificationProfiles--schedule-friday-short": {
+    "messageformat": "Жума"
+  },
+  "icu:NotificationProfiles--schedule-saturday-short": {
+    "messageformat": "Ишем"
+  },
+  "icu:NotificationProfiles--schedule-weekdays": {
+    "messageformat": "Иш күндөрү"
+  },
+  "icu:NotificationProfiles--schedule-weekends": {
+    "messageformat": "Дем алыш күндөр"
+  },
+  "icu:NotificationProfiles--schedule-daily": {
+    "messageformat": "Күн сайын"
+  },
+  "icu:NotificationProfiles--schedule-separator": {
+    "messageformat": ", "
+  },
+  "icu:NotificationProfiles--list--header": {
+    "messageformat": "Профильдер"
+  },
+  "icu:NotificationProfiles--list--sync": {
+    "messageformat": "Түзмөктөрдү шайкештирүү"
+  },
+  "icu:NotificationProfiles--list--sync--description": {
+    "messageformat": "Профилдериңиз түзмөктөрүңүздүн ортосунда шайкештирилет. Профилди бир түзмөктө өчүрсөңүз, ал башка түзмөктөрдө да өчөт."
+  },
+  "icu:NotificationProfiles--delete": {
+    "messageformat": "Профилди жок кылуу"
+  },
+  "icu:NotificationProfiles--delete-confirmation": {
+    "messageformat": "Бул билдирмелер профилин биротоло өчүрөсүзбү?"
+  },
+  "icu:NotificationProfiles--delete-button": {
+    "messageformat": "Өчүрүү"
+  },
+  "icu:NotificationProfiles--edit--is-active": {
+    "messageformat": "Күйүк"
+  },
+  "icu:NotificationProfiles--edit--is-not-active": {
+    "messageformat": "Өчүк"
+  },
+  "icu:NotificationProfiles--edit--edit-name-label": {
+    "messageformat": "Бул профилдин аталышын өзгөртүү"
+  },
+  "icu:NotificationProfiles--edit--allowed": {
+    "messageformat": "Уруксат берилген билдирмелер"
+  },
+  "icu:NotificationProfiles--edit--schedule-timing": {
+    "messageformat": "{startTime} -> {endTime}"
+  },
+  "icu:NotificationProfiles--edit--schedule-enabled": {
+    "messageformat": "Күйүк"
+  },
+  "icu:NotificationProfiles--edit--schedule-disabled": {
+    "messageformat": "Өчүк"
+  },
   "icu:Preferences--blocked": {
     "messageformat": "Бөгөттөлдү"
   },
   "icu:Preferences--signal-backups": {
-    "messageformat": "Signal Secure Backups"
+    "messageformat": "Signal'дын Коопсуз камдык көчүрмөлөрү"
   },
   "icu:Preferences--signal-backups-off-description": {
     "messageformat": "Signal'дын баштан аяк шифрленген сактоо кызматы менен камдык көчүрмөлөр автоматтык түрдө сакталат. Телефонуңузда баштаңыз. <learnMoreLink>Кененирээк маалымат.</learnMoreLink>"
@@ -5307,7 +5850,10 @@
     "messageformat": "Тексттик ж.б. медиа файлдардын камдык көчүрмөсү"
   },
   "icu:Preferences--backup-plan-not-found__description": {
-    "messageformat": "Your subscription was not found. Renew to continue using Signal Secure Backups."
+    "messageformat": "Жазылууңуз табылган жок. Телефонуңуздан камдык көчүрмөлөрүн карап көрүңүз."
+  },
+  "icu:Preferences--backup-subscription-monthly-cost": {
+    "messageformat": "Айына {cost}"
   },
   "icu:Preferences--backup-messages-plan__description": {
     "messageformat": "{mediaDayCount, plural, other {Тексттик жана соңку {mediaDayCount,number} күндөгү медиа файлдардын камдык көчүрмөсү}}"
@@ -5325,13 +5871,13 @@
     "messageformat": "Жазылуу токтотулду"
   },
   "icu:Preferences--backup-media-plan__note": {
-    "messageformat": "You can manage or cancel your Signal Secure Backups subscription on your phone."
+    "messageformat": "Signal'дын камдык көчүрмөлөрүнө катталууну телефонуңуздан өзгөртүп же токтото аласыз."
   },
   "icu:Preferences--backup-messages-plan__note": {
-    "messageformat": "You can manage or upgrade Signal Secure Backups on your phone."
+    "messageformat": "Signal'дын камдык көчүрмөлөрүн телефонуңуздан башкарып же башка тарифке өтө аласыз."
   },
   "icu:Preferences--backup-plan__not-found__note": {
-    "messageformat": "You can manage or renew your Signal Secure Backups subscription on your phone."
+    "messageformat": "Signal'дын камдык көчүрмөлөрүнө телефонуңуздан катталып же катталууңузду узарта аласыз."
   },
   "icu:Preferences--backup-created-at__label": {
     "messageformat": "Акыркы жолу качан сакталган"
@@ -5362,6 +5908,18 @@
   },
   "icu:Preferences--local-backups-view-backup-key-done": {
     "messageformat": "Бүттү"
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt--mac": {
+    "messageformat": "камдык көчүрмө ачкычын көрүү"
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt--windows": {
+    "messageformat": "Камдык көчүрмөнүн ачкычын көрүү үчүн өздүгүңүздү ырастаңыз."
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt-description--linux": {
+    "messageformat": "Камдык көчүрмөнүн ачкычын көрүү"
+  },
+  "icu:Preferences--local-backups--view-backup-key--os-prompt-message--linux": {
+    "messageformat": "Камдык көчүрмө ачкычын көрүү үчүн аутентификациядан өтүшүңүз керек."
   },
   "icu:Preferences--local-backups-backup-key-text-box": {
     "messageformat": "Камдык көчүрмөнүн ачкычы жазылган жер"
@@ -5404,6 +5962,18 @@
   },
   "icu:Preferences__local-backups-copied-key": {
     "messageformat": "Камдык көчүрмөнүн ачкычы көчүрүлдү"
+  },
+  "icu:Preferences__local-backups--enable--os-prompt--mac": {
+    "messageformat": "Камдык көчүрмөлөрдү иштетүү"
+  },
+  "icu:Preferences__local-backups--enable--os-prompt--windows": {
+    "messageformat": "Өздүгүңүздү ырастап, камдык көчүрмөлөрдү иштетиңиз."
+  },
+  "icu:Preferences__local-backups--enable--os-prompt-description--linux": {
+    "messageformat": "Камдык көчүрмөлөрдү иштетүү"
+  },
+  "icu:Preferences__local-backups--enable--os-prompt-message--linux": {
+    "messageformat": "Камдык көчүрмөлөрдү иштетүү үчүн аутентификациядан өтүшүңүз керек."
   },
   "icu:Preferences__view-key": {
     "messageformat": "Ачкычты карап көрүү"
@@ -6393,6 +6963,9 @@
   "icu:MessageMetadata__edited": {
     "messageformat": "Оңдолгон"
   },
+  "icu:MessageMetadata__pinned": {
+    "messageformat": "Pinned"
+  },
   "icu:DraftGifMessageSendModal__Title": {
     "messageformat": "Билдирүү кошуу"
   },
@@ -6404,6 +6977,9 @@
   },
   "icu:EditHistoryMessagesModal__title": {
     "messageformat": "Оңдолгондор"
+  },
+  "icu:EditHistoryMessagesModal__Message__ContextMenu__CopyTimestamp": {
+    "messageformat": "Убакыт белгисин көчүрүү"
   },
   "icu:ResendMessageEdit__body": {
     "messageformat": "Бул оңдолгон билдирүү жөнөтүлгөн жок. Байланышыңызды текшерип, кайталап көрүңүз"
@@ -6699,9 +7275,6 @@
   "icu:PreferencesDonations--receiptList__empty-title": {
     "messageformat": "Дүмүрчөктөр жок"
   },
-  "icu:PreferencesDonations__ReceiptModal--title": {
-    "messageformat": "Чоо-жайы"
-  },
   "icu:PreferencesDonations__ReceiptModal--download": {
     "messageformat": "Дүмүрчөктү жүктөп алуу"
   },
@@ -6819,14 +7392,11 @@
   "icu:Donations__Toast__ConfirmationNeeded": {
     "messageformat": "Ырастоону талап кылган салымыңыз ишке ашууда."
   },
-  "icu:Donations__Toast__DonationCompletedAndBadgeApplicationFailed": {
+  "icu:Donations__BadgeApplicationFailed__Title": {
     "messageformat": "Салымыңыз кошулду, бирок төшбелгиңиздин параметрлерин өзгөртө алган жокпуз"
   },
-  "icu:Donations__BadgeApplicationFailed__Title": {
-    "messageformat": "Donation succeeded, but we could not update your badge settings"
-  },
   "icu:Donations__BadgeApplicationFailed__Description": {
-    "messageformat": "To update your badge settings on your mobile device, go to Settings → Donate to Signal → Badges."
+    "messageformat": "Мобилдик түзмөгүңүздө төшбелги параметрлерин өзгөртүү үчүн Параметрлер → Signal'га колдоо көрсөтүү → Төшбелгилер дегенге өтүңүз."
   },
   "icu:Donations__DonationInterrupted": {
     "messageformat": "Салым үзгүлтүккө учурады"
@@ -6903,6 +7473,90 @@
   "icu:Donations__badge-modal--help-text": {
     "messageformat": "Аны мобилдик түзмөгүңүздө Параметрлер → Signal'га колдоо көрсөтүү → Төшбелгилер деген жерде тууралай аласыз"
   },
+  "icu:CallQualitySurvey__CloseButton__AccessibilityLabel": {
+    "messageformat": "Close"
+  },
+  "icu:CallQualitySurvey__BackButton__AccessibilityLabel": {
+    "messageformat": "Back"
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__PageTitle": {
+    "messageformat": "How was your call?"
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__PageDescription": {
+    "messageformat": "This helps us improve calls in Signal. No personally identifiable information will be stored."
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__Response__HadIssues": {
+    "messageformat": "Had issues"
+  },
+  "icu:CallQualitySurvey__HowWasYourCall__Response__Great": {
+    "messageformat": "Great"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__PageTitle": {
+    "messageformat": "What issues did you have?"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__IssuesList__Heading": {
+    "messageformat": "Select all that apply"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO": {
+    "messageformat": "Audio issue"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_STUTTERING": {
+    "messageformat": "Audio stuttering"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_LOCAL_ECHO": {
+    "messageformat": "I heard echo"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_REMOTE_ECHO": {
+    "messageformat": "Others heard echo"
+  },
+  "icu:CallQualitySurvey__Issue--AUDIO_DROP": {
+    "messageformat": "Audio cut out"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO": {
+    "messageformat": "Video issue"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO_NO_CAMERA": {
+    "messageformat": "Camera didn't work"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO_LOW_QUALITY": {
+    "messageformat": "Poor video quality"
+  },
+  "icu:CallQualitySurvey__Issue--VIDEO_LOW_RESOLUTION": {
+    "messageformat": "Low resolution"
+  },
+  "icu:CallQualitySurvey__Issue--CALL_DROPPED": {
+    "messageformat": "Call dropped"
+  },
+  "icu:CallQualitySurvey__Issue--OTHER": {
+    "messageformat": "Something else"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__SomethingElse__TextArea__AccessibilityLabel": {
+    "messageformat": "Issues description"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__SomethingElse__TextArea__HelpText": {
+    "messageformat": "Please include any details relevant to the issue. Anything you share here will be kept private and will only be used to help improve calls in Signal."
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__ContinueButton": {
+    "messageformat": "Continue"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__PageTitle": {
+    "messageformat": "Help us improve"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__PageDescription": {
+    "messageformat": "This helps us learn more about calls and what is working or not working. You can view your debug log before submitting."
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__Label": {
+    "messageformat": "Share debug log"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__ViewButton": {
+    "messageformat": "View"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__HelpText": {
+    "messageformat": "Debug logs contain low level app information and do not reveal any of your message contents."
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__SubmitButton": {
+    "messageformat": "Submit"
+  },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "Бул версия бир нече майда өзгөртүүлөрдү жана мүчүлүштүктөрдү оңдоолорду камтыйт.",
     "ignoreUnused": true
@@ -6931,13 +7585,16 @@
     "messageformat": "Майда-барат өзгөрүүлөрдү киргизип, мүчүлүштүктөрдү оңдоп, колдонмонун иштешин жакшыртып жатабыз. Signal'ды колдонгонуңуз үчүн чоң рахмат!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__v7.66--0": {
-    "messageformat": "Бул жаңы версияда бир нече мүчүлүштүктөр оңдолду. Мисалы, сезимдерди билдирген быйтыкчалар туура эмес топтоштурулган мүчүлүштүк."
+  "icu:WhatsNew__7.79-1": {
+    "messageformat": "Колдонмодогу сыдырмалардын көрүнүшү менен стилин өзгөрттүк. Адатта, өтө тез сыдырганда кээ бир нерселер көрүнбөй калчу, эми аларды сыдырып гана көрөсүз."
   },
-  "icu:WhatsNew__v7.67--0": {
-    "messageformat": "Айрым колдонуучулар үчүн кайрымдуулук бейжиктери туура эмес көрүнүп жаткан мүчүлүштүктү оңдодук. Signal - АКШнын Салык кодексинин 501c3-бөлүмүнө ылайык иштеген коммерциялык эмес уюм. Колдооңуз үчүн терең ыраазычылык!"
+  "icu:WhatsNew__7.79-2": {
+    "messageformat": "Көчүрүү/Чаптоо функциялары жакшырып, эми баарын оңоюраак тандап, учурдагы текстти жаңы форматта алмаштырасыз. Чоң рахмат <brianHarder></brianHarder>!"
   },
-  "icu:WhatsNew__v7.70--0": {
-    "messageformat": "Signal Desktop терезесинин аталышын көк эмес, кызгылт сары кылып көрсөткөн Microsoft Windows'тогу катаны оңдоп койдук. Кызгылт сары түскө көнүп калып, мындай жаңылыктан маанайың чөксө, Windows'тун параметрлеринен түстүн акцентин өзгөртүп алыңыз."
+  "icu:WhatsNew__7.80-1": {
+    "messageformat": "★ Signal сурамжылоолорун байкап көрүңүз! Досторуңуз менен оюңуз бирби же таптакыр башкабы? Сурамжылоолор аркылуу тобуңуздун кандайдыр бир нерселер боюнча пикирин биле аласыз. Кечки тамактанууга, эс алууга, унаа менен сапарга чыкканда угуучу музыкага жана башка маанилүү нерселерге бир нече вариант сунуштап сурамжылоо жүргүзүңүз. Топтогулардын баары добуш берип, бири-биринин жоопторун көрүп турушат. Кааласаңыз, бир же бир нече добушту кабыл алсаңыз болот."
+  },
+  "icu:WhatsNew__7.81-1": {
+    "messageformat": "Медиа файлдар галереясында эми аудио билдирүүлөргө жана шилтемелерге арналган эки жаңы өтмөк бар. Шилтеме топтук маекке түшүп калса, үн чыгабы?"
   }
 }
