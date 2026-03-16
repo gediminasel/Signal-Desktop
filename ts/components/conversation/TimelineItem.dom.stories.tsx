@@ -39,6 +39,7 @@ const getDefaultProps = () => ({
   containerWidthBreakpoint: WidthBreakpoint.Wide,
   conversationId: 'conversation-id',
   getPreferredBadge: () => undefined,
+  getSharedGroupNames: () => [],
   id: 'asdf',
   isNextItemCallingNotification: false,
   isPinned: false,
@@ -49,6 +50,7 @@ const getDefaultProps = () => ({
   interactionMode: 'keyboard' as const,
   theme: ThemeType.light,
   platform: 'darwin',
+  handleDebugMessage: action('handleDebugMessage'),
   targetMessage: action('targetMessage'),
   toggleSelectMessage: action('toggleSelectMessage'),
   endPoll: action('endPoll'),
@@ -71,7 +73,7 @@ const getDefaultProps = () => ({
   openGiftBadge: action('openGiftBadge'),
   saveAttachment: action('saveAttachment'),
   saveAttachments: action('saveAttachments'),
-  onPinnedMessageAdd: action('onPinnedMessageAdd'),
+  showPinMessageDialog: action('showPinMessageDialog'),
   onPinnedMessageRemove: action('onPinnedMessageRemove'),
   onOpenEditNicknameAndNoteModal: action('onOpenEditNicknameAndNoteModal'),
   onOutgoingAudioCallInConversation: action(
@@ -128,7 +130,7 @@ export default {
   title: 'Components/Conversation/TimelineItem',
 } satisfies Meta<TimelineItemProps>;
 
-export function PlainMessage(): JSX.Element {
+export function PlainMessage(): React.JSX.Element {
   const item = {
     type: 'message',
     data: {
@@ -146,7 +148,7 @@ export function PlainMessage(): JSX.Element {
   return <TimelineItem {...getDefaultProps()} item={item} i18n={i18n} />;
 }
 
-export function Notification(): JSX.Element {
+export function Notification(): React.JSX.Element {
   const items = [
     {
       type: 'timerNotification',
@@ -599,7 +601,7 @@ export function Notification(): JSX.Element {
   );
 }
 
-export function UnknownType(): JSX.Element {
+export function UnknownType(): React.JSX.Element {
   const item = {
     type: 'random',
     data: {
@@ -615,7 +617,7 @@ export function UnknownType(): JSX.Element {
   );
 }
 
-export function MissingItem(): JSX.Element {
+export function MissingItem(): React.JSX.Element {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const item = null as any as TimelineItemProps['item'];
 

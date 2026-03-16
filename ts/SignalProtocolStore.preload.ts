@@ -6,6 +6,7 @@ import lodash from 'lodash';
 import { z } from 'zod';
 import { EventEmitter } from 'node:events';
 
+import type { Aci } from '@signalapp/libsignal-client';
 import {
   Direction,
   IdentityChange,
@@ -54,7 +55,11 @@ import type {
   PniString,
   AciString,
 } from './types/ServiceId.std.js';
-import { isServiceIdString, ServiceIdKind } from './types/ServiceId.std.js';
+import {
+  isServiceIdString,
+  ServiceIdKind,
+  fromAciObject,
+} from './types/ServiceId.std.js';
 import type { Address } from './types/Address.std.js';
 import type { QualifiedAddressStringType } from './types/QualifiedAddress.std.js';
 import { QualifiedAddress } from './types/QualifiedAddress.std.js';
@@ -67,6 +72,7 @@ import {
 } from './textsecure/AccountManager.preload.js';
 import { formatGroups, groupWhile } from './util/groupWhile.std.js';
 import { parseUnknown } from './util/schemas.std.js';
+import { wrappingAdd24 } from './util/wrappingAdd.std.js';
 import { itemStorage } from './textsecure/Storage.preload.js';
 
 const { omit } = lodash;
@@ -2099,6 +2105,7 @@ export class SignalProtocolStore extends EventEmitter {
       nonblockingApproval = false;
     }
 
+    strictAssert(publicKey.length > 0, 'Empty public key');
     return this.#_runOnIdentityQueue(
       encodedAddress.serviceId,
       zone,
@@ -2399,7 +2406,7 @@ export class SignalProtocolStore extends EventEmitter {
         const hadEntry = identityRecord !== undefined;
         const keyMatches = Boolean(
           identityRecord?.publicKey &&
-            constantTimeEqual(publicKey, identityRecord.publicKey)
+          constantTimeEqual(publicKey, identityRecord.publicKey)
         );
         const statusMatches =
           keyMatches && verifiedStatus === identityRecord?.verified;
@@ -2647,7 +2654,7 @@ export class SignalProtocolStore extends EventEmitter {
         [pni]: registrationId,
       }),
       (async () => {
-        const newId = signedPreKey.id() + 1;
+        const newId = Math.max(1, wrappingAdd24(signedPreKey.id(), 1));
         log.warn(`${logId}: Updating next signed pre key id to ${newId}`);
         await itemStorage.put(SIGNED_PRE_KEY_ID_KEY[ServiceIdKind.PNI], newId);
       })(),
@@ -2665,7 +2672,7 @@ export class SignalProtocolStore extends EventEmitter {
         if (!lastResortKyberPreKey) {
           return;
         }
-        const newId = lastResortKyberPreKey.id() + 1;
+        const newId = Math.max(1, wrappingAdd24(lastResortKyberPreKey.id(), 1));
         log.warn(`${logId}: Updating next kyber pre key id to ${newId}`);
         await itemStorage.put(KYBER_KEY_ID_KEY[ServiceIdKind.PNI], newId);
       })(),
@@ -2794,6 +2801,36 @@ export class SignalProtocolStore extends EventEmitter {
     } catch (error) {
       log.error(`${logId}: Error thrown from emit`, Errors.toLogFormat(error));
     }
+  }
+
+  // Key Transparency
+
+  getLastDistinguishedTreeHead(): Uint8Array | null {
+    return itemStorage.get('lastDistinguishedTreeHead') ?? null;
+  }
+
+  async setLastDistinguishedTreeHead(
+    bytes: Readonly<Uint8Array> | null
+  ): Promise<void> {
+    if (bytes == null) {
+      await itemStorage.remove('lastDistinguishedTreeHead');
+    } else {
+      await itemStorage.put('lastDistinguishedTreeHead', bytes);
+    }
+  }
+
+  async getKTAccountData(aciObject: Aci): Promise<Uint8Array | null> {
+    const aci = fromAciObject(aciObject);
+    const data = await DataReader.getKTAccountData(aci);
+    return data ?? null;
+  }
+
+  async setKTAccountData(
+    aciObject: Aci,
+    bytes: Readonly<Uint8Array>
+  ): Promise<void> {
+    const aci = fromAciObject(aciObject);
+    return DataWriter.setKTAccountData(aci, bytes);
   }
 
   //

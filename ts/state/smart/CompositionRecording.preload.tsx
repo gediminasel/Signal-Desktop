@@ -7,7 +7,7 @@ import { CompositionRecording } from '../../components/CompositionRecording.dom.
 import { useAudioRecorderActions } from '../ducks/audioRecorder.preload.js';
 import { useComposerActions } from '../ducks/composer.preload.js';
 import { useToastActions } from '../ducks/toast.preload.js';
-import { getSelectedConversationId } from '../selectors/conversations.dom.js';
+import { getSelectedConversationId } from '../selectors/nav.std.js';
 import { getIntl } from '../selectors/user.std.js';
 
 export const SmartCompositionRecording = memo(
@@ -17,7 +17,7 @@ export const SmartCompositionRecording = memo(
     const { errorRecording, cancelRecording, completeRecording } =
       useAudioRecorderActions();
 
-    const { sendMultiMediaMessage, addAttachment, saveDraftRecordingIfNeeded } =
+    const { sendMultiMediaMessage, saveDraftRecordingIfNeeded: saveDraft } =
       useComposerActions();
     const { hideToast, showToast } = useToastActions();
 
@@ -34,6 +34,11 @@ export const SmartCompositionRecording = memo(
         });
       }
     }, [selectedConversationId, completeRecording, sendMultiMediaMessage]);
+    const saveDraftRecordingIfNeeded = useCallback(() => {
+      if (selectedConversationId) {
+        saveDraft(selectedConversationId);
+      }
+    }, [saveDraft, selectedConversationId]);
 
     if (!selectedConversationId) {
       return null;
@@ -45,8 +50,6 @@ export const SmartCompositionRecording = memo(
         onCancel={handleCancel}
         onSend={handleSend}
         errorRecording={errorRecording}
-        addAttachment={addAttachment}
-        completeRecording={completeRecording}
         saveDraftRecordingIfNeeded={saveDraftRecordingIfNeeded}
         showToast={showToast}
         hideToast={hideToast}

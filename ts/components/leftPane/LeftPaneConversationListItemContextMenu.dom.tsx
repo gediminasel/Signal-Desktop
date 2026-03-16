@@ -47,8 +47,6 @@ export type LeftPaneConversationListItemContextMenuProps = Readonly<{
   onDelete: (conversationId: string) => void;
   onChatFolderOpenCreatePage: (initChatFolderParams: ChatFolderParams) => void;
   onChatFolderToggleChat: ChatFolderToggleChat;
-  localDeleteWarningShown: boolean;
-  setLocalDeleteWarningShown: () => void;
   children: ReactNode;
 }>;
 
@@ -290,10 +288,8 @@ export const LeftPaneConversationListItemContextMenu: FC<LeftPaneConversationLis
         {showConfirmDeleteDialog && (
           <DeleteMessagesConfirmationDialog
             i18n={i18n}
-            localDeleteWarningShown={props.localDeleteWarningShown}
             onDestroyMessages={handleDelete}
             onClose={handleCloseConfirmDeleteDialog}
-            setLocalDeleteWarningShown={props.setLocalDeleteWarningShown}
           />
         )}
       </>
@@ -305,7 +301,7 @@ function ContextMenuMuteNotificationsItem(props: {
   value: number;
   onSelect: (value: number) => void;
   children: ReactNode;
-}): JSX.Element {
+}): React.JSX.Element {
   const { value, onSelect } = props;
   const handleSelect = useCallback(() => {
     onSelect(value);
@@ -320,7 +316,7 @@ function ContextMenuMuteNotificationsItem(props: {
 function ContextMenuCopyTextItem(props: {
   value: string;
   children: ReactNode;
-}): JSX.Element {
+}): React.JSX.Element {
   const { value } = props;
 
   const handleSelect = useCallback((): void => {

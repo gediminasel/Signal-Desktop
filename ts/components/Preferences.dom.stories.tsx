@@ -58,10 +58,7 @@ import type { SmartPreferencesEditChatFolderPageProps } from '../state/smart/Pre
 import { CurrentChatFolders } from '../types/CurrentChatFolders.std.js';
 import type { ExternalProps as SmartNotificationProfilesProps } from '../state/smart/PreferencesNotificationProfiles.preload.js';
 import type { NotificationProfileIdString } from '../types/NotificationProfile.std.js';
-import type {
-  ExportResultType,
-  LocalBackupExportResultType,
-} from '../services/backups/types.std.js';
+import type { ExportResultType } from '../services/backups/types.std.js';
 import { BackupLevel } from '../services/backups/types.std.js';
 
 const { shuffle } = lodash;
@@ -118,6 +115,7 @@ const availableSpeakers = [
 
 const validateBackupResult: ExportResultType = {
   attachmentBackupJobs: [],
+  mediaNames: [],
   totalBytes: 100,
   duration: 10000,
   stats: {
@@ -135,11 +133,6 @@ const validateBackupResult: ExportResultType = {
   },
 };
 
-const exportLocalBackupResult: LocalBackupExportResultType = {
-  ...validateBackupResult,
-  snapshotDir: '/home/signaluser/SignalBackups/signal-backup-1745618069169',
-};
-
 const donationAmountsConfig = {
   cad: {
     minimum: 4,
@@ -147,6 +140,7 @@ const donationAmountsConfig = {
       1: [7, 15, 30, 40, 70, 140],
       100: [7],
     },
+    supportedPaymentMethods: ['CARD, PAYPAL'],
   },
   jpy: {
     minimum: 400,
@@ -154,6 +148,7 @@ const donationAmountsConfig = {
       '1': [500, 1000, 2000, 3000, 5000, 10000],
       '100': [500],
     },
+    supportedPaymentMethods: ['CARD, PAYPAL'],
   },
   usd: {
     minimum: 3,
@@ -161,6 +156,7 @@ const donationAmountsConfig = {
       1: [5, 10, 20, 30, 50, 100],
       100: [5],
     },
+    supportedPaymentMethods: ['CARD, PAYPAL'],
   },
   ugx: {
     minimum: 8000,
@@ -168,12 +164,13 @@ const donationAmountsConfig = {
       1: [15000, 35000, 70000, 100000, 150000, 300000],
       100: [15000],
     },
+    supportedPaymentMethods: ['CARD'],
   },
 } as unknown as OneTimeDonationHumanAmounts;
 
 function renderUpdateDialog(
   props: Readonly<{ containerWidthBreakpoint: WidthBreakpoint }>
-): JSX.Element {
+): React.JSX.Element {
   return (
     <DialogUpdate
       i18n={i18n}
@@ -194,7 +191,7 @@ function renderProfileEditor({
   contentsRef,
 }: {
   contentsRef: MutableRefObject<HTMLDivElement | null>;
-}): JSX.Element {
+}): React.JSX.Element {
   return (
     <ProfileEditor
       aboutEmoji={undefined}
@@ -254,7 +251,7 @@ function renderDonationsPane(props: {
   ) => Promise<Blob>;
   showToast: (toast: AnyToast) => void;
   workflow?: DonationWorkflow;
-}): JSX.Element {
+}): React.JSX.Element {
   return (
     <PreferencesDonations
       applyDonationBadge={action('applyDonationBadge')}
@@ -263,6 +260,7 @@ function renderDonationsPane(props: {
       clearWorkflow={action('clearWorkflow')}
       initialCurrency="usd"
       resumeWorkflow={action('resumeWorkflow')}
+      isDonationPaypalEnabled
       isOnline
       settingsLocation={props.settingsLocation}
       setSettingsLocation={props.setSettingsLocation}
@@ -290,13 +288,13 @@ function renderDonationsPane(props: {
   );
 }
 
-function renderToastManager(): JSX.Element {
+function renderToastManager(): React.JSX.Element {
   return <div />;
 }
 
 function renderPreferencesChatFoldersPage(
   props: SmartPreferencesChatFoldersPageProps
-): JSX.Element {
+): React.JSX.Element {
   return (
     <PreferencesChatFoldersPage
       i18n={i18n}
@@ -314,7 +312,7 @@ function renderPreferencesChatFoldersPage(
 
 function renderPreferencesEditChatFolderPage(
   props: SmartPreferencesEditChatFolderPageProps
-): JSX.Element {
+): React.JSX.Element {
   return (
     <PreferencesEditChatFolderPage
       i18n={i18n}
@@ -339,7 +337,7 @@ function renderPreferencesEditChatFolderPage(
 
 function renderNotificationProfilesCreateFlow(
   props: SmartNotificationProfilesProps
-): JSX.Element {
+): React.JSX.Element {
   return (
     <NotificationProfilesCreateFlow
       contentsRef={props.contentsRef}
@@ -356,7 +354,7 @@ function renderNotificationProfilesCreateFlow(
 
 function renderNotificationProfilesHome(
   props: SmartNotificationProfilesProps
-): JSX.Element {
+): React.JSX.Element {
   return (
     <NotificationProfilesHome
       activeProfileId={undefined}
@@ -414,7 +412,6 @@ export default {
     availableLocales: ['en'],
     availableMicrophones,
     availableSpeakers,
-    backupFeatureEnabled: false,
     chatFoldersFeatureEnabled: true,
     backupFreeMediaDays: 45,
     backupKeyViewed: false,
@@ -441,6 +438,7 @@ export default {
     hasFailedStorySends: false,
     hasHideMenuBar: false,
     hasIncomingCallNotifications: true,
+    hasKeyTransparencyDisabled: false,
     hasLinkPreviews: true,
     hasMediaCameraPermissions: true,
     hasMediaPermissions: true,
@@ -460,6 +458,7 @@ export default {
     isAutoDownloadUpdatesSupported: true,
     isAutoLaunchSupported: true,
     isHideMenuBarSupported: true,
+    isKeyTransparencyAvailable: true,
     isNotificationAttentionSupported: true,
     isSyncSupported: true,
     isSystemTraySupported: true,
@@ -468,6 +467,7 @@ export default {
     isContentProtectionNeeded: true,
     isMinimizeToAndStartInSystemTraySupported: true,
     isPlaintextExportEnabled: true,
+    lastLocalBackup: undefined,
     lastSyncTime: Date.now(),
     localeOverride: null,
     localBackupFolder: undefined,
@@ -475,6 +475,7 @@ export default {
     navTabsCollapsed: false,
     notificationContent: 'name',
     notificationProfileCount: 0,
+    osName: 'windows',
     otherTabsUnreadStats: {
       unreadCount: 0,
       unreadMentionsCount: 0,
@@ -538,11 +539,6 @@ export default {
     addCustomColor: action('addCustomColor'),
     doDeleteAllData: action('doDeleteAllData'),
     editCustomColor: action('editCustomColor'),
-    exportLocalBackup: async () => {
-      return {
-        result: exportLocalBackupResult,
-      };
-    },
     getMessageCountBySchemaVersion: async () => [
       { schemaVersion: 10, count: 1024 },
       { schemaVersion: 8, count: 256 },
@@ -564,6 +560,9 @@ export default {
     onContentProtectionChange: action('onContentProtectionChange'),
     onCountMutedConversationsChange: action('onCountMutedConversationsChange'),
     onEmojiSkinToneDefaultChange: action('onEmojiSkinToneDefaultChange'),
+    onHasKeyTransparencyDisabledChanged: action(
+      'onHasKeyTransparencyDisabledChanged'
+    ),
     onHasStoriesDisabledChanged: action('onHasStoriesDisabledChanged'),
     onHideMenuBarChange: action('onHideMenuBarChange'),
     onIncomingCallNotificationsChange: action(
@@ -596,8 +595,10 @@ export default {
     onWhoCanSeeMeChange: action('onWhoCanSeeMeChange'),
     onWhoCanFindMeChange: action('onWhoCanFindMeChange'),
     onZoomFactorChange: action('onZoomFactorChange'),
+    openFileInFolder: action('openFileInFolder'),
     pickLocalBackupFolder: () =>
       Promise.resolve('/home/signaluser/Signal Backups/'),
+    disableLocalBackups: () => Promise.resolve(),
     promptOSAuth: () => Promise.resolve('success'),
     refreshCloudBackupStatus: action('refreshCloudBackupStatus'),
     refreshBackupSubscriptionStatus: action('refreshBackupSubscriptionStatus'),
@@ -616,6 +617,7 @@ export default {
     ),
     setSettingsLocation: action('setSettingsLocation'),
     showToast: action('showToast'),
+    startLocalBackupExport: action('startLocalBackupExport'),
     startPlaintextExport: action('startPlaintextExport'),
     validateBackup: async () => {
       return {
@@ -632,16 +634,15 @@ export default {
       action('generateDonationReceiptBlob')();
       return new Blob();
     },
+    addVisibleMegaphone: async () => Promise.resolve(),
     internalDeleteAllMegaphones: async () => {
       return Promise.resolve(0);
     },
     __dangerouslyRunAbitraryReadOnlySqlQuery: async () => {
       return Promise.resolve([]);
     },
-    callQualitySurveyCooldownDisabled: false,
-    setCallQualitySurveyCooldownDisabled: action(
-      'setCallQualitySurveyCooldownDisabled'
-    ),
+    cqsTestMode: false,
+    setCqsTestMode: action('setCqsTestMode'),
   } satisfies PropsType,
 } satisfies Meta<PropsType>;
 
@@ -958,6 +959,43 @@ DonationsHomeWithInProgressDonation.args = {
       },
     }),
 };
+
+export const DonationsPaypalInProgress = Template.bind({});
+DonationsPaypalInProgress.args = {
+  settingsLocation: { page: SettingsPage.DonationsDonateFlow },
+  renderDonationsPane: ({
+    contentsRef,
+  }: {
+    contentsRef: MutableRefObject<HTMLDivElement | null>;
+  }) =>
+    renderDonationsPane({
+      contentsRef,
+      me,
+      donationReceipts: [],
+      settingsLocation: { page: SettingsPage.DonationsDonateFlow },
+      setSettingsLocation: action('setSettingsLocation'),
+      saveAttachmentToDisk: async () => {
+        action('saveAttachmentToDisk')();
+        return { fullPath: '/mock/path/to/file.png', name: 'file.png' };
+      },
+      generateDonationReceiptBlob: async () => {
+        action('generateDonationReceiptBlob')();
+        return new Blob();
+      },
+      showToast: action('showToast'),
+      workflow: {
+        type: 'PAYPAL_INTENT',
+        timestamp: Date.now() - 60,
+        paypalPaymentId: 'a',
+        paymentAmount: 500,
+        currencyType: 'USD',
+        id: 'a',
+        returnToken: 'a',
+        approvalUrl: 'https://www.signal.org',
+      },
+    }),
+};
+
 export const Internal = Template.bind({});
 Internal.args = {
   settingsLocation: { page: SettingsPage.Internal },
@@ -999,7 +1037,6 @@ PNPDiscoverabilityDisabled.args = {
 export const BackupDetailsMediaDownloadActive = Template.bind({});
 BackupDetailsMediaDownloadActive.args = {
   settingsLocation: { page: SettingsPage.BackupsDetails },
-  backupFeatureEnabled: true,
   backupLocalBackupsEnabled: true,
   cloudBackupStatus: {
     protoSize: 100_000_000,
@@ -1024,7 +1061,6 @@ BackupDetailsMediaDownloadActive.args = {
 export const BackupDetailsMediaDownloadPaused = Template.bind({});
 BackupDetailsMediaDownloadPaused.args = {
   settingsLocation: { page: SettingsPage.BackupsDetails },
-  backupFeatureEnabled: true,
   backupLocalBackupsEnabled: true,
   cloudBackupStatus: {
     protoSize: 100_000_000,
@@ -1050,7 +1086,6 @@ BackupDetailsMediaDownloadPaused.args = {
 export const BackupDetailsFree = Template.bind({});
 BackupDetailsFree.args = {
   settingsLocation: { page: SettingsPage.BackupsDetails },
-  backupFeatureEnabled: true,
   backupLocalBackupsEnabled: true,
   cloudBackupStatus: {
     protoSize: 100_000_000,
@@ -1067,7 +1102,6 @@ export const BackupsPaidActive = Template.bind({});
 BackupsPaidActive.args = {
   settingsLocation: { page: SettingsPage.Backups },
   backupTier: BackupLevel.Paid,
-  backupFeatureEnabled: true,
   backupLocalBackupsEnabled: true,
   cloudBackupStatus: {
     protoSize: 100_000_000,
@@ -1087,7 +1121,6 @@ export const BackupsPaidLoadingSubscription = Template.bind({});
 BackupsPaidLoadingSubscription.args = {
   settingsLocation: { page: SettingsPage.Backups },
   backupTier: BackupLevel.Paid,
-  backupFeatureEnabled: true,
   backupLocalBackupsEnabled: true,
   cloudBackupStatus: {
     protoSize: 100_000_000,
@@ -1109,7 +1142,6 @@ export const BackupsPaidLoadingFirstTime = Template.bind({});
 BackupsPaidLoadingFirstTime.args = {
   settingsLocation: { page: SettingsPage.Backups },
   backupTier: BackupLevel.Paid,
-  backupFeatureEnabled: true,
   backupLocalBackupsEnabled: true,
   cloudBackupStatus: {
     protoSize: 100_000_000,
@@ -1124,7 +1156,6 @@ BackupsPaidLoadingFirstTime.args = {
 export const BackupsPaidCanceled = Template.bind({});
 BackupsPaidCanceled.args = {
   settingsLocation: { page: SettingsPage.Backups },
-  backupFeatureEnabled: true,
   backupLocalBackupsEnabled: true,
   backupTier: BackupLevel.Paid,
   cloudBackupStatus: {
@@ -1145,13 +1176,11 @@ export const BackupsFree = Template.bind({});
 BackupsFree.args = {
   settingsLocation: { page: SettingsPage.Backups },
   backupTier: BackupLevel.Free,
-  backupFeatureEnabled: true,
   backupLocalBackupsEnabled: true,
 };
 export const BackupsFreeNoLocal = Template.bind({});
 BackupsFreeNoLocal.args = {
   settingsLocation: { page: SettingsPage.Backups },
-  backupFeatureEnabled: true,
   backupLocalBackupsEnabled: false,
   backupTier: BackupLevel.Free,
 };
@@ -1159,7 +1188,6 @@ BackupsFreeNoLocal.args = {
 export const BackupsOff = Template.bind({});
 BackupsOff.args = {
   settingsLocation: { page: SettingsPage.Backups },
-  backupFeatureEnabled: true,
   backupLocalBackupsEnabled: true,
   backupTier: null,
 };
@@ -1167,21 +1195,18 @@ BackupsOff.args = {
 export const BackupsLocalBackups = Template.bind({});
 BackupsLocalBackups.args = {
   settingsLocation: { page: SettingsPage.Backups },
-  backupFeatureEnabled: true,
   backupLocalBackupsEnabled: true,
 };
 
 export const BackupsRemoteEnabledLocalDisabled = Template.bind({});
 BackupsRemoteEnabledLocalDisabled.args = {
   settingsLocation: { page: SettingsPage.Backups },
-  backupFeatureEnabled: true,
   backupLocalBackupsEnabled: false,
 };
 
 export const BackupsPaidSubscriptionNotFound = Template.bind({});
 BackupsPaidSubscriptionNotFound.args = {
   settingsLocation: { page: SettingsPage.Backups },
-  backupFeatureEnabled: true,
   backupLocalBackupsEnabled: true,
   backupSubscriptionStatus: {
     status: 'not-found',
@@ -1196,7 +1221,6 @@ BackupsPaidSubscriptionNotFound.args = {
 export const BackupsSubscriptionExpired = Template.bind({});
 BackupsSubscriptionExpired.args = {
   settingsLocation: { page: SettingsPage.Backups },
-  backupFeatureEnabled: true,
   backupLocalBackupsEnabled: true,
   backupTier: null,
   backupSubscriptionStatus: {
@@ -1207,23 +1231,34 @@ BackupsSubscriptionExpired.args = {
 export const LocalBackups = Template.bind({});
 LocalBackups.args = {
   settingsLocation: { page: SettingsPage.LocalBackups },
-  backupFeatureEnabled: true,
   backupLocalBackupsEnabled: true,
   backupKeyViewed: true,
+  lastLocalBackup: {
+    timestamp: Date.now() - DAY,
+    backupsFolder: 'backups',
+    snapshotDir: 'backups/snapshot',
+  },
+  localBackupFolder: '/home/signaluser/Signal Backups/',
+};
+
+export const LocalBackupsNeverBackedUp = Template.bind({});
+LocalBackupsNeverBackedUp.args = {
+  settingsLocation: { page: SettingsPage.LocalBackups },
+  backupLocalBackupsEnabled: true,
+  backupKeyViewed: true,
+  lastLocalBackup: undefined,
   localBackupFolder: '/home/signaluser/Signal Backups/',
 };
 
 export const LocalBackupsSetupChooseFolder = Template.bind({});
 LocalBackupsSetupChooseFolder.args = {
   settingsLocation: { page: SettingsPage.LocalBackupsSetupFolder },
-  backupFeatureEnabled: true,
   backupLocalBackupsEnabled: true,
 };
 
 export const LocalBackupsSetupViewBackupKey = Template.bind({});
 LocalBackupsSetupViewBackupKey.args = {
   settingsLocation: { page: SettingsPage.LocalBackupsSetupKey },
-  backupFeatureEnabled: true,
   backupLocalBackupsEnabled: true,
   localBackupFolder: '/home/signaluser/Signal Backups/',
 };

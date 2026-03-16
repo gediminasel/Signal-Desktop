@@ -20,7 +20,6 @@ import {
   CallingMessage,
   CallMessageUrgency,
   CallLinkRootKey,
-  CallLinkEpoch,
   CallLogLevel,
   CallState,
   CallEndReason,
@@ -35,6 +34,7 @@ import {
   HangupType,
   IceCandidateMessage,
   OfferMessage,
+  OfferType,
   OpaqueMessage,
   RingCancelReason,
   RingRTC,
@@ -44,7 +44,6 @@ import {
 } from '@signalapp/ringrtc';
 import * as muteStateChange from '@signalapp/mute-state-change';
 import lodash from 'lodash';
-import Long from 'long';
 import type { CallLinkAuthCredentialPresentation } from '@signalapp/libsignal-client/zkgroup.js';
 import {
   CallLinkSecretParams,
@@ -58,7 +57,10 @@ import {
   CanvasVideoRenderer,
   GumVideoCapturer,
 } from '../calling/VideoSupport.preload.js';
-import type { GumVideoCaptureOptions } from '../calling/VideoSupport.preload.js';
+import type {
+  GumVideoCaptureOptions,
+  SizeCallbackType,
+} from '../calling/VideoSupport.preload.js';
 import type {
   ActionsType as CallingReduxActionsType,
   GroupCallParticipantInfoType,
@@ -68,6 +70,7 @@ import type { ConversationType } from '../state/ducks/conversations.preload.js';
 import { getConversationCallMode } from '../state/ducks/conversations.preload.js';
 import { isMe } from '../util/whatTypeOfConversation.dom.js';
 import { getAbsoluteTempPath } from '../util/migrations.preload.js';
+import { isKnownProtoEnumMember } from '../util/isKnownProtoEnumMember.std.js';
 import type {
   AvailableIODevicesType,
   IceServerType,
@@ -211,8 +214,6 @@ const CALL_QUALITY_SURVEY_DELAY = 2.5 * durations.SECOND;
 
 const ICE_SERVER_IS_IP_LIKE = /(turn|turns|stun):[.\d]+/;
 
-const MAX_CALL_DEBUG_STATS_TABS = 5;
-
 // We send group call update messages to tell other clients to peek, which triggers
 //   notifications, timeline messages, big green "Join" buttons, and so on. This enum
 //   represents the three possible states we can be in. This helps ensure that we don't
@@ -336,16 +337,17 @@ function maybeShowCallQualitySurvey(
   const lastSurveyTime = itemStorage.get('lastCallQualitySurveyTime') ?? null;
   const lastFailureSurveyTime =
     itemStorage.get('lastCallQualityFailureSurveyTime') ?? null;
-  const bypassCooldown =
-    itemStorage.get('callQualitySurveyCooldownDisabled') ?? false;
+  const cqsTestMode = itemStorage.get('cqsTestMode') ?? false;
+  const ourE164 = itemStorage.user.getNumber();
 
   if (
-    !shouldShowCallQualitySurvey(
-      summary,
+    !shouldShowCallQualitySurvey({
+      callSummary: summary,
       lastSurveyTime,
       lastFailureSurveyTime,
-      bypassCooldown
-    )
+      e164: ourE164,
+      cqsTestMode,
+    })
   ) {
     return;
   }
@@ -363,6 +365,48 @@ function maybeShowCallQualitySurvey(
   }, CALL_QUALITY_SURVEY_DELAY);
 }
 
+function protoOfferTypeToCalling(
+  offer: Proto.CallMessage.Offer['type']
+): OfferType {
+  if (!isKnownProtoEnumMember(Proto.CallMessage.Offer.Type, offer)) {
+    return OfferType.AudioCall;
+  }
+
+  const { Type } = Proto.CallMessage.Offer;
+  switch (offer) {
+    case Type.OFFER_AUDIO_CALL:
+      return OfferType.AudioCall;
+    case Type.OFFER_VIDEO_CALL:
+      return OfferType.VideoCall;
+    default:
+      throw missingCaseError(offer);
+  }
+}
+
+function protoHangupTypeToCalling(
+  hangup: Proto.CallMessage.Hangup['type']
+): HangupType {
+  if (!isKnownProtoEnumMember(Proto.CallMessage.Hangup.Type, hangup)) {
+    return HangupType.Normal;
+  }
+
+  const { Type } = Proto.CallMessage.Hangup;
+  switch (hangup) {
+    case Type.HANGUP_NORMAL:
+      return HangupType.Normal;
+    case Type.HANGUP_ACCEPTED:
+      return HangupType.Accepted;
+    case Type.HANGUP_DECLINED:
+      return HangupType.Declined;
+    case Type.HANGUP_BUSY:
+      return HangupType.Busy;
+    case Type.HANGUP_NEED_PERMISSION:
+      return HangupType.NeedPermission;
+    default:
+      throw missingCaseError(hangup);
+  }
+}
+
 function protoToCallingMessage({
   offer,
   answer,
@@ -371,7 +415,7 @@ function protoToCallingMessage({
   hangup,
   destinationDeviceId,
   opaque,
-}: Proto.ICallMessage): CallingMessage {
+}: Proto.CallMessage): CallingMessage {
   const newIceCandidates: Array<IceCandidateMessage> = [];
   if (iceUpdate) {
     iceUpdate.forEach(candidate => {
@@ -388,7 +432,7 @@ function protoToCallingMessage({
       offer && offer.id && offer.opaque
         ? new OfferMessage(
             offer.id,
-            dropNull(offer.type) as number,
+            protoOfferTypeToCalling(offer.type),
             offer.opaque
           )
         : undefined,
@@ -402,7 +446,7 @@ function protoToCallingMessage({
       hangup && hangup.id
         ? new HangupMessage(
             hangup.id,
-            dropNull(hangup.type) as number,
+            protoHangupTypeToCalling(hangup.type),
             hangup.deviceId || 0
           )
         : undefined,
@@ -516,11 +560,16 @@ const GROUP_CALL_OPTIONS: GumVideoCaptureOptions = {
   maxFramerate: REQUESTED_VIDEO_FRAMERATE,
 };
 
+export type SetLocalPreviewContainerType = {
+  container: HTMLDivElement | undefined;
+  sizeCallback: SizeCallbackType | undefined;
+};
+
 export class CallingClass {
   readonly #videoCapturer: GumVideoCapturer;
   readonly videoRenderer: CanvasVideoRenderer;
 
-  #localPreviewContainer: HTMLDivElement | null = null;
+  #localPreviewContainer: HTMLDivElement | undefined;
   #localPreview: HTMLVideoElement | undefined;
   #reduxInterface?: CallingReduxInterface;
 
@@ -534,17 +583,17 @@ export class CallingClass {
   #lastMediaDeviceSettings?: MediaDeviceSettings;
   #deviceReselectionTimer?: NodeJS.Timeout;
   #callsLookup: { [key: string]: Call | GroupCall };
-  #currentRtcStatsInterval: number | null = null;
-  #callDebugNumber: number = 0;
 
   #cameraEnabled: boolean = false;
+
+  #registeredAssets: Map<string, boolean> = new Map();
 
   // Send our profile key to other participants in call link calls to ensure they
   // can see our profile info. Only send once per aci until the next app start.
   #sendProfileKeysForAdhocCallCache: Set<AciString>;
 
   constructor() {
-    this.#videoCapturer = new GumVideoCapturer(DIRECT_CALL_OPTIONS);
+    this.#videoCapturer = new GumVideoCapturer();
     this.videoRenderer = new CanvasVideoRenderer();
 
     this.#callsLookup = {};
@@ -579,7 +628,6 @@ export class CallingClass {
       this.#handleSendCallMessageToGroup.bind(this);
     RingRTC.handleGroupCallRingUpdate =
       this.#handleGroupCallRingUpdate.bind(this);
-    RingRTC.handleRtcStatsReport = this.#handleRtcStatsReport.bind(this);
 
     this.#attemptToGiveOurServiceIdToRingRtc();
     window.Whisper.events.on('userChanged', () => {
@@ -589,12 +637,6 @@ export class CallingClass {
     ipcRenderer.on('stop-screen-share', () => {
       reduxInterface.cancelPresenting();
     });
-    ipcRenderer.on(
-      'calling:set-rtc-stats-interval',
-      (_, intervalMillis: number | null) => {
-        this.setAllRtcStatsInterval(intervalMillis);
-      }
-    );
 
     drop(this.#cleanExpiredGroupCallRingsAndLoop());
     drop(this.cleanupStaleRingingCalls());
@@ -615,16 +657,6 @@ export class CallingClass {
       // Trigger UI update
       reduxInterface.setLocalAudio({ enabled: !isMuted, isUIOnly: true });
     });
-  }
-
-  #maybeUpdateRtcLogging(groupCall: GroupCall): void {
-    if (!this.#currentRtcStatsInterval) {
-      return;
-    }
-
-    groupCall.setRtcStatsInterval(this.#currentRtcStatsInterval);
-    this.#callDebugNumber =
-      (this.#callDebugNumber + 1) % MAX_CALL_DEBUG_STATS_TABS;
   }
 
   #attemptToGiveOurServiceIdToRingRtc(): void {
@@ -875,13 +907,12 @@ export class CallingClass {
     }
 
     log.info(`${logId}: success`);
-    const { epoch } = result.value;
     const state = callLinkStateFromRingRTC(result.value);
+    const maybeUpdatedRootKey = result.value.rootKey.toString();
 
     const callLink: CallLinkType = {
       roomId: roomIdHex,
-      rootKey: rootKey.toString(),
-      epoch: epoch ? epoch.toString() : null,
+      rootKey: maybeUpdatedRootKey,
       adminKey: Bytes.toBase64(adminKey),
       storageNeedsSync: true,
       ...state,
@@ -903,9 +934,6 @@ export class CallingClass {
     log.info(logId);
 
     const callLinkRootKey = CallLinkRootKey.parse(callLink.rootKey);
-    const callLinkEpoch = callLink.epoch
-      ? CallLinkEpoch.parse(callLink.epoch)
-      : undefined;
     strictAssert(callLink.adminKey, 'Missing admin key');
     const callLinkAdminKey = toAdminKeyBytes(callLink.adminKey);
     const authCredentialPresentation =
@@ -915,7 +943,6 @@ export class CallingClass {
       sfuUrl,
       authCredentialPresentation.serialize(),
       callLinkRootKey,
-      callLinkEpoch,
       callLinkAdminKey
     );
 
@@ -944,9 +971,6 @@ export class CallingClass {
     log.info(`${logId}: Updating call link name`);
 
     const callLinkRootKey = CallLinkRootKey.parse(callLink.rootKey);
-    const callLinkEpoch = callLink.epoch
-      ? CallLinkEpoch.parse(callLink.epoch)
-      : undefined;
     strictAssert(callLink.adminKey, 'Missing admin key');
     const callLinkAdminKey = toAdminKeyBytes(callLink.adminKey);
     const authCredentialPresentation =
@@ -955,7 +979,6 @@ export class CallingClass {
       sfuUrl,
       authCredentialPresentation.serialize(),
       callLinkRootKey,
-      callLinkEpoch,
       callLinkAdminKey,
       name
     );
@@ -986,9 +1009,6 @@ export class CallingClass {
     log.info(`${logId}: Updating call link restrictions`);
 
     const callLinkRootKey = CallLinkRootKey.parse(callLink.rootKey);
-    const callLinkEpoch = callLink.epoch
-      ? CallLinkEpoch.parse(callLink.epoch)
-      : undefined;
     strictAssert(callLink.adminKey, 'Missing admin key');
     const callLinkAdminKey = toAdminKeyBytes(callLink.adminKey);
     const authCredentialPresentation =
@@ -1004,7 +1024,6 @@ export class CallingClass {
       sfuUrl,
       authCredentialPresentation.serialize(),
       callLinkRootKey,
-      callLinkEpoch,
       callLinkAdminKey,
       newRestrictions
     );
@@ -1022,8 +1041,7 @@ export class CallingClass {
   }
 
   async readCallLink(
-    callLinkRootKey: CallLinkRootKey,
-    callLinkEpoch: CallLinkEpoch | undefined
+    callLinkRootKey: CallLinkRootKey
   ): Promise<CallLinkStateType | null> {
     if (!this._sfuUrl) {
       throw new Error('readCallLink() missing SFU URL; not handling call link');
@@ -1039,8 +1057,7 @@ export class CallingClass {
     const result = await RingRTC.readCallLink(
       this._sfuUrl,
       authCredentialPresentation.serialize(),
-      callLinkRootKey,
-      callLinkEpoch
+      callLinkRootKey
     );
     if (!result.success) {
       log.warn(`${logId}: failed with status ${result.errorStatusCode}`);
@@ -1056,13 +1073,11 @@ export class CallingClass {
 
   async startCallLinkLobby({
     callLinkRootKey,
-    callLinkEpoch,
     adminPasskey,
     hasLocalAudio,
     preferLocalVideo = true,
   }: Readonly<{
     callLinkRootKey: CallLinkRootKey;
-    callLinkEpoch: CallLinkEpoch | undefined;
     adminPasskey: Uint8Array | undefined;
     hasLocalAudio: boolean;
     preferLocalVideo?: boolean;
@@ -1106,7 +1121,6 @@ export class CallingClass {
       roomId,
       authCredentialPresentation,
       callLinkRootKey,
-      callLinkEpoch,
       adminPasskey,
       endorsementsPublicKey,
     });
@@ -1236,18 +1250,21 @@ export class CallingClass {
     );
   }
 
-  public setLocalPreviewContainer(container: HTMLDivElement | null): void {
+  public setLocalPreviewContainer(options: SetLocalPreviewContainerType): void {
     // Reuse HTMLVideoElement between different containers so that the preview
     // of the last frame stays valid even if there are no new frames on the
     // underlying MediaStream.
     if (this.#localPreview == null) {
       this.#localPreview = document.createElement('video');
       this.#localPreview.autoplay = true;
-      this.#videoCapturer.setLocalPreview(this.#localPreview);
     }
+    this.#videoCapturer.setLocalPreview({
+      localPreview: this.#localPreview,
+      sizeCallback: options.sizeCallback,
+    });
 
     this.#localPreviewContainer?.removeChild(this.#localPreview);
-    this.#localPreviewContainer = container;
+    this.#localPreviewContainer = options.container;
     this.#localPreviewContainer?.appendChild(this.#localPreview);
   }
 
@@ -1318,8 +1335,7 @@ export class CallingClass {
 
   public async peekCallLinkCall(
     roomId: string,
-    rootKey: string | undefined,
-    epoch: string | undefined
+    rootKey: string | undefined
   ): Promise<PeekInfo> {
     log.info(`peekCallLinkCall: For roomId ${roomId}`);
     const statefulPeekInfo = this.#getGroupCall(roomId)?.getPeekInfo();
@@ -1338,15 +1354,13 @@ export class CallingClass {
     }
 
     const callLinkRootKey = CallLinkRootKey.parse(rootKey);
-    const callLinkEpoch = epoch ? CallLinkEpoch.parse(epoch) : undefined;
     const authCredentialPresentation =
       await getCallLinkAuthCredentialPresentation(callLinkRootKey);
 
     const result = await RingRTC.peekCallLinkCall(
       this._sfuUrl,
       authCredentialPresentation.serialize(),
-      callLinkRootKey,
-      callLinkEpoch
+      callLinkRootKey
     );
     if (!result.success) {
       throw new Error(
@@ -1395,6 +1409,7 @@ export class CallingClass {
     log.info(logId);
 
     const groupIdBuffer = Bytes.fromBase64(groupId);
+    const dredDuration = 0;
 
     let isRequestingMembershipProof = false;
 
@@ -1403,6 +1418,7 @@ export class CallingClass {
       this._sfuUrl,
       new Uint8Array(),
       AUDIO_LEVEL_INTERVAL_MS,
+      dredDuration,
       {
         ...this.#getGroupCallObserver(conversationId, CallMode.Group),
         async requestMembershipProof(groupCall) {
@@ -1437,7 +1453,6 @@ export class CallingClass {
 
     outerGroupCall.connect();
 
-    this.#maybeUpdateRtcLogging(outerGroupCall);
     this.#syncGroupCallToRedux(conversationId, outerGroupCall, CallMode.Group);
 
     return outerGroupCall;
@@ -1447,14 +1462,12 @@ export class CallingClass {
     roomId,
     authCredentialPresentation,
     callLinkRootKey,
-    callLinkEpoch,
     adminPasskey,
     endorsementsPublicKey,
   }: {
     roomId: string;
     authCredentialPresentation: CallLinkAuthCredentialPresentation;
     callLinkRootKey: CallLinkRootKey;
-    callLinkEpoch: CallLinkEpoch | undefined;
     adminPasskey: Uint8Array | undefined;
     endorsementsPublicKey: Uint8Array;
   }): GroupCall {
@@ -1478,15 +1491,17 @@ export class CallingClass {
       );
     }
 
+    const dredDuration = 0;
+
     const outerGroupCall = RingRTC.getCallLinkCall(
       this._sfuUrl,
       endorsementsPublicKey,
       authCredentialPresentation.serialize(),
       callLinkRootKey,
-      callLinkEpoch,
       adminPasskey,
       new Uint8Array(),
       AUDIO_LEVEL_INTERVAL_MS,
+      dredDuration,
       this.#getGroupCallObserver(roomId, CallMode.Adhoc)
     );
 
@@ -1500,7 +1515,6 @@ export class CallingClass {
 
     outerGroupCall.connect();
 
-    this.#maybeUpdateRtcLogging(outerGroupCall);
     this.#syncGroupCallToRedux(roomId, outerGroupCall, CallMode.Adhoc);
 
     return outerGroupCall;
@@ -1894,14 +1908,12 @@ export class CallingClass {
   public async joinCallLinkCall({
     roomId,
     rootKey,
-    epoch,
     adminKey,
     hasLocalAudio,
     hasLocalVideo,
   }: {
     roomId: string;
     rootKey: string;
-    epoch: string | undefined;
     adminKey: string | undefined;
     hasLocalAudio: boolean;
     hasLocalVideo: boolean;
@@ -1921,7 +1933,6 @@ export class CallingClass {
     muteStateChange.setIsMuted(!hasLocalAudio);
 
     const callLinkRootKey = CallLinkRootKey.parse(rootKey);
-    const callLinkEpoch = epoch ? CallLinkEpoch.parse(epoch) : undefined;
     const authCredentialPresentation =
       await getCallLinkAuthCredentialPresentation(callLinkRootKey);
     const adminPasskey = adminKey ? toAdminKeyBytes(adminKey) : undefined;
@@ -1935,7 +1946,6 @@ export class CallingClass {
       roomId,
       authCredentialPresentation,
       callLinkRootKey,
-      callLinkEpoch,
       adminPasskey,
       endorsementsPublicKey,
     });
@@ -2011,6 +2021,15 @@ export class CallingClass {
     }
 
     groupCall.blockClient(demuxId);
+  }
+
+  public sendRemoteMute(conversationId: string, demuxId: number): void {
+    const groupCall = this.#getGroupCall(conversationId);
+    if (!groupCall) {
+      throw new Error('Could not find matching call');
+    }
+
+    groupCall.sendRemoteMuteRequest(demuxId);
   }
 
   // See the comment in types/Calling.ts to explain why we have to do this conversion.
@@ -2261,27 +2280,6 @@ export class CallingClass {
       throw new Error('Could not find matching call');
     }
     groupCall.react(value);
-  }
-
-  // configures how often call stats are computed
-  public setAllRtcStatsInterval(intervalMillis: number | null): void {
-    if (this.#currentRtcStatsInterval === intervalMillis) {
-      return;
-    }
-    this.#currentRtcStatsInterval = intervalMillis;
-
-    // GroupCall.setRtcStatsInterval resets to the default when interval == 0
-    // so set it to 0 when intervalMillis is undefined
-    const statsInterval = intervalMillis ?? 0;
-
-    for (const conversationId of Object.keys(this.#callsLookup)) {
-      const groupCall = this.#getGroupCall(conversationId);
-      if (!groupCall) {
-        continue;
-      }
-      log.info('Setting rtc stats interval:', conversationId, statsInterval);
-      groupCall.setRtcStatsInterval(statsInterval);
-    }
   }
 
   #syncGroupCallToRedux(
@@ -3008,13 +3006,15 @@ export class CallingClass {
     );
 
     await this.#videoCapturer.enableCapture(
-      mode === CallMode.Direct ? undefined : GROUP_CALL_OPTIONS
+      mode === CallMode.Direct ? DIRECT_CALL_OPTIONS : GROUP_CALL_OPTIONS
     );
   }
 
   async enableCaptureAndSend(
     call: GroupCall | Call,
-    options = call instanceof GroupCall ? GROUP_CALL_OPTIONS : undefined,
+    options = call instanceof GroupCall
+      ? GROUP_CALL_OPTIONS
+      : DIRECT_CALL_OPTIONS,
     logId = 'enableCaptureAndSend'
   ): Promise<void> {
     try {
@@ -3041,7 +3041,7 @@ export class CallingClass {
 
   async handleCallingMessage(
     envelope: ProcessedEnvelope,
-    callingMessage: Proto.ICallMessage
+    callingMessage: Proto.CallMessage
   ): Promise<void> {
     const logId = `CallingClass.handleCallingMessage(${envelope.timestamp})`;
     log.info(logId);
@@ -3277,7 +3277,7 @@ export class CallingClass {
       callingMessage.opaque.data = data;
 
       const proto = callingMessageToProto(callingMessage, urgency);
-      const protoBytes = Proto.CallMessage.encode(proto).finish();
+      const protoBytes = Proto.CallMessage.encode(proto);
       const protoBase64 = Bytes.toBase64(protoBytes);
 
       await conversationJobQueue.add({
@@ -3443,7 +3443,7 @@ export class CallingClass {
 
     try {
       const proto = callingMessageToProto(message, urgency);
-      const protoBytes = Proto.CallMessage.encode(proto).finish();
+      const protoBytes = Proto.CallMessage.encode(proto);
       const protoBase64 = Bytes.toBase64(protoBytes);
 
       const job = await conversationJobQueue.add({
@@ -3575,7 +3575,7 @@ export class CallingClass {
     const callEndedReason =
       this.#convertRingRtcCallRejectReason(callRejectReason);
 
-    const callId = Long.fromValue(callIdValue).toString();
+    const callId = callIdValue.toString();
     const peerId = getPeerIdFromConversation(conversation.attributes);
 
     // This is extra defensive, just in case RingRTC passes us a bad value. (It probably
@@ -3755,18 +3755,6 @@ export class CallingClass {
       default:
         break;
     }
-  }
-
-  async #handleRtcStatsReport(reportJson: string) {
-    // assumes one active call
-    const conversationId = Object.keys(this.#callsLookup)[0] ?? '';
-    const callId = this.#callDebugNumber;
-
-    ipcRenderer.send('calling:rtc-stats-report', {
-      conversationId,
-      callId,
-      reportJson,
-    });
   }
 
   async #handleSendHttpRequest(
@@ -3949,6 +3937,7 @@ export class CallingClass {
       hideIp: shouldRelayCalls || isContactUntrusted,
       dataMode: DataMode.Normal,
       audioLevelsIntervalMillis: AUDIO_LEVEL_INTERVAL_MS,
+      dredDuration: 0,
     };
 
     log.info('CallingClass.handleStartCall(): Proceeding');
@@ -4260,6 +4249,40 @@ export class CallingClass {
     } catch (error) {
       log.error('enumerateMediaDevices failed:', Errors.toLogFormat(error));
     }
+  }
+
+  async prepareCallingAssets(): Promise<void> {
+    const manifest = {
+      'opus-dred': ['calling-dred_weights-1_6_1-f4aed08a.bin'],
+    };
+
+    await Promise.allSettled(
+      Object.entries(manifest).map(async ([feature, options]) => {
+        await Promise.allSettled(
+          options.map(async opt => {
+            try {
+              if (this.#registeredAssets.has(opt)) {
+                log.info('Already registered calling asset', opt);
+                return;
+              }
+              const content = await ipcRenderer.invoke(
+                'OptionalResourceService:getData',
+                opt
+              );
+              log.info('Attempting to register calling asset', opt);
+              RingRTC.addAsset(feature, { content: new Uint8Array(content) });
+              this.#registeredAssets.set(opt, true);
+            } catch (e) {
+              log.error(
+                'Failed to download and register calling asset',
+                opt,
+                e
+              );
+            }
+          })
+        );
+      })
+    );
   }
 }
 

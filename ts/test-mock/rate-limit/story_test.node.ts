@@ -46,6 +46,8 @@ describe('story/no-sender-key', function (this: Mocha.Suite) {
           identifier: uuidToBytes(MY_STORY_ID),
           isBlockList: true,
           name: MY_STORY_ID,
+          deletedAtTimestamp: null,
+          recipientServiceIdsBinary: null,
         },
       },
     });
@@ -123,7 +125,10 @@ describe('story/no-sender-key', function (this: Mocha.Suite) {
             storyMessage.profileKey ?? new Uint8Array(0)
           )
         );
-        assert.strictEqual(storyMessage.textAttachment?.text, '123');
+        assert.strictEqual(
+          storyMessage.attachment?.textAttachment?.text,
+          '123'
+        );
       })
     );
   });

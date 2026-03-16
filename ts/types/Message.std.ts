@@ -109,6 +109,7 @@ export const messageAttrsToPreserveAfterErase = [
   // all other, non-TS-required fields to preserve
   'canReplyToStory',
   'deletedForEveryone',
+  'deletedForEveryoneByAdminAci',
   'deletedForEveryoneFailed',
   'deletedForEveryoneSendStatus',
   'deletedForEveryoneTimestamp',
@@ -170,7 +171,7 @@ const messageAttrsToErase = [
   'messageTimer',
   'payment',
   'phoneNumberDiscovery',
-  'pinnedMessageId',
+  'pinMessage',
   'poll',
   'pollTerminateNotification',
   'preview',

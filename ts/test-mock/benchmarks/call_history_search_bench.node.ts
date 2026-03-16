@@ -4,7 +4,6 @@
 import type { PrimaryDevice } from '@signalapp/mock-server';
 import { Proto, StorageState } from '@signalapp/mock-server';
 
-import Long from 'long';
 import lodash from 'lodash';
 import { expect } from 'playwright/test';
 import { Bootstrap, debug, RUN_COUNT, DISCARD_COUNT } from './fixtures.node.js';
@@ -95,16 +94,26 @@ Bootstrap.benchmark(async (bootstrap: Bootstrap): Promise<void> => {
     await phone.sendRaw(
       desktop,
       {
-        syncMessage: {
-          callEvent: {
-            peerId: uuidToBytes(contact.device.aci),
-            callId: Long.fromNumber(timestamp),
-            timestamp: Long.fromNumber(timestamp),
-            type,
-            direction,
-            event,
+        content: {
+          syncMessage: {
+            content: {
+              callEvent: {
+                conversationId: uuidToBytes(contact.device.aci),
+                callId: BigInt(timestamp),
+                timestamp: BigInt(timestamp),
+                type,
+                direction,
+                event,
+              },
+            },
+            read: null,
+            stickerPackOperation: null,
+            viewed: null,
+            padding: null,
           },
         },
+        pniSignatureMessage: null,
+        senderKeyDistributionMessage: null,
       },
       { timestamp }
     );

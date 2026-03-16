@@ -1,7 +1,6 @@
 // Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import Long from 'long';
 import lodash from 'lodash';
 import { Aci, Pni, hkdf } from '@signalapp/libsignal-client';
 import type { PublicKey, PrivateKey } from '@signalapp/libsignal-client';
@@ -158,6 +157,61 @@ export function decryptDeviceName(
   return Bytes.toString(plaintext);
 }
 
+// For testing
+export function encryptDeviceCreatedAt(
+  createdAt: number,
+  deviceId: number,
+  registrationId: number,
+  identityPublic: PublicKey
+): Uint8Array {
+  const createdAtBuffer = new ArrayBuffer(8);
+  const dataView = new DataView(createdAtBuffer);
+  dataView.setBigUint64(0, BigInt(createdAt), false);
+  const createdAtBytes = new Uint8Array(createdAtBuffer);
+
+  const associatedData = getAssociatedDataForDeviceCreatedAt(
+    deviceId,
+    registrationId
+  );
+
+  return identityPublic.seal(createdAtBytes, 'deviceCreatedAt', associatedData);
+}
+
+// createdAtCiphertext is an Int64, encrypted using the identity key
+// PrivateKey with 5 bytes of associated data (deviceId || registrationId).
+export function decryptDeviceCreatedAt(
+  createdAtCiphertext: Uint8Array,
+  deviceId: number,
+  registrationId: number,
+  identityPrivate: PrivateKey
+): number {
+  const associatedData = getAssociatedDataForDeviceCreatedAt(
+    deviceId,
+    registrationId
+  );
+  const createdAtData = identityPrivate.open(
+    createdAtCiphertext,
+    'deviceCreatedAt',
+    associatedData
+  );
+  return Number(Bytes.readBigUint64BE(createdAtData));
+}
+
+function getAssociatedDataForDeviceCreatedAt(
+  deviceId: number,
+  registrationId: number
+): Uint8Array {
+  if (deviceId > 255) {
+    throw new Error('deviceId above 255, must be 1 byte');
+  }
+
+  const associatedDataBuffer = new ArrayBuffer(5);
+  const dataView = new DataView(associatedDataBuffer);
+  dataView.setUint8(0, deviceId);
+  dataView.setUint32(1, registrationId, false);
+  return new Uint8Array(associatedDataBuffer);
+}
+
 export function deriveMasterKey(accountEntropyPool: string): Uint8Array {
   return AccountEntropyPool.deriveSvrKey(accountEntropyPool);
 }
@@ -168,7 +222,7 @@ export function deriveStorageServiceKey(masterKey: Uint8Array): Uint8Array {
 
 export function deriveStorageManifestKey(
   storageServiceKey: Uint8Array,
-  version: Long = Long.fromNumber(0)
+  version = 0n
 ): Uint8Array {
   return hmacSha256(storageServiceKey, Bytes.fromString(`Manifest_${version}`));
 }

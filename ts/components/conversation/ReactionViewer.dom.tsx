@@ -46,7 +46,6 @@ export type Reaction = {
     | 'isMe'
     | 'phoneNumber'
     | 'profileName'
-    | 'sharedGroupNames'
     | 'title'
   >;
 };
@@ -88,7 +87,7 @@ type ReactionWithEmojiData = Reaction &
 
 function ReactionViewerEmoji(props: {
   emojiVariantValue: string | undefined;
-}): JSX.Element | null {
+}): React.JSX.Element | null {
   const emojiLocalizer = useFunEmojiLocalizer();
   strictAssert(props.emojiVariantValue != null, 'Expected an emoji');
 
@@ -272,7 +271,6 @@ export const ReactionViewer = React.forwardRef<HTMLDivElement, Props>(
                   avatarUrl={from.avatarUrl}
                   badge={getPreferredBadge(from.badges)}
                   conversationType="direct"
-                  sharedGroupNames={from.sharedGroupNames}
                   size={32}
                   color={from.color}
                   profileName={from.profileName}

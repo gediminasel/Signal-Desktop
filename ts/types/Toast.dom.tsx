@@ -15,6 +15,7 @@ export enum ToastType {
   CallQualitySurveySuccess = 'CallQualitySurveySuccess',
   CaptchaFailed = 'CaptchaFailed',
   CaptchaSolved = 'CaptchaSolved',
+  CannotAddMemberLabel = 'CannotAddMemberLabel',
   CannotEditMessage = 'CannotEditMessage',
   CannotForwardEmptyMessage = 'CannotForwardEmptyMessage',
   CannotMixMultiAndNonMultiAttachments = 'CannotMixMultiAndNonMultiAttachments',
@@ -41,6 +42,9 @@ export enum ToastType {
   DonationCompleted = 'DonationCompleted',
   DonationConfirmationNeeded = 'DonationConfirmationNeeded',
   DonationError = 'DonationError',
+  DonationPaypalCanceled = 'DonationPaypalCanceled',
+  DonationPaypalConfirmationNeeded = 'DonationPaypalConfirmationNeeded',
+  DonationPaypalError = 'DonationPaypalError',
   DonationProcessing = 'DonationProcessing',
   DonationVerificationNeeded = 'DonationVerificationNeeded',
   DonationVerificationFailed = 'DonationVerificationFailed',
@@ -93,6 +97,8 @@ export enum ToastType {
   UnsupportedOS = 'UnsupportedOS',
   UserAddedToGroup = 'UserAddedToGroup',
   UsernameRecovered = 'UsernameRecovered',
+  ViewOnceDisabled = 'ViewOnceDisabled',
+  ViewOnceEnabled = 'ViewOnceEnabled',
   VoiceNoteLimit = 'VoiceNoteLimit',
   VoiceNoteMustBeTheOnlyAttachment = 'VoiceNoteMustBeTheOnlyAttachment',
   WhoCanFindMeReadOnly = 'WhoCanFindMeReadOnly',
@@ -122,6 +128,7 @@ export type AnyToast =
       parameters: { canRetry: boolean };
     }
   | { toastType: ToastType.CallQualitySurveySuccess }
+  | { toastType: ToastType.CannotAddMemberLabel }
   | { toastType: ToastType.CannotEditMessage }
   | { toastType: ToastType.CannotForwardEmptyMessage }
   | { toastType: ToastType.CannotMixMultiAndNonMultiAttachments }
@@ -161,6 +168,9 @@ export type AnyToast =
   | { toastType: ToastType.DonationCompleted }
   | { toastType: ToastType.DonationConfirmationNeeded }
   | { toastType: ToastType.DonationError }
+  | { toastType: ToastType.DonationPaypalCanceled }
+  | { toastType: ToastType.DonationPaypalConfirmationNeeded }
+  | { toastType: ToastType.DonationPaypalError }
   | { toastType: ToastType.DonationProcessing }
   | { toastType: ToastType.DonationVerificationFailed }
   | { toastType: ToastType.DonationVerificationNeeded }
@@ -244,6 +254,8 @@ export type AnyToast =
       toastType: ToastType.UsernameRecovered;
       parameters: { username: string };
     }
+  | { toastType: ToastType.ViewOnceDisabled }
+  | { toastType: ToastType.ViewOnceEnabled }
   | { toastType: ToastType.VoiceNoteLimit }
   | { toastType: ToastType.VoiceNoteMustBeTheOnlyAttachment }
   | { toastType: ToastType.WhoCanFindMeReadOnly };

@@ -1,17 +1,17 @@
 // Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import Long from 'long';
 import { ReceiptCredentialPresentation } from '@signalapp/libsignal-client/zkgroup.js';
 import lodash from 'lodash';
 
 import { assertDev, strictAssert } from '../util/assert.std.js';
-import { dropNull, shallowDropNull } from '../util/dropNull.std.js';
+import { dropNull } from '../util/dropNull.std.js';
 import {
   fromAciUuidBytes,
   fromAciUuidBytesOrString,
 } from '../util/ServiceId.node.js';
 import { getTimestampFromLong } from '../util/timestampLongUtils.std.js';
+import { isKnownProtoEnumMember } from '../util/isKnownProtoEnumMember.std.js';
 import { SignalService as Proto } from '../protobuf/index.std.js';
 import { deriveGroupFields } from '../groups.preload.js';
 import * as Bytes from '../Bytes.std.js';
@@ -29,17 +29,23 @@ import type {
   ProcessedPollVote,
   ProcessedPollTerminate,
   ProcessedDelete,
+  ProcessedAdminDelete,
   ProcessedGiftBadge,
   ProcessedStoryContext,
   ProcessedPinMessage,
   ProcessedUnpinMessage,
 } from './Types.d.ts';
 import { GiftBadgeStates } from '../types/GiftBadgeStates.std.js';
+import type { RawBodyRange } from '../types/BodyRange.std.js';
 import {
   APPLICATION_OCTET_STREAM,
   stringToMIMEType,
 } from '../types/MIME.std.js';
-import { SECOND, DurationInSeconds } from '../util/durations/index.std.js';
+import {
+  SECOND,
+  DurationInSeconds,
+  HOUR,
+} from '../util/durations/index.std.js';
 import type { AnyPaymentEvent } from '../types/Payment.std.js';
 import { PaymentEventKind } from '../types/Payment.std.js';
 import { filterAndClean } from '../util/BodyRange.node.js';
@@ -47,31 +53,34 @@ import { bytesToUuid } from '../util/uuidToBytes.std.js';
 import { createName } from '../util/attachmentPath.node.js';
 import { partitionBodyAndNormalAttachments } from '../util/Attachment.std.js';
 import { isNotNil } from '../util/isNotNil.std.js';
+import { createLogger } from '../logging/log.std.js';
+
+import { toNumber } from '../util/toNumber.std.js';
 
 const { isNumber } = lodash;
+
+const log = createLogger('processDataMessage');
 
 const FLAGS = Proto.DataMessage.Flags;
 export const ATTACHMENT_MAX = 32;
 
 export function processAttachment(
-  attachment: Proto.IAttachmentPointer
+  attachment: Proto.AttachmentPointer
 ): ProcessedAttachment;
 export function processAttachment(
-  attachment?: Proto.IAttachmentPointer | null
+  attachment?: Proto.AttachmentPointer | null
 ): ProcessedAttachment | undefined;
 
 export function processAttachment(
-  attachment?: Proto.IAttachmentPointer | null
+  attachment?: Proto.AttachmentPointer | null
 ): ProcessedAttachment | undefined {
-  const attachmentWithoutNulls = shallowDropNull(attachment);
-  if (!attachmentWithoutNulls) {
+  if (attachment == null) {
     return undefined;
   }
 
   const {
-    cdnId,
-    cdnKey,
     cdnNumber,
+    attachmentIdentifier,
     clientUuid,
     key,
     size,
@@ -85,27 +94,37 @@ export function processAttachment(
     height,
     caption,
     blurHash,
-    uploadTimestamp,
-  } = attachmentWithoutNulls;
-
-  const hasCdnId = Long.isLong(cdnId) ? !cdnId.isZero() : Boolean(cdnId);
+  } = attachment;
 
   if (!isNumber(size)) {
     throw new Error('Missing size on incoming attachment!');
   }
 
+  let uploadTimestamp: number | undefined =
+    toNumber(attachment.uploadTimestamp) ?? 0;
+
+  // Make sure uploadTimestamp is not set to an obviously wrong future value (we use
+  // uploadTimestamp to determine whether to re-use CDN pointers)
+  if (uploadTimestamp && uploadTimestamp > Date.now() + 12 * HOUR) {
+    log.warn('uploadTimestamp is in the future, dropping');
+    uploadTimestamp = undefined;
+  }
+
   return {
-    cdnKey,
-    cdnNumber,
-    chunkSize,
-    fileName,
-    flags,
-    width,
-    height,
-    caption,
-    blurHash,
-    uploadTimestamp: uploadTimestamp?.toNumber(),
-    cdnId: hasCdnId ? String(cdnId) : undefined,
+    cdnKey: attachmentIdentifier?.cdnKey,
+    cdnNumber: cdnNumber ?? 0,
+    chunkSize: chunkSize ?? 0,
+    fileName: fileName ?? '',
+    flags: flags ?? 0,
+    width: width ?? 0,
+    height: height ?? 0,
+    caption: caption ?? '',
+    blurHash: blurHash ?? '',
+    uploadTimestamp,
+    cdnId:
+      attachmentIdentifier?.cdnId === 0n
+        ? undefined
+        : attachmentIdentifier?.cdnId?.toString(),
     clientUuid: Bytes.isNotEmpty(clientUuid)
       ? bytesToUuid(clientUuid)
       : undefined,
@@ -122,7 +141,7 @@ export function processAttachment(
 }
 
 export function processGroupV2Context(
-  groupV2?: Proto.IGroupContextV2 | null
+  groupV2?: Proto.GroupContextV2 | null
 ): ProcessedGroupV2Context | undefined {
   if (!groupV2) {
     return undefined;
@@ -133,7 +152,7 @@ export function processGroupV2Context(
 
   return {
     masterKey: Bytes.toBase64(groupV2.masterKey),
-    revision: dropNull(groupV2.revision),
+    revision: groupV2.revision ?? 0,
     groupChange: groupV2.groupChange
       ? Bytes.toBase64(groupV2.groupChange)
       : undefined,
@@ -144,28 +163,28 @@ export function processGroupV2Context(
 }
 
 export function processPayment(
-  payment?: Proto.DataMessage.IPayment | null
+  payment?: Proto.DataMessage.Payment | null
 ): AnyPaymentEvent | undefined {
   if (!payment) {
     return undefined;
   }
 
-  if (payment.notification != null) {
+  if (payment.Item?.notification != null) {
     return {
       kind: PaymentEventKind.Notification,
-      note: payment.notification.note ?? null,
+      note: payment.Item.notification.note ?? null,
     };
   }
 
-  if (payment.activation != null) {
+  if (payment.Item?.activation != null) {
     if (
-      payment.activation.type ===
+      payment.Item.activation.type ===
       Proto.DataMessage.Payment.Activation.Type.REQUEST
     ) {
       return { kind: PaymentEventKind.ActivationRequest };
     }
     if (
-      payment.activation.type ===
+      payment.Item.activation.type ===
       Proto.DataMessage.Payment.Activation.Type.ACTIVATED
     ) {
       return { kind: PaymentEventKind.Activation };
@@ -176,7 +195,7 @@ export function processPayment(
 }
 
 export function processQuote(
-  quote?: Proto.DataMessage.IQuote | null
+  quote?: Proto.DataMessage.Quote | null
 ): ProcessedQuote | undefined {
   if (!quote) {
     return undefined;
@@ -190,25 +209,29 @@ export function processQuote(
   );
 
   return {
-    id: quote.id?.toNumber(),
+    id: toNumber(quote.id) ?? 0,
     authorAci,
-    text: dropNull(quote.text),
+    text: quote.text ?? '',
     attachments: (quote.attachments ?? []).slice(0, 1).map(attachment => {
       return {
         contentType: attachment.contentType
           ? stringToMIMEType(attachment.contentType)
           : APPLICATION_OCTET_STREAM,
-        fileName: dropNull(attachment.fileName),
+        fileName: attachment.fileName ?? '',
         thumbnail: processAttachment(attachment.thumbnail),
       };
     }),
-    bodyRanges: filterAndClean(quote.bodyRanges),
-    type: quote.type || Proto.DataMessage.Quote.Type.NORMAL,
+    bodyRanges: filterAndClean(
+      quote.bodyRanges.map(processBodyRange).filter(isNotNil)
+    ),
+    type: isKnownProtoEnumMember(Proto.DataMessage.Quote.Type, quote.type)
+      ? quote.type
+      : Proto.DataMessage.Quote.Type.NORMAL,
   };
 }
 
 export function processStoryContext(
-  storyContext?: Proto.DataMessage.IStoryContext | null
+  storyContext?: Proto.DataMessage.StoryContext | null
 ): ProcessedStoryContext | undefined {
   if (!storyContext) {
     return undefined;
@@ -232,7 +255,7 @@ export function processStoryContext(
 }
 
 export function processContact(
-  contact?: ReadonlyArray<Proto.DataMessage.IContact> | null
+  contact?: ReadonlyArray<Proto.DataMessage.Contact> | null
 ): ReadonlyArray<ProcessedContact> | undefined {
   if (!contact) {
     return undefined;
@@ -260,13 +283,13 @@ function isLinkPreviewDateValid(value: unknown): value is number {
   );
 }
 
-function cleanLinkPreviewDate(value?: Long | null): number | undefined {
-  const result = value?.toNumber();
+function cleanLinkPreviewDate(value?: bigint | null): number | undefined {
+  const result = toNumber(value);
   return isLinkPreviewDateValid(result) ? result : undefined;
 }
 
 export function processPreview(
-  preview?: ReadonlyArray<Proto.IPreview> | null
+  preview?: ReadonlyArray<Proto.Preview> | null
 ): ReadonlyArray<ProcessedPreview> | undefined {
   if (!preview) {
     return undefined;
@@ -274,17 +297,17 @@ export function processPreview(
 
   return preview.slice(0, 1).map(item => {
     return {
-      url: dropNull(item.url),
-      title: dropNull(item.title),
+      url: item.url ?? '',
+      title: item.title ?? '',
       image: item.image ? processAttachment(item.image) : undefined,
-      description: dropNull(item.description),
+      description: item.description ?? '',
       date: cleanLinkPreviewDate(item.date),
     };
   });
 }
 
 export function processSticker(
-  sticker?: Proto.DataMessage.ISticker | null
+  sticker?: Proto.DataMessage.Sticker | null
 ): ProcessedSticker | undefined {
   if (!sticker) {
     return undefined;
@@ -293,14 +316,14 @@ export function processSticker(
   return {
     packId: sticker.packId ? Bytes.toHex(sticker.packId) : undefined,
     packKey: sticker.packKey ? Bytes.toBase64(sticker.packKey) : undefined,
-    stickerId: dropNull(sticker.stickerId),
-    emoji: dropNull(sticker.emoji),
+    stickerId: sticker.stickerId ?? 0,
+    emoji: sticker.emoji ?? '',
     data: processAttachment(sticker.data),
   };
 }
 
 export function processReaction(
-  reaction?: Proto.DataMessage.IReaction | null
+  reaction?: Proto.DataMessage.Reaction | null
 ): ProcessedReaction | undefined {
   if (!reaction) {
     return undefined;
@@ -315,32 +338,37 @@ export function processReaction(
   );
 
   return {
-    emoji: dropNull(reaction.emoji),
+    emoji: reaction.emoji ?? '',
     remove: Boolean(reaction.remove),
     targetAuthorAci,
-    targetTimestamp: reaction.targetSentTimestamp?.toNumber(),
+    targetTimestamp: toNumber(reaction.targetSentTimestamp) ?? 0,
   };
 }
 
 export function processPinMessage(
-  pinMessage?: Proto.DataMessage.IPinMessage | null
+  pinMessage?: Proto.DataMessage.PinMessage | null
 ): ProcessedPinMessage | undefined {
   if (pinMessage == null) {
     return undefined;
   }
 
-  const targetSentTimestamp = pinMessage.targetSentTimestamp?.toNumber();
+  const targetSentTimestamp = toNumber(pinMessage.targetSentTimestamp);
   strictAssert(targetSentTimestamp, 'Missing targetSentTimestamp');
 
   const targetAuthorAci = fromAciUuidBytes(pinMessage.targetAuthorAciBinary);
   strictAssert(targetAuthorAci, 'Missing targetAuthorAciBinary');
 
   let pinDuration: DurationInSeconds | null;
-  if (pinMessage.pinDurationForever) {
+  if (pinMessage.pinDuration?.pinDurationForever) {
     pinDuration = null;
   } else {
-    strictAssert(pinMessage.pinDurationSeconds, 'Missing pinDurationSeconds');
-    pinDuration = DurationInSeconds.fromSeconds(pinMessage.pinDurationSeconds);
+    strictAssert(
+      pinMessage.pinDuration?.pinDurationSeconds,
+      'Missing pinDurationSeconds'
+    );
+    pinDuration = DurationInSeconds.fromSeconds(
+      pinMessage.pinDuration.pinDurationSeconds
+    );
   }
 
   return {
@@ -351,21 +379,21 @@ export function processPinMessage(
 }
 
 export function processPollCreate(
-  pollCreate?: Proto.DataMessage.IPollCreate | null
+  pollCreate?: Proto.DataMessage.PollCreate | null
 ): ProcessedPollCreate | undefined {
   if (!pollCreate) {
     return undefined;
   }
 
   return {
-    question: dropNull(pollCreate.question),
+    question: pollCreate.question ?? '',
     options: pollCreate.options?.filter(isNotNil) || [],
     allowMultiple: Boolean(pollCreate.allowMultiple),
   };
 }
 
 export function processPollVote(
-  pollVote?: Proto.DataMessage.IPollVote | null
+  pollVote?: Proto.DataMessage.PollVote | null
 ): ProcessedPollVote | undefined {
   if (!pollVote) {
     return undefined;
@@ -379,38 +407,57 @@ export function processPollVote(
 
   return {
     targetAuthorAci,
-    targetTimestamp: pollVote.targetSentTimestamp?.toNumber(),
+    targetTimestamp: toNumber(pollVote.targetSentTimestamp) ?? 0,
     optionIndexes: pollVote.optionIndexes?.filter(isNotNil) || [],
     voteCount: pollVote.voteCount || 0,
   };
 }
 
 export function processPollTerminate(
-  pollTerminate?: Proto.DataMessage.IPollTerminate | null
+  pollTerminate?: Proto.DataMessage.PollTerminate | null
 ): ProcessedPollTerminate | undefined {
   if (!pollTerminate) {
     return undefined;
   }
 
   return {
-    targetTimestamp: pollTerminate.targetSentTimestamp?.toNumber(),
+    targetTimestamp: toNumber(pollTerminate.targetSentTimestamp) ?? 0,
   };
 }
 
 export function processDelete(
-  del?: Proto.DataMessage.IDelete | null
+  del?: Proto.DataMessage.Delete | null
 ): ProcessedDelete | undefined {
   if (!del) {
     return undefined;
   }
 
   return {
-    targetSentTimestamp: del.targetSentTimestamp?.toNumber(),
+    targetSentTimestamp: toNumber(del.targetSentTimestamp) ?? 0,
+  };
+}
+
+export function processAdminDelete(
+  adminDelete?: Proto.DataMessage.AdminDelete | null
+): ProcessedAdminDelete | undefined {
+  if (!adminDelete) {
+    return undefined;
+  }
+
+  const targetSentTimestamp = toNumber(adminDelete.targetSentTimestamp);
+  strictAssert(targetSentTimestamp, 'AdminDelete missing targetSentTimestamp');
+
+  const targetAuthorAci = fromAciUuidBytes(adminDelete.targetAuthorAciBinary);
+  strictAssert(targetAuthorAci, 'AdminDelete missing targetAuthorAciBinary');
+
+  return {
+    targetSentTimestamp,
+    targetAuthorAci,
   };
 }
 
 export function processGiftBadge(
-  giftBadge: Proto.DataMessage.IGiftBadge | null | undefined
+  giftBadge: Proto.DataMessage.GiftBadge | null | undefined
 ): ProcessedGiftBadge | undefined {
   if (
     !giftBadge ||
@@ -436,13 +483,13 @@ export function processGiftBadge(
 }
 
 export function processUnpinMessage(
-  unpinMessage?: Proto.DataMessage.IUnpinMessage | null
+  unpinMessage?: Proto.DataMessage.UnpinMessage | null
 ): ProcessedUnpinMessage | undefined {
   if (unpinMessage == null) {
     return undefined;
   }
 
-  const targetSentTimestamp = unpinMessage.targetSentTimestamp?.toNumber();
+  const targetSentTimestamp = toNumber(unpinMessage.targetSentTimestamp);
   strictAssert(targetSentTimestamp, 'Missing targetSentTimestamp');
 
   const targetAuthorAci = fromAciUuidBytes(unpinMessage.targetAuthorAciBinary);
@@ -455,7 +502,7 @@ export function processUnpinMessage(
 }
 
 export function processDataMessage(
-  message: Proto.IDataMessage,
+  message: Proto.DataMessage,
   envelopeTimestamp: number,
 
   // Only for testing
@@ -472,7 +519,7 @@ export function processDataMessage(
     throw new Error('Missing timestamp on dataMessage');
   }
 
-  const timestamp = message.timestamp?.toNumber();
+  const timestamp = toNumber(message.timestamp);
 
   if (envelopeTimestamp !== timestamp) {
     throw new Error(
@@ -482,7 +529,7 @@ export function processDataMessage(
   }
 
   const processedAttachments = message.attachments
-    ?.map((attachment: Proto.IAttachmentPointer) => ({
+    ?.map((attachment: Proto.AttachmentPointer) => ({
       ...processAttachment(attachment),
       downloadPath: doCreateName(),
     }))
@@ -494,7 +541,7 @@ export function processDataMessage(
   );
 
   const result: ProcessedDataMessage = {
-    body: dropNull(message.body),
+    body: message.body ?? '',
     bodyAttachment,
     attachments,
     groupV2: processGroupV2Context(message.groupV2),
@@ -511,7 +558,7 @@ export function processDataMessage(
     contact: processContact(message.contact),
     preview: processPreview(message.preview),
     sticker: processSticker(message.sticker),
-    requiredProtocolVersion: dropNull(message.requiredProtocolVersion),
+    requiredProtocolVersion: message.requiredProtocolVersion ?? 0,
     isViewOnce: Boolean(message.isViewOnce),
     reaction: processReaction(message.reaction),
     pinMessage: processPinMessage(message.pinMessage),
@@ -519,7 +566,10 @@ export function processDataMessage(
     pollVote: processPollVote(message.pollVote),
     pollTerminate: processPollTerminate(message.pollTerminate),
     delete: processDelete(message.delete),
-    bodyRanges: filterAndClean(message.bodyRanges),
+    adminDelete: processAdminDelete(message.adminDelete),
+    bodyRanges: filterAndClean(
+      message.bodyRanges.map(processBodyRange).filter(isNotNil)
+    ),
     groupCallUpdate: dropNull(message.groupCallUpdate),
     storyContext: processStoryContext(message.storyContext),
     giftBadge: processGiftBadge(message.giftBadge),
@@ -568,4 +618,37 @@ export function processDataMessage(
   }
 
   return result;
+}
+
+export function processBodyRange(
+  proto: Proto.BodyRange
+): RawBodyRange | undefined {
+  if (proto.associatedValue == null) {
+    return undefined;
+  }
+  if (proto.associatedValue.style) {
+    return {
+      start: proto.start ?? 0,
+      length: proto.length ?? 0,
+      style: isKnownProtoEnumMember(
+        Proto.BodyRange.Style,
+        proto.associatedValue.style
+      )
+        ? proto.associatedValue.style
+        : 0,
+    };
+  }
+
+  const mentionAci = fromAciUuidBytesOrString(
+    proto.associatedValue.mentionAciBinary,
+    proto.associatedValue.mentionAci,
+    'BodyRange.mentionAci'
+  );
+  strictAssert(mentionAci != null, 'Expected mentionAci');
+
+  return {
+    start: proto.start ?? 0,
+    length: proto.length ?? 0,
+    mentionAci,
+  };
 }

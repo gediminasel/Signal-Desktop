@@ -16,7 +16,6 @@ import {
   LightIconLabel,
   SettingsRow,
 } from './PreferencesUtil.dom.js';
-import { ButtonVariant } from './Button.dom.js';
 import type { SettingsLocation } from '../types/Nav.std.js';
 import { SettingsPage } from '../types/Nav.std.js';
 import { I18n } from './I18n.dom.js';
@@ -26,13 +25,13 @@ import type {
   PromptOSAuthReasonType,
   PromptOSAuthResultType,
 } from '../util/os/promptOSAuthMain.main.js';
-import { ConfirmationDialog } from './ConfirmationDialog.dom.js';
 import { AxoButton } from '../axo/AxoButton.dom.js';
 import { BackupLevel } from '../services/backups/types.std.js';
 import {
   BackupsDetailsPage,
   renderSubscriptionDetails,
 } from './PreferencesBackupDetails.dom.js';
+import type { LocalBackupExportMetadata } from '../types/LocalExport.std.js';
 
 export const SIGNAL_BACKUPS_LEARN_MORE_URL =
   'https://support.signal.org/hc/articles/360007059752-Backup-and-Restore-Messages';
@@ -43,14 +42,11 @@ const LOCAL_BACKUPS_PAGES = new Set([
   SettingsPage.LocalBackupsSetupFolder,
   SettingsPage.LocalBackupsSetupKey,
 ]);
-const REMOTE_BACKUPS_PAGES = new Set([SettingsPage.BackupsDetails]);
 
 function isLocalBackupsPage(page: SettingsPage) {
   return LOCAL_BACKUPS_PAGES.has(page);
 }
-function isRemoteBackupsPage(page: SettingsPage) {
-  return REMOTE_BACKUPS_PAGES.has(page);
-}
+
 export function PreferencesBackups({
   accountEntropyPool,
   backupFreeMediaDays,
@@ -60,11 +56,14 @@ export function PreferencesBackups({
   cloudBackupStatus,
   i18n,
   isLocalBackupsEnabled,
-  isRemoteBackupsEnabled,
+  lastLocalBackup,
   locale,
   localBackupFolder,
   onBackupKeyViewedChange,
+  openFileInFolder,
+  osName,
   pickLocalBackupFolder,
+  disableLocalBackups,
   backupMediaDownloadStatus,
   cancelBackupMediaDownload,
   pauseBackupMediaDownload,
@@ -75,6 +74,7 @@ export function PreferencesBackups({
   refreshBackupSubscriptionStatus,
   setSettingsLocation,
   showToast,
+  startLocalBackupExport,
 }: {
   accountEntropyPool: string | undefined;
   backupFreeMediaDays: number;
@@ -85,12 +85,19 @@ export function PreferencesBackups({
   localBackupFolder: string | undefined;
   i18n: LocalizerType;
   isLocalBackupsEnabled: boolean;
-  isRemoteBackupsEnabled: boolean;
+  lastLocalBackup: LocalBackupExportMetadata | undefined;
   locale: string;
   onBackupKeyViewedChange: (keyViewed: boolean) => void;
+  openFileInFolder: (path: string) => void;
+  osName: 'linux' | 'macos' | 'windows' | undefined;
   settingsLocation: SettingsLocation;
   backupMediaDownloadStatus: BackupMediaDownloadStatusType | undefined;
   cancelBackupMediaDownload: () => void;
+  disableLocalBackups: ({
+    deleteExistingBackups,
+  }: {
+    deleteExistingBackups: boolean;
+  }) => Promise<void>;
   pauseBackupMediaDownload: () => void;
   resumeBackupMediaDownload: () => void;
   pickLocalBackupFolder: () => Promise<string | undefined>;
@@ -101,9 +108,8 @@ export function PreferencesBackups({
   refreshBackupSubscriptionStatus: () => void;
   setSettingsLocation: (settingsLocation: SettingsLocation) => void;
   showToast: ShowToastAction;
-}): JSX.Element | null {
-  const [authError, setAuthError] =
-    useState<Omit<PromptOSAuthResultType, 'success'>>();
+  startLocalBackupExport: () => void;
+}): React.JSX.Element | null {
   const [isAuthPending, setIsAuthPending] = useState<boolean>(false);
 
   useEffect(() => {
@@ -118,11 +124,6 @@ export function PreferencesBackups({
     refreshBackupSubscriptionStatus,
     refreshCloudBackupStatus,
   ]);
-
-  if (!isRemoteBackupsEnabled && isRemoteBackupsPage(settingsLocation.page)) {
-    setSettingsLocation({ page: SettingsPage.Backups });
-    return null;
-  }
 
   if (!isLocalBackupsEnabled && isLocalBackupsPage(settingsLocation.page)) {
     setSettingsLocation({ page: SettingsPage.Backups });
@@ -156,18 +157,23 @@ export function PreferencesBackups({
         accountEntropyPool={accountEntropyPool}
         backupKeyViewed={backupKeyViewed}
         i18n={i18n}
+        lastLocalBackup={lastLocalBackup}
         localBackupFolder={localBackupFolder}
         onBackupKeyViewedChange={onBackupKeyViewedChange}
+        openFileInFolder={openFileInFolder}
+        osName={osName}
         settingsLocation={settingsLocation}
         pickLocalBackupFolder={pickLocalBackupFolder}
+        disableLocalBackups={disableLocalBackups}
         promptOSAuth={promptOSAuth}
         setSettingsLocation={setSettingsLocation}
         showToast={showToast}
+        startLocalBackupExport={startLocalBackupExport}
       />
     );
   }
 
-  const learnMoreLink = (parts: Array<string | JSX.Element>) => (
+  const learnMoreLink = (parts: Array<string | React.JSX.Element>) => (
     <a href={SIGNAL_BACKUPS_LEARN_MORE_URL} rel="noreferrer" target="_blank">
       {parts}
     </a>
@@ -250,74 +256,54 @@ export function PreferencesBackups({
 
   function renderLocalBackups() {
     return (
-      <>
-        <SettingsRow
-          className="Preferences--BackupsRow"
-          title={i18n('icu:Preferences__backup-other-ways')}
-        >
-          <FlowingControl>
-            <div className="Preferences__two-thirds-flow">
-              <LightIconLabel icon="Preferences__LocalBackupsIcon">
-                <label>
-                  {i18n('icu:Preferences__local-backups')}{' '}
-                  <div className="Preferences__description">
-                    {isLocalBackupsSetup
-                      ? null
-                      : i18n('icu:Preferences--local-backups-off-description')}
-                  </div>
-                </label>
-              </LightIconLabel>
-            </div>
-            <div
-              className={classNames(
-                'Preferences__flow-button',
-                'Preferences__one-third-flow',
-                'Preferences__one-third-flow--align-right'
-              )}
-            >
-              <AxoButton.Root
-                variant="secondary"
-                size="lg"
-                disabled={isAuthPending}
-                onClick={async () => {
-                  setAuthError(undefined);
-
-                  if (!isLocalBackupsSetup) {
-                    try {
-                      setIsAuthPending(true);
-                      const result = await promptOSAuth('enable-backups');
-                      if (result !== 'success' && result !== 'unsupported') {
-                        setAuthError(result);
-                        return;
-                      }
-                    } finally {
-                      setIsAuthPending(false);
-                    }
-                  }
-
-                  setSettingsLocation({ page: SettingsPage.LocalBackups });
-                }}
-              >
-                {isLocalBackupsSetup
-                  ? i18n('icu:Preferences__button--manage')
-                  : i18n('icu:Preferences__button--set-up')}
-              </AxoButton.Root>
-            </div>
-          </FlowingControl>
-        </SettingsRow>
-
-        {authError && (
-          <ConfirmationDialog
-            i18n={i18n}
-            dialogName="PreferencesLocalBackups--ErrorDialog"
-            onClose={() => setAuthError(undefined)}
-            cancelButtonVariant={ButtonVariant.Secondary}
-            cancelText={i18n('icu:ok')}
+      <SettingsRow
+        className="Preferences--BackupsRow"
+        title={i18n('icu:Preferences__backup-other-ways')}
+      >
+        <FlowingControl>
+          <div className="Preferences__two-thirds-flow">
+            <LightIconLabel icon="Preferences__LocalBackupsIcon">
+              <label>
+                {i18n('icu:Preferences__local-backups')}{' '}
+                <div className="Preferences__description">
+                  {i18n('icu:Preferences--local-backups-off-description')}
+                </div>
+              </label>
+            </LightIconLabel>
+          </div>
+          <div
+            className={classNames(
+              'Preferences__flow-button',
+              'Preferences__one-third-flow',
+              'Preferences__one-third-flow--align-right'
+            )}
           >
-            {getOSAuthErrorString(authError) ?? i18n('icu:error')}
-          </ConfirmationDialog>
-        )}
-      </>
+            <AxoButton.Root
+              variant="secondary"
+              size="lg"
+              disabled={isAuthPending}
+              onClick={async () => {
+                if (!isLocalBackupsSetup) {
+                  try {
+                    setIsAuthPending(true);
+                    const result = await promptOSAuth('enable-backups');
+                    if (result !== 'success' && result !== 'unsupported') {
+                      return;
+                    }
+                  } finally {
+                    setIsAuthPending(false);
+                  }
+                }
+                setSettingsLocation({ page: SettingsPage.LocalBackups });
+              }}
+            >
+              {isLocalBackupsSetup
+                ? i18n('icu:Preferences__button--manage')
+                : i18n('icu:Preferences__button--set-up')}
+            </AxoButton.Root>
+          </div>
+        </FlowingControl>
+      </SettingsRow>
     );
   }
 
@@ -328,8 +314,7 @@ export function PreferencesBackups({
           {i18n('icu:Preferences--backup-section-description')}
         </div>
       </div>
-
-      {isRemoteBackupsEnabled ? renderRemoteBackups() : null}
+      {renderRemoteBackups()}
       {isLocalBackupsEnabled ? renderLocalBackups() : null}
     </>
   );
@@ -343,7 +328,7 @@ export function renderPaidBackupsSummary({
   locale: string;
   subscriptionStatus: BackupsSubscriptionType;
   i18n: LocalizerType;
-}): JSX.Element | null {
+}): React.JSX.Element | null {
   return (
     <div className="Preferences--backups-summary__status-container">
       <div>
@@ -364,7 +349,7 @@ export function renderFreeBackupsSummary({
 }: {
   backupFreeMediaDays: number;
   i18n: LocalizerType;
-}): JSX.Element | null {
+}): React.JSX.Element | null {
   return (
     <div className="Preferences--backups-summary__status-container">
       <div>
@@ -379,23 +364,4 @@ export function renderFreeBackupsSummary({
       </div>
     </div>
   );
-}
-
-export function getOSAuthErrorString(
-  authError: Omit<PromptOSAuthResultType, 'success'> | undefined
-): string | undefined {
-  if (!authError) {
-    return undefined;
-  }
-
-  // TODO: DESKTOP-8895
-  if (authError === 'unauthorized') {
-    return 'This action could not be completed because system authentication failed. Please try again or open the Signal app on your mobile device and go to Backup Settings to view your backup key.';
-  }
-
-  if (authError === 'unauthorized-no-windows-ucv') {
-    return 'This action could not be completed because Windows Hello is not enabled on your computer. Please set up Windows Hello and try again, or open the Signal app on your mobile device and go to Backup Settings to view your backup key.';
-  }
-
-  return 'The action could not be completed because authentication is not available on this computer. Please open the Signal app on your mobile device and go to Backup Settings to view your backup key.';
 }

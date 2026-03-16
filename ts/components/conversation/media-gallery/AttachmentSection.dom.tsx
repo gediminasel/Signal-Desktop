@@ -8,6 +8,7 @@ import type {
   GenericMediaItemType,
   MediaItemType,
   LinkPreviewMediaItemType,
+  ContactMediaItemType,
 } from '../../../types/MediaItem.std.js';
 import { missingCaseError } from '../../../util/missingCaseError.std.js';
 import { strictAssert } from '../../../util/assert.std.js';
@@ -21,7 +22,7 @@ export type Props = {
   renderMediaItem: (props: {
     onItemClick: (event: ItemClickEvent) => unknown;
     mediaItem: GenericMediaItemType;
-  }) => JSX.Element;
+  }) => React.JSX.Element;
 };
 
 function getMediaItemKey(mediaItem: GenericMediaItemType): string {
@@ -34,12 +35,16 @@ function getMediaItemKey(mediaItem: GenericMediaItemType): string {
 
 type VerifiedMediaItems =
   | {
-      type: 'media' | 'audio' | 'document';
+      type: 'media' | 'audio';
       entries: ReadonlyArray<MediaItemType>;
     }
   | {
       type: 'link';
       entries: ReadonlyArray<LinkPreviewMediaItemType>;
+    }
+  | {
+      type: 'document';
+      entries: ReadonlyArray<MediaItemType | ContactMediaItemType>;
     };
 
 function verifyMediaItems(
@@ -48,11 +53,19 @@ function verifyMediaItems(
   const first = mediaItems.at(0);
   strictAssert(first != null, 'AttachmentSection cannot be empty');
 
-  const { type } = first;
+  let { type } = first;
+  if (type === 'contact') {
+    type = 'document';
+  }
 
   const result = {
     type,
-    entries: mediaItems.filter(item => item.type === type),
+    entries: mediaItems.filter(item => {
+      if (type === 'document') {
+        return item.type === 'document' || item.type === 'contact';
+      }
+      return item.type === type;
+    }),
   };
 
   strictAssert(
@@ -69,13 +82,17 @@ export function AttachmentSection({
   onItemClick,
 
   renderMediaItem,
-}: Props): JSX.Element {
+}: Props): React.JSX.Element {
   const verified = verifyMediaItems(mediaItems);
   switch (verified.type) {
     case 'media':
       return (
         <section className={tw('@container px-5')}>
-          <h2 className={tw('ps-1 pt-4 pb-2 type-body-medium')}>{header}</h2>
+          {header != null && (
+            <h2 className={tw('ps-1 pt-4 pb-2 type-body-medium font-semibold')}>
+              {header}
+            </h2>
+          )}
           <div
             className={tw(
               'grid gap-1',
@@ -103,7 +120,13 @@ export function AttachmentSection({
     case 'link':
       return (
         <section>
-          <h2 className={tw('px-6 pt-1.5 pb-2 type-body-medium')}>{header}</h2>
+          {header != null && (
+            <h2
+              className={tw('px-6 pt-1.5 pb-2 type-body-medium font-semibold')}
+            >
+              {header}
+            </h2>
+          )}
           <div>
             {verified.entries.map(mediaItem => {
               return (

@@ -59,6 +59,7 @@ import type { AttachmentBackupJobType } from '../types/AttachmentBackup.std.js';
 import type { AttachmentType } from '../types/Attachment.std.js';
 import type { MediaItemMessageType } from '../types/MediaItem.std.js';
 import type { LinkPreviewType } from '../types/message/LinkPreviews.std.js';
+import type { EmbeddedContactType } from '../types/EmbeddedContact.std.js';
 import type { GifType } from '../components/fun/panels/FunPanelGifs.dom.js';
 import type { NotificationProfileType } from '../types/NotificationProfile.std.js';
 import type { DonationReceipt } from '../types/Donations.std.js';
@@ -69,12 +70,15 @@ import type {
   PinnedMessage,
   PinnedMessageId,
   PinnedMessageParams,
+  PinnedMessagePreloadData,
 } from '../types/PinnedMessage.std.js';
 import type { AppendPinnedMessageResult } from './server/pinnedMessages.std.js';
 import type {
   RemoteMegaphoneId,
   RemoteMegaphoneType,
 } from '../types/Megaphone.std.js';
+import { sqlFragment, sqlId, sqlJoin } from './util.std.js';
+import type { MIMEType } from '../types/MIME.std.js';
 
 export type ReadableDB = Database & { __readable_db: never };
 export type WritableDB = ReadableDB & { __writable_db: never };
@@ -190,6 +194,12 @@ export const MESSAGE_COLUMNS = [
   ...MESSAGE_PRIMARY_KEY_COLUMNS,
   ...MESSAGE_NON_PRIMARY_KEY_COLUMNS,
 ] as const;
+
+export const MESSAGE_COLUMNS_FRAGMENT = sqlJoin(
+  MESSAGE_COLUMNS.map(column => {
+    return sqlFragment`messages.${sqlId(column)}`;
+  })
+);
 
 export type MessageTypeUnhydrated = {
   json: string;
@@ -601,28 +611,54 @@ export type GetSortedMediaOptionsType = Readonly<{
   messageId?: string;
   receivedAt?: number;
   sentAt?: number;
-  order: 'older' | 'newer';
+  size?: number;
+  order: 'older' | 'newer' | 'bigger';
   type: 'media' | 'audio' | 'documents';
 }>;
 
-export type GetOlderLinkPreviewsOptionsType = Readonly<{
+export type GetSortedDocumentsOptionsType = Readonly<{
   conversationId: string;
   limit: number;
   messageId?: string;
   receivedAt?: number;
   sentAt?: number;
+  size?: number;
+  order: 'older' | 'bigger';
+}>;
+
+export type GetSortedNonAttachmentMediaOptionsType = Readonly<{
+  conversationId: string;
+  limit: number;
+  messageId?: string;
+  receivedAt?: number;
+  sentAt?: number;
+  size?: number;
+  order: 'older' | 'bigger';
+  type: 'links' | 'contacts';
 }>;
 
 export type MediaItemDBType = Readonly<{
+  type: 'mediaItem';
   attachment: AttachmentType;
   index: number;
   message: MediaItemMessageType;
 }>;
 
 export type LinkPreviewMediaItemDBType = Readonly<{
+  type: 'link';
   preview: LinkPreviewType;
   message: MediaItemMessageType;
 }>;
+
+export type ContactMediaItemDBType = Readonly<{
+  type: 'contact';
+  contact: EmbeddedContactType;
+  message: MediaItemMessageType;
+}>;
+
+export type NonAttachmentMediaItemDBType =
+  | LinkPreviewMediaItemDBType
+  | ContactMediaItemDBType;
 
 export type KyberPreKeyTripleType = Readonly<{
   id: PreKeyIdType;
@@ -768,6 +804,42 @@ strictAssert(
   'attachment_columns must match DB fields type'
 );
 
+export type ExistingAttachmentUploadData = {
+  cdnKey: string;
+  cdnNumber: number;
+  digest: string;
+  key: string;
+  uploadTimestamp: number;
+  incrementalMac: string | null;
+  chunkSize: number | null;
+};
+
+export type ExistingAttachmentData = Pick<
+  MessageAttachmentDBType,
+  | 'version'
+  | 'path'
+  | 'localKey'
+  | 'width'
+  | 'height'
+  | 'thumbnailPath'
+  | 'thumbnailLocalKey'
+  | 'thumbnailVersion'
+  | 'thumbnailContentType'
+  | 'thumbnailSize'
+  | 'screenshotPath'
+  | 'screenshotLocalKey'
+  | 'screenshotVersion'
+  | 'screenshotContentType'
+  | 'screenshotSize'
+>;
+
+export type RemoveMessageOptions = {
+  cleanupMessages: (
+    messages: ReadonlyArray<MessageAttributesType>,
+    options: { fromSync?: boolean }
+  ) => Promise<void>;
+  fromSync?: boolean;
+};
 type ReadableInterface = {
   close: () => void;
 
@@ -832,12 +904,12 @@ type ReadableInterface = {
   ) => ReactionType | undefined;
   _getAllReactions: () => Array<ReactionType>;
 
-  getMessageBySender: (options: {
-    source?: string;
-    sourceServiceId?: ServiceIdString;
-    sourceDevice?: number;
-    sent_at: number;
-  }) => MessageType | undefined;
+  getMessageByAuthorAciAndSentAt: (
+    ourAci: AciString,
+    authorAci: AciString,
+    sentAtTimestamp: number,
+    options: { includeEdits: boolean }
+  ) => MessageType | null;
   getMessageById: (id: string) => MessageType | undefined;
   getMessagesById: (messageIds: ReadonlyArray<string>) => Array<MessageType>;
   _getAllMessages: () => Array<MessageType>;
@@ -860,9 +932,12 @@ type ReadableInterface = {
   getSortedMedia: (
     options: GetSortedMediaOptionsType
   ) => Array<MediaItemDBType>;
-  getOlderLinkPreviews: (
-    options: GetOlderLinkPreviewsOptionsType
-  ) => Array<LinkPreviewMediaItemDBType>;
+  getSortedNonAttachmentMedia: (
+    options: GetSortedNonAttachmentMediaOptionsType
+  ) => Array<NonAttachmentMediaItemDBType>;
+  getSortedDocuments: (
+    options: GetSortedDocumentsOptionsType
+  ) => Array<MediaItemDBType | ContactMediaItemDBType>;
   getAllStories: (options: {
     conversationId?: string;
     sourceServiceId?: ServiceIdString;
@@ -924,6 +999,7 @@ type ReadableInterface = {
     conversationId: string,
     limit?: number
   ) => Array<MessageType>;
+  getAllProtectedAttachmentPaths: () => Array<string>;
 
   getUnprocessedCount: () => number;
 
@@ -980,11 +1056,16 @@ type ReadableInterface = {
   getOldestDeletedChatFolder: () => ChatFolder | null;
 
   getAllMegaphones: () => ReadonlyArray<RemoteMegaphoneType>;
+  getAllMegaphoneIds: () => ReadonlyArray<RemoteMegaphoneId>;
   hasMegaphone: (megaphoneId: RemoteMegaphoneId) => boolean;
 
-  getPinnedMessagesForConversation: (
+  getAllKTAcis: () => ReadonlyArray<AciString>;
+  getKTAccountData: (aci: AciString) => Uint8Array | undefined;
+
+  getAllPinnedMessages: () => ReadonlyArray<PinnedMessage>;
+  getPinnedMessagesPreloadDataForConversation: (
     conversationId: string
-  ) => ReadonlyArray<PinnedMessage>;
+  ) => ReadonlyArray<PinnedMessagePreloadData>;
   getNextExpiringPinnedMessageAcrossConversations: () => PinnedMessage | null;
 
   getMessagesNeedingUpgrade: (
@@ -1005,10 +1086,16 @@ type ReadableInterface = {
     messageIds: Array<string>
   ) => Array<MessageAttachmentDBType>;
 
+  isAttachmentSafeToDelete: (path: string) => boolean;
+
   getMessageCountBySchemaVersion: () => MessageCountBySchemaVersionType;
   getMessageSampleForSchemaVersion: (
     version: number
   ) => Array<MessageAttributesType>;
+
+  getMostRecentAttachmentUploadData: (
+    plaintextHash: string
+  ) => ExistingAttachmentUploadData | undefined;
 
   __dangerouslyRunAbitraryReadOnlySqlQuery: (
     readOnlySqlQuery: string
@@ -1169,11 +1256,6 @@ type WritableInterface = {
     roomId: string,
     callLinkState: CallLinkStateType
   ): CallLinkType;
-  updateCallLinkStateAndEpoch(
-    roomId: string,
-    callLinkState: CallLinkStateType,
-    epoch: string | null
-  ): CallLinkType;
   beginDeleteAllCallLinks(): boolean;
   beginDeleteCallLink(roomId: string): boolean;
   deleteCallHistoryByRoomId(roomid: string): void;
@@ -1284,7 +1366,7 @@ type WritableInterface = {
   updateEmojiUsage: (shortName: string, timeUsed?: number) => void;
 
   addRecentGif: (gif: GifType, lastUsedAt: number, maxRecents: number) => void;
-  removeRecentGif: (gif: Pick<GifType, 'id'>) => void;
+  removeRecentGif: (gif: GifType['id']) => void;
 
   updateOrCreateBadges(badges: ReadonlyArray<BadgeType>): void;
   badgeImageFileDownloaded(url: string, localPath: string): void;
@@ -1349,7 +1431,12 @@ type WritableInterface = {
   createMegaphone: (megaphone: RemoteMegaphoneType) => void;
   updateMegaphone: (megaphone: RemoteMegaphoneType) => void;
   deleteMegaphone: (megaphoneId: RemoteMegaphoneId) => void;
+  finishMegaphone: (megaphoneId: RemoteMegaphoneId) => void;
+  snoozeMegaphone: (megaphoneId: RemoteMegaphoneId) => void;
   internalDeleteAllMegaphones: () => number;
+
+  removeAllKTAccountData: () => void;
+  setKTAccountData: (aci: AciString, data: Uint8Array) => void;
 
   appendPinnedMessage: (
     pinnedMessagesLimit: number,
@@ -1358,7 +1445,27 @@ type WritableInterface = {
   deletePinnedMessageByMessageId: (messageId: string) => PinnedMessageId | null;
   deleteAllExpiredPinnedMessagesBefore: (
     beforeTimestamp: number
-  ) => ReadonlyArray<PinnedMessageId>;
+  ) => ReadonlyArray<PinnedMessage>;
+
+  getAndProtectExistingAttachmentPath: ({
+    plaintextHash,
+    version,
+    contentType,
+    messageId,
+  }: {
+    plaintextHash: string;
+    version: number;
+    contentType: MIMEType;
+    messageId: string;
+  }) => ExistingAttachmentData | undefined;
+  _protectAttachmentPathFromDeletion: ({
+    path,
+    messageId,
+  }: {
+    path: string;
+    messageId: string;
+  }) => void;
+  resetProtectedAttachmentPaths: () => void;
 
   removeAll: () => void;
   removeAllConfiguration: () => void;
@@ -1598,25 +1705,10 @@ export type ClientOnlyWritableInterface = ClientInterfaceWrap<{
       postSaveUpdates: () => Promise<void>;
     }
   ) => { failedIndices: Array<number> };
-  removeMessage: (
-    id: string,
-    options: {
-      fromSync?: boolean;
-      cleanupMessages: (
-        messages: ReadonlyArray<MessageAttributesType>,
-        options: { fromSync?: boolean | undefined }
-      ) => Promise<void>;
-    }
-  ) => void;
-  removeMessages: (
+  removeMessageById: (id: string, options: RemoveMessageOptions) => void;
+  removeMessagesById: (
     ids: ReadonlyArray<string>,
-    options: {
-      fromSync?: boolean;
-      cleanupMessages: (
-        messages: ReadonlyArray<MessageAttributesType>,
-        options: { fromSync?: boolean | undefined }
-      ) => Promise<void>;
-    }
+    options: RemoveMessageOptions
   ) => void;
 
   createOrUpdateIdentityKey: (data: IdentityKeyType) => void;

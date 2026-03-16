@@ -4,7 +4,6 @@
 import assert from 'node:assert';
 import { Proto, StorageState } from '@signalapp/mock-server';
 import { expect } from 'playwright/test';
-import Long from 'long';
 
 import * as Bytes from '../../Bytes.std.js';
 import * as durations from '../../util/durations/index.std.js';
@@ -107,12 +106,17 @@ describe('storage service/notification profiles', function (this: Mocha.Suite) {
 
     let profileId: Uint8Array | undefined;
     const profilewasAdded = thirdState.hasRecord(record => {
+      if (record.record.notificationProfile == null) {
+        return false;
+      }
+
+      assert.ok(record.type === IdentifierType.NOTIFICATION_PROFILE);
+
       const isMatch =
-        record.type === IdentifierType.NOTIFICATION_PROFILE &&
-        record.record?.notificationProfile?.name === profileName &&
-        record.record?.notificationProfile?.scheduleEnabled === true;
+        record.record.notificationProfile.name === profileName &&
+        record.record.notificationProfile.scheduleEnabled === true;
       if (isMatch) {
-        profileId = dropNull(record.record?.notificationProfile?.id);
+        profileId = dropNull(record.record.notificationProfile.id);
       }
 
       return isMatch;
@@ -148,10 +152,14 @@ describe('storage service/notification profiles', function (this: Mocha.Suite) {
     });
 
     const profileScheduleIsOff = fourthState.hasRecord(record => {
+      if (record.record.notificationProfile == null) {
+        return false;
+      }
+      assert.ok(record.type === IdentifierType.NOTIFICATION_PROFILE);
+
       return (
-        record.type === IdentifierType.NOTIFICATION_PROFILE &&
-        record.record?.notificationProfile?.name === profileName &&
-        record.record?.notificationProfile?.scheduleEnabled === false
+        record.record.notificationProfile.name === profileName &&
+        record.record.notificationProfile.scheduleEnabled === false
       );
     });
     if (!profileScheduleIsOff) {
@@ -176,15 +184,22 @@ describe('storage service/notification profiles', function (this: Mocha.Suite) {
     });
 
     const acountRecordHasOverride = fifthState.hasRecord(record => {
-      const id =
-        record.record?.account?.notificationProfileManualOverride?.enabled?.id;
+      if (record.record.account == null) {
+        return false;
+      }
+      const { notificationProfileManualOverride } = record.record.account;
+      if (notificationProfileManualOverride?.override?.enabled == null) {
+        return false;
+      }
+
+      const { id } = notificationProfileManualOverride.override.enabled;
 
       return Boolean(
         record.type === IdentifierType.ACCOUNT &&
-          id &&
-          id.length &&
-          profileId &&
-          constantTimeEqual(id, profileId)
+        id &&
+        id.length &&
+        profileId &&
+        constantTimeEqual(id, profileId)
       );
     });
     if (!acountRecordHasOverride) {
@@ -244,6 +259,9 @@ describe('storage service/notification profiles', function (this: Mocha.Suite) {
         DayOfWeek.THURSDAY,
         DayOfWeek.FRIDAY,
       ],
+      emoji: null,
+      allowedMembers: null,
+      deletedAtTimestampMs: null,
     };
 
     {
@@ -254,7 +272,7 @@ describe('storage service/notification profiles', function (this: Mocha.Suite) {
             id: notificationProfileId1,
             name: notificationProfileName1,
             color: 0xffff0000,
-            createdAtMs: Long.fromNumber(now + 1),
+            createdAtMs: BigInt(now + 1),
             ...DEFAULT_PROFILE,
           },
         },
@@ -267,7 +285,7 @@ describe('storage service/notification profiles', function (this: Mocha.Suite) {
             id: notificationProfileId2,
             name: notificationProfileName2,
             color: 0xff00ff00,
-            createdAtMs: Long.fromNumber(now + 2),
+            createdAtMs: BigInt(now + 2),
             ...DEFAULT_PROFILE,
             allowAllCalls: false,
           },
@@ -276,8 +294,11 @@ describe('storage service/notification profiles', function (this: Mocha.Suite) {
 
       newState = newState.updateAccount({
         notificationProfileManualOverride: {
-          enabled: {
-            id: notificationProfileId1,
+          override: {
+            enabled: {
+              id: notificationProfileId1,
+              endAtTimestampMs: null,
+            },
           },
         },
       });
@@ -289,7 +310,7 @@ describe('storage service/notification profiles', function (this: Mocha.Suite) {
     await phone.sendFetchStorage({
       timestamp: bootstrap.getTimestamp(),
     });
-    await app.waitForManifestVersion(firstState.version + 1);
+    await app.waitForManifestVersion(firstState.version + 1n);
 
     debug('Now we should be on the Notification Profiles list page');
     await expect(
@@ -322,19 +343,21 @@ describe('storage service/notification profiles', function (this: Mocha.Suite) {
         throw new Error('Notification profile sync is disabled!');
       }
 
-      assert.deepEqual(accountRecord?.notificationProfileManualOverride, {
-        enabled: {
-          id: notificationProfileId1,
-        },
-      });
+      assert.deepEqual(
+        accountRecord.notificationProfileManualOverride?.override?.enabled?.id,
+        notificationProfileId1
+      );
 
       let countOfProfiles = 0;
       secondState.hasRecord(record => {
+        if (record.record.notificationProfile == null) {
+          return false;
+        }
         const deletedTimestamp =
-          record.record.notificationProfile?.deletedAtTimestampMs;
+          record.record.notificationProfile.deletedAtTimestampMs;
         if (
           record.type === IdentifierType.NOTIFICATION_PROFILE &&
-          (!deletedTimestamp || deletedTimestamp.isZero())
+          (!deletedTimestamp || deletedTimestamp === 0n)
         ) {
           countOfProfiles += 1;
         }
@@ -399,7 +422,7 @@ describe('storage service/notification profiles', function (this: Mocha.Suite) {
             id: notificationProfileId1,
             name: notificationProfileName1,
             color: 0xffff0000,
-            createdAtMs: Long.fromNumber(now + 1),
+            createdAtMs: BigInt(now + 1),
             ...DEFAULT_PROFILE,
           },
         },
@@ -412,7 +435,7 @@ describe('storage service/notification profiles', function (this: Mocha.Suite) {
             id: notificationProfileId2,
             name: notificationProfileName2,
             color: 0xff00ff00,
-            createdAtMs: Long.fromNumber(now + 2),
+            createdAtMs: BigInt(now + 2),
             ...DEFAULT_PROFILE,
             allowAllCalls: false,
           },
@@ -426,7 +449,7 @@ describe('storage service/notification profiles', function (this: Mocha.Suite) {
             id: notificationProfileId3,
             name: notificationProfileName3,
             color: 0xff0000ff,
-            createdAtMs: Long.fromNumber(now + 3),
+            createdAtMs: BigInt(now + 3),
             ...DEFAULT_PROFILE,
           },
         },
@@ -439,7 +462,7 @@ describe('storage service/notification profiles', function (this: Mocha.Suite) {
             id: notificationProfileId4,
             name: notificationProfileName4,
             color: 0xff0000ff,
-            createdAtMs: Long.fromNumber(now + 4),
+            createdAtMs: BigInt(now + 4),
             ...DEFAULT_PROFILE,
             allowAllCalls: false,
             scheduleStartTime: 1000,
@@ -451,8 +474,11 @@ describe('storage service/notification profiles', function (this: Mocha.Suite) {
 
       newState = newState.updateAccount({
         notificationProfileManualOverride: {
-          enabled: {
-            id: notificationProfileId1,
+          override: {
+            enabled: {
+              id: notificationProfileId1,
+              endAtTimestampMs: null,
+            },
           },
         },
         notificationProfileSyncDisabled: false,
@@ -470,7 +496,7 @@ describe('storage service/notification profiles', function (this: Mocha.Suite) {
     await phone.sendFetchStorage({
       timestamp: bootstrap.getTimestamp(),
     });
-    await app.waitForManifestVersion(secondState.version + 1);
+    await app.waitForManifestVersion(secondState.version + 1n);
 
     debug('Check what is on the list page now');
     await expect(
@@ -495,11 +521,15 @@ describe('storage service/notification profiles', function (this: Mocha.Suite) {
 
     let countOfProfiles = 0;
     thirdState.hasRecord(record => {
+      if (record.record?.notificationProfile == null) {
+        return false;
+      }
+
       const deletedTimestamp =
-        record.record.notificationProfile?.deletedAtTimestampMs;
+        record.record.notificationProfile.deletedAtTimestampMs;
       if (
         record.type === IdentifierType.NOTIFICATION_PROFILE &&
-        (!deletedTimestamp || deletedTimestamp.isZero())
+        (!deletedTimestamp || deletedTimestamp === 0n)
       ) {
         countOfProfiles += 1;
       }

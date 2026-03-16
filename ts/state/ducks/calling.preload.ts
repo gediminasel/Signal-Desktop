@@ -4,10 +4,8 @@
 import type { ThunkAction, ThunkDispatch } from 'redux-thunk';
 import { ipcRenderer } from 'electron';
 import lodash from 'lodash';
-import Long from 'long';
 import type { ReadonlyDeep } from 'type-fest';
 import {
-  CallLinkEpoch,
   CallLinkRootKey,
   CallEndReason,
   type Reaction as CallReaction,
@@ -36,6 +34,7 @@ import type {
   ObservedRemoteMuteType,
   PresentedSource,
   PresentableSource,
+  RemoveClientType,
 } from '../../types/Calling.std.js';
 import {
   isCallLinkAdmin,
@@ -103,10 +102,10 @@ import type {
   ToggleConfirmLeaveCallModalActionType,
 } from './globalModals.preload.js';
 import {
-  HIDE_CALL_QUALITY_SURVEY,
   SHOW_CALL_QUALITY_SURVEY,
   SHOW_ERROR_MODAL,
   toggleConfirmLeaveCallModal,
+  hideCallQualitySurvey,
 } from './globalModals.preload.js';
 import { CallQualitySurvey } from '../../types/CallQualitySurvey.std.js';
 import { isCallFailure } from '../../util/callQualitySurvey.dom.js';
@@ -130,6 +129,8 @@ import {
   submitCallQualitySurvey as submitCallQualitySurveyToServer,
 } from '../../textsecure/WebAPI.preload.js';
 import { itemStorage } from '../../textsecure/Storage.preload.js';
+import type { SizeCallbackType } from '../../calling/VideoSupport.preload.js';
+import type { NoopActionType } from './noop.std.js';
 
 const { omit } = lodash;
 
@@ -327,7 +328,6 @@ type HangUpActionPayloadType = ReadonlyDeep<{
 
 export type HandleCallLinkUpdateType = ReadonlyDeep<{
   rootKey: string;
-  epoch: string | null;
   adminKey: string | null;
 }>;
 
@@ -394,10 +394,6 @@ type RemoteSharingScreenChangeType = ReadonlyDeep<{
   isSharingScreen: boolean;
 }>;
 
-export type RemoveClientType = ReadonlyDeep<{
-  demuxId: number;
-}>;
-
 // eslint-disable-next-line local-rules/type-alias-readonlydeep
 export type SetLocalAudioType = (
   payload?: ReadonlyDeep<{
@@ -443,7 +439,6 @@ export type StartCallingLobbyType = ReadonlyDeep<{
 
 export type StartCallLinkLobbyType = ReadonlyDeep<{
   rootKey: string;
-  epoch: string | null;
 }>;
 
 export type StartCallLinkLobbyByRoomIdType = ReadonlyDeep<{
@@ -492,13 +487,13 @@ type StartCallLinkLobbyPayloadType = {
   remoteParticipants: Array<GroupCallParticipantInfoType>;
   callLinkState: CallLinkStateType;
   callLinkRoomId: string;
-  callLinkEpoch: string | null;
   callLinkRootKey: string;
 };
 
 // eslint-disable-next-line local-rules/type-alias-readonlydeep
 export type SetRendererCanvasType = {
   element: React.RefObject<HTMLCanvasElement> | undefined;
+  sizeCallback: SizeCallbackType | undefined;
 };
 
 // Helpers
@@ -616,12 +611,7 @@ const doGroupCallPeek = ({
         // For adhoc calls, conversationId is actually a roomId.
         const callLink = getOwn(state.calling.callLinks, conversationId);
         const rootKey = callLink?.rootKey;
-        const epoch = callLink?.epoch ?? undefined;
-        peekInfo = await calling.peekCallLinkCall(
-          conversationId,
-          rootKey,
-          epoch
-        );
+        peekInfo = await calling.peekCallLinkCall(conversationId, rootKey);
       }
     } catch (err) {
       log.error('Group call peeking failed', Errors.toLogFormat(err));
@@ -1144,7 +1134,7 @@ function acceptCall(
       return;
     }
 
-    saveDraftRecordingIfNeeded()(dispatch, getState, undefined);
+    saveDraftRecordingIfNeeded(conversationId)(dispatch, getState, undefined);
 
     switch (call.callMode) {
       case CallMode.Direct:
@@ -1291,6 +1281,27 @@ function blockClient(
 
     calling.blockClient(activeCall.conversationId, payload.demuxId);
     dispatch({ type: BLOCK_CLIENT });
+  };
+}
+
+function sendRemoteMute(
+  demuxId: number
+): ThunkAction<void, RootStateType, unknown, NoopActionType> {
+  return (dispatch, getState) => {
+    const state = getState();
+    const activeCall = getActiveCall(state.calling);
+    if (!isGroupOrAdhocCallState(activeCall)) {
+      log.warn(
+        'sendRemoteMute: Trying to remote mute without active group or adhoc call'
+      );
+      return;
+    }
+
+    calling.sendRemoteMute(activeCall.conversationId, demuxId);
+    dispatch({
+      type: 'NOOP',
+      payload: null,
+    });
   };
 }
 
@@ -1660,7 +1671,7 @@ function handleCallLinkUpdate(
   HandleCallLinkUpdateActionType | CallHistoryAdd
 > {
   return async dispatch => {
-    const { rootKey, epoch, adminKey } = payload;
+    const { rootKey, adminKey } = payload;
     const callLinkRootKey = CallLinkRootKey.parse(rootKey);
     const roomId = getRoomIdFromRootKey(callLinkRootKey);
     const logId = `handleCallLinkUpdate(${roomId})`;
@@ -1670,7 +1681,6 @@ function handleCallLinkUpdate(
       storageNeedsSync: false,
       roomId,
       rootKey,
-      epoch,
       adminKey,
     };
 
@@ -1704,7 +1714,6 @@ function handleCallLinkUpdate(
     drop(
       callLinkRefreshJobQueue.add({
         rootKey,
-        epoch,
         source: 'handleCallLinkUpdate',
       })
     );
@@ -1880,41 +1889,33 @@ function joinedAdhocCall(
   };
 }
 
-function peekGroupCallForTheFirstTime(
+function maybePeekGroupCall(
   conversationId: string
 ): ThunkAction<void, RootStateType, unknown, PeekGroupCallFulfilledActionType> {
   return (dispatch, getState) => {
     const call = getOwn(getState().calling.callsByConversation, conversationId);
-    const shouldPeek =
-      !call || (isGroupOrAdhocCallState(call) && !call.peekInfo);
-    const callMode = call?.callMode ?? CallMode.Group;
-    if (callMode === CallMode.Direct) {
+
+    if (call && !isGroupOrAdhocCallState(call)) {
       return;
     }
 
-    if (shouldPeek) {
+    const existingPeekInfo = call?.peekInfo;
+
+    // We peek if:
+    // 1. this is the first time since app has started that we've peeked, or
+    // 2. we've peeked prior and there is an ongoing group call
+    if (existingPeekInfo == null) {
       doGroupCallPeek({
         conversationId,
-        callMode,
+        callMode: call?.callMode ?? CallMode.Group,
         dispatch,
         getState,
       });
-    }
-  };
-}
-
-function peekGroupCallIfItHasMembers(
-  conversationId: string
-): ThunkAction<void, RootStateType, unknown, PeekGroupCallFulfilledActionType> {
-  return (dispatch, getState) => {
-    const call = getOwn(getState().calling.callsByConversation, conversationId);
-    const shouldPeek =
+    } else if (
       call &&
-      isGroupOrAdhocCallState(call) &&
       call.joinState === GroupCallJoinState.NotJoined &&
-      call.peekInfo &&
-      call.peekInfo.deviceCount > 0;
-    if (shouldPeek) {
+      existingPeekInfo.deviceCount > 0
+    ) {
       doGroupCallPeek({
         conversationId,
         callMode: call.callMode,
@@ -2000,6 +2001,7 @@ function setRendererCanvas(
 ): ThunkAction<void, RootStateType, unknown, never> {
   return () => {
     calling.videoRenderer.setCanvas(payload.element);
+    calling.videoRenderer.setSizer(payload.sizeCallback);
   };
 }
 
@@ -2437,28 +2439,25 @@ function startCallLinkLobbyByRoomId({
       `startCallLinkLobbyByRoomId(${roomId}): call link not found`
     );
 
-    const { rootKey, epoch } = callLink;
-    await _startCallLinkLobby({ rootKey, epoch, dispatch, getState });
+    const { rootKey } = callLink;
+    await _startCallLinkLobby({ rootKey, dispatch, getState });
   };
 }
 
 function startCallLinkLobby({
   rootKey,
-  epoch,
 }: StartCallLinkLobbyType): StartCallLinkLobbyThunkActionType {
   return async (dispatch, getState) => {
-    await _startCallLinkLobby({ rootKey, epoch, dispatch, getState });
+    await _startCallLinkLobby({ rootKey, dispatch, getState });
   };
 }
 
 const _startCallLinkLobby = async ({
   rootKey,
-  epoch,
   dispatch,
   getState,
 }: {
   rootKey: string;
-  epoch: string | null;
   dispatch: ThunkDispatch<
     RootStateType,
     unknown,
@@ -2472,7 +2471,6 @@ const _startCallLinkLobby = async ({
   getState: () => RootStateType;
 }) => {
   const callLinkRootKey = CallLinkRootKey.parse(rootKey);
-  const callLinkEpoch = epoch ? CallLinkEpoch.parse(epoch) : undefined;
   const roomId = getRoomIdFromRootKey(callLinkRootKey);
   const state = getState();
 
@@ -2500,7 +2498,6 @@ const _startCallLinkLobby = async ({
       toggleConfirmLeaveCallModal({
         type: 'adhoc-rootKey',
         rootKey,
-        epoch,
       })
     );
     return;
@@ -2516,7 +2513,7 @@ const _startCallLinkLobby = async ({
     });
 
     let callLinkState: CallLinkStateType | null = null;
-    callLinkState = await calling.readCallLink(callLinkRootKey, callLinkEpoch);
+    callLinkState = await calling.readCallLink(callLinkRootKey);
 
     if (callLinkState == null) {
       const i18n = getIntl(getState());
@@ -2550,27 +2547,13 @@ const _startCallLinkLobby = async ({
 
     const callLink = await DataReader.getCallLinkByRoomId(roomId);
     if (callLink) {
-      await DataWriter.updateCallLinkStateAndEpoch(
-        roomId,
-        callLinkState,
-        epoch
-      );
+      await DataWriter.updateCallLinkState(roomId, callLinkState);
       log.info(`${logId}: Updated existing call link`);
-      if (epoch !== callLink.epoch) {
-        drop(
-          sendCallLinkUpdateSync({
-            rootKey,
-            epoch,
-            adminKey: callLink.adminKey,
-          })
-        );
-      }
     } else {
       const { name, restrictions, expiration, revoked } = callLinkState;
       await DataWriter.insertCallLink({
         roomId,
         rootKey,
-        epoch: epoch ?? null,
         adminKey: null,
         name,
         restrictions,
@@ -2592,7 +2575,6 @@ const _startCallLinkLobby = async ({
 
     const callLobbyData = await calling.startCallLinkLobby({
       callLinkRootKey,
-      callLinkEpoch,
       adminPasskey,
       hasLocalAudio:
         groupCallDeviceCount < MAX_CALL_PARTICIPANTS_FOR_DEFAULT_MUTE,
@@ -2608,7 +2590,6 @@ const _startCallLinkLobby = async ({
         callLinkState,
         callLinkRoomId: roomId,
         callLinkRootKey: rootKey,
-        callLinkEpoch: epoch,
         conversationId: roomId,
         isConversationTooBigToRing: false,
       },
@@ -2655,8 +2636,8 @@ function leaveCurrentCallAndStartCallingLobby(
       const { roomId } = data;
       startCallLinkLobbyByRoomId({ roomId })(dispatch, getState, undefined);
     } else if (type === 'adhoc-rootKey') {
-      const { rootKey, epoch } = data;
-      startCallLinkLobby({ rootKey, epoch })(dispatch, getState, undefined);
+      const { rootKey } = data;
+      startCallLinkLobby({ rootKey })(dispatch, getState, undefined);
     } else {
       throw missingCaseError(type);
     }
@@ -2847,7 +2828,6 @@ function startCall(
         await calling.joinCallLinkCall({
           roomId: conversationId,
           rootKey: callLink.rootKey,
-          epoch: callLink.epoch ?? undefined,
           adminKey: callLink.adminKey ?? undefined,
           hasLocalAudio,
           hasLocalVideo,
@@ -2940,6 +2920,9 @@ function showCallQualitySurvey(
   return dispatch => {
     dispatch({ type: RESET_CQS_SUBMISSION_STATE });
     dispatch({ type: SHOW_CALL_QUALITY_SURVEY, payload });
+
+    const diagnosticData = JSON.stringify(payload.callSummary);
+    window.IPC.updateCallDiagnosticData(diagnosticData);
   };
 }
 
@@ -2987,24 +2970,24 @@ function submitCallQualitySurvey(
           callQualityIssues.includes(CallQualitySurvey.Issue.OTHER)
             ? additionalIssuesDescription
             : null,
-        debugLogUrl,
-        startTimestamp: Long.fromNumber(callSummary.startTime),
-        endTimestamp: Long.fromNumber(callSummary.endTime),
+        debugLogUrl: debugLogUrl ?? null,
+        startTimestamp: BigInt(callSummary.startTime),
+        endTimestamp: BigInt(callSummary.endTime),
         callType,
         success: !isCallFailure(callSummary.callEndReasonText),
         callEndReason: callSummary.callEndReasonText,
-        connectionRttMedian: qualityStats.rttMedianConnection,
-        audioRttMedian: audioStats.rttMedianMillis,
-        videoRttMedian: videoStats.rttMedianMillis,
-        audioRecvJitterMedian: audioStats.jitterMedianRecvMillis,
-        videoRecvJitterMedian: videoStats.jitterMedianRecvMillis,
-        audioSendJitterMedian: audioStats.jitterMedianSendMillis,
-        videoSendJitterMedian: videoStats.jitterMedianSendMillis,
-        audioRecvPacketLossFraction: audioStats.packetLossPercentageRecv,
-        videoRecvPacketLossFraction: videoStats.packetLossPercentageRecv,
-        audioSendPacketLossFraction: audioStats.packetLossPercentageSend,
-        videoSendPacketLossFraction: videoStats.packetLossPercentageSend,
-        callTelemetry: callSummary.rawStats,
+        connectionRttMedian: qualityStats.rttMedianConnectionMillis ?? null,
+        audioRttMedian: audioStats.rttMedianMillis ?? null,
+        videoRttMedian: videoStats.rttMedianMillis ?? null,
+        audioRecvJitterMedian: audioStats.jitterMedianRecvMillis ?? null,
+        videoRecvJitterMedian: videoStats.jitterMedianRecvMillis ?? null,
+        audioSendJitterMedian: audioStats.jitterMedianSendMillis ?? null,
+        videoSendJitterMedian: videoStats.jitterMedianSendMillis ?? null,
+        audioRecvPacketLossFraction: audioStats.packetLossFractionRecv ?? null,
+        videoRecvPacketLossFraction: videoStats.packetLossFractionRecv ?? null,
+        audioSendPacketLossFraction: audioStats.packetLossFractionSend ?? null,
+        videoSendPacketLossFraction: videoStats.packetLossFractionSend ?? null,
+        callTelemetry: callSummary.rawStats ?? null,
       };
 
       await submitCallQualitySurveyToServer(surveyRequest);
@@ -3036,7 +3019,7 @@ function submitCallQualitySurvey(
         },
       });
     } finally {
-      dispatch({ type: HIDE_CALL_QUALITY_SURVEY });
+      dispatch(hideCallQualitySurvey());
     }
   };
 }
@@ -3088,13 +3071,12 @@ export const actions = {
   handleCallLinkDelete,
   joinedAdhocCall,
   leaveCurrentCallAndStartCallingLobby,
+  maybePeekGroupCall,
   onObservedRemoteMute,
   onOutgoingVideoCallInConversation,
   onOutgoingAudioCallInConversation,
   openSystemPreferencesAction,
   outgoingCall,
-  peekGroupCallForTheFirstTime,
-  peekGroupCallIfItHasMembers,
   peekNotConnectedGroupCall,
   receiveGroupCallReactions,
   receiveIncomingDirectCall,
@@ -3107,6 +3089,7 @@ export const actions = {
   returnToActiveCall,
   sendGroupCallRaiseHand,
   sendGroupCallReaction,
+  sendRemoteMute,
   selectPresentingSource,
   setGroupCallVideoRequest,
   setIsCallActive,
@@ -3415,9 +3398,6 @@ export function reducer(
                 rootKey:
                   callLinks[conversationId]?.rootKey ??
                   action.payload.callLinkRootKey,
-                epoch:
-                  callLinks[conversationId]?.epoch ??
-                  action.payload.callLinkEpoch,
                 adminKey: callLinks[conversationId]?.adminKey,
                 storageNeedsSync: false,
               },

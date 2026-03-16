@@ -11,14 +11,13 @@ import { SignalService as Proto } from '../protobuf/index.std.js';
 import { singleProtoJobQueue } from '../jobs/singleProtoJobQueue.preload.js';
 import { MessageSender } from '../textsecure/SendMessage.preload.js';
 import { toAdminKeyBytes } from './callLinks.std.js';
-import { toEpochBytes, toRootKeyBytes } from './callLinksRingrtc.node.js';
+import { toRootKeyBytes } from './callLinksRingrtc.node.js';
 import { itemStorage } from '../textsecure/Storage.preload.js';
 
 const log = createLogger('sendCallLinkUpdateSync');
 
 export type sendCallLinkUpdateSyncCallLinkType = {
   rootKey: string;
-  epoch: string | null;
   adminKey: string | null;
 };
 
@@ -44,27 +43,32 @@ async function _sendCallLinkUpdateSync(
   try {
     const ourAci = itemStorage.user.getCheckedAci();
 
-    const callLinkUpdate = new Proto.SyncMessage.CallLinkUpdate({
+    const callLinkUpdate: Proto.SyncMessage.CallLinkUpdate.Params = {
       type: protoType,
       rootKey: toRootKeyBytes(callLink.rootKey),
-      epoch: callLink.epoch ? toEpochBytes(callLink.epoch) : null,
       adminPasskey: callLink.adminKey
         ? toAdminKeyBytes(callLink.adminKey)
         : null,
+    };
+
+    const syncMessage = MessageSender.padSyncMessage({
+      content: {
+        callLinkUpdate,
+      },
     });
-
-    const syncMessage = MessageSender.createSyncMessage();
-    syncMessage.callLinkUpdate = callLinkUpdate;
-
-    const contentMessage = new Proto.Content();
-    contentMessage.syncMessage = syncMessage;
 
     await singleProtoJobQueue.add({
       contentHint: ContentHint.Resendable,
       serviceId: ourAci,
       isSyncMessage: true,
       protoBase64: Bytes.toBase64(
-        Proto.Content.encode(contentMessage).finish()
+        Proto.Content.encode({
+          content: {
+            syncMessage,
+          },
+          senderKeyDistributionMessage: null,
+          pniSignatureMessage: null,
+        })
       ),
       type: 'callLinkUpdateSync',
       urgent: false,

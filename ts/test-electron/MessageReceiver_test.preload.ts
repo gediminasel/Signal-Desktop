@@ -1,13 +1,13 @@
 // Copyright 2015 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-/* eslint-disable @typescript-eslint/no-empty-function */
-
 import { assert } from 'chai';
-import Long from 'long';
 
 import MessageReceiver from '../textsecure/MessageReceiver.preload.js';
-import { IncomingWebSocketRequestLegacy } from '../textsecure/WebsocketResources.preload.js';
+import {
+  IncomingWebSocketRequest,
+  ServerRequestType,
+} from '../textsecure/WebsocketResources.preload.js';
 import type { DecryptionErrorEvent } from '../textsecure/messageReceiverEvents.std.js';
 import { generateAci } from '../types/ServiceId.std.js';
 import type { AciString } from '../types/ServiceId.std.js';
@@ -51,22 +51,34 @@ describe('MessageReceiver', () => {
 
       const body = Proto.Envelope.encode({
         type: Proto.Envelope.Type.DOUBLE_RATCHET,
+        sourceServiceId: null,
         sourceServiceIdBinary: toAciObject(someAci).getRawUuidBytes(),
         sourceDeviceId: deviceId,
-        clientTimestamp: Long.fromNumber(Date.now()),
+        clientTimestamp: BigInt(Date.now()),
         content: Crypto.getRandomBytes(200),
-      }).finish();
+        destinationServiceId: null,
+        destinationServiceIdBinary: null,
+        serverGuid: null,
+        serverGuidBinary: null,
+        serverTimestamp: null,
+        ephemeral: null,
+        urgent: null,
+        updatedPni: null,
+        story: null,
+        reportSpamToken: null,
+        updatedPniBinary: null,
+      });
 
       messageReceiver.handleRequest(
-        new IncomingWebSocketRequestLegacy(
+        new IncomingWebSocketRequest(
+          ServerRequestType.ApiMessage,
+          body,
+          Date.now(),
           {
-            id: Long.fromNumber(1),
-            verb: 'PUT',
-            path: '/api/v1/message',
-            body,
-            headers: [],
-          },
-          (_: Buffer): void => {}
+            async send() {
+              // no-op
+            },
+          }
         )
       );
 

@@ -3,10 +3,14 @@
 
 import { timingSafeEqual } from 'node:crypto';
 import { assert } from 'chai';
-import { ServiceIdKind, Proto, StorageState } from '@signalapp/mock-server';
+import {
+  ServiceIdKind,
+  Proto,
+  StorageState,
+  EMPTY_DATA_MESSAGE,
+} from '@signalapp/mock-server';
 import type { PrimaryDevice } from '@signalapp/mock-server';
 import createDebug from 'debug';
-import Long from 'long';
 
 import * as durations from '../../util/durations/index.std.js';
 import { uuidToBytes } from '../../util/uuidToBytes.std.js';
@@ -87,6 +91,8 @@ describe('pnp/merge', function (this: Mocha.Suite) {
           identifier: uuidToBytes(MY_STORY_ID),
           isBlockList: true,
           name: MY_STORY_ID,
+          deletedAtTimestamp: null,
+          recipientServiceIdsBinary: null,
         },
       },
     });
@@ -283,7 +289,7 @@ describe('pnp/merge', function (this: Mocha.Suite) {
         state = state.updateContact(pniContact, {
           pniBinary: undefined,
           e164: undefined,
-          unregisteredAtTimestamp: Long.fromNumber(bootstrap.getTimestamp()),
+          unregisteredAtTimestamp: BigInt(bootstrap.getTimestamp()),
         });
 
         if (withPniContact) {
@@ -397,10 +403,10 @@ describe('pnp/merge', function (this: Mocha.Suite) {
 
       let pniContacts = 0;
       let aciContacts = 0;
-      for (const { contact } of added) {
-        if (!contact) {
-          throw new Error('Invalid record');
-        }
+      for (const record of added) {
+        assert.ok(record.contact != null);
+
+        const { contact } = record;
 
         const { aciBinary, e164, pniBinary } = contact;
         if (
@@ -421,13 +427,14 @@ describe('pnp/merge', function (this: Mocha.Suite) {
       }
       assert.strictEqual(aciContacts, 1);
       assert.strictEqual(pniContacts, 1);
+      assert.ok(removed[0].contact != null);
 
       assert.deepEqual(
-        removed[0].contact?.pniBinary,
+        removed[0].contact.pniBinary,
         pniContact.device.pniRawUuid
       );
       assert.deepEqual(
-        removed[0].contact?.aciBinary,
+        removed[0].contact.aciBinary,
         pniContact.device.aciRawUuid
       );
 
@@ -553,26 +560,45 @@ describe('pnp/merge', function (this: Mocha.Suite) {
       const timestamp = bootstrap.getTimestamp();
       const destinationServiceIdBinary = pniContact.device[`${key}Binary`];
       const destination = key === 'pni' ? pniContact.device.number : undefined;
-      const content = {
-        syncMessage: {
-          sent: {
-            destinationServiceIdBinary,
-            destination,
-            timestamp: Long.fromNumber(timestamp),
-            message: {
-              timestamp: Long.fromNumber(timestamp),
-              flags: Proto.DataMessage.Flags.EXPIRATION_TIMER_UPDATE,
-              expireTimer: key === 'pni' ? 90 * 24 * 3600 : 60 * 24 * 3600,
-              expireTimerVersion: key === 'pni' ? 3 : 4,
-            },
-            unidentifiedStatus: [
-              {
+      const content: Proto.Content.Params = {
+        content: {
+          syncMessage: {
+            content: {
+              sent: {
                 destinationServiceIdBinary,
-                destination,
+                destinationE164: destination ?? null,
+                timestamp: BigInt(timestamp),
+                message: {
+                  ...EMPTY_DATA_MESSAGE,
+                  timestamp: BigInt(timestamp),
+                  flags: Proto.DataMessage.Flags.EXPIRATION_TIMER_UPDATE,
+                  expireTimer: key === 'pni' ? 90 * 24 * 3600 : 60 * 24 * 3600,
+                  expireTimerVersion: key === 'pni' ? 3 : 4,
+                },
+                unidentifiedStatus: [
+                  {
+                    destinationServiceIdBinary,
+                    unidentified: null,
+                    destinationPniIdentityKey: null,
+                    destinationServiceId: null,
+                  },
+                ],
+                expirationStartTimestamp: null,
+                isRecipientUpdate: null,
+                storyMessage: null,
+                storyMessageRecipients: null,
+                editMessage: null,
+                destinationServiceId: null,
               },
-            ],
+            },
+            read: null,
+            stickerPackOperation: null,
+            viewed: null,
+            padding: null,
           },
         },
+        pniSignatureMessage: null,
+        senderKeyDistributionMessage: null,
       };
       const sendOptions = {
         timestamp,

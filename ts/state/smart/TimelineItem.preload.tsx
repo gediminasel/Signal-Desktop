@@ -25,6 +25,8 @@ import {
   getTargetedMessage,
   getTargetedMessageSource,
 } from '../selectors/conversations.dom.js';
+import { getSharedGroupNames } from '../../util/sharedGroupNames.dom.js';
+import { startConversation } from '../../util/startConversation.dom.js';
 import { useTimelineItem } from '../selectors/timeline.preload.js';
 import {
   areMessagesInSameGroup,
@@ -40,6 +42,9 @@ import { renderReactionPicker } from './renderReactionPicker.dom.js';
 import type { MessageRequestState } from '../../components/conversation/MessageRequestActionsConfirmation.dom.js';
 import { TargetedMessageSource } from '../ducks/conversationsEnums.std.js';
 import type { MessageInteractivity } from '../../components/conversation/Message.dom.js';
+import { useNavActions } from '../ducks/nav.std.js';
+import { DataReader } from '../../sql/Client.preload.js';
+import { isInternalFeaturesEnabled } from '../../util/isInternalFeaturesEnabled.dom.js';
 
 export type SmartTimelineItemProps = {
   containerElementRef: RefObject<HTMLElement>;
@@ -55,16 +60,16 @@ export type SmartTimelineItemProps = {
   unreadIndicatorPlacement: undefined | UnreadIndicatorPlacement;
 };
 
-function renderContact(contactId: string): JSX.Element {
+function renderContact(contactId: string): React.JSX.Element {
   return <SmartContactName contactId={contactId} />;
 }
 
-function renderUniversalTimerNotification(): JSX.Element {
+function renderUniversalTimerNotification(): React.JSX.Element {
   return <SmartUniversalTimerNotification />;
 }
 export const SmartTimelineItem = memo(function SmartTimelineItem(
   props: SmartTimelineItemProps
-): JSX.Element {
+): React.JSX.Element {
   const {
     containerElementRef,
     containerWidthBreakpoint,
@@ -92,8 +97,8 @@ export const SmartTimelineItem = memo(function SmartTimelineItem(
   const targetedMessageSource = useSelector(getTargetedMessageSource);
   const isTargeted = Boolean(
     targetedMessage &&
-      messageId === targetedMessage.id &&
-      targetedMessageSource !== TargetedMessageSource.Reset
+    messageId === targetedMessage.id &&
+    targetedMessageSource !== TargetedMessageSource.Reset
   );
   const isNextItemCallingNotification = nextItem?.type === 'callHistory';
 
@@ -116,10 +121,10 @@ export const SmartTimelineItem = memo(function SmartTimelineItem(
     isOldestTimelineItem ||
     Boolean(
       item &&
-        previousItem &&
-        // This comparison avoids strange header behavior for out-of-order messages.
-        item.timestamp > previousItem.timestamp &&
-        !isSameDay(previousItem.timestamp, item.timestamp)
+      previousItem &&
+      // This comparison avoids strange header behavior for out-of-order messages.
+      item.timestamp > previousItem.timestamp &&
+      !isSameDay(previousItem.timestamp, item.timestamp)
     );
 
   const {
@@ -131,10 +136,8 @@ export const SmartTimelineItem = memo(function SmartTimelineItem(
     kickOffAttachmentDownload,
     markAttachmentAsCorrupted,
     messageExpanded,
-    onPinnedMessageAdd,
     onPinnedMessageRemove,
     openGiftBadge,
-    pushPanelForConversation,
     retryDeleteForEveryone,
     retryMessageSend,
     saveAttachment,
@@ -147,10 +150,11 @@ export const SmartTimelineItem = memo(function SmartTimelineItem(
     showExpiredOutgoingTapToViewToast,
     showMediaNoLongerAvailableToast,
     showSpoiler,
-    startConversation,
     targetMessage,
     toggleSelectMessage,
   } = useConversationsActions();
+
+  const { pushPanelForConversation } = useNavActions();
 
   const {
     endPoll,
@@ -164,6 +168,7 @@ export const SmartTimelineItem = memo(function SmartTimelineItem(
   const {
     showContactModal,
     showEditHistoryModal,
+    showPinMessageDialog,
     showTapToViewNotAvailableModal,
     toggleMessageRequestActionsConfirmation,
     toggleDeleteMessagesModal,
@@ -194,6 +199,18 @@ export const SmartTimelineItem = memo(function SmartTimelineItem(
     [conversationId, toggleMessageRequestActionsConfirmation]
   );
 
+  const handleDebugMessage = useCallback(async () => {
+    if (!isInternalFeaturesEnabled()) {
+      return;
+    }
+    const message = await DataReader.getMessageById(messageId);
+    // eslint-disable-next-line no-console
+    console.debug(message);
+    await window.navigator.clipboard.writeText(
+      JSON.stringify(message, null, 2)
+    );
+  }, [messageId]);
+
   return (
     <TimelineItem
       item={item}
@@ -202,6 +219,7 @@ export const SmartTimelineItem = memo(function SmartTimelineItem(
       containerWidthBreakpoint={containerWidthBreakpoint}
       conversationId={conversationId}
       getPreferredBadge={getPreferredBadge}
+      getSharedGroupNames={getSharedGroupNames}
       isNextItemCallingNotification={isNextItemCallingNotification}
       isTargeted={isTargeted}
       renderAudioAttachment={renderAudioAttachment}
@@ -233,13 +251,14 @@ export const SmartTimelineItem = memo(function SmartTimelineItem(
       endPoll={endPoll}
       reactToMessage={reactToMessage}
       copyMessageText={copyMessageText}
+      handleDebugMessage={handleDebugMessage}
       onOpenEditNicknameAndNoteModal={onOpenEditNicknameAndNoteModal}
       onOpenMessageRequestActionsConfirmation={
         onOpenMessageRequestActionsConfirmation
       }
       onOutgoingAudioCallInConversation={onOutgoingAudioCallInConversation}
       onOutgoingVideoCallInConversation={onOutgoingVideoCallInConversation}
-      onPinnedMessageAdd={onPinnedMessageAdd}
+      showPinMessageDialog={showPinMessageDialog}
       onPinnedMessageRemove={onPinnedMessageRemove}
       scrollToPinnedMessage={scrollToPinnedMessage}
       retryDeleteForEveryone={retryDeleteForEveryone}

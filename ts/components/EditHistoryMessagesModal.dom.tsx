@@ -42,6 +42,8 @@ export type PropsType = {
 
 const MESSAGE_DEFAULT_PROPS = {
   canDeleteForEveryone: false,
+  canRetryDeleteForEveryone: false,
+  retryDeleteForEveryone: shouldNeverBeCalled,
   checkForAccount: shouldNeverBeCalled,
   clearSelectedMessage: shouldNeverBeCalled,
   clearTargetedMessage: shouldNeverBeCalled,
@@ -92,7 +94,7 @@ export function EditHistoryMessagesModal({
   platform,
   kickOffAttachmentDownload,
   showLightbox,
-}: PropsType): JSX.Element {
+}: PropsType): React.JSX.Element {
   const containerElementRef = useRef<HTMLDivElement | null>(null);
   const theme = useTheme();
 
@@ -189,9 +191,9 @@ export function EditHistoryMessagesModal({
 
           const shouldShowDateHeader = Boolean(
             !previousItem ||
-              // This comparison avoids strange header behavior for out-of-order messages.
-              (messageAttributes.timestamp > previousItem.timestamp &&
-                !isSameDay(previousItem.timestamp, messageAttributes.timestamp))
+            // This comparison avoids strange header behavior for out-of-order messages.
+            (messageAttributes.timestamp > previousItem.timestamp &&
+              !isSameDay(previousItem.timestamp, messageAttributes.timestamp))
           );
           const dateHeaderElement = shouldShowDateHeader ? (
             <TimelineDateHeader

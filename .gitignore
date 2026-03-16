@@ -28,7 +28,6 @@ js/util_worker.js
 libtextsecure/components.js
 stylesheets/*.css
 !stylesheets/tailwind-config.css
-!stylesheets/webrtc_internals.css
 /storybook-static/
 preload.bundle.*
 preload.wrapper.js
@@ -51,3 +50,7 @@ ts/protobuf/*.d.ts
 /.zed
 *.sublime*
 *.map
+
+# Nix
+.direnv/
+.envrc

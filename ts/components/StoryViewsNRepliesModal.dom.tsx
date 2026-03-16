@@ -45,6 +45,7 @@ import { useConfirmDiscard } from '../hooks/useConfirmDiscard.dom.js';
 import { AxoContextMenu } from '../axo/AxoContextMenu.dom.js';
 import type { AxoMenuBuilder } from '../axo/AxoMenuBuilder.dom.js';
 import { drop } from '../util/drop.std.js';
+import type { ContactModalStateType } from '../types/globalModals.std.js';
 
 const { noop, orderBy } = lodash;
 
@@ -53,6 +54,8 @@ const { noop, orderBy } = lodash;
 // text messages and reactions.
 const MESSAGE_DEFAULT_PROPS = {
   canDeleteForEveryone: false,
+  canRetryDeleteForEveryone: false,
+  retryDeleteForEveryone: shouldNeverBeCalled,
   checkForAccount: shouldNeverBeCalled,
   clearTargetedMessage: shouldNeverBeCalled,
   containerWidthBreakpoint: WidthBreakpoint.Medium,
@@ -124,7 +127,7 @@ export type PropsType = {
   ourConversationId: string | undefined;
   preferredReactionEmoji: ReadonlyArray<string>;
   replies: ReadonlyArray<ReplyType>;
-  showContactModal: (contactId: string, conversationId?: string) => void;
+  showContactModal: (payload: ContactModalStateType) => void;
   emojiSkinToneDefault: EmojiSkinTone | null;
   sortedGroupMembers?: ReadonlyArray<ConversationType>;
   views: ReadonlyArray<StorySendStateType>;
@@ -158,7 +161,7 @@ export function StoryViewsNRepliesModal({
   sortedGroupMembers,
   viewTarget,
   views,
-}: PropsType): JSX.Element | null {
+}: PropsType): React.JSX.Element | null {
   const [deleteReplyId, setDeleteReplyId] = useState<string | undefined>(
     undefined
   );
@@ -209,7 +212,7 @@ export function StoryViewsNRepliesModal({
     }
   }, []);
 
-  let composerElement: JSX.Element | undefined;
+  let composerElement: React.JSX.Element | undefined;
 
   useLayoutEffect(() => {
     if (
@@ -245,10 +248,10 @@ export function StoryViewsNRepliesModal({
         <ReactionPicker
           i18n={i18n}
           onPick={emoji => {
-            if (!group) {
+            onReact(emoji);
+            if (!group && messageBodyText.length === 0) {
               onClose();
             }
-            onReact(emoji);
           }}
           preferredReactionEmoji={preferredReactionEmoji}
           theme={ThemeType.dark}
@@ -294,6 +297,9 @@ export function StoryViewsNRepliesModal({
               large={null}
               shouldHidePopovers={null}
               linkPreviewResult={null}
+              showViewOnceButton={false}
+              isViewOnceActive={false}
+              onToggleViewOnce={noop}
             >
               <FunEmojiPicker
                 open={emojiPickerOpen}
@@ -312,7 +318,7 @@ export function StoryViewsNRepliesModal({
     );
   }
 
-  let repliesElement: JSX.Element | undefined;
+  let repliesElement: React.JSX.Element | undefined;
 
   function shouldCollapse(reply: ReplyType, otherReply?: ReplyType) {
     // deleted reactions get rendered the same as deleted replies
@@ -376,7 +382,7 @@ export function StoryViewsNRepliesModal({
     );
   }
 
-  let viewsElement: JSX.Element | undefined;
+  let viewsElement: React.JSX.Element | undefined;
   if (hasViewsCapability && !hasViewReceiptSetting) {
     viewsElement = (
       <div className="StoryViewsNRepliesModal__read-receipts-off">
@@ -399,7 +405,6 @@ export function StoryViewsNRepliesModal({
                 conversationType="direct"
                 i18n={i18n}
                 profileName={view.recipient.profileName}
-                sharedGroupNames={view.recipient.sharedGroupNames || []}
                 size={AvatarSize.TWENTY_EIGHT}
                 title={view.recipient.title}
               />
@@ -543,7 +548,7 @@ type ReplyOrReactionMessageProps = {
   reply: ReplyType;
   shouldCollapseAbove: boolean;
   shouldCollapseBelow: boolean;
-  showContactModal: (contactId: string, conversationId?: string) => void;
+  showContactModal: (payload: ContactModalStateType) => void;
   messageExpanded: (messageId: string, displayLimit: number) => void;
   showSpoiler: (messageId: string, data: Record<number, boolean>) => void;
 };
@@ -631,7 +636,6 @@ function ReplyOrReactionMessage({
             conversationType="direct"
             i18n={i18n}
             profileName={reply.author.profileName}
-            sharedGroupNames={reply.author.sharedGroupNames || []}
             size={AvatarSize.TWENTY_EIGHT}
             theme={ThemeType.dark}
             title={reply.author.title}

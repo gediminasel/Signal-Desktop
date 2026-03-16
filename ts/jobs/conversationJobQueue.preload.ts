@@ -103,10 +103,10 @@ export type CallingMessageJobData = z.infer<typeof callingMessageJobDataSchema>;
 const deleteForEveryoneJobDataSchema = z.object({
   type: z.literal(conversationQueueJobEnum.enum.DeleteForEveryone),
   conversationId: z.string(),
-  messageId: z.string(),
+  isAdminDelete: z.boolean(),
+  targetMessageId: z.string(),
   recipients: z.array(z.string()),
   revision: z.number().optional(),
-  targetTimestamp: z.number(),
 });
 export type DeleteForEveryoneJobData = z.infer<
   typeof deleteForEveryoneJobDataSchema
@@ -209,6 +209,7 @@ const pinMessageJobDataSchema = z.object({
   targetAuthorAci: aciSchema,
   targetSentTimestamp: z.number(),
   pinDurationSeconds: z.number().nullable(),
+  pinnedAt: z.number(),
 });
 export type PinMessageJobData = z.infer<typeof pinMessageJobDataSchema>;
 
@@ -290,6 +291,8 @@ const unpinMessageJobDataSchema = z.object({
   targetMessageId: z.string(),
   targetAuthorAci: aciSchema,
   targetSentTimestamp: z.number(),
+  unpinnedAt: z.number(),
+  isSyncOnly: z.boolean(),
 });
 export type UnpinMessageJobData = z.infer<typeof unpinMessageJobDataSchema>;
 

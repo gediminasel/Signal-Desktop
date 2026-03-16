@@ -42,7 +42,7 @@ export function DebugLogWindow({
   fetchLogs,
   uploadLogs,
   mode = 'submit',
-}: PropsType): JSX.Element {
+}: PropsType): React.JSX.Element {
   const [loadState, setLoadState] = useState<LoadState>(LoadState.NotStarted);
   const [logText, setLogText] = useState<string | undefined>();
   const [publicLogURL, setPublicLogURL] = useState<string | undefined>();
@@ -164,6 +164,7 @@ export function DebugLogWindow({
           setDidResumeDonation={shouldNeverBeCalled}
           toast={toast}
           containerWidthBreakpoint={null}
+          expandNarrowLeftPane={shouldNeverBeCalled}
           isInFullScreenCall={false}
         />
       </div>
@@ -230,6 +231,7 @@ export function DebugLogWindow({
         setDidResumeDonation={shouldNeverBeCalled}
         toast={toast}
         containerWidthBreakpoint={null}
+        expandNarrowLeftPane={shouldNeverBeCalled}
         isInFullScreenCall={false}
       />
     </div>

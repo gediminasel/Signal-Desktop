@@ -12,7 +12,7 @@ import React, {
 } from 'react';
 import { useSelector } from 'react-redux';
 import classNames from 'classnames';
-import type { PanelRenderType } from '../../types/Panels.std.js';
+import type { PanelArgsType } from '../../types/Panels.std.js';
 import { createLogger } from '../../logging/log.std.js';
 import { PanelType } from '../../types/Panels.std.js';
 import { toLogFormat } from '../../types/errors.std.js';
@@ -33,14 +33,15 @@ import { getIntl } from '../selectors/user.std.js';
 import {
   getPanelInformation,
   getWasPanelAnimated,
-} from '../selectors/conversations.dom.js';
+} from '../selectors/nav.std.js';
 import { focusableSelector } from '../../util/focusableSelectors.std.js';
 import { missingCaseError } from '../../util/missingCaseError.std.js';
-import { useConversationsActions } from '../ducks/conversations.preload.js';
 import { useReducedMotion } from '../../hooks/useReducedMotion.dom.js';
 import { itemStorage } from '../../textsecure/Storage.preload.js';
 import { SmartPinnedMessagesPanel } from './PinnedMessagesPanel.preload.js';
 import { SmartMiniPlayer } from './MiniPlayer.preload.js';
+import { SmartGroupMemberLabelEditor } from './GroupMemberLabelEditor.preload.js';
+import { useNavActions } from '../ducks/nav.std.js';
 
 const log = createLogger('ConversationPanel');
 
@@ -105,8 +106,7 @@ export const ConversationPanel = memo(function ConversationPanel({
   conversationId: string;
 }) {
   const panelInformation = useSelector(getPanelInformation);
-  const { panelAnimationDone, panelAnimationStarted } =
-    useConversationsActions();
+  const { panelAnimationDone, panelAnimationStarted } = useNavActions();
 
   const animateRef = useRef<HTMLDivElement | null>(null);
   const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -118,7 +118,7 @@ export const ConversationPanel = memo(function ConversationPanel({
   const wasAnimated = useSelector(getWasPanelAnimated);
 
   const [lastPanelDoneAnimating, setLastPanelDoneAnimating] =
-    useState<PanelRenderType | null>(null);
+    useState<PanelArgsType | null>(null);
 
   const wasAnimatedRef = useRef(wasAnimated);
   useEffect(() => {
@@ -130,7 +130,7 @@ export const ConversationPanel = memo(function ConversationPanel({
   }, [panelInformation?.prevPanel]);
 
   const onAnimationDone = useCallback(
-    (panel: PanelRenderType | null) => {
+    (panel: PanelArgsType | null) => {
       setLastPanelDoneAnimating(panel);
       panelAnimationDone();
     },
@@ -209,7 +209,12 @@ export const ConversationPanel = memo(function ConversationPanel({
     return null;
   }
 
-  const { currPanel: activePanel, direction, prevPanel } = panelInformation;
+  const {
+    currPanel: activePanel,
+    direction,
+    leafPanelOnly,
+    prevPanel,
+  } = panelInformation;
 
   if (!direction) {
     return null;
@@ -237,6 +242,7 @@ export const ConversationPanel = memo(function ConversationPanel({
           <PanelContainer
             key={getPanelKey(prevPanel)}
             conversationId={conversationId}
+            isActive={false}
             panel={prevPanel}
             ref={animateRef}
           />
@@ -248,13 +254,16 @@ export const ConversationPanel = memo(function ConversationPanel({
   if (direction === 'push' && activePanel) {
     return (
       <>
-        {lastPanelDoneAnimating !== prevPanel && prevPanel && (
-          <PanelContainer
-            conversationId={conversationId}
-            panel={prevPanel}
-            key={getPanelKey(prevPanel)}
-          />
-        )}
+        {!leafPanelOnly &&
+          lastPanelDoneAnimating !== prevPanel &&
+          prevPanel && (
+            <PanelContainer
+              isActive={false}
+              conversationId={conversationId}
+              panel={prevPanel}
+              key={getPanelKey(prevPanel)}
+            />
+          )}
         <div
           key="overlay"
           className="ConversationPanel__overlay"
@@ -276,82 +285,96 @@ export const ConversationPanel = memo(function ConversationPanel({
 
 type PanelPropsType = {
   conversationId: string;
-  panel: PanelRenderType;
+  isActive: boolean;
+  panel: PanelArgsType;
 };
 
-const PanelContainer = forwardRef<
-  HTMLDivElement,
-  PanelPropsType & { isActive?: boolean }
->(function PanelContainerInner(
-  { conversationId, isActive, panel },
-  ref
-): JSX.Element {
-  const i18n = useSelector(getIntl);
-  const { popPanelForConversation } = useConversationsActions();
-  const conversationTitle = getConversationTitleForPanelType(i18n, panel.type);
+const PanelContainer = forwardRef<HTMLDivElement, PanelPropsType>(
+  function PanelContainerInner(
+    { conversationId, isActive, panel },
+    ref
+  ): React.JSX.Element {
+    const i18n = useSelector(getIntl);
+    const { popPanelForConversation } = useNavActions();
+    const conversationTitle = getConversationTitleForPanelType(
+      i18n,
+      panel.type
+    );
 
-  let info: JSX.Element | undefined;
-  if (panel.type === PanelType.AllMedia) {
-    info = <SmartAllMediaHeader />;
-  } else if (conversationTitle != null) {
-    info = (
-      <div className="ConversationPanel__header__info">
-        <div className="ConversationPanel__header__info__title">
-          {conversationTitle}
+    let info: React.JSX.Element | undefined;
+    if (panel.type === PanelType.AllMedia) {
+      info = <SmartAllMediaHeader />;
+    } else if (conversationTitle != null) {
+      info = (
+        <div className="ConversationPanel__header__info">
+          <div className="ConversationPanel__header__info__title">
+            {conversationTitle}
+          </div>
+        </div>
+      );
+    }
+
+    const focusRef = useRef<HTMLDivElement | null>(null);
+    useEffect(() => {
+      if (!isActive) {
+        return;
+      }
+
+      if (panel.type === PanelType.GroupMemberLabelEditor) {
+        return;
+      }
+
+      const focusNode = focusRef.current;
+      if (!focusNode) {
+        return;
+      }
+
+      const elements =
+        focusNode.querySelectorAll<HTMLElement>(focusableSelector);
+      if (!elements.length) {
+        return;
+      }
+      elements[0]?.focus();
+    }, [isActive, panel]);
+
+    return (
+      <div className="ConversationPanel" ref={ref}>
+        <div className="ConversationPanel__header">
+          <button
+            aria-label={i18n('icu:goBack')}
+            className="ConversationPanel__header__back-button"
+            onClick={popPanelForConversation}
+            type="button"
+          />
+          {info}
+        </div>
+        <SmartMiniPlayer shouldFlow />
+        <div
+          className={classNames(
+            'ConversationPanel__body',
+            panel.type !== PanelType.PinnedMessages &&
+              panel.type !== PanelType.AllMedia &&
+              panel.type !== PanelType.GroupMemberLabelEditor &&
+              'ConversationPanel__body--padding'
+          )}
+          ref={focusRef}
+        >
+          <PanelElement
+            isActive={isActive}
+            conversationId={conversationId}
+            panel={panel}
+          />
         </div>
       </div>
     );
   }
-
-  const focusRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    if (!isActive) {
-      return;
-    }
-
-    const focusNode = focusRef.current;
-    if (!focusNode) {
-      return;
-    }
-
-    const elements = focusNode.querySelectorAll<HTMLElement>(focusableSelector);
-    if (!elements.length) {
-      return;
-    }
-    elements[0]?.focus();
-  }, [isActive, panel]);
-
-  return (
-    <div className="ConversationPanel" ref={ref}>
-      <div className="ConversationPanel__header">
-        <button
-          aria-label={i18n('icu:goBack')}
-          className="ConversationPanel__header__back-button"
-          onClick={popPanelForConversation}
-          type="button"
-        />
-        {info}
-      </div>
-      <SmartMiniPlayer shouldFlow />
-      <div
-        className={classNames(
-          'ConversationPanel__body',
-          panel.type !== PanelType.PinnedMessages &&
-            panel.type !== PanelType.AllMedia &&
-            'ConversationPanel__body--padding'
-        )}
-        ref={focusRef}
-      >
-        <PanelElement conversationId={conversationId} panel={panel} />
-      </div>
-    </div>
-  );
-});
+);
 
 function PanelElement({
   conversationId,
+  isActive,
   panel,
-}: PanelPropsType): JSX.Element | null {
+}: PanelPropsType): React.JSX.Element | null {
   if (panel.type === PanelType.AllMedia) {
     return <SmartAllMedia conversationId={conversationId} />;
   }
@@ -383,6 +406,15 @@ function PanelElement({
     return <SmartGroupLinkManagement conversationId={conversationId} />;
   }
 
+  if (panel.type === PanelType.GroupMemberLabelEditor) {
+    return (
+      <SmartGroupMemberLabelEditor
+        conversationId={conversationId}
+        isActive={isActive}
+      />
+    );
+  }
+
   if (panel.type === PanelType.GroupPermissions) {
     return <SmartGroupV2Permissions conversationId={conversationId} />;
   }
@@ -392,7 +424,9 @@ function PanelElement({
   }
 
   if (panel.type === PanelType.MessageDetails) {
-    return <SmartMessageDetail />;
+    const { messageId } = panel.args;
+
+    return <SmartMessageDetail messageId={messageId} />;
   }
 
   if (panel.type === PanelType.NotificationSettings) {
@@ -409,11 +443,11 @@ function PanelElement({
     return <SmartStickerManager />;
   }
 
-  log.warn(toLogFormat(missingCaseError(panel)));
+  log.warn(toLogFormat(missingCaseError(panel.type)));
   return null;
 }
 
-function getPanelKey(panel: PanelRenderType): string {
+function getPanelKey(panel: PanelArgsType): string {
   switch (panel.type) {
     case PanelType.AllMedia:
     case PanelType.ChatColorEditor:
@@ -422,12 +456,12 @@ function getPanelKey(panel: PanelRenderType): string {
     case PanelType.GroupLinkManagement:
     case PanelType.GroupPermissions:
     case PanelType.GroupV1Members:
+    case PanelType.GroupMemberLabelEditor:
     case PanelType.NotificationSettings:
     case PanelType.PinnedMessages:
     case PanelType.StickerManager:
       return panel.type;
     case PanelType.MessageDetails:
-      return `${panel.type}:${panel.args.message.id}`;
     case PanelType.ContactDetails:
       return `${panel.type}:${panel.args.messageId}`;
     default:

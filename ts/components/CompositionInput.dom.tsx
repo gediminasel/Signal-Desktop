@@ -51,6 +51,7 @@ import {
   getDeltaToRestartEmoji,
   insertEmojiOps,
   insertFormattingAndMentionsOps,
+  isInsertMentionOp,
 } from '../quill/util.dom.js';
 import { SignalClipboard } from '../quill/signal-clipboard/index.dom.js';
 import { DirectionalBlot } from '../quill/block/blot.dom.js';
@@ -83,6 +84,9 @@ import type { EmojiCompletionOptions } from '../quill/emoji/completion.dom.js';
 import { useFunEmojiLocalizer } from './fun/useFunEmojiLocalizer.dom.js';
 import { MAX_BODY_ATTACHMENT_BYTE_LENGTH } from '../util/longAttachment.std.js';
 import type { FunEmojiSelection } from './fun/panels/FunPanelEmojis.dom.js';
+import { AxoSymbol } from '../axo/AxoSymbol.dom.js';
+import { AxoTooltip } from '../axo/AxoTooltip.dom.js';
+import { tw } from '../axo/tw.dom.js';
 
 const log = createLogger('CompositionInput');
 
@@ -159,6 +163,9 @@ export type Props = Readonly<{
   linkPreviewLoading?: boolean;
   linkPreviewResult: LinkPreviewForUIType | null;
   onCloseLinkPreview?(conversationId: string): unknown;
+  showViewOnceButton: boolean;
+  isViewOnceActive: boolean;
+  onToggleViewOnce: () => void;
 }>;
 
 const BASE_CLASS_NAME = 'module-composition-input';
@@ -195,16 +202,19 @@ export function CompositionInput(props: Props): React.ReactElement {
     sendCounter,
     sortedGroupMembers,
     theme,
+    showViewOnceButton,
+    isViewOnceActive,
+    onToggleViewOnce,
   } = props;
 
   const [emojiCompletionElement, setEmojiCompletionElement] =
-    React.useState<JSX.Element | null>();
+    React.useState<React.JSX.Element | null>();
   const [formattingChooserElement, setFormattingChooserElement] =
-    React.useState<JSX.Element>();
+    React.useState<React.JSX.Element>();
   const [lastSelectionRange, setLastSelectionRange] =
     React.useState<RangeStatic | null>(null);
   const [mentionCompletionElement, setMentionCompletionElement] =
-    React.useState<JSX.Element>();
+    React.useState<React.JSX.Element>();
 
   const emojiCompletionRef = React.useRef<EmojiCompletion>();
   const mentionCompletionRef = React.useRef<MentionCompletion>();
@@ -745,6 +755,9 @@ export function CompositionInput(props: Props): React.ReactElement {
     if (ops === undefined) {
       return;
     }
+    if (!ops.some(isInsertMentionOp)) {
+      return;
+    }
 
     const currentMemberAcis = currentMembers
       .map(m => m.serviceId)
@@ -757,17 +770,17 @@ export function CompositionInput(props: Props): React.ReactElement {
     quill.updateContents(newDelta as any);
   };
 
-  const memberIds = sortedGroupMembers ? sortedGroupMembers.map(m => m.id) : [];
+  const memberIdList = React.useMemo(() => {
+    return JSON.stringify(sortedGroupMembers?.map(mem => mem.id));
+  }, [sortedGroupMembers]);
+  const previousMemberIdList = usePrevious(undefined, memberIdList);
 
   React.useEffect(() => {
     memberRepositoryRef.current.updateMembers(sortedGroupMembers || []);
-    removeStaleMentions(sortedGroupMembers || []);
-    // We are still depending on members, but ESLint can't tell
-    // Comparing the actual members list does not work for a couple reasons:
-    //    * Arrays with the same objects are not "equal" to React
-    //    * We only care about added/removed members, ignoring other attributes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(memberIds)]);
+    if (memberIdList !== previousMemberIdList) {
+      removeStaleMentions(sortedGroupMembers || []);
+    }
+  }, [sortedGroupMembers, memberIdList, previousMemberIdList]);
 
   // Placing all of these callbacks inside of a ref since Quill is not able
   // to re-render. We want to make sure that all these callbacks are fresh
@@ -876,7 +889,7 @@ export function CompositionInput(props: Props): React.ReactElement {
           }}
           formats={getQuillFormats()}
           placeholder={placeholder || i18n('icu:sendMessage')}
-          readOnly={disabled}
+          readOnly={disabled || isViewOnceActive}
           ref={element => {
             if (!element) {
               return;
@@ -988,16 +1001,22 @@ export function CompositionInput(props: Props): React.ReactElement {
     };
   }, [isMouseDown]);
 
+  const isInputEnabled = !disabled && !isViewOnceActive;
+
   return (
     <Manager>
       <Reference>
         {({ ref }) => (
           <div
-            className={getClassName('__input')}
+            className={classNames(
+              getClassName('__input'),
+              showViewOnceButton && getClassName('__input--with-view-once'),
+              isViewOnceActive && getClassName('__input--view-once-active')
+            )}
             data-supertab
             ref={ref}
             data-testid="CompositionInput"
-            data-enabled={disabled ? 'false' : 'true'}
+            data-enabled={isInputEnabled ? 'true' : 'false'}
             onMouseDown={onMouseDown}
           >
             {draftEditMessage && (
@@ -1024,6 +1043,11 @@ export function CompositionInput(props: Props): React.ReactElement {
               />
             )}
             {children}
+            {isViewOnceActive && (
+              <div className={getClassName('__view-once-placeholder')}>
+                {i18n('icu:CompositionArea--viewOnceMediaPlaceholder')}
+              </div>
+            )}
             <div
               onClick={focus}
               onScroll={onScroll}
@@ -1045,6 +1069,32 @@ export function CompositionInput(props: Props): React.ReactElement {
                 </>
               )}
             </div>
+            {showViewOnceButton && (
+              <div className={getClassName('__view-once-button')}>
+                <AxoTooltip.Root
+                  label={i18n('icu:CompositionArea--viewOnceToggle')}
+                  tooltipRepeatsTriggerAccessibleName
+                >
+                  <button
+                    type="button"
+                    aria-label={i18n('icu:CompositionArea--viewOnceToggle')}
+                    onClick={onToggleViewOnce}
+                    className={tw(
+                      'flex cursor-default items-center justify-center rounded-full',
+                      'outline-border-focused not-forced-colors:outline-0 not-forced-colors:focused:outline-[2.5px]',
+                      'forced-colors:border forced-colors:border-[ButtonBorder]'
+                    )}
+                  >
+                    <AxoSymbol.Icon
+                      size={20}
+                      symbol={isViewOnceActive ? 'viewonce' : 'viewonce-slash'}
+                      weight={300}
+                      label={null}
+                    />
+                  </button>
+                </AxoTooltip.Root>
+              </div>
+            )}
           </div>
         )}
       </Reference>

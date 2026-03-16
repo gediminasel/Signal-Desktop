@@ -21,12 +21,13 @@ import { getHumanDonationAmount } from '../util/currency.dom.js';
 import { AutoSizeTextArea } from './AutoSizeTextArea.dom.js';
 import { AxoButton } from '../axo/AxoButton.dom.js';
 import { AxoSwitch } from '../axo/AxoSwitch.dom.js';
+import type { VisibleRemoteMegaphoneType } from '../types/Megaphone.std.js';
+import { internalGetTestMegaphone } from '../util/getTestMegaphone.std.js';
 
 const log = createLogger('PreferencesInternal');
 
 export function PreferencesInternal({
   i18n,
-  exportLocalBackup: doExportLocalBackup,
   validateBackup: doValidateBackup,
   getMessageCountBySchemaVersion,
   getMessageSampleForSchemaVersion,
@@ -34,13 +35,13 @@ export function PreferencesInternal({
   internalAddDonationReceipt,
   saveAttachmentToDisk,
   generateDonationReceiptBlob,
+  addVisibleMegaphone,
   internalDeleteAllMegaphones,
   __dangerouslyRunAbitraryReadOnlySqlQuery,
-  callQualitySurveyCooldownDisabled,
-  setCallQualitySurveyCooldownDisabled,
+  cqsTestMode,
+  setCqsTestMode,
 }: {
   i18n: LocalizerType;
-  exportLocalBackup: () => Promise<BackupValidationResultType>;
   validateBackup: () => Promise<BackupValidationResultType>;
   getMessageCountBySchemaVersion: () => Promise<MessageCountBySchemaVersionType>;
   getMessageSampleForSchemaVersion: (
@@ -57,18 +58,14 @@ export function PreferencesInternal({
     receipt: DonationReceipt,
     i18n: LocalizerType
   ) => Promise<Blob>;
+  addVisibleMegaphone: (megaphone: VisibleRemoteMegaphoneType) => void;
   internalDeleteAllMegaphones: () => Promise<number>;
   __dangerouslyRunAbitraryReadOnlySqlQuery: (
     readonlySqlQuery: string
   ) => Promise<ReadonlyArray<RowType<object>>>;
-  callQualitySurveyCooldownDisabled: boolean;
-  setCallQualitySurveyCooldownDisabled: (value: boolean) => void;
-}): JSX.Element {
-  const [isExportPending, setIsExportPending] = useState(false);
-  const [exportResult, setExportResult] = useState<
-    BackupValidationResultType | undefined
-  >();
-
+  cqsTestMode: boolean;
+  setCqsTestMode: (value: boolean) => void;
+}): React.JSX.Element {
   const [messageCountBySchemaVersion, setMessageCountBySchemaVersion] =
     useState<MessageCountBySchemaVersionType>();
   const [messageSampleForVersions, setMessageSampleForVersions] = useState<{
@@ -80,6 +77,9 @@ export function PreferencesInternal({
     BackupValidationResultType | undefined
   >();
 
+  const [showMegaphoneResult, setShowMegaphoneResult] = useState<
+    string | undefined
+  >();
   const [deleteAllMegaphonesResult, setDeleteAllMegaphonesResult] = useState<
     number | undefined
   >();
@@ -104,7 +104,7 @@ export function PreferencesInternal({
   const renderValidationResult = useCallback(
     (
       backupResult: BackupValidationResultType | undefined
-    ): JSX.Element | undefined => {
+    ): React.JSX.Element | undefined => {
       if (backupResult == null) {
         return;
       }
@@ -114,7 +114,7 @@ export function PreferencesInternal({
           result: { totalBytes, stats, duration },
         } = backupResult;
 
-        let snapshotDirEl: JSX.Element | undefined;
+        let snapshotDirEl: React.JSX.Element | undefined;
         if ('snapshotDir' in backupResult.result) {
           snapshotDirEl = (
             <p>
@@ -150,18 +150,6 @@ export function PreferencesInternal({
     },
     []
   );
-
-  const exportLocalBackup = useCallback(async () => {
-    setIsExportPending(true);
-    setExportResult(undefined);
-    try {
-      setExportResult(await doExportLocalBackup());
-    } catch (error) {
-      setExportResult({ error: toLogFormat(error) });
-    } finally {
-      setIsExportPending(false);
-    }
-  }, [doExportLocalBackup]);
 
   // Donation receipt states
   const [isGeneratingReceipt, setIsGeneratingReceipt] = useState(false);
@@ -270,40 +258,6 @@ export function PreferencesInternal({
       </SettingsRow>
 
       <SettingsRow
-        className="Preferences--internal--backups"
-        title={i18n('icu:Preferences__internal__local-backups')}
-      >
-        <FlowingSettingsControl>
-          <div className="Preferences__two-thirds-flow">
-            {i18n(
-              'icu:Preferences__internal__export-local-backup--description'
-            )}
-          </div>
-          <div
-            className={classNames(
-              'Preferences__flow-button',
-              'Preferences__one-third-flow',
-              'Preferences__one-third-flow--align-right'
-            )}
-          >
-            <AxoButton.Root
-              variant="secondary"
-              size="lg"
-              onClick={exportLocalBackup}
-              disabled={isExportPending}
-              experimentalSpinner={
-                isExportPending ? { 'aria-label': i18n('icu:loading') } : null
-              }
-            >
-              {i18n('icu:Preferences__internal__export-local-backup')}
-            </AxoButton.Root>
-          </div>
-        </FlowingSettingsControl>
-
-        {renderValidationResult(exportResult)}
-      </SettingsRow>
-
-      <SettingsRow
         className="Preferences--internal--message-schemas"
         title="Message schema versions"
       >
@@ -327,7 +281,6 @@ export function PreferencesInternal({
                 );
                 setMessageSampleForVersions({});
               }}
-              disabled={isExportPending}
             >
               Fetch data
             </AxoButton.Root>
@@ -364,7 +317,6 @@ export function PreferencesInternal({
                                     [schemaVersion]: sampleMessages,
                                   });
                                 }}
-                                disabled={isExportPending}
                               >
                                 Sample
                               </button>
@@ -496,12 +448,12 @@ export function PreferencesInternal({
       <SettingsRow title="Call Quality Survey Testing">
         <FlowingSettingsControl>
           <div className="Preferences__two-thirds-flow">
-            Disable 24h cooldown (show survey after every call)
+            CQS testing: disable cooldown and always show for calls under 30s
           </div>
-          <div className="Preferences__one-third-flow Preferences__one-third-flow--align-right">
+          <div className="Preferences__one-third-flow Preferences__one-third-flow--justify-end">
             <AxoSwitch.Root
-              checked={callQualitySurveyCooldownDisabled}
-              onCheckedChange={setCallQualitySurveyCooldownDisabled}
+              checked={cqsTestMode}
+              onCheckedChange={setCqsTestMode}
             />
           </div>
         </FlowingSettingsControl>
@@ -537,6 +489,42 @@ export function PreferencesInternal({
       </SettingsRow>
 
       <SettingsRow title="Megaphones">
+        <FlowingSettingsControl>
+          <div className="Preferences__two-thirds-flow">
+            Show a test megaphone in memory. Disappears on restart.
+          </div>
+          <div
+            className={classNames(
+              'Preferences__flow-button',
+              'Preferences__one-third-flow',
+              'Preferences__one-third-flow--align-right'
+            )}
+          >
+            <AxoButton.Root
+              variant="secondary"
+              size="lg"
+              onClick={async () => {
+                const megaphone = internalGetTestMegaphone();
+                addVisibleMegaphone(megaphone);
+                setShowMegaphoneResult(
+                  `Megaphone shown. Go to Chats tab to view.\n${JSON.stringify(megaphone, null, 2)}`
+                );
+              }}
+            >
+              Show megaphone
+            </AxoButton.Root>
+          </div>
+          {showMegaphoneResult != null && (
+            <AutoSizeTextArea
+              i18n={i18n}
+              value={showMegaphoneResult}
+              onChange={() => null}
+              readOnly
+              placeholder=""
+              moduleClassName="Preferences__ReadonlySqlPlayground__Textarea"
+            />
+          )}
+        </FlowingSettingsControl>
         <FlowingSettingsControl>
           <div className="Preferences__two-thirds-flow">
             Delete local records of remote megaphones

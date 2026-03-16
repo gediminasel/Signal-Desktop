@@ -16,7 +16,7 @@ const getCallQualitySurveySubmission = (state: StateType) =>
   state.calling.callQualitySurveySubmission;
 
 export const SmartCallQualitySurveyDialog = memo(
-  function SmartCallQualitySurveyDialog(): JSX.Element | null {
+  function SmartCallQualitySurveyDialog(): React.JSX.Element | null {
     const i18n = useSelector(getIntl);
     const props = useSelector(getCallQualitySurveyProps);
     strictAssert(props, 'Expected callQualitySurveyProps to be set');
@@ -52,6 +52,10 @@ export const SmartCallQualitySurveyDialog = memo(
       [submitCallQualitySurvey, callSummary, callType]
     );
 
+    const handleViewDiagnosticInfo = useCallback(() => {
+      window.IPC.showCallDiagnostic();
+    }, []);
+
     return (
       <CallQualitySurveyDialog
         i18n={i18n}
@@ -59,6 +63,7 @@ export const SmartCallQualitySurveyDialog = memo(
         onOpenChange={handleOpenChange}
         onSubmit={handleSubmit}
         onViewDebugLog={() => window.IPC.showDebugLog({ mode: 'close' })}
+        onViewDiagnosticInfo={handleViewDiagnosticInfo}
         isSubmitting={isSubmitting}
       />
     );

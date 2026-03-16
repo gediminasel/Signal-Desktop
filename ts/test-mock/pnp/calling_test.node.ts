@@ -63,11 +63,23 @@ describe('pnp/calling', function (this: Mocha.Suite) {
     await stranger.sendRaw(
       desktop,
       {
-        callMessage: {
-          offer: {
-            opaque: new Uint8Array(1),
+        content: {
+          callMessage: {
+            offer: {
+              id: null,
+              type: null,
+              opaque: new Uint8Array(1),
+            },
+            answer: null,
+            iceUpdate: null,
+            busy: null,
+            hangup: null,
+            destinationDeviceId: null,
+            opaque: null,
           },
         },
+        pniSignatureMessage: null,
+        senderKeyDistributionMessage: null,
       },
       {
         timestamp: bootstrap.getTimestamp(),

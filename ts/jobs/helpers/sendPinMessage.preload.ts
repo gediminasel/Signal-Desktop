@@ -6,17 +6,23 @@ import { createSendMessageJob } from './createSendMessageJob.preload.js';
 export const sendPinMessage = createSendMessageJob<PinMessageJobData>({
   sendName: 'sendPinMessage',
   sendType: 'pinMessage',
+  isSyncOnly() {
+    return false;
+  },
   getMessageId(data) {
     return data.targetMessageId;
   },
-  getMessageOptions(data, jobTimestamp) {
+  getMessageOptions(data) {
     return {
-      timestamp: jobTimestamp,
+      timestamp: data.pinnedAt,
       pinMessage: {
         targetAuthorAci: data.targetAuthorAci,
         targetSentTimestamp: data.targetSentTimestamp,
         pinDurationSeconds: data.pinDurationSeconds,
       },
     };
+  },
+  getExpirationStartTimestamp(data) {
+    return data.pinnedAt;
   },
 });

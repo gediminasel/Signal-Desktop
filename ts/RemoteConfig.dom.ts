@@ -3,6 +3,7 @@
 
 import lodash from 'lodash';
 import semver from 'semver';
+import type { REMOTE_CONFIG_KEYS as KeysExpectedByLibsignalNet } from '@signalapp/libsignal-client/dist/net.js';
 
 import type { getConfig } from './textsecure/WebAPI.preload.js';
 import { createLogger } from './logging/log.std.js';
@@ -16,6 +17,12 @@ import { getCountryCode } from './types/PhoneNumber.std.js';
 import { parseRemoteClientExpiration } from './util/parseRemoteClientExpiration.dom.js';
 import type { StorageInterface } from './types/Storage.d.ts';
 import { ToastType } from './types/Toast.dom.js';
+import { assertDev, strictAssert } from './util/assert.std.js';
+import type {
+  ArrayValues,
+  AssertSameMembers,
+  StripPrefix,
+} from './types/Util.std.js';
 
 const { get, throttle } = lodash;
 
@@ -25,19 +32,42 @@ const log = createLogger('RemoteConfig');
 const SemverKeys = [
   'desktop.callQualitySurvey.beta',
   'desktop.callQualitySurvey.prod',
+  'desktop.donationPaypal.beta',
+  'desktop.donationPaypal.prod',
+  'desktop.groupMemberLabels.edit.beta',
+  'desktop.groupMemberLabels.edit.prod',
+  'desktop.adminDelete.receive.beta',
+  'desktop.adminDelete.receive.prod',
+  'desktop.adminDelete.send.beta',
+  'desktop.adminDelete.send.prod',
+  'desktop.pinnedMessages.receive.beta',
+  'desktop.pinnedMessages.receive.prod',
+  'desktop.pinnedMessages.send.beta',
+  'desktop.pinnedMessages.send.prod',
   'desktop.plaintextExport.beta',
   'desktop.plaintextExport.prod',
+  'desktop.remoteMegaphone.beta',
+  'desktop.remoteMegaphone.prod',
+  'desktop.remoteMute.send.beta',
+  'desktop.remoteMute.send.prod',
+  'desktop.retireAccessKeyGroupSend.beta',
+  'desktop.retireAccessKeyGroupSend.prod',
+  'desktop.keyTransparency.beta',
+  'desktop.keyTransparency.prod',
+  'desktop.binaryServiceId.beta',
+  'desktop.binaryServiceId.prod',
+  'desktop.pollSend1to1.beta',
+  'desktop.pollSend1to1.prod',
 ] as const;
 
-export type SemverKeyType = (typeof SemverKeys)[number];
+export type SemverKeyType = ArrayValues<typeof SemverKeys>;
 
 const ScalarKeys = [
+  'desktop.callQualitySurveyPPM',
   'desktop.chatFolders.alpha',
   'desktop.chatFolders.beta',
   'desktop.chatFolders.prod',
   'desktop.clientExpiration',
-  'desktop.backups.beta',
-  'desktop.backups.prod',
   'desktop.internalUser',
   'desktop.loggingErrorToasts',
   'desktop.mediaQuality.levels',
@@ -45,17 +75,7 @@ const ScalarKeys = [
   'desktop.retryRespondMaxAge',
   'desktop.senderKey.retry',
   'desktop.senderKeyMaxAge',
-  'desktop.libsignalNet.enforceMinimumTls',
-  'desktop.libsignalNet.shadowUnauthChatWithNoise',
-  'desktop.libsignalNet.shadowAuthChatWithNoise',
-  'desktop.libsignalNet.chatPermessageDeflate',
-  'desktop.libsignalNet.chatPermessageDeflate.prod',
-  'desktop.pollReceive.alpha',
-  'desktop.pollReceive.beta1',
-  'desktop.pollReceive.prod1',
-  'desktop.pollSend.alpha',
-  'desktop.pollSend.beta',
-  'desktop.pollSend.prod',
+  'desktop.recentGifs.allowLegacyTenorCdnUrls',
   'global.attachments.maxBytes',
   'global.attachments.maxReceiveBytes',
   'global.backups.mediaTierFallbackCdnNumber',
@@ -67,11 +87,49 @@ const ScalarKeys = [
   'global.nicknames.min',
   'global.pinned_message_limit',
   'global.textAttachmentLimitBytes',
+  'global.normalDeleteMaxAgeInSeconds',
+  'global.adminDeleteMaxAgeInSeconds',
 ] as const;
 
-const KnownConfigKeys = [...SemverKeys, ...ScalarKeys] as const;
+// These keys should always match those in Net.REMOTE_CONFIG_KEYS, prefixed by
+// `desktop.libsignalNet`
+const KnownDesktopLibsignalNetKeys = [
+  'desktop.libsignalNet.chatPermessageDeflate.prod',
+  'desktop.libsignalNet.chatRequestConnectionCheckTimeoutMillis.beta',
+  'desktop.libsignalNet.chatRequestConnectionCheckTimeoutMillis',
+  'desktop.libsignalNet.disableNagleAlgorithm.beta',
+  'desktop.libsignalNet.disableNagleAlgorithm',
+  'desktop.libsignalNet.grpc.AccountsAnonymousCheckAccountExistence.beta',
+  'desktop.libsignalNet.grpc.AccountsAnonymousCheckAccountExistence',
+  'desktop.libsignalNet.grpc.AccountsAnonymousLookupUsernameHash.beta',
+  'desktop.libsignalNet.grpc.AccountsAnonymousLookupUsernameHash',
+  'desktop.libsignalNet.grpc.AccountsAnonymousLookupUsernameLink.beta',
+  'desktop.libsignalNet.grpc.AccountsAnonymousLookupUsernameLink',
+  'desktop.libsignalNet.grpc.MessagesAnonymousSendMultiRecipientMessage.beta',
+  'desktop.libsignalNet.grpc.MessagesAnonymousSendMultiRecipientMessage',
+  'desktop.libsignalNet.useH2ForUnauthChat.beta',
+  'desktop.libsignalNet.useH2ForUnauthChat',
+] as const;
 
-export type ConfigKeyType = (typeof KnownConfigKeys)[number];
+type KnownLibsignalKeysType = StripPrefix<
+  ArrayValues<typeof KnownDesktopLibsignalNetKeys>,
+  'desktop.libsignalNet.'
+>;
+type ExpectedLibsignalKeysType = ArrayValues<typeof KeysExpectedByLibsignalNet>;
+
+const _assertLibsignalKeysMatch: AssertSameMembers<
+  KnownLibsignalKeysType,
+  ExpectedLibsignalKeysType
+> = true;
+strictAssert(_assertLibsignalKeysMatch, 'Libsignal keys match');
+
+const KnownConfigKeys = [
+  ...SemverKeys,
+  ...ScalarKeys,
+  ...KnownDesktopLibsignalNetKeys,
+] as const;
+
+export type ConfigKeyType = ArrayValues<typeof KnownConfigKeys>;
 
 type ConfigValueType = {
   name: ConfigKeyType;
@@ -85,7 +143,7 @@ type ConfigListenersMapType = {
   [key: string]: Array<ConfigListenerType>;
 };
 
-let config: ConfigMapType = {};
+let config: ConfigMapType | undefined;
 const listeners: ConfigListenersMapType = {};
 
 export type OptionsType = Readonly<{
@@ -265,6 +323,10 @@ export function isEnabled(
   // when called from UI component, provide redux config (items.remoteConfig)
   reduxConfig?: ConfigMapType
 ): boolean {
+  assertDev(
+    reduxConfig != null || config != null,
+    'getValue called before remote config is ready'
+  );
   return get(reduxConfig ?? config, [name, 'enabled'], false);
 }
 
@@ -272,6 +334,10 @@ export function getValue(
   name: ConfigKeyType, // when called from UI component, provide redux config (items.remoteConfig)
   reduxConfig?: ConfigMapType
 ): string | undefined {
+  assertDev(
+    reduxConfig != null || config != null,
+    'getValue called before remote config is ready'
+  );
   return get(reduxConfig ?? config, [name, 'value']);
 }
 
@@ -316,8 +382,10 @@ export function isCountryPpmCsvBucketEnabled(
   return bucketValue < remoteConfigValue;
 }
 
+export const COUNTRY_CODE_FALLBACK = Symbol('fallback');
+
 export function getCountryCodeValue(
-  countryCode: number,
+  countryCode: number | typeof COUNTRY_CODE_FALLBACK,
   countryPpmCsv: string,
   logTag: string
 ): number | undefined {
@@ -326,7 +394,6 @@ export function getCountryCodeValue(
     return undefined;
   }
 
-  const countryCodeString = countryCode.toString();
   const items = countryPpmCsv.split(',');
 
   let wildcard: number | undefined;
@@ -343,7 +410,10 @@ export function getCountryCodeValue(
     );
     if (code === '*') {
       wildcard = parsedValue;
-    } else if (countryCodeString === code) {
+    } else if (
+      countryCode !== COUNTRY_CODE_FALLBACK &&
+      countryCode.toString() === code
+    ) {
       return parsedValue;
     }
   }

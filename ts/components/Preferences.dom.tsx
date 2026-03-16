@@ -23,6 +23,7 @@ import { ConfirmationDialog } from './ConfirmationDialog.dom.js';
 import { DisappearingTimeDialog } from './DisappearingTimeDialog.dom.js';
 import { PhoneNumberDiscoverability } from '../util/phoneNumberDiscoverability.std.js';
 import { PhoneNumberSharingMode } from '../types/PhoneNumberSharingMode.std.js';
+import { KEY_TRANSPARENCY_URL } from '../types/support.std.js';
 import { Select } from './Select.dom.js';
 import { getCustomColorStyle } from '../util/getCustomColorStyle.dom.js';
 import {
@@ -98,6 +99,9 @@ import type { SmartPreferencesEditChatFolderPageProps } from '../state/smart/Pre
 import type { SmartPreferencesChatFoldersPageProps } from '../state/smart/PreferencesChatFoldersPage.preload.js';
 import { AxoButton } from '../axo/AxoButton.dom.js';
 import type { ExternalProps as SmartNotificationProfilesProps } from '../state/smart/PreferencesNotificationProfiles.preload.js';
+import type { LocalBackupExportMetadata } from '../types/LocalExport.std.js';
+import { isDonationsPage } from './PreferencesDonations.dom.js';
+import type { VisibleRemoteMegaphoneType } from '../types/Megaphone.std.js';
 
 const { isNumber, noop, partition } = lodash;
 
@@ -108,11 +112,11 @@ export type PropsDataType = {
   // Settings
   accountEntropyPool: string | undefined;
   autoDownloadAttachment: AutoDownloadAttachmentType;
-  backupFeatureEnabled: boolean;
   backupFreeMediaDays: number;
   backupKeyViewed: boolean;
   backupLocalBackupsEnabled: boolean;
   backupTier: BackupLevel | null;
+  lastLocalBackup: LocalBackupExportMetadata | undefined;
   localBackupFolder: string | undefined;
   chatFoldersFeatureEnabled: boolean;
   currentChatFoldersCount: number;
@@ -138,6 +142,7 @@ export type PropsDataType = {
   hasCountMutedConversations: boolean;
   hasHideMenuBar?: boolean;
   hasIncomingCallNotifications: boolean;
+  hasKeyTransparencyDisabled: boolean;
   hasLinkPreviews: boolean;
   hasMediaCameraPermissions: boolean | undefined;
   hasMediaPermissions: boolean | undefined;
@@ -156,6 +161,7 @@ export type PropsDataType = {
   settingsLocation: SettingsLocation;
   lastSyncTime?: number;
   notificationContent: NotificationSettingType;
+  osName: 'linux' | 'macos' | 'windows' | undefined;
   phoneNumber: string | undefined;
   selectedCamera?: string;
   selectedMicrophone?: AudioDevice;
@@ -191,6 +197,7 @@ export type PropsDataType = {
   isContentProtectionNeeded: boolean;
   isContentProtectionSupported: boolean;
   isHideMenuBarSupported: boolean;
+  isKeyTransparencyAvailable: boolean;
   isNotificationAttentionSupported: boolean;
   isPlaintextExportEnabled: boolean;
   isSyncSupported: boolean;
@@ -212,35 +219,39 @@ type PropsFunctionType = {
     contentsRef: MutableRefObject<HTMLDivElement | null>;
     settingsLocation: SettingsLocation;
     setSettingsLocation: (settingsLocation: SettingsLocation) => void;
-  }) => JSX.Element;
+  }) => React.JSX.Element;
   renderNotificationProfilesHome: (
     props: SmartNotificationProfilesProps
-  ) => JSX.Element;
+  ) => React.JSX.Element;
   renderNotificationProfilesCreateFlow: (
     props: SmartNotificationProfilesProps
-  ) => JSX.Element;
+  ) => React.JSX.Element;
 
   renderProfileEditor: (options: {
     contentsRef: MutableRefObject<HTMLDivElement | null>;
-  }) => JSX.Element;
+  }) => React.JSX.Element;
   renderToastManager: (
     _: Readonly<{ containerWidthBreakpoint: WidthBreakpoint }>
-  ) => JSX.Element;
+  ) => React.JSX.Element;
   renderUpdateDialog: (
     _: Readonly<{ containerWidthBreakpoint: WidthBreakpoint }>
-  ) => JSX.Element;
+  ) => React.JSX.Element;
   renderPreferencesChatFoldersPage: (
     props: SmartPreferencesChatFoldersPageProps
-  ) => JSX.Element;
+  ) => React.JSX.Element;
   renderPreferencesEditChatFolderPage: (
     props: SmartPreferencesEditChatFolderPageProps
-  ) => JSX.Element;
+  ) => React.JSX.Element;
 
   // Other props
   addCustomColor: (color: CustomColorType) => unknown;
+  disableLocalBackups: ({
+    deleteExistingBackups,
+  }: {
+    deleteExistingBackups: boolean;
+  }) => Promise<void>;
   doDeleteAllData: () => unknown;
   editCustomColor: (colorId: string, color: CustomColorType) => unknown;
-  exportLocalBackup: () => Promise<BackupValidationResultType>;
   getMessageCountBySchemaVersion: () => Promise<MessageCountBySchemaVersionType>;
   getMessageSampleForSchemaVersion: (
     version: number
@@ -270,6 +281,7 @@ type PropsFunctionType = {
   ) => unknown;
   setSettingsLocation: (settingsLocation: SettingsLocation) => unknown;
   showToast: (toast: AnyToast) => unknown;
+  startLocalBackupExport: () => void;
   startPlaintextExport: () => unknown;
   validateBackup: () => Promise<BackupValidationResultType>;
 
@@ -283,6 +295,7 @@ type PropsFunctionType = {
     receipt: DonationReceipt,
     i18n: LocalizerType
   ) => Promise<Blob>;
+  addVisibleMegaphone: (megaphone: VisibleRemoteMegaphoneType) => void;
 
   // Change handlers
   onAudioNotificationsChange: CheckboxChangeHandlerType;
@@ -298,6 +311,7 @@ type PropsFunctionType = {
   onContentProtectionChange: CheckboxChangeHandlerType;
   onCountMutedConversationsChange: CheckboxChangeHandlerType;
   onEmojiSkinToneDefaultChange: (emojiSkinTone: EmojiSkinTone) => void;
+  onHasKeyTransparencyDisabledChanged: SelectChangeHandlerType<boolean>;
   onHasStoriesDisabledChanged: SelectChangeHandlerType<boolean>;
   onHideMenuBarChange: CheckboxChangeHandlerType;
   onIncomingCallNotificationsChange: CheckboxChangeHandlerType;
@@ -325,12 +339,13 @@ type PropsFunctionType = {
   onWhoCanSeeMeChange: SelectChangeHandlerType<PhoneNumberSharingMode>;
   onWhoCanFindMeChange: SelectChangeHandlerType<PhoneNumberDiscoverability>;
   onZoomFactorChange: SelectChangeHandlerType<ZoomFactorType>;
+  openFileInFolder: (path: string) => void;
   internalDeleteAllMegaphones: () => Promise<number>;
   __dangerouslyRunAbitraryReadOnlySqlQuery: (
     readonlySqlQuery: string
   ) => Promise<ReadonlyArray<RowType<object>>>;
-  callQualitySurveyCooldownDisabled: boolean;
-  setCallQualitySurveyCooldownDisabled: (value: boolean) => void;
+  cqsTestMode: boolean;
+  setCqsTestMode: (value: boolean) => void;
 
   // Localization
   i18n: LocalizerType;
@@ -339,14 +354,6 @@ type PropsFunctionType = {
 export type PropsType = PropsDataType & PropsFunctionType;
 
 export type PropsPreloadType = Omit<PropsType, 'i18n'>;
-
-function isDonationsPage(page: SettingsPage): boolean {
-  return (
-    page === SettingsPage.Donations ||
-    page === SettingsPage.DonationsDonateFlow ||
-    page === SettingsPage.DonationsReceiptList
-  );
-}
 
 enum LanguageDialog {
   Selection,
@@ -384,7 +391,6 @@ export function Preferences({
   availableLocales,
   availableMicrophones,
   availableSpeakers,
-  backupFeatureEnabled,
   backupMediaDownloadStatus,
   chatFoldersFeatureEnabled,
   pauseBackupMediaDownload,
@@ -402,10 +408,10 @@ export function Preferences({
   customColors,
   defaultConversationColor,
   deviceName = '',
+  disableLocalBackups,
   doDeleteAllData,
   editCustomColor,
   emojiSkinToneDefault,
-  exportLocalBackup,
   getConversationsWithCustomColor,
   getMessageCountBySchemaVersion,
   getMessageSampleForSchemaVersion,
@@ -421,6 +427,7 @@ export function Preferences({
   hasFailedStorySends,
   hasHideMenuBar,
   hasIncomingCallNotifications,
+  hasKeyTransparencyDisabled,
   hasLinkPreviews,
   hasMediaCameraPermissions,
   hasMediaPermissions,
@@ -443,12 +450,14 @@ export function Preferences({
   isContentProtectionNeeded,
   isContentProtectionSupported,
   isHideMenuBarSupported,
+  isKeyTransparencyAvailable,
   isNotificationAttentionSupported,
   isPlaintextExportEnabled,
   isSyncSupported,
   isSystemTraySupported,
   isMinimizeToAndStartInSystemTraySupported,
   isInternalUser,
+  lastLocalBackup,
   lastSyncTime,
   localBackupFolder,
   makeSyncRequest,
@@ -467,6 +476,7 @@ export function Preferences({
   onContentProtectionChange,
   onCountMutedConversationsChange,
   onEmojiSkinToneDefaultChange,
+  onHasKeyTransparencyDisabledChanged,
   onHasStoriesDisabledChanged,
   onHideMenuBarChange,
   onIncomingCallNotificationsChange,
@@ -512,6 +522,8 @@ export function Preferences({
   renderUpdateDialog,
   renderPreferencesChatFoldersPage,
   renderPreferencesEditChatFolderPage,
+  openFileInFolder,
+  osName,
   promptOSAuth,
   resetAllChatColors,
   resetDefaultChatColor,
@@ -525,6 +537,7 @@ export function Preferences({
   setSettingsLocation,
   shouldShowUpdateDialog,
   showToast,
+  startLocalBackupExport,
   startPlaintextExport,
   localeOverride,
   theme,
@@ -538,11 +551,12 @@ export function Preferences({
   internalAddDonationReceipt,
   saveAttachmentToDisk,
   generateDonationReceiptBlob,
+  addVisibleMegaphone,
   internalDeleteAllMegaphones,
   __dangerouslyRunAbitraryReadOnlySqlQuery,
-  callQualitySurveyCooldownDisabled,
-  setCallQualitySurveyCooldownDisabled,
-}: PropsType): JSX.Element {
+  cqsTestMode,
+  setCqsTestMode,
+}: PropsType): React.JSX.Element {
   const storiesId = useId();
   const themeSelectId = useId();
   const zoomSelectId = useId();
@@ -582,20 +596,12 @@ export function Preferences({
     setLanguageDialog(null);
     setSelectedLanguageLocale(localeOverride);
   }
-  const shouldShowBackupsPage =
-    backupFeatureEnabled || backupLocalBackupsEnabled;
 
-  if (
-    settingsLocation.page === SettingsPage.Backups &&
-    !shouldShowBackupsPage
-  ) {
-    setSettingsLocation({ page: SettingsPage.General });
-  }
   if (settingsLocation.page === SettingsPage.Internal && !isInternalUser) {
     setSettingsLocation({ page: SettingsPage.General });
   }
 
-  let maybeUpdateDialog: JSX.Element | undefined;
+  let maybeUpdateDialog: React.JSX.Element | undefined;
   if (shouldShowUpdateDialog) {
     maybeUpdateDialog = renderUpdateDialog({
       containerWidthBreakpoint: WidthBreakpoint.Wide,
@@ -752,7 +758,7 @@ export function Preferences({
     });
   }, [localeSearchOptions, languageSearchInput]);
 
-  let content: JSX.Element | undefined;
+  let content: React.JSX.Element | undefined;
 
   if (settingsLocation.page === SettingsPage.Profile) {
     content = renderProfileEditor({
@@ -1819,6 +1825,40 @@ export function Preferences({
             </div>
           </FlowingControl>
         </SettingsRow>
+        {isKeyTransparencyAvailable && (
+          <SettingsRow>
+            <Checkbox
+              checked={!hasKeyTransparencyDisabled}
+              label={i18n(
+                'icu:Preferences__PrivacyPage__KeyTransparency__Label'
+              )}
+              moduleClassName="Preferences__checkbox"
+              name="keyTransparency"
+              onChange={() =>
+                onHasKeyTransparencyDisabledChanged(!hasKeyTransparencyDisabled)
+              }
+            />
+            <div className="Preferences__padding">
+              <div className="Preferences__description">
+                {i18n(
+                  'icu:Preferences__PrivacyPage__KeyTransparency__Description'
+                )}
+                &ensp;
+                <a
+                  href={KEY_TRANSPARENCY_URL}
+                  rel="noreferrer"
+                  target="_blank"
+                  className={tw('text-label-primary')}
+                >
+                  <I18n
+                    i18n={i18n}
+                    id="icu:Preferences__PrivacyPage__KeyTransparency__LearnMore"
+                  />
+                </a>
+              </div>
+            </div>
+          </SettingsRow>
+        )}
         <SettingsRow>
           <FlowingControl>
             <div
@@ -2217,7 +2257,7 @@ export function Preferences({
     } else if (settingsLocation.page !== SettingsPage.Backups) {
       backPage = SettingsPage.Backups;
     }
-    let backButton: JSX.Element | undefined;
+    let backButton: React.JSX.Element | undefined;
     if (backPage) {
       backButton = (
         <button
@@ -2242,17 +2282,21 @@ export function Preferences({
         cloudBackupStatus={cloudBackupStatus}
         i18n={i18n}
         isLocalBackupsEnabled={backupLocalBackupsEnabled}
-        isRemoteBackupsEnabled={backupFeatureEnabled}
+        lastLocalBackup={lastLocalBackup}
         locale={resolvedLocale}
         localBackupFolder={localBackupFolder}
         onBackupKeyViewedChange={onBackupKeyViewedChange}
+        openFileInFolder={openFileInFolder}
+        osName={osName}
         pickLocalBackupFolder={pickLocalBackupFolder}
+        disableLocalBackups={disableLocalBackups}
         settingsLocation={settingsLocation}
         promptOSAuth={promptOSAuth}
         refreshCloudBackupStatus={refreshCloudBackupStatus}
         refreshBackupSubscriptionStatus={refreshBackupSubscriptionStatus}
         setSettingsLocation={setSettingsLocation}
         showToast={showToast}
+        startLocalBackupExport={startLocalBackupExport}
       />
     );
     content = (
@@ -2281,7 +2325,6 @@ export function Preferences({
         contents={
           <PreferencesInternal
             i18n={i18n}
-            exportLocalBackup={exportLocalBackup}
             validateBackup={validateBackup}
             getMessageCountBySchemaVersion={getMessageCountBySchemaVersion}
             getMessageSampleForSchemaVersion={getMessageSampleForSchemaVersion}
@@ -2289,16 +2332,13 @@ export function Preferences({
             internalAddDonationReceipt={internalAddDonationReceipt}
             saveAttachmentToDisk={saveAttachmentToDisk}
             generateDonationReceiptBlob={generateDonationReceiptBlob}
+            addVisibleMegaphone={addVisibleMegaphone}
             internalDeleteAllMegaphones={internalDeleteAllMegaphones}
             __dangerouslyRunAbitraryReadOnlySqlQuery={
               __dangerouslyRunAbitraryReadOnlySqlQuery
             }
-            callQualitySurveyCooldownDisabled={
-              callQualitySurveyCooldownDisabled
-            }
-            setCallQualitySurveyCooldownDisabled={
-              setCallQualitySurveyCooldownDisabled
-            }
+            cqsTestMode={cqsTestMode}
+            setCqsTestMode={setCqsTestMode}
           />
         }
         contentsRef={settingsPaneRef}
@@ -2351,9 +2391,6 @@ export function Preferences({
                     profileName={me.profileName}
                     theme={theme}
                     title={me.title}
-                    // `sharedGroupNames` makes no sense for yourself, but
-                    // `<Avatar>` needs it to determine blurring.
-                    sharedGroupNames={[]}
                     size={AvatarSize.FORTY_EIGHT}
                   />
                 </div>
@@ -2385,19 +2422,21 @@ export function Preferences({
                     {i18n('icu:ProfileEditor__open')}
                   </span>
                 </button>
-                <button
-                  type="button"
-                  className="Preferences__profile-chip__qr-icon-button"
-                  aria-label={i18n('icu:ProfileEditor__username-link__open')}
-                  onClick={() => {
-                    setSettingsLocation({
-                      page: SettingsPage.Profile,
-                      state: ProfileEditorPage.UsernameLink,
-                    });
-                  }}
-                >
-                  <div className="Preferences__profile-chip__qr-icon" />
-                </button>
+                {me.username && (
+                  <button
+                    type="button"
+                    className="Preferences__profile-chip__qr-icon-button"
+                    aria-label={i18n('icu:ProfileEditor__username-link__open')}
+                    onClick={() => {
+                      setSettingsLocation({
+                        page: SettingsPage.Profile,
+                        state: ProfileEditorPage.UsernameLink,
+                      });
+                    }}
+                  >
+                    <div className="Preferences__profile-chip__qr-icon" />
+                  </button>
+                )}
               </div>
               <button
                 type="button"
@@ -2499,23 +2538,21 @@ export function Preferences({
               >
                 {i18n('icu:Preferences__button--data-usage')}
               </button>
-              {shouldShowBackupsPage ? (
-                <button
-                  type="button"
-                  className={classNames({
-                    Preferences__button: true,
-                    'Preferences__button--backups': true,
-                    'Preferences__button--selected': isBackupPage(
-                      settingsLocation.page
-                    ),
-                  })}
-                  onClick={() =>
-                    setSettingsLocation({ page: SettingsPage.Backups })
-                  }
-                >
-                  {i18n('icu:Preferences__button--backups')}
-                </button>
-              ) : null}
+              <button
+                type="button"
+                className={classNames({
+                  Preferences__button: true,
+                  'Preferences__button--backups': true,
+                  'Preferences__button--selected': isBackupPage(
+                    settingsLocation.page
+                  ),
+                })}
+                onClick={() =>
+                  setSettingsLocation({ page: SettingsPage.Backups })
+                }
+              >
+                {i18n('icu:Preferences__button--backups')}
+              </button>
               <button
                 type="button"
                 className={classNames({
@@ -2572,12 +2609,12 @@ export function PreferencesContent({
   title,
   actions,
 }: {
-  backButton?: JSX.Element | undefined;
-  contents: JSX.Element | undefined;
+  backButton?: React.JSX.Element | undefined;
+  contents: React.JSX.Element | undefined;
   contentsRef: MutableRefObject<HTMLDivElement | null>;
   title: string | undefined;
   actions?: ReactNode;
-}): JSX.Element {
+}): React.JSX.Element {
   return (
     <div className="Preferences__content">
       <div className="Preferences__title">

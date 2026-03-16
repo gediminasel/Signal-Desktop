@@ -21,6 +21,7 @@ import {
   ErrorDialogAudioRecorderType,
   RecordingState,
 } from '../../types/AudioRecorder.std.js';
+import { getSelectedConversationId } from '../selectors/nav.std.js';
 
 const log = createLogger('audioRecorder');
 
@@ -154,15 +155,10 @@ export function completeRecording(
   return async (dispatch, getState) => {
     const state = getState();
 
-    const isSelectedConversation =
-      state.conversations.selectedConversationId === conversationId;
-
-    if (!isSelectedConversation) {
+    if (getSelectedConversationId(state) !== conversationId) {
       log.warn(
-        'completeRecording: Recording started in one conversation and completed in another'
+        'completeRecording: Recording started in conversation then user switched away'
       );
-      dispatch(cancelRecording());
-      return;
     }
 
     const blob = await recorder.stop();

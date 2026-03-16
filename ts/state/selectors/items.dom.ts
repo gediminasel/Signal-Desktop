@@ -23,6 +23,7 @@ import {
   isValidEmojiSkinTone,
 } from '../../components/fun/data/emojis.std.js';
 import { BackupLevel } from '../../services/backups/types.std.js';
+import type { StateSelector } from '../types.std.js';
 
 const DEFAULT_PREFERRED_LEFT_PANE_WIDTH = 320;
 
@@ -141,6 +142,11 @@ export const isInternalUser = createSelector(
 export const getStoriesEnabled = createSelector(
   getItems,
   (state: ItemsStateType): boolean => !state.hasStoriesDisabled
+);
+
+export const getKeyTransparencyEnabled = createSelector(
+  getItems,
+  (state: ItemsStateType): boolean => !state.hasKeyTransparencyDisabled
 );
 
 export const getDefaultConversationColor = createSelector(
@@ -276,12 +282,6 @@ export const getHasUnidentifiedDeliveryIndicators = createSelector(
   }
 );
 
-export const getLocalDeleteWarningShown = createSelector(
-  getItems,
-  (state: ItemsStateType): boolean =>
-    Boolean(state.localDeleteWarningShown ?? false)
-);
-
 export const getBackupMediaDownloadProgress = createSelector(
   getItems,
   (
@@ -307,3 +307,15 @@ export const getServerAlerts = createSelector(
   getItems,
   (state: ItemsStateType) => state.serverAlerts ?? {}
 );
+
+export const getSeenPinMessageDisappearingMessagesWarningCount: StateSelector<number> =
+  createSelector(
+    getItems,
+    state => state.seenPinMessageDisappearingMessagesWarningCount ?? 0
+  );
+
+export const getHasSeenAdminDeleteEducationDialog: StateSelector<boolean> =
+  createSelector(
+    getItems,
+    state => state.hasSeenAdminDeleteEducationDialog ?? false
+  );

@@ -163,8 +163,8 @@ export function getConversation(model: ConversationModel): ConversationType {
     areWePending: areWePending(attributes),
     areWePendingApproval: Boolean(
       ourConversationId &&
-        ourAci &&
-        isMemberAwaitingApproval(attributes, ourAci)
+      ourAci &&
+      isMemberAwaitingApproval(attributes, ourAci)
     ),
     areWeAdmin: areWeAdmin(attributes),
     avatarPlaceholderGradient,
@@ -215,6 +215,7 @@ export function getConversation(model: ConversationModel): ConversationType {
     markedUnread: attributes.markedUnread,
     membersCount: getMembersCount(attributes),
     memberships: getMemberships(attributes),
+    membersV2: attributes.membersV2,
     messagesDeleted: Boolean(attributes.messagesDeleted),
     hasMessages: (attributes.messageCount ?? 0) > 0,
     pendingMemberships: getPendingMemberships(attributes),
@@ -224,6 +225,7 @@ export function getConversation(model: ConversationModel): ConversationType {
     accessControlAddFromInviteLink: attributes.accessControl?.addFromInviteLink,
     accessControlAttributes: attributes.accessControl?.attributes,
     accessControlMembers: attributes.accessControl?.members,
+    accessControlMemberLabel: attributes.accessControl?.memberLabel,
     announcementsOnly: Boolean(attributes.announcementsOnly),
     announcementsOnlyReady: canBeAnnouncementGroup(attributes),
     expireTimer: attributes.expireTimer,
@@ -263,14 +265,12 @@ export function getConversation(model: ConversationModel): ConversationType {
     ...(isDirectConversation(attributes)
       ? {
           type: 'direct' as const,
-          sharedGroupNames: attributes.sharedGroupNames || EMPTY_ARRAY,
         }
       : {
           type: 'group' as const,
           acknowledgedGroupNameCollisions:
             attributes.acknowledgedGroupNameCollisions ||
             EMPTY_GROUP_COLLISIONS,
-          sharedGroupNames: EMPTY_ARRAY,
           storySendMode: attributes.storySendMode ?? StorySendMode.IfActive,
         }),
     voiceNotePlaybackRate: attributes.voiceNotePlaybackRate,

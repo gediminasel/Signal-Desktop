@@ -26,12 +26,12 @@ import { getMessageIdForLogging } from './idForLogging.preload.js';
 import { singleProtoJobQueue } from '../jobs/singleProtoJobQueue.preload.js';
 import { MINUTE } from './durations/index.std.js';
 import { drop } from './drop.std.js';
-import { deleteExternalMessageFiles } from './migrations.preload.js';
 import { hydrateStoryContext } from './hydrateStoryContext.preload.js';
 import { update as updateExpiringMessagesService } from '../services/expiringMessagesDeletion.preload.js';
 import { tapToViewMessagesDeletionService } from '../services/tapToViewMessagesDeletionService.preload.js';
 import { throttledUpdateBackupMediaDownloadProgress } from './updateBackupMediaDownloadProgress.preload.js';
 import { messageAttrsToPreserveAfterErase } from '../types/Message.std.js';
+import { cleanupAllMessageAttachmentFiles } from '../types/Message2.preload.js';
 
 const log = createLogger('cleanup');
 
@@ -46,9 +46,10 @@ export async function eraseMessageContents(
     | 'view-once-viewed'
     | 'view-once-invalid'
     | 'view-once-expired'
+    | 'view-once-sent'
     | 'unsupported-message'
     | 'delete-for-everyone',
-  additionalProperties = {}
+  additionalProperties: Partial<MessageAttributesType> = {}
 ): Promise<void> {
   log.info(
     `Erasing data for message ${getMessageIdForLogging(message.attributes)}: ${reason}`
@@ -57,15 +58,7 @@ export async function eraseMessageContents(
   // Note: There are cases where we want to re-erase a given message. For example, when
   //   a viewed (or outgoing) View-Once message is deleted for everyone.
 
-  try {
-    await deleteMessageData(message.attributes);
-  } catch (error) {
-    log.error(
-      `Error erasing data for message ${getMessageIdForLogging(message.attributes)}:`,
-      Errors.toLogFormat(error)
-    );
-  }
-
+  const originalAttributes = message.attributes;
   const preservedAttributes = pick(
     message.attributes,
     ...messageAttrsToPreserveAfterErase
@@ -82,6 +75,17 @@ export async function eraseMessageContents(
   )?.debouncedUpdateLastMessage();
 
   await window.MessageCache.saveMessage(message.attributes);
+
+  // Cleanup files only after saving message so any files only referenced by that message
+  // are properly deleted
+  try {
+    await cleanupFilesAndReferencesToMessage(originalAttributes);
+  } catch (error) {
+    log.error(
+      `Error erasing data for message ${getMessageIdForLogging(message.attributes)}:`,
+      Errors.toLogFormat(error)
+    );
+  }
 
   await DataWriter.deleteSentProtoByMessageId(message.id);
 }
@@ -117,7 +121,7 @@ export async function cleanupMessages(
   drop(
     unloadedQueue.addAll(
       messages.map((message: MessageAttributesType) => async () => {
-        await deleteMessageData(message);
+        await cleanupFilesAndReferencesToMessage(message);
       })
     )
   );
@@ -128,6 +132,12 @@ export async function cleanupMessages(
       DataReader.getBackupAttachmentDownloadProgress
     )
   );
+
+  if (window.SignalCI) {
+    messages.forEach(msg => {
+      window.SignalCI?.handleEvent(`message:cleaned-up:${msg.id}`, null);
+    });
+  }
 }
 
 /** Removes a message from redux caches & MessageCache, but does NOT delete files on disk,
@@ -183,7 +193,7 @@ async function cleanupStoryReplies(
 
   if (isGroupConversation) {
     // Delete all group replies
-    await DataWriter.removeMessages(
+    await DataWriter.removeMessagesById(
       replies.map(reply => reply.id),
       { cleanupMessages }
     );
@@ -207,10 +217,10 @@ async function cleanupStoryReplies(
   });
 }
 
-export async function deleteMessageData(
+export async function cleanupFilesAndReferencesToMessage(
   message: MessageAttributesType
 ): Promise<void> {
-  await deleteExternalMessageFiles(message);
+  await cleanupAllMessageAttachmentFiles(message);
 
   if (isStory(message)) {
     await cleanupStoryReplies(message);

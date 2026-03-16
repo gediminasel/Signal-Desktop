@@ -11,7 +11,7 @@ export default {
   title: 'Components/PinnedMessages/PinMessageDialog',
 } satisfies Meta;
 
-export function Default(): JSX.Element {
+export function Default(): React.JSX.Element {
   const [open, setOpen] = useState(true);
   return (
     <PinMessageDialog
@@ -20,6 +20,12 @@ export function Default(): JSX.Element {
       onOpenChange={setOpen}
       messageId="42"
       onPinnedMessageAdd={action('onPinnedMessageAdd')}
+      hasMaxPinnedMessages
+      isPinningDisappearingMessage
+      seenPinMessageDisappearingMessagesWarningCount={0}
+      onSeenPinMessageDisappearingMessagesWarning={action(
+        'onSeenPinMessageDisappearingMessagesWarning'
+      )}
     />
   );
 }

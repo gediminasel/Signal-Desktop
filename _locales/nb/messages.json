@@ -206,9 +206,6 @@
   "icu:viewMenuToggleDevTools": {
     "messageformat": "Skru av/på Utviklerverktøy"
   },
-  "icu:viewMenuOpenCallingDevTools": {
-    "messageformat": "Åpne utviklerverktøy for anrop"
-  },
   "icu:menuSetupAsNewDevice": {
     "messageformat": "Sett Opp som Ny Enhet"
   },
@@ -539,6 +536,9 @@
   "icu:debugLogExplanation": {
     "messageformat": "Når du klikker på Send inn, legges loggen din ut i 30 dager på en unik og upublisert nettadresse. Du kan også lagre den lokalt først."
   },
+  "icu:debugLogExplanation--close": {
+    "messageformat": "Denne loggen publiseres på nettet, slik at bidragsytere kan se den. Du kan laste den ned før du sender den inn."
+  },
   "icu:debugLogError": {
     "messageformat": "Noe gikk galt under opplastingen! Send en e-post til support@signal.org og legg ved loggen din som en tekstfil."
   },
@@ -572,17 +572,89 @@
   "icu:SafetyNumberViewer__clearVerification": {
     "messageformat": "Fjern bekreftelse"
   },
-  "icu:SafetyNumberViewer__hint": {
+  "icu:SafetyNumberViewer__hint-v2": {
     "messageformat": "Hvis du vil sjekke ende-til-ende-krypteringen du har med {name}, sammenligner du tallene ovenfor med tallene på enheten hens. Hen kan også skanne koden din med enheten sin."
   },
   "icu:SafetyNumberViewer__learn_more": {
     "messageformat": "Les mer"
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__title": {
+    "messageformat": "Automatisk kodebekreftelse"
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__button--idle": {
+    "messageformat": "Bekreft automatisk"
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__button--running": {
+    "messageformat": "Bekrefter krypteringen …"
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__button--ok": {
+    "messageformat": "Krypteringen er bekreftet"
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__button--fail": {
+    "messageformat": "Automatisk bekreftelse er ikke tilgjengelig"
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__hint": {
+    "messageformat": "Automatisk bekreftelse er ikke tilgjengelig for alle samtaler."
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__learn_more": {
+    "messageformat": "Les mer"
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__popup--ok__title": {
+    "messageformat": "Krypteringen i denne samtalen ble automatisk bekreftet "
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__popup--ok__body": {
+    "messageformat": "Når du har lagt til en kontakt med telefonnummer, kan Signal automatisk bekrefte om forbindelsen er sikker via noe som kalles «key transparency». Hvis du ønsker mer sikkerhet, kan du bekrefte ende-til-ende-krypteringen manuelt ved å sammenligne tallene på forrige side eller skanne koden på enheten til personen du chatter med."
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__popup--fail__title": {
+    "messageformat": "Automatisk bekreftelse er ikke lenger tilgjengelig for denne samtalen"
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__popup--fail__body": {
+    "messageformat": "Signal kan ikke bekrefte krypteringen i denne samtalen automatisk. Dette skyldes sannsynligvis at {name} har byttet telefonnummer. Du kan bekrefte ende-til-ende-krypteringen manuelt ved å sammenligne tallene på forrige side eller skanne koden på enheten til personen du chatter med."
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__popup--unavailable__body": {
+    "messageformat": "Signal kan ikke bekrefte krypteringen i samtalen automatisk med mindre du har lagt til kontakten via et telefonnummer. Hvis du la til kontakten via et brukernavn eller en gruppe, må du bekrefte ende-til-ende-krypteringen manuelt. Dette gjør du ved å sammenligne tallene på den forrige siden eller skanne koden på enheten til personen du chatter med."
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__popup__okay": {
+    "messageformat": "Greit"
   },
   "icu:SafetyNumberNotReady__body": {
     "messageformat": "Samtalen vil få et eget sikkerhetsnummer når dere begynner å sende meldinger til hverandre."
   },
   "icu:SafetyNumberNotReady__learn-more": {
     "messageformat": "Lær mer"
+  },
+  "icu:KeyTransparencyErrorDialog__Title": {
+    "messageformat": "Automatisk kodebekreftelse er ikke tilgjengelig for øyeblikket. Vil du sende inn en feilsøkingslogg?"
+  },
+  "icu:KeyTransparencyErrorDialog__Description": {
+    "messageformat": "Feilsøkingslogger gjør det lettere for oss å løse problemet. De inneholder ikke opplysninger som kan brukes til å identifisere deg."
+  },
+  "icu:KeyTransparencyErrorDialog__ShareDebugLog__Label": {
+    "messageformat": "Del feilsøkingslogg"
+  },
+  "icu:KeyTransparencyErrorDialog__ShareDebugLog__ViewButton": {
+    "messageformat": "Vis"
+  },
+  "icu:KeyTransparencyErrorDialog__Submit": {
+    "messageformat": "Send inn"
+  },
+  "icu:KeyTransparencyErrorDialog__Submitting": {
+    "messageformat": "Sender inn …"
+  },
+  "icu:KeyTransparencyOnboardingDialog__Title": {
+    "messageformat": "Signal bekrefter nå krypteringer automatisk"
+  },
+  "icu:KeyTransparencyOnboardingDialog__Description": {
+    "messageformat": "Når du har lagt til en kontakt med telefonnummer, kan Signal automatisk bekrefte om forbindelsen er sikker via noe som kalles «key transparency». Du kan også bekrefte tilkoblingene manuelt med en QR-kode eller ved å sammenligne sikkerhetsnumre."
+  },
+  "icu:KeyTransparencyOnboardingDialog__Continue": {
+    "messageformat": "Fortsett"
+  },
+  "icu:KeyTransparencyOnboardingDialog__LearnMore": {
+    "messageformat": "Les mer"
+  },
+  "icu:KeyTransparencyOnboardingDialog__CloseButton__AccessibilityLabel": {
+    "messageformat": "Lukk"
   },
   "icu:verified": {
     "messageformat": "Bekreftet"
@@ -595,18 +667,6 @@
   },
   "icu:media": {
     "messageformat": "Media"
-  },
-  "icu:mediaEmptyState": {
-    "messageformat": "Det finnes ingen mediefiler i denne samtalen"
-  },
-  "icu:allMedia": {
-    "messageformat": "Alle mediefiler"
-  },
-  "icu:documents": {
-    "messageformat": "Dokumenter"
-  },
-  "icu:documentsEmptyState": {
-    "messageformat": "Det finnes ingen dokumenter i denne samtalen"
   },
   "icu:today": {
     "messageformat": "I dag"
@@ -743,12 +803,6 @@
   "icu:screenShareWindow": {
     "messageformat": "Skjermdeling"
   },
-  "icu:callingDeveloperTools": {
-    "messageformat": "Utviklerverktøy for anrop"
-  },
-  "icu:callingDeveloperToolsDescription": {
-    "messageformat": "Dette vinduet viser utviklere diagnostikk fra pågående telefonsamtaler."
-  },
   "icu:speech": {
     "messageformat": "Tale"
   },
@@ -820,6 +874,9 @@
   },
   "icu:whatsNew": {
     "messageformat": "Se {whatsNew} i denne oppdateringen"
+  },
+  "icu:signalNonProfit": {
+    "messageformat": "Signal er en ideell organisasjon"
   },
   "icu:viewReleaseNotes": {
     "messageformat": "siste nytt"
@@ -1046,6 +1103,12 @@
   "icu:AboutContactModal__system-contact": {
     "messageformat": "{name} står i kontaktlisten på enheten din"
   },
+  "icu:AboutContactModal__add-member-label": {
+    "messageformat": "Legg til et medlemsmerke"
+  },
+  "icu:AboutContactModal__your-qr-code": {
+    "messageformat": "Din QR-kode"
+  },
   "icu:NotePreviewModal__Title": {
     "messageformat": "Notat"
   },
@@ -1098,10 +1161,10 @@
     "messageformat": "Info"
   },
   "icu:MessageContextMenu__PinMessage": {
-    "messageformat": "Fest melding"
+    "messageformat": "Fest"
   },
   "icu:MessageContextMenu__UnpinMessage": {
-    "messageformat": "Unpin message"
+    "messageformat": "Løsne"
   },
   "icu:Poll__end-poll": {
     "messageformat": "Avslutt avstemningen"
@@ -1241,6 +1304,27 @@
   "icu:PinMessageDialog__Pin": {
     "messageformat": "Fest"
   },
+  "icu:PinMessageDialog--HasMaxPinnedMessages__Title": {
+    "messageformat": "Vil du bytte ut festet melding?"
+  },
+  "icu:PinMessageDialog--HasMaxPinnedMessages__Description": {
+    "messageformat": "Hvis du fester denne meldingen, bytter du ut den eldste festede meldingen."
+  },
+  "icu:PinMessageDialog--HasMaxPinnedMessages__Cancel": {
+    "messageformat": "Avbryt"
+  },
+  "icu:PinMessageDialog--HasMaxPinnedMessages__Continue": {
+    "messageformat": "Fortsett"
+  },
+  "icu:PinMessageDisappearingMessagesWarningDialog__Title": {
+    "messageformat": "Festing av tidsbegrensede meldinger"
+  },
+  "icu:PinMessageDisappearingMessagesWarningDialog__Description": {
+    "messageformat": "Tidsbegrensede meldinger løsnes automatisk når de utløper, og forsvinner fra samtalen."
+  },
+  "icu:PinMessageDisappearingMessagesWarningDialog__Okay": {
+    "messageformat": "Greit"
+  },
   "icu:PinnedMessagesBar__AccessibilityLabel": {
     "messageformat": "{pinsCount, plural, one {Festet melding} other {Festede meldinger}}"
   },
@@ -1254,7 +1338,7 @@
     "messageformat": "Flere funksjoner"
   },
   "icu:PinnedMessagesBar__ActionsMenu__UnpinMessage": {
-    "messageformat": "Løsne melding"
+    "messageformat": "Løsne"
   },
   "icu:PinnedMessagesBar__ActionsMenu__GoToMessage": {
     "messageformat": "Gå til meldingen"
@@ -1262,53 +1346,65 @@
   "icu:PinnedMessagesBar__ActionsMenu__SeeAllMessages": {
     "messageformat": "Se alle meldinger"
   },
-  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Address": {
-    "messageformat": "Address"
-  },
   "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--VoiceMessage": {
-    "messageformat": "Voice message"
+    "messageformat": "Talemelding"
   },
   "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Gif": {
     "messageformat": "GIF"
   },
   "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--File": {
-    "messageformat": "File"
-  },
-  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Contact": {
-    "messageformat": "Contact"
+    "messageformat": "Fil"
   },
   "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Payment": {
-    "messageformat": "Payment"
+    "messageformat": "Betaling"
   },
   "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Poll": {
-    "messageformat": "Poll"
+    "messageformat": "Avstemning"
   },
   "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Sticker": {
-    "messageformat": "Sticker"
+    "messageformat": "Klistremerke"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--ViewOnceMedia": {
+    "messageformat": "Flyktig mediefil"
   },
   "icu:PinnedMessagesBar__MessagePreview__Text--Photo": {
-    "messageformat": "Photo"
+    "messageformat": "Bilde"
   },
   "icu:PinnedMessagesBar__MessagePreview__Text--Video": {
     "messageformat": "Video"
   },
   "icu:PinnedMessagesBar__MessagePreview__Text--VoiceMessage": {
-    "messageformat": "Voice message"
+    "messageformat": "Talemelding"
   },
   "icu:PinnedMessagesBar__MessagePreview__Text--Gif": {
     "messageformat": "GIF"
   },
   "icu:PinnedMessagesBar__MessagePreview__Text--Payment": {
-    "messageformat": "Payment"
+    "messageformat": "Betaling"
   },
   "icu:PinnedMessagesBar__MessagePreview__Text--Sticker": {
-    "messageformat": "Sticker"
+    "messageformat": "Klistremerke"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--ViewOnceMedia": {
+    "messageformat": "Flyktig mediefil"
   },
   "icu:PinnedMessagesPanel__Title": {
-    "messageformat": "Pinned messages"
+    "messageformat": "Festede meldinger"
   },
   "icu:PinnedMessagesPanel__UnpinAllMessages": {
-    "messageformat": "Unpin all messages"
+    "messageformat": "Løsne alle meldinger"
+  },
+  "icu:PinnedMessagesPanel__UnpinAllMessages__ConfirmDialog__Title": {
+    "messageformat": "Vil du løsne alle meldingene?"
+  },
+  "icu:PinnedMessagesPanel__UnpinAllMessages__ConfirmDialog__Description": {
+    "messageformat": "Meldingene løsnes for alle medlemmene i denne samtalen."
+  },
+  "icu:PinnedMessagesPanel__UnpinAllMessages__ConfirmDialog__Cancel": {
+    "messageformat": "Avbryt"
+  },
+  "icu:PinnedMessagesPanel__UnpinAllMessages__ConfirmDialog__Unpin": {
+    "messageformat": "Løsne"
   },
   "icu:sessionEnded": {
     "messageformat": "Sikker økt er nullstilt"
@@ -1690,6 +1786,15 @@
   },
   "icu:Preferences__EditChatFolderPage__CancelButton": {
     "messageformat": "Avbryt"
+  },
+  "icu:Preferences__PrivacyPage__KeyTransparency__Label": {
+    "messageformat": "Automatisk kodebekreftelse"
+  },
+  "icu:Preferences__PrivacyPage__KeyTransparency__Description": {
+    "messageformat": "Når dette er aktivert, vil Signal forsøke å bekrefte krypteringen i personlige samtaler automatisk."
+  },
+  "icu:Preferences__PrivacyPage__KeyTransparency__LearnMore": {
+    "messageformat": "Les mer"
   },
   "icu:initialSync": {
     "messageformat": "Synkroniserer kontakter og grupper"
@@ -2105,6 +2210,18 @@
   "icu:deleteFailed": {
     "messageformat": "Sletting mislyktes"
   },
+  "icu:deleteFailedClickForDetails": {
+    "messageformat": "Kunne ikke slettes. Trykk for å lese mer."
+  },
+  "icu:retryDeleteForEveryone--title": {
+    "messageformat": "Vil du prøve å slette meldingen igjen?"
+  },
+  "icu:retryDeleteForEveryone--body": {
+    "messageformat": "Meldingen kunne ikke slettes. Sjekk internettilkoblingen, og prøv på nytt."
+  },
+  "icu:retryDeleteForEveryone--tryAgain": {
+    "messageformat": "Prøv på nytt"
+  },
   "icu:editFailed": {
     "messageformat": "Kunne ikke redigere. Klikk for å lese mer."
   },
@@ -2116,6 +2233,9 @@
   },
   "icu:partiallyDeleted": {
     "messageformat": "Delvis slettet, klikk for å prøve igjen"
+  },
+  "icu:partiallyDeleted--clickForDetails": {
+    "messageformat": "Delvis slettet. Trykk for å lese mer."
   },
   "icu:expiredWarning": {
     "messageformat": "Denne versjonen av Signal Desktop er utdatert. Oppdater til den nyeste versjonen for å fortsette å sende meldinger."
@@ -2318,6 +2438,15 @@
   "icu:Toast--unable-download-from-backup-tier": {
     "messageformat": "Attachment missing from backup CDN"
   },
+  "icu:ToastManager__CannotAddMemberLabel": {
+    "messageformat": "Medlemsmerker kan kun legge til av gruppeadministratorene."
+  },
+  "icu:Toast--viewOnceEnabled": {
+    "messageformat": "Flyktig melding aktivert"
+  },
+  "icu:Toast--viewOnceDisabled": {
+    "messageformat": "Flyktig melding deaktivert"
+  },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "Meldinger kan kun redigeres de første 24 timene etter at de ble sendt."
   },
@@ -2504,6 +2633,15 @@
   "icu:message--deletedForEveryone": {
     "messageformat": "Denne meldingen ble slettet."
   },
+  "icu:message--deletedByAdmin": {
+    "messageformat": "Administratoren {admin} slettet denne meldingen"
+  },
+  "icu:message--deletedForEveryone--incoming": {
+    "messageformat": "{name} slettet denne meldingen"
+  },
+  "icu:message--deletedForEveryone--outgoing": {
+    "messageformat": "Du slettet denne meldingen"
+  },
   "icu:message--attachmentTooBig--one": {
     "messageformat": "Vedlegget er for stort til å vises."
   },
@@ -2539,6 +2677,12 @@
   },
   "icu:message--donation--preview--sent": {
     "messageformat": "Du ga en pengegave for {recipient}"
+  },
+  "icu:message--pinned--preview--received": {
+    "messageformat": "{sender} festet en melding"
+  },
+  "icu:message--pinned--preview--sent": {
+    "messageformat": "Du festet en melding"
   },
   "icu:message--donation": {
     "messageformat": "Pengegave"
@@ -2741,11 +2885,11 @@
   "icu:FunPanelStickers__LightboxDialog__Label": {
     "messageformat": "Forhåndsvisning av klistremerke"
   },
-  "icu:FunPanelGifs__SearchLabel--Tenor": {
-    "messageformat": "Søk blant GIF-er i Tenor"
+  "icu:FunPanelGifs__SearchLabel": {
+    "messageformat": "Søk blant GIFer."
   },
-  "icu:FunPanelGifs__SearchPlaceholder--Tenor": {
-    "messageformat": "Søk i Tenor"
+  "icu:FunPanelGifs__SearchPlaceholder": {
+    "messageformat": "Søk blant GIFer."
   },
   "icu:FunPanelGifs__SubNavLabel": {
     "messageformat": "GIF-kategorier"
@@ -2791,6 +2935,9 @@
   },
   "icu:FunPanelGifs__LightboxDialog__Label": {
     "messageformat": "Forhåndsvisning av GIF"
+  },
+  "icu:FunPanelGifs__GiphyAttribution__AccessibilityLabel": {
+    "messageformat": "Drevet av GIPHY"
   },
   "icu:FunSearch__ClearButtonLabel": {
     "messageformat": "Fjern søk"
@@ -3866,23 +4013,41 @@
   "icu:GroupV2--access-attributes--all--unknown": {
     "messageformat": "En administrator endret hvem som kan endre gruppens info til \"Alle medlemmer.\""
   },
-  "icu:GroupV2--access-members--admins--other": {
-    "messageformat": "{adminName} endret hvem som kan endre gruppens medlemmer til \"kun administratorer.\""
-  },
   "icu:GroupV2--access-members--admins--you": {
     "messageformat": "Du endret hvem som kan endre gruppens medlemmer til \"kun administratorer.\""
+  },
+  "icu:GroupV2--access-members--admins--other": {
+    "messageformat": "{adminName} endret hvem som kan endre gruppens medlemmer til \"kun administratorer.\""
   },
   "icu:GroupV2--access-members--admins--unknown": {
     "messageformat": "En administrator endret hvem som kan endre gruppens medlemmer til \"bare administratorer.\""
   },
-  "icu:GroupV2--access-members--all--other": {
-    "messageformat": "{adminName} endret hvem som kan endre gruppens medlemmer til \"Alle medlemmer.\""
-  },
   "icu:GroupV2--access-members--all--you": {
     "messageformat": "Du endret hvem som kan endre gruppens medlemmer til \"Alle medlemmer.\""
   },
+  "icu:GroupV2--access-members--all--other": {
+    "messageformat": "{adminName} endret hvem som kan endre gruppens medlemmer til \"Alle medlemmer.\""
+  },
   "icu:GroupV2--access-members--all--unknown": {
     "messageformat": "En administrator endret hvem som kan redigere gruppens medlemmer til \"Alle medlemmer.\""
+  },
+  "icu:GroupV2--access-member-label--admins--you": {
+    "messageformat": "You changed who can add member labels to \"Only admins.\""
+  },
+  "icu:GroupV2--access-member-label--admins--other": {
+    "messageformat": "{adminName} changed who can add member labels to \"Only admins.\""
+  },
+  "icu:GroupV2--access-member-label--admins--unknown": {
+    "messageformat": "An admin changed who can add member labels to \"Only admins.\""
+  },
+  "icu:GroupV2--access-member-label--all--you": {
+    "messageformat": "You changed who can add member labels to \"All members.\""
+  },
+  "icu:GroupV2--access-member-label--all--other": {
+    "messageformat": "{adminName} changed who can add member labels to \"All members.\""
+  },
+  "icu:GroupV2--access-member-label--all--unknown": {
+    "messageformat": "An admin changed who can add member labels to \"All members.\""
   },
   "icu:GroupV2--access-invite-link--disabled--you": {
     "messageformat": "Du skrudde av administrativ godkjenning for gruppelenken."
@@ -4490,6 +4655,12 @@
   "icu:CompositionArea__ConfirmGifSelection__ReplaceButton": {
     "messageformat": "Bytt ut"
   },
+  "icu:CompositionArea--viewOnceToggle": {
+    "messageformat": "Flyktig melding"
+  },
+  "icu:CompositionArea--viewOnceMediaPlaceholder": {
+    "messageformat": "Flyktige mediefiler"
+  },
   "icu:CompositionInput__editing-message": {
     "messageformat": "Rediger melding"
   },
@@ -4501,6 +4672,9 @@
   },
   "icu:ContactModal--rm-admin": {
     "messageformat": "Fjern som administrator"
+  },
+  "icu:ContactModal--rm-admin--clear-label": {
+    "messageformat": "Dette fjerner også medlemsmerket til vedkommende."
   },
   "icu:ContactModal--make-admin": {
     "messageformat": "Gjør til administrator"
@@ -4520,6 +4694,30 @@
   "icu:ContactModal--voice": {
     "messageformat": "Tale"
   },
+  "icu:ContactModal--mute-audio": {
+    "messageformat": "Slå av lyden"
+  },
+  "icu:ContactModal--confirm-mute-body": {
+    "messageformat": "Er du sikker på at du vil slå av lyden på samtalen med {contact}?"
+  },
+  "icu:ContactModal--confirm-mute-primary-button": {
+    "messageformat": "Slå av lyden"
+  },
+  "icu:ContactModal--remove-from-call": {
+    "messageformat": "Remove from call"
+  },
+  "icu:GroupMemberLabelInfoModal--title": {
+    "messageformat": "Medlemsmerker"
+  },
+  "icu:GroupMemberLabelInfoModal--description": {
+    "messageformat": "Bruk medlemsmerker som beskriver deg eller rollen din i denne gruppen. Medlemsmerker vises kun i denne gruppen."
+  },
+  "icu:GroupMemberLabelInfoModal--add-label": {
+    "messageformat": "Velg et merke"
+  },
+  "icu:GroupMemberLabelInfoModal--edit-label": {
+    "messageformat": "Rediger merket ditt"
+  },
   "icu:showChatColorEditor": {
     "messageformat": "Samtalefarge"
   },
@@ -4534,6 +4732,39 @@
   },
   "icu:ConversationDetails--group-link": {
     "messageformat": "Gruppelenke"
+  },
+  "icu:ConversationDetails--member-label": {
+    "messageformat": "Medlemsmerke"
+  },
+  "icu:ConversationDetails--member-label--placeholder": {
+    "messageformat": "Skriv her"
+  },
+  "icu:ConversationDetails--member-label--description": {
+    "messageformat": "Velg et medlemsmerke som beskriver deg eller rollen din i denne gruppen. Medlemsmerker vises kun i denne gruppen."
+  },
+  "icu:ConversationDetails--member-label--preview": {
+    "messageformat": "Forhåndsvisning"
+  },
+  "icu:ConversationDetails--member-label--hello": {
+    "messageformat": "Hei!"
+  },
+  "icu:ConversationDetails--member-label--list-header": {
+    "messageformat": "Gruppemedlemmer med merker"
+  },
+  "icu:ConversationDetails--member-label--no-members": {
+    "messageformat": "Ingen andre medlemmer har merker"
+  },
+  "icu:ConversationDetails--member-label--saving": {
+    "messageformat": "Lagrer endringene …"
+  },
+  "icu:ConversationDetails--member-label--error-title": {
+    "messageformat": "Medlemsmerket kan ikke lagres"
+  },
+  "icu:ConversationDetails--member-label--error-generic": {
+    "messageformat": "Sjekk internettilkoblingen og prøv igjen."
+  },
+  "icu:ConversationDetails--member-label--error-permissions": {
+    "messageformat": "Medlemsmerker kan kun velges av gruppeadministratorene."
   },
   "icu:ConversationDetails--disappearing-messages-label": {
     "messageformat": "Tidsavgrensede meldinger"
@@ -4565,8 +4796,8 @@
   "icu:ConversationDetails--group-info-label": {
     "messageformat": "Kan redigere gruppeinfo"
   },
-  "icu:ConversationDetails--group-info-info": {
-    "messageformat": "Velg hvem som kan redigere gruppenavnet, gruppeavataren og når meldinger forsvinner."
+  "icu:ConversationDetails--group-info-info-v2": {
+    "messageformat": "Velg hvem som kan redigere gruppenavnet, gruppebildet, gruppebeskrivelsen, festede meldinger og nedtellingen for tidsbegrensede meldinger."
   },
   "icu:ConversationDetails--add-members-label": {
     "messageformat": "Hvem kan legge til medlemmer"
@@ -4579,6 +4810,21 @@
   },
   "icu:ConversationDetails--announcement-info": {
     "messageformat": "Velg hvem som kan sende meldinger til gruppen."
+  },
+  "icu:ConversationDetails--member-label--label": {
+    "messageformat": "Who can add member labels"
+  },
+  "icu:ConversationDetails--member-label--info": {
+    "messageformat": "Choose who can add member labels in this group."
+  },
+  "icu:ConversationDetails--label-clear-warning--title": {
+    "messageformat": "Medlemsmerker slettes"
+  },
+  "icu:ConversationDetails--label-clear-warning--description": {
+    "messageformat": "Hvis du velger at kun administratorer kan opprette medlemsmerker, fjernes merkene som er valgt av medlemmer uten administratortilgang."
+  },
+  "icu:ConversationDetails--label-clear-warning--continue": {
+    "messageformat": "Fortsett"
   },
   "icu:ConversationDetails--requests-and-invites": {
     "messageformat": "Forespørsler og invitasjoner"
@@ -4633,6 +4879,9 @@
   },
   "icu:ConversationDetailsMembershipList--add-members": {
     "messageformat": "Legg til medlemmer"
+  },
+  "icu:ConversationDetailsMembershipList--add-member-label": {
+    "messageformat": "Legg til medlemsmerke"
   },
   "icu:ConversationDetailsMembershipList--show-all": {
     "messageformat": "Se alle"
@@ -4781,6 +5030,9 @@
   "icu:DeleteMessagesModal--title": {
     "messageformat": "{count, plural, one {Vil du slette meldingen?} other {Vil du slette {count,number} meldinger?}}"
   },
+  "icu:DeleteMessagesModal--title-2": {
+    "messageformat": "{count, plural, one {Vil du slette den valgte meldingen?} other {Vil du slette de {count,number} valgte meldingene?}}"
+  },
   "icu:DeleteMessagesModal--description": {
     "messageformat": "{count, plural, one {Hvem vil du slette meldingen for?} other {Hvem vil du slette meldingene for?}}"
   },
@@ -4799,6 +5051,12 @@
   "icu:DeleteMessagesModal--deleteForEveryone": {
     "messageformat": "Slett for alle"
   },
+  "icu:DeleteMessagesModal--adminDeleteConfirmation--title": {
+    "messageformat": "Vil du slette for alle?"
+  },
+  "icu:DeleteMessagesModal--adminDeleteConfirmation--description": {
+    "messageformat": "{count, plural, one {Siden du er administrator, kan andre gruppemedlemmer se at du slettet disse meldingene.} other {Siden du er administrator, kan andre gruppemedlemmer se at du slettet disse meldingene.}}"
+  },
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
     "messageformat": "Slett fra alle enhetene"
   },
@@ -4807,6 +5065,27 @@
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {Du kan slette opptil {count,number} melding om gangen} other {Du kan slette opptil {count,number} meldinger om gangen}}"
+  },
+  "icu:DiscardDraftDialog__title": {
+    "messageformat": "Discard draft?"
+  },
+  "icu:DiscardDraftDialog__description": {
+    "messageformat": "This action can't be undone."
+  },
+  "icu:DeleteAttachmentModal__Title": {
+    "messageformat": "Vil du slette elementet?"
+  },
+  "icu:DeleteAttachmentModal__Body": {
+    "messageformat": "Elementet slettes for godt. All tekst tilknyttet dette elementet, blir også slettet."
+  },
+  "icu:DeleteAttachmentModal__Close": {
+    "messageformat": "Lukk"
+  },
+  "icu:DeleteAttachmentModal__Delete": {
+    "messageformat": "Slett"
+  },
+  "icu:DeleteAttachmentModal__Cancel": {
+    "messageformat": "Avbryt"
   },
   "icu:SelectModeActions__toast--TooManyMessagesToForward": {
     "messageformat": "Du kan videresende opptil 30 meldinger"
@@ -5126,6 +5405,9 @@
   "icu:AudioListItem__subtitle--audio": {
     "messageformat": "Lyd"
   },
+  "icu:ContactListItem__subtitle": {
+    "messageformat": "Kontakt"
+  },
   "icu:LinkPreviewItem__alt": {
     "messageformat": "Åpne lenken i en nettleser"
   },
@@ -5140,6 +5422,18 @@
   },
   "icu:MediaGallery__tab__links": {
     "messageformat": "Lenker"
+  },
+  "icu:MediaGallery__sort": {
+    "messageformat": "Sorter etter"
+  },
+  "icu:MediaGallery__sort--header": {
+    "messageformat": "Sorter etter"
+  },
+  "icu:MediaGallery__sort__date": {
+    "messageformat": "Dato"
+  },
+  "icu:MediaGallery__sort__size": {
+    "messageformat": "Størrelse"
   },
   "icu:MediaGallery__EmptyState__title--media": {
     "messageformat": "Ingen mediefiler"
@@ -5159,17 +5453,29 @@
   "icu:MediaGallery__EmptyState__description--links-2": {
     "messageformat": "Lenker som du sender og mottar, vises her"
   },
-  "icu:MediaGallery__EmptyState__description--documents": {
-    "messageformat": "Lenker som du sender og mottar, vises her"
-  },
   "icu:MediaGallery__EmptyState__title--documents": {
     "messageformat": "Ingen filer"
   },
   "icu:MediaGallery__EmptyState__description--documents-2": {
     "messageformat": "Filer som du sender og mottar, vises her"
   },
-  "icu:MediaGallery__EmptyState__description--links": {
-    "messageformat": "Filer som du sender og mottar, vises her"
+  "icu:MediaGallery__ContextMenu__ViewInChat": {
+    "messageformat": "Se i samtalen"
+  },
+  "icu:MediaGallery__ContextMenu__Forward": {
+    "messageformat": "Videresend"
+  },
+  "icu:MediaGallery__ContextMenu__Save": {
+    "messageformat": "Lagre"
+  },
+  "icu:MediaGallery__ContextMenu__Send": {
+    "messageformat": "Send melding"
+  },
+  "icu:MediaGallery__ContextMenu__Copy": {
+    "messageformat": "Kopier lenken"
+  },
+  "icu:MediaGallery__ContextMenu__Delete": {
+    "messageformat": "Slett"
   },
   "icu:MediaQualitySelector--button": {
     "messageformat": "Velg mediekvalitet"
@@ -5384,6 +5690,10 @@
   "icu:AnnouncementsOnlyGroupBanner--admins": {
     "messageformat": "administratorer"
   },
+  "icu:Avatar__View": {
+    "messageformat": "Vis",
+    "limit": 7
+  },
   "icu:AvatarEditor--choose": {
     "messageformat": "Velg et ikon"
   },
@@ -5461,15 +5771,6 @@
   },
   "icu:Preferences__button--set-up": {
     "messageformat": "Konfigurer"
-  },
-  "icu:Preferences__internal__local-backups": {
-    "messageformat": "Lokal sikkerhetskopiering"
-  },
-  "icu:Preferences__internal__export-local-backup": {
-    "messageformat": "Eksporter …"
-  },
-  "icu:Preferences__internal__export-local-backup--description": {
-    "messageformat": "Eksporter krypterte sikkerhetskopier til en mappe og bekreft dem"
   },
   "icu:Preferences__internal__validate-backup--description": {
     "messageformat": "Eksporter en kryptert sikkerhetskopi til minnet og kjør bekreftelse av den"
@@ -5593,6 +5894,24 @@
   },
   "icu:PlaintextExport--Error--DiskPermssions--Detail": {
     "messageformat": "Samtaleloggen din kunne ikke eksporteres fordi Signal ikke har tillatelse til å lagre filer på disken din. Du må endre tillatelsene for disken eller systeminnstillingene før du kan prøve på nytt."
+  },
+  "icu:LocalBackupExport--ProgressDialog--Header": {
+    "messageformat": "Eksporterer sikkerhetskopi"
+  },
+  "icu:LocalBackupExport--CompleteDialog--Header": {
+    "messageformat": "Eksporten er fullført"
+  },
+  "icu:LocalBackupExport--CompleteDialog--RestoreInstructionsHeader": {
+    "messageformat": "Slik gjenoppretter du sikkerhetskopien:"
+  },
+  "icu:LocalBackupExport--CompleteDialog--RestoreInstructionsTransfer": {
+    "messageformat": "Overfør sikkerhetskopimappen til lagringsplassen på mobilen"
+  },
+  "icu:LocalBackupExport--CompleteDialog--RestoreInstructionsInstall": {
+    "messageformat": "Installer Signal på mobilen på nytt"
+  },
+  "icu:LocalBackupExport--CompleteDialog--RestoreInstructionsRestore": {
+    "messageformat": "Trykk på «Gjenopprett eller overfør» og velg «På enheten»"
   },
   "icu:NotificationProfile--moon-icon": {
     "messageformat": "Måneikon"
@@ -5889,13 +6208,13 @@
     "messageformat": "Sikkerhetskopier av skrivebordet"
   },
   "icu:Preferences__local-backups-section__description": {
-    "messageformat": "Sikkerhetskopier krypteres med en kode og lagres på datamaskinen din."
+    "messageformat": "Your backup is end-to-end encrypted and stored on your computer."
   },
   "icu:Preferences--local-backups-off-description": {
     "messageformat": "Lag en ende-til-ende-kryptert sikkerhetskopi som kan gjenopprettes på mobilen din. "
   },
   "icu:Preferences--local-backups-restore-info": {
-    "messageformat": "For å gjenopprette en sikkerhetskopi må du installere en ny kopi av Signal. Åpne appen og trykk på «Gjenopprett sikkerhetskopi», og finn mappen med sikkerhetskopien. <learnMoreLink>Les mer.</learnMoreLink>"
+    "messageformat": "To restore a backup, install a new copy of Signal on your phone. Open the app and tap “Restore or transfer.” <learnMoreLink>Learn more.</learnMoreLink>"
   },
   "icu:Preferences--local-backups-setup-folder": {
     "messageformat": "Velg en mappe"
@@ -5950,6 +6269,15 @@
   },
   "icu:Preferences--local-backups-see-backup-key-again": {
     "messageformat": "Se koden igjen"
+  },
+  "icu:Preferences__local-backups-last-backup": {
+    "messageformat": "Siste sikkerhetskopi"
+  },
+  "icu:Preferences__local-backups-last-backup-never": {
+    "messageformat": "Aldri"
+  },
+  "icu:Preferences__local-backups-backup-now": {
+    "messageformat": "Sikkerhetskopier nå"
   },
   "icu:Preferences__local-backups-folder": {
     "messageformat": "Mappe for sikkerhetskopi"
@@ -6964,7 +7292,7 @@
     "messageformat": "Redigert"
   },
   "icu:MessageMetadata__pinned": {
-    "messageformat": "Pinned"
+    "messageformat": "Festet"
   },
   "icu:DraftGifMessageSendModal__Title": {
     "messageformat": "Legg til en melding"
@@ -7227,11 +7555,11 @@
   "icu:WhatsNew__modal-title": {
     "messageformat": "Siste nytt"
   },
-  "icu:PreferencesDonations__title": {
-    "messageformat": "Personvern fremfor profitt"
+  "icu:PreferencesDonations__title-v2": {
+    "messageformat": "Stolt ideell organisasjon"
   },
-  "icu:PreferencesDonations__description": {
-    "messageformat": "Private meldinger, finansiert av brukerne. Ingen annonser, ingen sporing, ingen kompromiss. Støtt Signal med en pengegave nå. <readMoreLink>Les mer</readMoreLink>"
+  "icu:PreferencesDonations__description-v2": {
+    "messageformat": "Gi en pengegave for å støtte private samtaler. Bidra til at Signal kan være uavhengig og annonsefri. <readMoreLink>Les mer</readMoreLink>"
   },
   "icu:PreferencesDonations__donate-button": {
     "messageformat": "Gi penger"
@@ -7256,6 +7584,21 @@
   },
   "icu:PreferencesDonations__privacy-modal-content": {
     "messageformat": "<paragraph>Signal lagrer ikke personopplysningene dine når du gir en pengegave.</paragraph><paragraph>Betalingstjenesten Stripe behandler pengebeløpet du gir oss. Vi har ikke tilgang til og verken lagrer eller oppbevarer opplysningene du gir til Stripe.</paragraph><paragraph>Signal vil ikke, og kan ikke, knytte pengegaven til Signal-kontoen din.</paragraph><paragraph>Takk for støtten!</paragraph>"
+  },
+  "icu:PreferencesDonations__privacy-modal-intro": {
+    "messageformat": "Signal er en uavhengig, ideell organisasjon som tilbyr private chatter og samtaler. Ingen annonser, ingen sporing, ingen overvåking. Vil du støtte Signal med en pengegave?"
+  },
+  "icu:PreferencesDonations__privacy-modal-list-1": {
+    "messageformat": "Du får et merke i profilen din når du gir penger"
+  },
+  "icu:PreferencesDonations__privacy-modal-list-2": {
+    "messageformat": "Personvernet ditt er hovedfokuset vårt"
+  },
+  "icu:PreferencesDonations__privacy-modal-list-3": {
+    "messageformat": "Signal er en ideell organisasjon."
+  },
+  "icu:PreferencesDonations__privacy-modal-icon-accessibility-label": {
+    "messageformat": "Hjerteikon i samme stil som Signal-logoen"
   },
   "icu:PreferencesDonations__privacy-modal-ok": {
     "messageformat": "OK"
@@ -7347,6 +7690,15 @@
   "icu:DonateFlow__discard-dialog-remove-info": {
     "messageformat": "Forlat siden"
   },
+  "icu:DonateFlow__discard-paypal-dialog-body": {
+    "messageformat": "Pengegaven din avbrytes dersom du forlater siden."
+  },
+  "icu:DonateFlow__discard-paypal-dialog-discard": {
+    "messageformat": "Avbryt"
+  },
+  "icu:DonateFlow__discard-paypal-dialog-cancel": {
+    "messageformat": "Bli på siden"
+  },
   "icu:DonateFlow__continue": {
     "messageformat": "Fortsett"
   },
@@ -7392,6 +7744,15 @@
   "icu:Donations__Toast__ConfirmationNeeded": {
     "messageformat": "Du har en pengegave som krever bekreftelse."
   },
+  "icu:Donations__Toast__PaypalConfirmationNeeded": {
+    "messageformat": "Du har en pengegave som krever bekreftelse."
+  },
+  "icu:Donations__Toast__PaypalCanceled": {
+    "messageformat": "PayPal-pengegaven ble avbrutt"
+  },
+  "icu:Donations__Toast__PaypalError": {
+    "messageformat": "Kunne ikke behandle PayPal-pengegaven. Ingenting har blitt trukket fra kontoen."
+  },
   "icu:Donations__BadgeApplicationFailed__Title": {
     "messageformat": "Gaven ble gitt, men vi kunne ikke endre innstillingene dine for merker."
   },
@@ -7407,11 +7768,41 @@
   "icu:Donations__DonationInterrupted__RetryButton": {
     "messageformat": "Prøv igjen"
   },
+  "icu:Donations__PaymentMethod": {
+    "messageformat": "Betalingsmåte"
+  },
   "icu:Donations__PaymentMethodDeclined": {
     "messageformat": "Betalingsmåten ble avvist"
   },
   "icu:Donations__PaymentMethodDeclined__Description": {
     "messageformat": "Prøv en annen betalingsmåte, eller ta kontakt med banken din for å få mer informasjon."
+  },
+  "icu:DonateFlow__PaymentCardIcon__AccessibilityLabel": {
+    "messageformat": "Betalingskort-ikon"
+  },
+  "icu:DonateFlow__CreditOrDebitCard": {
+    "messageformat": "Kreditt- eller debetkort"
+  },
+  "icu:DonateFlow__Paypal__AccessibilityLabel": {
+    "messageformat": "PayPal"
+  },
+  "icu:DonateFlow__Paypal__Cancel": {
+    "messageformat": "Avbryt"
+  },
+  "icu:DonateFlow__Paypal__CompleteDonation": {
+    "messageformat": "Fullfør pengegaven"
+  },
+  "icu:Donations__PaypalCanceled": {
+    "messageformat": "PayPal-pengegaven ble avbrutt"
+  },
+  "icu:Donations__PaypalCanceled__Description": {
+    "messageformat": "Ingenting har blitt trukket fra kontoen. Prøv igjen, eller bruk en annen betalingsmåte."
+  },
+  "icu:Donations__PaypalError": {
+    "messageformat": "Kunne ikke behandle PayPal-pengegaven"
+  },
+  "icu:Donations__PaypalError__Description": {
+    "messageformat": "Ingenting har blitt trukket fra kontoen. Prøv igjen, eller bruk en annen betalingsmåte."
   },
   "icu:Donations__Failed3dsValidation": {
     "messageformat": "Bekreftelse mislyktes"
@@ -7474,88 +7865,112 @@
     "messageformat": "Du kan justere dette på mobilen din under Innstillinger → Gi penger til Signal → Merker"
   },
   "icu:CallQualitySurvey__CloseButton__AccessibilityLabel": {
-    "messageformat": "Close"
+    "messageformat": "Lukk"
   },
   "icu:CallQualitySurvey__BackButton__AccessibilityLabel": {
-    "messageformat": "Back"
+    "messageformat": "Tilbake"
   },
   "icu:CallQualitySurvey__HowWasYourCall__PageTitle": {
-    "messageformat": "How was your call?"
+    "messageformat": "Hvordan var samtalen?"
   },
   "icu:CallQualitySurvey__HowWasYourCall__PageDescription": {
-    "messageformat": "This helps us improve calls in Signal. No personally identifiable information will be stored."
+    "messageformat": "Dette hjelper oss med å gjøre anropene i Signal bedre. Vi lagrer ingen identifiserbare opplysninger om deg."
   },
   "icu:CallQualitySurvey__HowWasYourCall__Response__HadIssues": {
-    "messageformat": "Had issues"
+    "messageformat": "Fikk problemer"
   },
   "icu:CallQualitySurvey__HowWasYourCall__Response__Great": {
-    "messageformat": "Great"
+    "messageformat": "Bra"
   },
   "icu:CallQualitySurvey__WhatIssuesDidYouHave__PageTitle": {
-    "messageformat": "What issues did you have?"
+    "messageformat": "Hvilke problemer oppsto?"
   },
   "icu:CallQualitySurvey__WhatIssuesDidYouHave__IssuesList__Heading": {
-    "messageformat": "Select all that apply"
+    "messageformat": "Velg alle som gjelder"
   },
   "icu:CallQualitySurvey__Issue--AUDIO": {
-    "messageformat": "Audio issue"
+    "messageformat": "Lydproblem"
   },
   "icu:CallQualitySurvey__Issue--AUDIO_STUTTERING": {
-    "messageformat": "Audio stuttering"
+    "messageformat": "Hakkende lyd"
   },
   "icu:CallQualitySurvey__Issue--AUDIO_LOCAL_ECHO": {
-    "messageformat": "I heard echo"
+    "messageformat": "Jeg hørte ekko"
   },
   "icu:CallQualitySurvey__Issue--AUDIO_REMOTE_ECHO": {
-    "messageformat": "Others heard echo"
+    "messageformat": "Andre hørte ekko"
   },
   "icu:CallQualitySurvey__Issue--AUDIO_DROP": {
-    "messageformat": "Audio cut out"
+    "messageformat": "Manglende lyd"
   },
   "icu:CallQualitySurvey__Issue--VIDEO": {
-    "messageformat": "Video issue"
+    "messageformat": "Videoproblem"
   },
   "icu:CallQualitySurvey__Issue--VIDEO_NO_CAMERA": {
-    "messageformat": "Camera didn't work"
+    "messageformat": "Kameraet virket ikke"
   },
   "icu:CallQualitySurvey__Issue--VIDEO_LOW_QUALITY": {
-    "messageformat": "Poor video quality"
+    "messageformat": "Dårlig videokvalitet"
   },
   "icu:CallQualitySurvey__Issue--VIDEO_LOW_RESOLUTION": {
-    "messageformat": "Low resolution"
+    "messageformat": "Lav oppløsning"
   },
   "icu:CallQualitySurvey__Issue--CALL_DROPPED": {
-    "messageformat": "Call dropped"
+    "messageformat": "Avbrutt anrop"
   },
   "icu:CallQualitySurvey__Issue--OTHER": {
-    "messageformat": "Something else"
+    "messageformat": "Noe annet"
   },
   "icu:CallQualitySurvey__WhatIssuesDidYouHave__SomethingElse__TextArea__AccessibilityLabel": {
-    "messageformat": "Issues description"
+    "messageformat": "Beskriv problemet her"
   },
   "icu:CallQualitySurvey__WhatIssuesDidYouHave__SomethingElse__TextArea__HelpText": {
-    "messageformat": "Please include any details relevant to the issue. Anything you share here will be kept private and will only be used to help improve calls in Signal."
+    "messageformat": "Gi oss så detaljert informasjon som mulig. Alt du deler, holdes privat og blir kun brukt til å gjøre anropene på Signal bedre."
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__SomethingElse__TextArea__ErrorText": {
+    "messageformat": "Beskriv problemet"
   },
   "icu:CallQualitySurvey__WhatIssuesDidYouHave__ContinueButton": {
-    "messageformat": "Continue"
+    "messageformat": "Fortsett"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__ContinueButton__DisabledTooltip": {
+    "messageformat": "Velg minst ett alternativ for å gå videre"
   },
   "icu:CallQualitySurvey__ConfirmSubmission__PageTitle": {
-    "messageformat": "Help us improve"
+    "messageformat": "Bidra til bedre anrop"
   },
-  "icu:CallQualitySurvey__ConfirmSubmission__PageDescription": {
-    "messageformat": "This helps us learn more about calls and what is working or not working. You can view your debug log before submitting."
+  "icu:CallQualitySurvey__ConfirmSubmission__PageDescriptionWithDiagnosticLink": {
+    "messageformat": "Når du sender inn tilbakemeldingen, sendes også <diagnosticInfoLink>diagnostisk informasjon om anropet</diagnosticInfoLink>. Du kan også dele feilsøkingsloggen din for å bidra til å gjøre anropskvaliteten bedre."
   },
   "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__Label": {
-    "messageformat": "Share debug log"
+    "messageformat": "Del feilsøkingslogg"
   },
   "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__ViewButton": {
-    "messageformat": "View"
+    "messageformat": "Vis"
   },
-  "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__HelpText": {
-    "messageformat": "Debug logs contain low level app information and do not reveal any of your message contents."
+  "icu:CallQualitySurvey__ConfirmSubmission__PrivacyNote": {
+    "messageformat": "Opplysningene som deles med oss, består av enkle opplysninger fra appen og viser ikke innholdet i samtalene dine."
+  },
+  "icu:CallDiagnosticWindow__title": {
+    "messageformat": "Diagnostisk informasjon"
   },
   "icu:CallQualitySurvey__ConfirmSubmission__SubmitButton": {
-    "messageformat": "Submit"
+    "messageformat": "Send"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__Submitting": {
+    "messageformat": "Undersøkelsen sendes inn …"
+  },
+  "icu:CallQualitySurvey__SubmissionFailed": {
+    "messageformat": "Undesøkelsen kunne ikke sendes inn"
+  },
+  "icu:CallQualitySurvey__SubmissionFailed__Retry": {
+    "messageformat": "Prøv på nytt"
+  },
+  "icu:CallQualitySurvey__SubmissionSuccess": {
+    "messageformat": "Takk for tilbakemeldingen!"
+  },
+  "icu:Megaphone__ExpandNarrowSidebar": {
+    "messageformat": "Utvid sidefeltet for å bruke megafonen"
   },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "Denne versjonen inneholder noen justeringer og feilrettinger som sikrer at Signal fungerer optimalt.",
@@ -7585,16 +8000,16 @@
     "messageformat": "Noen små justeringer, feilrettinger og ytelsesforbedringer. Takk for at du bruker Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__7.79-1": {
-    "messageformat": "Vi har endret designet av rullefeltene i appen, slik at alle har samme stil."
+  "icu:WhatsNew__7.90--0": {
+    "messageformat": "Fem nye offisielle klistremerkepakker fra ulike kunstnere."
   },
-  "icu:WhatsNew__7.79-2": {
-    "messageformat": "Vi har også gjort formateringen av funksjonen for kopiering og innliming bedre. Takk, <brianHarder></brianHarder>!"
+  "icu:WhatsNew__8.0--0": {
+    "messageformat": "Sikre sikkerhetskopier på Signal er her! Nå kan du aktivere automatisk ende-til-ende-kryptert sikkerhetskopiering og slippe å miste meldingene dine når du bytter mobil eller installerer Signal på nytt. Du kan sikkerhetskopiere alle meldingene dine fra de siste 45 dagene uten kostnad, eller betale en liten sum hver måned for å få 100 GB lagringsplass. Trykk på «Sikkerhetskopiering» i Signal-innstillingene for å komme i gang. Takk til alle som hjalp oss med å teste ut funksjonen i betamodus!"
   },
-  "icu:WhatsNew__7.80-1": {
-    "messageformat": "Signal har nå avstemninger! Med avstemninger blir det lett å finne ut hva gruppechatten faktisk mener. Du kan f.eks. lage en avstemning med ulike middagsalternativer eller andre viktige avgjørelser. Alle i gruppen kan stemme og se hva de andre stemmer, og du kan bestemme om det er lov å stemme flere ganger."
+  "icu:WhatsNew__8.2--0": {
+    "messageformat": "Nå kan du sende flyktige meldinger og mediefiler i Signal Desktop. Bildene og videoene du sender som flyktige meldinger, slettes automatisk fra samtaletråden etter at de er sett av andre."
   },
-  "icu:WhatsNew__7.81-1": {
-    "messageformat": "Mediegalleriet har nå to nye faner: en for talemeldinger og en for forhåndsvisning av lenker."
+  "icu:WhatsNew__8.3--0": {
+    "messageformat": "Now you can optionally add a member label to describe yourself or your role in a group chat. Set your group member label to \"Referee\" or \"Goalie\" in your local rec league soccer chat to help kick things off when new teammates join, then choose a different label with your job title in the company chat. Member labels appear next to your profile name in that group, and group admins can control whether or not they are enabled for everyone."
   }
 }

@@ -98,12 +98,7 @@ export const copyQuoteContentFromOriginal = async (
   const { attachments } = quote;
   const quoteAttachment = attachments ? attachments[0] : undefined;
 
-  if (messageHasPaymentEvent(message.attributes)) {
-    // eslint-disable-next-line no-param-reassign
-    quote.payment = message.get('payment');
-  }
-
-  if (isTapToView(message.attributes)) {
+  if (isTapToView(message.attributes, true)) {
     // eslint-disable-next-line no-param-reassign
     quote.text = undefined;
     // eslint-disable-next-line no-param-reassign
@@ -115,6 +110,15 @@ export const copyQuoteContentFromOriginal = async (
     // eslint-disable-next-line no-param-reassign
     quote.isViewOnce = true;
 
+    return;
+  }
+
+  // eslint-disable-next-line no-param-reassign
+  quote.isViewOnce = false;
+
+  // We should copy things that contribute to the type of message,
+  // but not copy any of the contents of the message.
+  if (message.attributes.deletedForEveryone) {
     return;
   }
 
@@ -135,8 +139,10 @@ export const copyQuoteContentFromOriginal = async (
     return;
   }
 
-  // eslint-disable-next-line no-param-reassign
-  quote.isViewOnce = false;
+  if (messageHasPaymentEvent(message.attributes)) {
+    // eslint-disable-next-line no-param-reassign
+    quote.payment = message.get('payment');
+  }
 
   // eslint-disable-next-line no-param-reassign
   quote.text = getQuoteBodyText({

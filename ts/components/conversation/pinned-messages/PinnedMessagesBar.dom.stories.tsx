@@ -16,6 +16,26 @@ export default {
   title: 'Components/PinnedMessages/PinnedMessagesBar',
 } satisfies Meta;
 
+type MockPinMessageProps = Partial<
+  Omit<PinMessage, 'id' | 'sentAtTimestamp' | 'receivedAtCounter'>
+>;
+
+function mockPinMessage(id: number, props: MockPinMessageProps): PinMessage {
+  return {
+    id: `message-${id}`,
+    sentAtTimestamp: id,
+    receivedAtCounter: id,
+    text: null,
+    attachment: null,
+    contact: null,
+    payment: false,
+    poll: null,
+    sticker: false,
+    viewOnceMedia: false,
+    ...props,
+  };
+}
+
 const PIN_1: Pin = {
   id: 1 as PinnedMessageId,
   sender: {
@@ -23,12 +43,11 @@ const PIN_1: Pin = {
     title: 'Jamie',
     isMe: true,
   },
-  message: {
-    id: 'message-1',
+  message: mockPinMessage(1, {
     poll: {
       question: 'What should we get for lunch?',
     },
-  },
+  }),
 };
 
 const PIN_2: Pin = {
@@ -38,8 +57,7 @@ const PIN_2: Pin = {
     title: 'Tyler',
     isMe: false,
   },
-  message: {
-    id: 'message-2',
+  message: mockPinMessage(2, {
     text: {
       body: 'We found a cute pottery store close to Inokashira Park that we’re going to check out on Saturday. Anyone want to meet at the south exit at Kichijoji station at 1pm? Too early?',
       bodyRanges: [
@@ -47,7 +65,7 @@ const PIN_2: Pin = {
         { start: 39, length: 15, style: BodyRange.Style.SPOILER },
       ],
     },
-  },
+  }),
 };
 
 const PIN_3: Pin = {
@@ -57,17 +75,16 @@ const PIN_3: Pin = {
     title: 'Adrian',
     isMe: false,
   },
-  message: {
-    id: 'message-3',
+  message: mockPinMessage(3, {
     text: {
       body: 'Photo',
       bodyRanges: [],
     },
     attachment: {
-      type: 'photo',
+      type: 'image',
       url: '/fixtures/tina-rolf-269345-unsplash.jpg',
     },
-  },
+  }),
 };
 
 function Template(props: {
@@ -84,6 +101,7 @@ function Template(props: {
       onPinGoTo={action('onPinGoTo')}
       onPinRemove={action('onPinRemove')}
       onPinsShowAll={action('onPinsShowAll')}
+      canPinMessages
     />
   );
 }
@@ -96,7 +114,7 @@ function Stack(props: { children: ReactNode }) {
   );
 }
 
-export function Default(): JSX.Element {
+export function Default(): React.JSX.Element {
   return (
     <Stack>
       <Template defaultCurrent={PIN_1.id} pins={[PIN_1]} />
@@ -106,7 +124,7 @@ export function Default(): JSX.Element {
   );
 }
 
-function Variant(props: { title: string; message: Omit<PinMessage, 'id'> }) {
+function Variant(props: { title: string; message: MockPinMessageProps }) {
   const pin: Pin = {
     id: 1 as PinnedMessageId,
     sender: {
@@ -114,10 +132,7 @@ function Variant(props: { title: string; message: Omit<PinMessage, 'id'> }) {
       title: props.title,
       isMe: true,
     },
-    message: {
-      id: 'message-1',
-      ...props.message,
-    },
+    message: mockPinMessage(1, props.message),
   };
   return <Template defaultCurrent={pin.id} pins={[pin]} />;
 }
@@ -125,7 +140,7 @@ function Variant(props: { title: string; message: Omit<PinMessage, 'id'> }) {
 const SHORT_TEXT = 'Lorem, ipsum dolor sit amet';
 const IMAGE_URL = '/fixtures/tina-rolf-269345-unsplash.jpg';
 
-export function Variants(): JSX.Element {
+export function Variants(): React.JSX.Element {
   return (
     <Stack>
       <Variant
@@ -133,15 +148,15 @@ export function Variants(): JSX.Element {
         message={{ text: { body: SHORT_TEXT, bodyRanges: [] } }}
       />
       <Variant
-        title="Photo attachment with text"
+        title="Image attachment with text"
         message={{
           text: { body: SHORT_TEXT, bodyRanges: [] },
-          attachment: { type: 'photo', url: IMAGE_URL },
+          attachment: { type: 'image', url: IMAGE_URL },
         }}
       />
       <Variant
-        title="Photo attachment"
-        message={{ attachment: { type: 'photo', url: IMAGE_URL } }}
+        title="Image attachment"
+        message={{ attachment: { type: 'image', url: IMAGE_URL } }}
       />
       <Variant
         title="Video attachment with text"
@@ -158,10 +173,7 @@ export function Variants(): JSX.Element {
         title="Voice message"
         message={{ attachment: { type: 'voiceMessage' } }}
       />
-      <Variant
-        title="GIF message"
-        message={{ attachment: { type: 'gif', url: IMAGE_URL } }}
-      />
+      <Variant title="GIF message" message={{ attachment: { type: 'gif' } }} />
       <Variant
         title="File"
         message={{ attachment: { type: 'file', name: 'project.zip' } }}
@@ -170,13 +182,28 @@ export function Variants(): JSX.Element {
         title="Poll"
         message={{ poll: { question: `${SHORT_TEXT}?` } }}
       />
-      <Variant title="Sticker" message={{ sticker: true }} />
-      <Variant title="Contact" message={{ contact: { name: 'Tyler' } }} />
       <Variant
-        title="Address"
-        message={{ contact: { address: '742 Evergreen Terrace' } }}
+        title="Sticker"
+        message={{
+          sticker: true,
+          attachment: { type: 'image', url: IMAGE_URL },
+        }}
+      />
+      <Variant
+        title="Contact"
+        message={{
+          contact: { name: 'Tyler' },
+          attachment: { type: 'file', name: '' },
+        }}
       />
       <Variant title="Payment" message={{ payment: true }} />
+      <Variant
+        title="View-Once Media"
+        message={{
+          viewOnceMedia: true,
+          attachment: { type: 'image', url: IMAGE_URL },
+        }}
+      />
     </Stack>
   );
 }

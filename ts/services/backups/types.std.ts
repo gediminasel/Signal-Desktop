@@ -34,18 +34,14 @@ export type OnProgressCallback = (
   totalBytes: number
 ) => void;
 
-export type BackupExportOptions =
+export type BackupExportOptions = { abortSignal: AbortSignal } & (
   | {
       type: 'remote' | 'cross-client-integration-test';
       level: BackupLevel;
     }
-  | {
-      type: 'plaintext-export';
-    }
-  | {
-      type: 'local-encrypted';
-      snapshotDir: string;
-    };
+  | { type: 'plaintext-export' }
+  | { type: 'local-encrypted' }
+);
 
 export type BackupImportOptions = (
   | { type: 'remote' | 'cross-client-integration-test' }
@@ -85,6 +81,7 @@ export type ExportResultType = Readonly<{
   attachmentBackupJobs: ReadonlyArray<
     CoreAttachmentBackupJobType | CoreAttachmentLocalBackupJobType
   >;
+  mediaNames: Array<string>;
   totalBytes: number;
   duration: number;
   stats: Readonly<StatsType>;

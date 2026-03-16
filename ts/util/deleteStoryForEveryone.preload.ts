@@ -41,7 +41,6 @@ export async function deleteStoryForEveryone(
   );
   if (sourceConversation && isGroupV2(sourceConversation.attributes)) {
     void sendDeleteForEveryoneMessage(sourceConversation.attributes, {
-      deleteForEveryoneDuration: DAY,
       id: story.messageId,
       timestamp: story.timestamp,
     });
@@ -208,7 +207,12 @@ export async function deleteStoryForEveryone(
     {
       destinationServiceId,
       timestamp: story.timestamp,
-      storyMessageRecipients: newStoryMessageRecipients,
+      storyMessageRecipients: newStoryMessageRecipients.map(recipient => {
+        return {
+          ...recipient,
+          destinationServiceId: recipient.destinationServiceId ?? undefined,
+        };
+      }),
     },
     noop
   );

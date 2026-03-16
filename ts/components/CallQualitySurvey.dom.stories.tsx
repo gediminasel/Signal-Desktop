@@ -11,7 +11,7 @@ export default {
   title: 'Components/CallQualitySurveyDialog',
 } satisfies Meta;
 
-export function Default(): JSX.Element {
+export function Default(): React.JSX.Element {
   const [open, setOpen] = useState(true);
   return (
     <CallQualitySurveyDialog
@@ -19,6 +19,8 @@ export function Default(): JSX.Element {
       open={open}
       onOpenChange={setOpen}
       onSubmit={action('onSubmit')}
+      onViewDebugLog={action('onViewDebugLog')}
+      onViewDiagnosticInfo={action('onViewDiagnosticInfo')}
     />
   );
 }

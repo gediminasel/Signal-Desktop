@@ -77,7 +77,6 @@ const NODE_PACKAGES = new Set([
   'proxy-agent',
   'read-last-lines',
   'split2',
-  'websocket',
   'write-file-atomic',
 
   // Dev dependencies
@@ -115,7 +114,6 @@ const NODE_PACKAGES = new Set([
   'postcss-loader',
   'prettier',
   'prettier-plugin-tailwindcss',
-  'protobufjs-cli',
   'react-devtools',
   'react-devtools-core',
   'resedit',
@@ -248,7 +246,6 @@ const STD_PACKAGES = new Set([
   'js-yaml',
   'linkify-it',
   'lodash',
-  'long',
   'lru-cache',
   'memoizee',
   'mocha',

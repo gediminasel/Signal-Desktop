@@ -5,21 +5,75 @@ import type {
   PinnedMessage,
   PinnedMessageId,
   PinnedMessageParams,
+  PinnedMessagePreloadData,
 } from '../../types/PinnedMessage.std.js';
 import { strictAssert } from '../../util/assert.std.js';
-import type { ReadableDB, WritableDB } from '../Interface.std.js';
+import { hydrateMessage } from '../hydration.std.js';
+import type {
+  MessageTypeUnhydrated,
+  MessageType,
+  ReadableDB,
+  WritableDB,
+} from '../Interface.std.js';
 import { sql } from '../util.std.js';
 
-export function getPinnedMessagesForConversation(
+function _getMessageById(
   db: ReadableDB,
-  conversationId: string
+  messageId: string
+): MessageType | null {
+  const [query, params] = sql`
+    SELECT * FROM messages
+    WHERE id = ${messageId}
+  `;
+
+  const row = db.prepare(query).get<MessageTypeUnhydrated>(params);
+  if (row == null) {
+    return null;
+  }
+
+  return hydrateMessage(db, row);
+}
+
+function _getPinnedMessagePreloadData(
+  db: ReadableDB,
+  pinnedMessage: PinnedMessage
+): PinnedMessagePreloadData {
+  const message = _getMessageById(db, pinnedMessage.messageId);
+  strictAssert(
+    message != null,
+    `Missing message ${pinnedMessage.messageId} for pinned message ${pinnedMessage.id}`
+  );
+  return { pinnedMessage, message };
+}
+
+export function getAllPinnedMessages(
+  db: ReadableDB
 ): ReadonlyArray<PinnedMessage> {
   const [query, params] = sql`
-    SELECT * FROM pinnedMessages
-    WHERE conversationId = ${conversationId}
-    ORDER BY pinnedAt DESC
+    SELECT * FROM pinnedMessages;
   `;
+
   return db.prepare(query).all<PinnedMessage>(params);
+}
+
+export function getPinnedMessagesPreloadDataForConversation(
+  db: ReadableDB,
+  conversationId: string
+): ReadonlyArray<PinnedMessagePreloadData> {
+  return db.transaction(() => {
+    const [query, params] = sql`
+      SELECT * FROM pinnedMessages
+      WHERE conversationId = ${conversationId}
+      ORDER BY pinnedAt ASC
+    `;
+
+    return db
+      .prepare(query)
+      .all<PinnedMessage>(params)
+      .map(pinnedMessage => {
+        return _getPinnedMessagePreloadData(db, pinnedMessage);
+      });
+  })();
 }
 
 function _getPinnedMessageByMessageId(
@@ -178,11 +232,11 @@ export function getNextExpiringPinnedMessageAcrossConversations(
 export function deleteAllExpiredPinnedMessagesBefore(
   db: WritableDB,
   beforeTimestamp: number
-): ReadonlyArray<PinnedMessageId> {
+): ReadonlyArray<PinnedMessage> {
   const [query, params] = sql`
     DELETE FROM pinnedMessages
     WHERE expiresAt <= ${beforeTimestamp}
-    RETURNING id
+    RETURNING *
   `;
-  return db.prepare(query, { pluck: true }).all<PinnedMessageId>(params);
+  return db.prepare(query).all<PinnedMessage>(params);
 }

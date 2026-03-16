@@ -73,6 +73,7 @@ export const CallingNotification: React.FC<PropsType> = React.memo(
           });
         }}
         shouldShowAdditional={false}
+        onDebugMessage={null}
         onDownload={null}
         onEdit={null}
         onReplyToMessage={null}
@@ -146,7 +147,7 @@ function renderCallingNotificationButton(
 
   const inThisCall = Boolean(
     props.activeConversationId &&
-      props.activeConversationId === props.conversationId
+    props.activeConversationId === props.conversationId
   );
 
   if (props.callHistory == null) {
@@ -225,8 +226,8 @@ function renderCallingNotificationButton(
   const disabled = Boolean(disabledTooltipText);
   const inAnotherCall = Boolean(
     !disabled &&
-      props.activeConversationId &&
-      props.activeConversationId !== props.conversationId
+    props.activeConversationId &&
+    props.activeConversationId !== props.conversationId
   );
   const button = (
     <Button

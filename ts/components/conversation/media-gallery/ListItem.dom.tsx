@@ -1,7 +1,8 @@
 // Copyright 2025 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, { useCallback } from 'react';
+import React, { useCallback, type ReactNode } from 'react';
+import type { ReadonlyDeep } from 'type-fest';
 
 import moment from 'moment';
 import { missingCaseError } from '../../../util/missingCaseError.std.js';
@@ -18,7 +19,7 @@ import {
   type AttachmentStatusType,
 } from '../../../hooks/useAttachmentStatus.std.js';
 
-export type Props = {
+export type Props = Readonly<{
   i18n: LocalizerType;
   mediaItem: GenericMediaItemType;
   thumbnail: React.ReactNode;
@@ -26,8 +27,12 @@ export type Props = {
   subtitle: React.ReactNode;
   readyLabel: string;
   onClick: (status: AttachmentStatusType['state']) => void;
-  onShowMessage: () => void;
-};
+  showMessage: () => void;
+  renderContextMenu: (
+    mediaItem: ReadonlyDeep<GenericMediaItemType>,
+    children: ReactNode
+  ) => JSX.Element;
+}>;
 
 export function ListItem({
   i18n,
@@ -37,13 +42,16 @@ export function ListItem({
   subtitle,
   readyLabel,
   onClick,
-  onShowMessage,
-}: Props): JSX.Element {
+  showMessage,
+  renderContextMenu,
+}: Props): React.JSX.Element {
   const { message } = mediaItem;
   let attachment: AttachmentForUIType | undefined;
 
   if (mediaItem.type === 'link') {
     attachment = mediaItem.preview.image;
+  } else if (mediaItem.type === 'contact') {
+    attachment = mediaItem.contact.avatar?.avatar;
   } else {
     ({ attachment } = mediaItem);
   }
@@ -67,9 +75,9 @@ export function ListItem({
     (ev: React.MouseEvent) => {
       ev.preventDefault();
       ev.stopPropagation();
-      onShowMessage();
+      showMessage();
     },
-    [onShowMessage]
+    [showMessage]
   );
 
   if (status == null || status.state === 'ReadyToShow') {
@@ -82,7 +90,7 @@ export function ListItem({
     throw missingCaseError(status);
   }
 
-  let button: JSX.Element | undefined;
+  let button: React.JSX.Element | undefined;
   if (
     status != null &&
     status.state !== 'ReadyToShow' &&
@@ -140,7 +148,10 @@ export function ListItem({
           {subtitle}
         </div>
       </div>
-      <AriaClickable.HiddenTrigger aria-label={label} onClick={handleClick} />
+      {renderContextMenu(
+        mediaItem,
+        <AriaClickable.HiddenTrigger aria-label={label} onClick={handleClick} />
+      )}
       <AriaClickable.SubWidget>
         <button
           type="button"

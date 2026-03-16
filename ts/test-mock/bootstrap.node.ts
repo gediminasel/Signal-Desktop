@@ -694,7 +694,7 @@ export class Bootstrap {
   public async encryptAndStoreAttachmentOnCDN(
     data: Buffer,
     contentType: MIMEType
-  ): Promise<Proto.IAttachmentPointer> {
+  ): Promise<Proto.AttachmentPointer.Params> {
     const cdnKey = uuid();
     const keys = generateAttachmentKeys();
     const cdnNumber = 3;
@@ -716,12 +716,23 @@ export class Bootstrap {
     return {
       size: data.byteLength,
       contentType,
-      cdnKey,
+      attachmentIdentifier: {
+        cdnKey,
+      },
       cdnNumber,
       key: keys,
       digest,
-      chunkSize,
-      incrementalMac,
+      chunkSize: chunkSize ?? null,
+      incrementalMac: incrementalMac ?? null,
+      clientUuid: null,
+      thumbnail: null,
+      fileName: null,
+      flags: null,
+      width: null,
+      height: null,
+      caption: null,
+      blurHash: null,
+      uploadTimestamp: null,
     };
   }
 

@@ -1070,24 +1070,18 @@ $message-padding-horizontal: 12px;
 }
 
 .module-message__author {
-  @include mixins.font-body-2-bold;
+  @include mixins.font-body-small-bold;
 
-  height: 18px;
-  overflow-x: hidden;
-  overflow-y: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
   user-select: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 3px;
 }
 
 .module-message__author_with_sticker {
-  @include mixins.font-body-2-bold;
+  @include mixins.font-body-small-bold;
 
-  height: 18px;
-  overflow-x: hidden;
-  overflow-y: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  min-height: 18px;
 
   // Stickers are pretty narrow, so we allow this one element of a sticker
   //   message to go wider than normal.
@@ -1101,6 +1095,10 @@ $message-padding-horizontal: 12px;
   @include mixins.dark-theme {
     color: variables.$color-gray-05;
   }
+}
+
+.module-message__author--with-quote {
+  margin-bottom: 3px;
 }
 
 .module-message__text {
@@ -1183,13 +1181,7 @@ $message-padding-horizontal: 12px;
 }
 .module-message__text--delete-for-everyone {
   user-select: none;
-
-  @include mixins.light-theme {
-    color: variables.$color-gray-90;
-  }
-  @include mixins.dark-theme {
-    color: variables.$color-gray-05;
-  }
+  color: light-dark(variables.$color-gray-60, variables.$color-gray-25);
 }
 
 .module-message__metadata {
@@ -1203,23 +1195,19 @@ $message-padding-horizontal: 12px;
   font-style: normal;
   user-select: none;
   white-space: nowrap;
-
   color: light-dark(variables.$color-gray-60, variables.$color-gray-25);
 
   &--outgoing {
     color: variables.$color-white-alpha-80;
   }
 
-  &--with-image-no-caption {
-    color: light-dark(variables.$color-white, variables.$color-white-alpha-80);
-  }
-
-  &--outline-only-bubble {
+  &--outline-only-bubble,
+  &--sticker {
     color: light-dark(variables.$color-gray-60, variables.$color-gray-25);
   }
 
-  &--sticker {
-    color: variables.$color-gray-60;
+  &--with-image-no-caption {
+    color: light-dark(variables.$color-white, variables.$color-white-alpha-80);
   }
 
   &--inline {
@@ -1874,81 +1862,17 @@ $message-padding-horizontal: 12px;
   display: inline-block;
   margin-inline-start: 6px;
   margin-bottom: 2px;
-
-  & {
-    @include mixins.dark-theme {
-      @include mixins.color-svg(
-        '../images/icons/v3/message_timer/messagetimer-60.svg',
-        variables.$color-white-alpha-80
-      );
-    }
-  }
-  & {
-    @include mixins.light-theme {
-      @include mixins.color-svg(
-        '../images/icons/v3/message_timer/messagetimer-60.svg',
-        variables.$color-white-alpha-80
-      );
-    }
-  }
 }
 
-$timer-icons: '55', '50', '45', '40', '35', '30', '25', '20', '15', '10', '05',
-  '00';
+$timer-icons:
+  '60', '55', '50', '45', '40', '35', '30', '25', '20', '15', '10', '05', '00';
 
 @each $timer-icon in $timer-icons {
   .module-expire-timer--#{$timer-icon} {
-    & {
-      @include mixins.dark-theme {
-        @include mixins.color-svg(
-          '../images/icons/v3/message_timer/messagetimer-#{$timer-icon}.svg',
-          variables.$color-white-alpha-80
-        );
-      }
-    }
-    & {
-      @include mixins.light-theme {
-        @include mixins.color-svg(
-          '../images/icons/v3/message_timer/messagetimer-#{$timer-icon}.svg',
-          variables.$color-white-alpha-80
-        );
-      }
-    }
-  }
-}
-
-.module-expire-timer--incoming {
-  background-color: variables.$color-white-alpha-80;
-
-  @include mixins.light-theme {
-    background-color: variables.$color-gray-60;
-  }
-  @include mixins.dark-theme {
-    background-color: variables.$color-gray-25;
-  }
-}
-.module-expire-timer--with-sticker {
-  @include mixins.light-theme {
-    background-color: variables.$color-gray-60;
-  }
-}
-
-// When status indicators are overlaid on top of an image, they use different colors
-.module-expire-timer--with-image-no-caption {
-  @include mixins.light-theme {
-    background-color: variables.$color-white;
-  }
-  @include mixins.dark-theme {
-    background-color: variables.$color-gray-02;
-  }
-}
-
-.module-expire-timer--outline-only-bubble {
-  @include mixins.light-theme {
-    background-color: variables.$color-gray-60;
-  }
-  @include mixins.dark-theme {
-    background-color: variables.$color-gray-25;
+    @include mixins.color-svg(
+      '../images/icons/v3/message_timer/messagetimer-#{$timer-icon}.svg',
+      currentColor
+    );
   }
 }
 
@@ -2233,10 +2157,6 @@ $timer-icons: '55', '50', '45', '40', '35', '30', '25', '20', '15', '10', '05',
 // Module: Group Notification
 
 .module-group-notification__contact {
-  font-weight: bold;
-}
-
-.module-safety-number__bold-name {
   font-weight: bold;
 }
 
@@ -3622,7 +3542,6 @@ button.module-image__border-overlay:focus {
 }
 .module-ongoing-call {
   &__remote-video-enabled {
-    // TODO: DESKTOP-8537 remove this; we want blurred avatar not all-black letterboxing
     height: 100%;
     width: 100%;
     position: relative;
@@ -3694,6 +3613,7 @@ button.module-image__border-overlay:focus {
 
   &__direct-call-ringing-spacer {
     flex: 1;
+    z-index: -1;
   }
 
   &__direct-call-speaking-indicator {
@@ -4157,6 +4077,8 @@ button.module-image__border-overlay:focus {
     position: absolute;
 
     display: flex;
+
+    // 960x720 = 1.333 aspect ratio
     height: 80px;
     width: variables.$calling-local-preview-normal-width;
 
@@ -4174,8 +4096,10 @@ button.module-image__border-overlay:focus {
 
     &--expanded {
       bottom: 112px;
-      height: 200px;
+
+      // 960x720 = 1.333 aspect ratio
       width: 312px;
+      height: 234px;
     }
 
     &--controls-hidden {
@@ -4306,7 +4230,7 @@ button.module-image__border-overlay:focus {
       inset-inline-start: 8px;
       // These are the normal widths; the size will change based on whether the window
       // is large, like the overall pip.
-      height: 54px;
+      height: 60px;
       width: 80px;
 
       border-radius: 12px;
@@ -4316,7 +4240,7 @@ button.module-image__border-overlay:focus {
       video {
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain;
       }
     }
 
@@ -4327,14 +4251,18 @@ button.module-image__border-overlay:focus {
 
   &__full-size-local-preview {
     width: 100%;
+    height: 100%;
+    object-fit: contain;
     position: relative;
 
     video {
       width: 100%;
+      height: 100%;
       transform: rotateY(180deg);
+      object-fit: contain;
     }
 
-    &--presenting {
+    &--presenting video {
       transform: none;
     }
   }
@@ -4556,8 +4484,15 @@ button.module-image__border-overlay:focus {
       border-radius: 6px;
       cursor: auto;
     }
-    &:hover {
+    &:not(.module-calling-participants-list__me):hover {
       background-color: variables.$color-gray-62;
+
+      .module-calling-participants-list__status-icon {
+        display: none;
+      }
+      .module-calling-participants-list__menu-icon {
+        display: flex;
+      }
     }
     &[disabled] {
       cursor: auto;
@@ -4651,9 +4586,10 @@ button.module-image__border-overlay:focus {
     );
   }
 
-  &__remove {
+  &__menu-icon {
+    display: none;
     @include mixins.color-svg(
-      '../images/icons/v3/minus/minus-circle-compact.svg',
+      '../images/icons/v3/more/more.svg',
       variables.$color-white
     );
   }
@@ -6256,14 +6192,6 @@ button.module-calling-participants-list__contact {
   }
 }
 
-.module-background-color {
-  &__default {
-    background-color: variables.$color-black-alpha-40;
-  }
-
-  @include mixins.avatar-colors();
-}
-
 .module-tooltip {
   --tooltip-text-color: #{variables.$color-gray-75};
   --tooltip-background-color: #{variables.$color-gray-02};
@@ -6397,10 +6325,10 @@ button.module-calling-participants-list__contact {
   &--with-reactions {
     margin-bottom: -6px;
   }
+}
 
-  &--deleted-for-everyone {
-    font-style: italic;
-  }
+.module-message__container--sticker-like {
+  overflow: initial;
 }
 
 .module-message__context {

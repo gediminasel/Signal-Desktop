@@ -3,7 +3,6 @@
 
 import lodash from 'lodash';
 
-import type { SignalService as Proto } from '../protobuf/index.std.js';
 import {
   BodyRange,
   type RawBodyRange,
@@ -26,7 +25,7 @@ const MAX_PER_TYPE = 250;
 
 // We drop unknown bodyRanges and remove extra stuff so they serialize properly
 export function filterAndClean(
-  ranges: ReadonlyArray<Proto.IBodyRange | RawBodyRange> | undefined | null
+  ranges: ReadonlyArray<RawBodyRange> | undefined | null
 ): ReadonlyArray<RawBodyRange> | undefined {
   if (!ranges) {
     return undefined;
@@ -60,7 +59,10 @@ export function filterAndClean(
       if ('mentionAci' in range) {
         rawMentionAci = dropNull(range.mentionAci);
       }
-      if ('mentionAciBinary' in range) {
+      if (
+        'mentionAciBinary' in range &&
+        range.mentionAciBinary instanceof Uint8Array
+      ) {
         mentionAciBinary = dropNull(range.mentionAciBinary);
       }
 
@@ -80,7 +82,6 @@ export function filterAndClean(
         }
 
         return {
-          ...restOfRange,
           start,
           length,
           mentionAci,
@@ -106,7 +107,7 @@ export function filterAndClean(
 }
 
 export function hydrateRanges(
-  ranges: ReadonlyArray<BodyRange<object>> | undefined,
+  ranges: ReadonlyArray<RawBodyRange> | undefined,
   conversationSelector: (id: string) => { id: string; title: string }
 ): Array<HydratedBodyRangeType> | undefined {
   if (!ranges) {

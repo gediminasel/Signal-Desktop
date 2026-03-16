@@ -1326,67 +1326,6 @@ async function showScreenShareWindow(sourceName: string | undefined) {
   );
 }
 
-let callingDevToolsWindow: BrowserWindow | undefined;
-async function showCallingDevToolsWindow() {
-  if (callingDevToolsWindow) {
-    callingDevToolsWindow.show();
-    return;
-  }
-
-  const options = {
-    height: 1200,
-    width: 1000,
-    alwaysOnTop: false,
-    autoHideMenuBar: true,
-    backgroundColor: '#ffffff',
-    darkTheme: false,
-    frame: true,
-    fullscreenable: true,
-    maximizable: true,
-    minimizable: true,
-    resizable: true,
-    show: false,
-    title: getResolvedMessagesLocale().i18n('icu:callingDeveloperTools'),
-    titleBarStyle: nonMainTitleBarStyle,
-    webPreferences: {
-      ...defaultWebPrefs,
-      nodeIntegration: false,
-      nodeIntegrationInWorker: false,
-      sandbox: true,
-      contextIsolation: true,
-      nativeWindowOpen: true,
-      preload: join(__dirname, '../bundles/calling-tools/preload.preload.js'),
-    },
-  };
-
-  callingDevToolsWindow = new BrowserWindow(options);
-
-  await handleCommonWindowEvents(callingDevToolsWindow);
-
-  callingDevToolsWindow.once('closed', () => {
-    callingDevToolsWindow = undefined;
-
-    mainWindow?.webContents.send('calling:set-rtc-stats-interval', null);
-  });
-
-  ipc.on('calling:set-rtc-stats-interval', (_, intervalMillis: number) => {
-    mainWindow?.webContents.send(
-      'calling:set-rtc-stats-interval',
-      intervalMillis
-    );
-  });
-
-  ipc.on('calling:rtc-stats-report', (_, report) => {
-    callingDevToolsWindow?.webContents.send('calling:rtc-stats-report', report);
-  });
-
-  await safeLoadURL(
-    callingDevToolsWindow,
-    await prepareFileUrl([__dirname, '../calling_tools.html'])
-  );
-  callingDevToolsWindow.show();
-}
-
 let aboutWindow: BrowserWindow | undefined;
 async function showAbout() {
   if (aboutWindow) {
@@ -1462,15 +1401,27 @@ async function openArtCreator() {
 }
 
 let debugLogWindow: BrowserWindow | undefined;
+let debugLogCurrentMode: 'submit' | 'close' | undefined;
 type DebugLogWindowOptions = {
   mode?: 'submit' | 'close';
 };
 
 async function showDebugLogWindow(options: DebugLogWindowOptions = {}) {
+  const newMode = options.mode ?? 'submit';
+
   if (debugLogWindow) {
+    if (debugLogCurrentMode !== newMode) {
+      debugLogCurrentMode = newMode;
+      const url = pathToFileURL(join(__dirname, '../debug_log.html'));
+      url.searchParams.set('mode', newMode);
+      await safeLoadURL(debugLogWindow, url.href);
+    }
+
     doShowDebugLogWindow();
     return;
   }
+
+  debugLogCurrentMode = newMode;
 
   function doShowDebugLogWindow() {
     if (debugLogWindow) {
@@ -1513,6 +1464,7 @@ async function showDebugLogWindow(options: DebugLogWindowOptions = {}) {
 
   debugLogWindow.on('closed', () => {
     debugLogWindow = undefined;
+    debugLogCurrentMode = undefined;
   });
 
   debugLogWindow.once('ready-to-show', () => {
@@ -1530,6 +1482,71 @@ async function showDebugLogWindow(options: DebugLogWindowOptions = {}) {
   }
 
   await safeLoadURL(debugLogWindow, url.href);
+}
+
+let callDiagnosticWindow: BrowserWindow | undefined;
+let storedCallDiagnosticData: string | undefined;
+
+async function showCallDiagnosticWindow() {
+  if (callDiagnosticWindow) {
+    doShowCallDiagnosticWindow();
+    return;
+  }
+
+  function doShowCallDiagnosticWindow() {
+    if (callDiagnosticWindow) {
+      // Electron has [a macOS bug][0] that causes parent windows to become unresponsive
+      //   if it's fullscreen and opens a fullscreen child window. Until that's fixed, we
+      //   only set the parent on MacOS is if the mainWindow is not fullscreen
+      // [0]: https://github.com/electron/electron/issues/32374
+      if (OS.isMacOS() && mainWindow?.isFullScreen()) {
+        callDiagnosticWindow.setParentWindow(null);
+      } else {
+        callDiagnosticWindow.setParentWindow(mainWindow ?? null);
+      }
+      callDiagnosticWindow.show();
+    }
+  }
+
+  const windowOptions: Electron.BrowserWindowConstructorOptions = {
+    width: 700,
+    height: 500,
+    resizable: false,
+    title: getResolvedMessagesLocale().i18n('icu:CallDiagnosticWindow__title'),
+    titleBarStyle: nonMainTitleBarStyle,
+    autoHideMenuBar: true,
+    backgroundColor: await getBackgroundColor(),
+    show: false,
+    webPreferences: {
+      ...defaultWebPrefs,
+      nodeIntegration: false,
+      nodeIntegrationInWorker: false,
+      sandbox: true,
+      contextIsolation: true,
+      preload: join(__dirname, '../bundles/calldiagnostic/preload.preload.js'),
+    },
+    parent: mainWindow,
+  };
+
+  callDiagnosticWindow = new BrowserWindow(windowOptions);
+
+  await handleCommonWindowEvents(callDiagnosticWindow);
+
+  callDiagnosticWindow.on('closed', () => {
+    callDiagnosticWindow = undefined;
+  });
+
+  callDiagnosticWindow.once('ready-to-show', () => {
+    if (callDiagnosticWindow) {
+      doShowCallDiagnosticWindow();
+
+      // Electron sometimes puts the window in a strange spot until it's shown.
+      callDiagnosticWindow.center();
+    }
+  });
+
+  const url = pathToFileURL(join(__dirname, '../call_diagnostic.html'));
+  await safeLoadURL(callDiagnosticWindow, url.href);
 }
 
 let permissionsPopupWindow: BrowserWindow | undefined;
@@ -1645,6 +1662,11 @@ function getSQLKey(): string {
     ? safeStorage.getSelectedStorageBackend()
     : undefined;
   const isEncryptionAvailable =
+    // Don't use safeStorage if not packaged and building preload cache or
+    // running test-electron to avoid blocking prompt on macOS CI.
+    (app.isPackaged ||
+      (!process.env.GENERATE_PRELOAD_CACHE &&
+        !isTestEnvironment(getEnvironment()))) &&
     safeStorage.isEncryptionAvailable() &&
     (!isLinux || safeStorageBackend !== 'basic_text');
 
@@ -2396,7 +2418,6 @@ function setupMenu(options?: Partial<CreateTemplateOptionsType>) {
     stageLocalBackupForImport,
     showAbout,
     showDebugLog: showDebugLogWindow,
-    showCallingDevTools: showCallingDevToolsWindow,
     showKeyboardShortcuts,
     showSettings: () => {
       if (!settingsChannel) {
@@ -2618,8 +2639,24 @@ app.on(
   }
 );
 
-app.setAsDefaultProtocolClient('sgnl');
-app.setAsDefaultProtocolClient('signalcaptcha');
+if (!app.isDefaultProtocolClient('sgnl')) {
+  log.info('setting signal as the default app for the sgnl url scheme');
+  app.setAsDefaultProtocolClient('sgnl');
+} else {
+  log.info(
+    'signal is already registered as the default app for the sgnl url scheme.'
+  );
+}
+if (!app.isDefaultProtocolClient('signalcaptcha')) {
+  log.info(
+    'setting signal as the default app for the signalcaptcha url scheme'
+  );
+  app.setAsDefaultProtocolClient('signalcaptcha');
+} else {
+  log.info(
+    'signal is already registered as the default app for the sgnl url scheme.'
+  );
+}
 
 ipc.on(
   'set-badge',
@@ -2747,6 +2784,35 @@ ipc.on(
     }
   }
 );
+
+// Call Diagnostic Window-related IPC calls
+
+ipc.on('show-call-diagnostic', () => {
+  void showCallDiagnosticWindow();
+});
+
+ipc.handle('get-call-diagnostic-data', () => {
+  return storedCallDiagnosticData ?? '';
+});
+
+ipc.on('close-call-diagnostic', () => {
+  storedCallDiagnosticData = undefined;
+  callDiagnosticWindow?.close();
+});
+
+ipc.on('close-debug-log', () => {
+  if (debugLogCurrentMode === 'close') {
+    debugLogWindow?.close();
+  }
+});
+
+ipc.on('update-call-diagnostic-data', (_event, diagnosticData: string) => {
+  storedCallDiagnosticData = diagnosticData;
+
+  if (callDiagnosticWindow && !callDiagnosticWindow.isDestroyed()) {
+    callDiagnosticWindow.webContents.send('call-diagnostic-data-updated');
+  }
+});
 
 // Permissions Popup-related IPC calls
 
@@ -2994,7 +3060,6 @@ function handleSignalRoute(route: ParsedSignalRoute) {
   } else if (route.key === 'linkCall') {
     mainWindow.webContents.send('start-call-link', {
       key: route.args.key,
-      epoch: route.args.epoch,
     });
   } else if (route.key === 'showWindow') {
     mainWindow.webContents.send('show-window');
@@ -3007,6 +3072,12 @@ function handleSignalRoute(route: ParsedSignalRoute) {
   } else if (route.key === 'donationValidationComplete') {
     log.info('donationValidationComplete route handled');
     mainWindow.webContents.send('donation-validation-complete', route.args);
+  } else if (route.key === 'donationPaypalApproved') {
+    log.info('donationPaypalApproved route handled');
+    mainWindow.webContents.send('donation-paypal-approved', route.args);
+  } else if (route.key === 'donationPaypalCanceled') {
+    log.info('donationPaypalCanceled route handled');
+    mainWindow.webContents.send('donation-paypal-canceled', route.args);
   } else {
     log.info('handleSignalRoute: Unknown signal route:', route.key);
     mainWindow.webContents.send('unknown-sgnl-link');

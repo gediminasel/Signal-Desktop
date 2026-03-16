@@ -206,9 +206,6 @@
   "icu:viewMenuToggleDevTools": {
     "messageformat": "עורר כלי מפתחים"
   },
-  "icu:viewMenuOpenCallingDevTools": {
-    "messageformat": "פתיחת כלים למפתחים בנושא שיחות"
-  },
   "icu:menuSetupAsNewDevice": {
     "messageformat": "הגדר מכשיר חדש"
   },
@@ -539,6 +536,9 @@
   "icu:debugLogExplanation": {
     "messageformat": "כשאתה לוחץ הגש, היומן שלך יפורסם באופן מקוון למשך 30 ימים במען ייחודי, בלתי מפורסם. אתה יכול לשמור אותו באופן מקומי תחילה."
   },
+  "icu:debugLogExplanation--close": {
+    "messageformat": "יומן זה יפורסם באופן ציבורי באינטרנט לצפייה על ידי תורמים. ניתן להוריד אותו לפני השליחה."
+  },
   "icu:debugLogError": {
     "messageformat": "משהו השתבש עם ההעלאה! אנא שלח דוא״ל אל support@signal.org וצרף את היומן שלך כקובץ טקסט."
   },
@@ -572,17 +572,89 @@
   "icu:SafetyNumberViewer__clearVerification": {
     "messageformat": "לנקות אימות"
   },
-  "icu:SafetyNumberViewer__hint": {
+  "icu:SafetyNumberViewer__hint-v2": {
     "messageformat": "כדי לאמת את ההצפנה שלך מקצה לקצה עם {name}, יש להשוות את המספרים שלמעלה עם המכשיר של הצד השני. גם הצד השני יכול לסרוק את הקוד שלך עם המכשיר שלו או שלה."
   },
   "icu:SafetyNumberViewer__learn_more": {
     "messageformat": "למידע נוסף"
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__title": {
+    "messageformat": "אימות מפתח אוטומטי"
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__button--idle": {
+    "messageformat": "אימות אוטומטי"
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__button--running": {
+    "messageformat": "מתבצע אימות הצפנה…"
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__button--ok": {
+    "messageformat": "ההצפנה אומתה"
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__button--fail": {
+    "messageformat": "אימות אוטומטי לא זמין"
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__hint": {
+    "messageformat": "אימות אוטומטי אינו זמין עבור כל הצ׳אטים."
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__learn_more": {
+    "messageformat": "למידע נוסף"
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__popup--ok__title": {
+    "messageformat": "ההצפנה אומתה אוטומטית עבור צ'אט זה "
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__popup--ok__body": {
+    "messageformat": "עבור אנשי קשר שהחיבור איתם נוצר באמצעות מספר טלפון, Signal יכולה לאשר אוטומטית שהחיבור מאובטח באמצעות שימוש בתהליך הנקרא שקיפות מפתחות. לבטיחות משופרת, אפשר לאמת הצפנה מקצה לקצה באופן ידני באמצעות השוואת המספרים במסך הקודם או סריקת הקוד במכשיר שלו או שלה."
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__popup--fail__title": {
+    "messageformat": "אימות אוטומטי אינו זמין עוד עבור צ'אט זה"
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__popup--fail__body": {
+    "messageformat": "Signal אינה יכולה עוד לאמת אוטומטית את ההצפנה עבור צ׳אט זה. זה כנראה בגלל ש{name} החליפ/ה מספר טלפון. יש לאמת ידנית הצפנה מקצה לקצה ידנית באמצעות השוואת המספרים במסך הקודם או סריקת הקוד במכשיר שלו או שלה."
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__popup--unavailable__body": {
+    "messageformat": "Signal יכולה לאמת אוטומטית את ההצפנה רק הצ׳אטים שבהם החיבור עם הצד השני מתבצע באמצעות מספר טלפון. אם הצ׳אט התחיל באמצעות שם משתמש או קבוצה משותפת, יש לאמת את ההצפנה מקצה לקצה באמצעות השוואת המספרים במסך הקודם או סריקת הקוד במכשיר שלו או שלה."
+  },
+  "icu:SafetyNumberViewer__KeyTransparency__popup__okay": {
+    "messageformat": "בסדר"
   },
   "icu:SafetyNumberNotReady__body": {
     "messageformat": "מספר בטיחות ייווצר עם אדם זה אחרי שתחליפו ביניכם הודעות."
   },
   "icu:SafetyNumberNotReady__learn-more": {
     "messageformat": "למד עוד"
+  },
+  "icu:KeyTransparencyErrorDialog__Title": {
+    "messageformat": "אימות מפתח אוטומטי אינו זמין כרגע עבור המכשיר שלך. להגיש יומן ניפוי באגים?"
+  },
+  "icu:KeyTransparencyErrorDialog__Description": {
+    "messageformat": "יומני ניפוי באגים עוזרים לנו לאבחן ולתקן את הבעיה ולא מכילים מידע מזהה."
+  },
+  "icu:KeyTransparencyErrorDialog__ShareDebugLog__Label": {
+    "messageformat": "שיתוף יומן ניפוי באגים"
+  },
+  "icu:KeyTransparencyErrorDialog__ShareDebugLog__ViewButton": {
+    "messageformat": "צפיה"
+  },
+  "icu:KeyTransparencyErrorDialog__Submit": {
+    "messageformat": "שלח"
+  },
+  "icu:KeyTransparencyErrorDialog__Submitting": {
+    "messageformat": "שליחה בתהליך…"
+  },
+  "icu:KeyTransparencyOnboardingDialog__Title": {
+    "messageformat": "Signal יכולה כעת לאמת הצפנה באופן אוטומטי"
+  },
+  "icu:KeyTransparencyOnboardingDialog__Description": {
+    "messageformat": "עבור אנשי קשר שהחיבור איתם נוצר באמצעות מספר טלפון, Signal יכולה לאשר אוטומטית שהחיבור מאובטח באמצעות שימוש בתהליך הנקרא שקיפות מפתחות. לאבטחה נוספת, עדיין אפשר לאמת חיבורים ידנית באמצעות קוד QR או השוואת מספרי בטיחות."
+  },
+  "icu:KeyTransparencyOnboardingDialog__Continue": {
+    "messageformat": "המשך"
+  },
+  "icu:KeyTransparencyOnboardingDialog__LearnMore": {
+    "messageformat": "למידע נוסף"
+  },
+  "icu:KeyTransparencyOnboardingDialog__CloseButton__AccessibilityLabel": {
+    "messageformat": "סגירה"
   },
   "icu:verified": {
     "messageformat": "מודא"
@@ -595,18 +667,6 @@
   },
   "icu:media": {
     "messageformat": "מדיה"
-  },
-  "icu:mediaEmptyState": {
-    "messageformat": "אין לך מדיה כלשהי בצ'אט זה"
-  },
-  "icu:allMedia": {
-    "messageformat": "כל המדיה"
-  },
-  "icu:documents": {
-    "messageformat": "מסמכים"
-  },
-  "icu:documentsEmptyState": {
-    "messageformat": "אין לך מסמכים כלשהם בצ'אט זה"
   },
   "icu:today": {
     "messageformat": "היום"
@@ -743,12 +803,6 @@
   "icu:screenShareWindow": {
     "messageformat": "שיתוף מסך"
   },
-  "icu:callingDeveloperTools": {
-    "messageformat": "כלים למפתחים בנושא שיחות"
-  },
-  "icu:callingDeveloperToolsDescription": {
-    "messageformat": "החלון הזה משמש בזמן הפיתוח כדי להציג נתונים משיחות פעילות."
-  },
   "icu:speech": {
     "messageformat": "דיבור"
   },
@@ -820,6 +874,9 @@
   },
   "icu:whatsNew": {
     "messageformat": "ראה {whatsNew} בעדכון זה"
+  },
+  "icu:signalNonProfit": {
+    "messageformat": "Signal היא עמותה ללא מטרות רווח."
   },
   "icu:viewReleaseNotes": {
     "messageformat": "מה חדש"
@@ -1046,6 +1103,12 @@
   "icu:AboutContactModal__system-contact": {
     "messageformat": "{name} נמצא/ת באנשי הקשר של המערכת שלך"
   },
+  "icu:AboutContactModal__add-member-label": {
+    "messageformat": "הוספת תווית"
+  },
+  "icu:AboutContactModal__your-qr-code": {
+    "messageformat": "קוד ה–QR שלך"
+  },
   "icu:NotePreviewModal__Title": {
     "messageformat": "הערה"
   },
@@ -1098,10 +1161,10 @@
     "messageformat": "מידע"
   },
   "icu:MessageContextMenu__PinMessage": {
-    "messageformat": "הצמדת הודעה"
+    "messageformat": "הצמדה"
   },
   "icu:MessageContextMenu__UnpinMessage": {
-    "messageformat": "Unpin message"
+    "messageformat": "ביטול הצמדה"
   },
   "icu:Poll__end-poll": {
     "messageformat": "סיום סקר"
@@ -1209,10 +1272,10 @@
     "messageformat": "לפני העזיבה, יש לבחור לפחות מנהל חדש אחד עבור קבוצה זו."
   },
   "icu:PinnedMessageNotification__Message--You": {
-    "messageformat": "הצמדת הודעה"
+    "messageformat": "הודעה הוצמדה על ידך"
   },
   "icu:PinnedMessageNotification__Message--SomeoneElse": {
-    "messageformat": "{sender} הצמיד/ה הודעה"
+    "messageformat": "הודעה הוצמדה על ידי {sender}"
   },
   "icu:PinnedMessageNotification__Button": {
     "messageformat": "מעבר להודעה"
@@ -1221,7 +1284,7 @@
     "messageformat": "הצמדת הודעה למשך…"
   },
   "icu:PinMessageDialog__Close": {
-    "messageformat": "סגור"
+    "messageformat": "סגירה"
   },
   "icu:PinMessageDialog__Option--TIME_24_HOURS": {
     "messageformat": "24 שעות"
@@ -1230,7 +1293,7 @@
     "messageformat": "7 ימים"
   },
   "icu:PinMessageDialog__Option--TIME_30_DAYS": {
-    "messageformat": "30 ימים"
+    "messageformat": "30 יום"
   },
   "icu:PinMessageDialog__Option--FOREVER": {
     "messageformat": "לנצח"
@@ -1241,8 +1304,29 @@
   "icu:PinMessageDialog__Pin": {
     "messageformat": "הצמדה"
   },
+  "icu:PinMessageDialog--HasMaxPinnedMessages__Title": {
+    "messageformat": "להחליף את ההצמדה הוותיקה ביותר?"
+  },
+  "icu:PinMessageDialog--HasMaxPinnedMessages__Description": {
+    "messageformat": "הצמדת הודעה זו תחליף את ההודעה המוצמדת הוותיקה ביותר."
+  },
+  "icu:PinMessageDialog--HasMaxPinnedMessages__Cancel": {
+    "messageformat": "ביטול"
+  },
+  "icu:PinMessageDialog--HasMaxPinnedMessages__Continue": {
+    "messageformat": "המשך"
+  },
+  "icu:PinMessageDisappearingMessagesWarningDialog__Title": {
+    "messageformat": "הצמדת הודעות נעלמות"
+  },
+  "icu:PinMessageDisappearingMessagesWarningDialog__Description": {
+    "messageformat": "ההצמדה של הודעות נעלמות תבוטל כשהטיימר שלהן יסתיים וההודעה תימחק מהצ'אט."
+  },
+  "icu:PinMessageDisappearingMessagesWarningDialog__Okay": {
+    "messageformat": "בסדר"
+  },
   "icu:PinnedMessagesBar__AccessibilityLabel": {
-    "messageformat": "{pinsCount, plural, one {הודעות מוצמדות} two {הודעות מוצמדות} many {הודעות מוצמדות} other {הודעות מוצמדות}}"
+    "messageformat": "{pinsCount, plural, one {הודעה מוצמדת} two {הודעות מוצמדות} many {הודעות מוצמדות} other {הודעות מוצמדות}}"
   },
   "icu:PinnedMessagesBar__Tab__AccessibilityLabel": {
     "messageformat": "מעבר להצמדה {pinNumber,number}"
@@ -1251,10 +1335,10 @@
     "messageformat": "מעבר להודעה"
   },
   "icu:PinnedMessagesBar__ActionsMenu__Button__AccessibilityLabel": {
-    "messageformat": "עוד פעולות"
+    "messageformat": "פעולות נוספות"
   },
   "icu:PinnedMessagesBar__ActionsMenu__UnpinMessage": {
-    "messageformat": "ביטול הצמדת הודעה"
+    "messageformat": "ביטול הצמדה"
   },
   "icu:PinnedMessagesBar__ActionsMenu__GoToMessage": {
     "messageformat": "מעבר להודעה"
@@ -1262,53 +1346,65 @@
   "icu:PinnedMessagesBar__ActionsMenu__SeeAllMessages": {
     "messageformat": "הצגת כל ההודעות"
   },
-  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Address": {
-    "messageformat": "Address"
-  },
   "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--VoiceMessage": {
-    "messageformat": "Voice message"
+    "messageformat": "הודעה קולית"
   },
   "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Gif": {
     "messageformat": "GIF"
   },
   "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--File": {
-    "messageformat": "File"
-  },
-  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Contact": {
-    "messageformat": "Contact"
+    "messageformat": "קובץ"
   },
   "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Payment": {
-    "messageformat": "Payment"
+    "messageformat": "תשלום"
   },
   "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Poll": {
-    "messageformat": "Poll"
+    "messageformat": "סקר"
   },
   "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--Sticker": {
-    "messageformat": "Sticker"
+    "messageformat": "מדבקה"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__SymbolLabel--ViewOnceMedia": {
+    "messageformat": "מדיה לצפייה חד–פעמית"
   },
   "icu:PinnedMessagesBar__MessagePreview__Text--Photo": {
-    "messageformat": "Photo"
+    "messageformat": "תצלום"
   },
   "icu:PinnedMessagesBar__MessagePreview__Text--Video": {
-    "messageformat": "Video"
+    "messageformat": "סרטון"
   },
   "icu:PinnedMessagesBar__MessagePreview__Text--VoiceMessage": {
-    "messageformat": "Voice message"
+    "messageformat": "הודעה קולית"
   },
   "icu:PinnedMessagesBar__MessagePreview__Text--Gif": {
     "messageformat": "GIF"
   },
   "icu:PinnedMessagesBar__MessagePreview__Text--Payment": {
-    "messageformat": "Payment"
+    "messageformat": "תשלום"
   },
   "icu:PinnedMessagesBar__MessagePreview__Text--Sticker": {
-    "messageformat": "Sticker"
+    "messageformat": "מדבקה"
+  },
+  "icu:PinnedMessagesBar__MessagePreview__Text--ViewOnceMedia": {
+    "messageformat": "מדיה לצפייה חד–פעמית"
   },
   "icu:PinnedMessagesPanel__Title": {
-    "messageformat": "Pinned messages"
+    "messageformat": "הודעות מוצמדות"
   },
   "icu:PinnedMessagesPanel__UnpinAllMessages": {
-    "messageformat": "Unpin all messages"
+    "messageformat": "ביטול הצמדת כל ההודעות"
+  },
+  "icu:PinnedMessagesPanel__UnpinAllMessages__ConfirmDialog__Title": {
+    "messageformat": "לבטל את הצמדת כל ההודעות?"
+  },
+  "icu:PinnedMessagesPanel__UnpinAllMessages__ConfirmDialog__Description": {
+    "messageformat": "ההודעות יוסרו מהצמדה עבור חברי הצ׳אט הזה."
+  },
+  "icu:PinnedMessagesPanel__UnpinAllMessages__ConfirmDialog__Cancel": {
+    "messageformat": "ביטול"
+  },
+  "icu:PinnedMessagesPanel__UnpinAllMessages__ConfirmDialog__Unpin": {
+    "messageformat": "ביטול הצמדה"
   },
   "icu:sessionEnded": {
     "messageformat": "שיח מאובטח אופס"
@@ -1690,6 +1786,15 @@
   },
   "icu:Preferences__EditChatFolderPage__CancelButton": {
     "messageformat": "ביטול"
+  },
+  "icu:Preferences__PrivacyPage__KeyTransparency__Label": {
+    "messageformat": "אימות מפתח אוטומטי"
+  },
+  "icu:Preferences__PrivacyPage__KeyTransparency__Description": {
+    "messageformat": "כשהאפשרות הזו מופעלת, Signal תנסה לאמת אוטומטית את ההצפנה של צ׳אטים אישיים."
+  },
+  "icu:Preferences__PrivacyPage__KeyTransparency__LearnMore": {
+    "messageformat": "למידע נוסף"
   },
   "icu:initialSync": {
     "messageformat": "מסנכרן אנשי קשר וקבוצות"
@@ -2105,6 +2210,18 @@
   "icu:deleteFailed": {
     "messageformat": "מחיקה נכשלה"
   },
+  "icu:deleteFailedClickForDetails": {
+    "messageformat": "המחיקה נכשלה, יש ללחוץ לפרטים"
+  },
+  "icu:retryDeleteForEveryone--title": {
+    "messageformat": "לנסות למחוק שוב?"
+  },
+  "icu:retryDeleteForEveryone--body": {
+    "messageformat": "מחיקת ההודעה נכשלה. כדאי לבדוק את החיבור שלך ולנסות שוב."
+  },
+  "icu:retryDeleteForEveryone--tryAgain": {
+    "messageformat": "נסה שוב"
+  },
   "icu:editFailed": {
     "messageformat": "עריכה נכשלה, יש ללחוץ לפרטים"
   },
@@ -2116,6 +2233,9 @@
   },
   "icu:partiallyDeleted": {
     "messageformat": "נמחקה חלקית, אפשר ללחוץ כדי לנסות שוב"
+  },
+  "icu:partiallyDeleted--clickForDetails": {
+    "messageformat": "נמחק חלקית, יש ללחוץ לפרטים"
   },
   "icu:expiredWarning": {
     "messageformat": "גרסה זו של Signal Desktop פגה. אנא שדרג אל הגרסה האחרונה כדי להמשיך בשליחת הודעות."
@@ -2318,6 +2438,15 @@
   "icu:Toast--unable-download-from-backup-tier": {
     "messageformat": "Attachment missing from backup CDN"
   },
+  "icu:ToastManager__CannotAddMemberLabel": {
+    "messageformat": "רק מנהלים יכולים להגדיר תוויות חברים בקבוצה זו."
+  },
+  "icu:Toast--viewOnceEnabled": {
+    "messageformat": "צפייה חד–פעמית מופעלת"
+  },
+  "icu:Toast--viewOnceDisabled": {
+    "messageformat": "צפייה חד–פעמית מושבתת"
+  },
   "icu:ToastManager__CannotEditMessage_24": {
     "messageformat": "ניתן לערוך את ההודעה הזו רק עד 24 שעות מזמן השליחה שלה."
   },
@@ -2504,6 +2633,15 @@
   "icu:message--deletedForEveryone": {
     "messageformat": "הודעה זו נמחקה."
   },
+  "icu:message--deletedByAdmin": {
+    "messageformat": "ההודעה הזו נמחקה על ידי מנהל/ת הקבוצה {admin}"
+  },
+  "icu:message--deletedForEveryone--incoming": {
+    "messageformat": "ההודעה הזו נמחקה על ידי {name}"
+  },
+  "icu:message--deletedForEveryone--outgoing": {
+    "messageformat": "ההודעה הזו נמחקה על ידך"
+  },
   "icu:message--attachmentTooBig--one": {
     "messageformat": "הקובץ המצורף גדול מדי לתצוגה."
   },
@@ -2539,6 +2677,12 @@
   },
   "icu:message--donation--preview--sent": {
     "messageformat": "תרמת בשביל {recipient}"
+  },
+  "icu:message--pinned--preview--received": {
+    "messageformat": "הודעה הוצמדה על ידי {sender}"
+  },
+  "icu:message--pinned--preview--sent": {
+    "messageformat": "הודעה הוצמדה על ידך"
   },
   "icu:message--donation": {
     "messageformat": "תרומה"
@@ -2741,11 +2885,11 @@
   "icu:FunPanelStickers__LightboxDialog__Label": {
     "messageformat": "תצוגה מקדימה של סטיקר"
   },
-  "icu:FunPanelGifs__SearchLabel--Tenor": {
-    "messageformat": "חיפוש קובצי GIF באמצעות Tenor"
+  "icu:FunPanelGifs__SearchLabel": {
+    "messageformat": "חפש תמונות GIF"
   },
-  "icu:FunPanelGifs__SearchPlaceholder--Tenor": {
-    "messageformat": "חיפוש ב–Tenor"
+  "icu:FunPanelGifs__SearchPlaceholder": {
+    "messageformat": "חפש תמונות GIF"
   },
   "icu:FunPanelGifs__SubNavLabel": {
     "messageformat": "קטגוריות קובצי GIF"
@@ -2791,6 +2935,9 @@
   },
   "icu:FunPanelGifs__LightboxDialog__Label": {
     "messageformat": "תצוגה מקדימה של GIF"
+  },
+  "icu:FunPanelGifs__GiphyAttribution__AccessibilityLabel": {
+    "messageformat": "מופעל באמצעות GIPHY"
   },
   "icu:FunSearch__ClearButtonLabel": {
     "messageformat": "נקה חיפוש"
@@ -3866,23 +4013,41 @@
   "icu:GroupV2--access-attributes--all--unknown": {
     "messageformat": "מנהלן שינה מי יכול לערוך מידע קרבוצה אל \"כל חברי הקבוצה\"."
   },
-  "icu:GroupV2--access-members--admins--other": {
-    "messageformat": "{adminName} שינה/שינתה מי יכול לערוך חֲבֵרוּת קבוצה אל \"מנהלנים בלבד\"."
-  },
   "icu:GroupV2--access-members--admins--you": {
     "messageformat": "שינית מי יכול לערוך חֲבֵרוּת קבוצה אל \"מנהלנים בלבד\"."
+  },
+  "icu:GroupV2--access-members--admins--other": {
+    "messageformat": "{adminName} שינה/שינתה מי יכול לערוך חֲבֵרוּת קבוצה אל \"מנהלנים בלבד\"."
   },
   "icu:GroupV2--access-members--admins--unknown": {
     "messageformat": "מנהלן שינה מי יכול לערוך חֲבֵרוּת קבוצה אל \"מנהלנים בלבד\"."
   },
-  "icu:GroupV2--access-members--all--other": {
-    "messageformat": "{adminName} שינה/שינתה מי יכול לערוך חֲבֵרוּת קבוצה אל \"כל חברי הקבוצה\"."
-  },
   "icu:GroupV2--access-members--all--you": {
     "messageformat": "שינית מי יכול לערוך חֲבֵרוּת קבוצה אל \"כל חברי הקבוצה\"."
   },
+  "icu:GroupV2--access-members--all--other": {
+    "messageformat": "{adminName} שינה/שינתה מי יכול לערוך חֲבֵרוּת קבוצה אל \"כל חברי הקבוצה\"."
+  },
   "icu:GroupV2--access-members--all--unknown": {
     "messageformat": "מנהלן שינה מי יכול לערוך חֲבֵרוּת קבוצה אל \"כל חברי הקבוצה\"."
+  },
+  "icu:GroupV2--access-member-label--admins--you": {
+    "messageformat": "You changed who can add member labels to \"Only admins.\""
+  },
+  "icu:GroupV2--access-member-label--admins--other": {
+    "messageformat": "{adminName} changed who can add member labels to \"Only admins.\""
+  },
+  "icu:GroupV2--access-member-label--admins--unknown": {
+    "messageformat": "An admin changed who can add member labels to \"Only admins.\""
+  },
+  "icu:GroupV2--access-member-label--all--you": {
+    "messageformat": "You changed who can add member labels to \"All members.\""
+  },
+  "icu:GroupV2--access-member-label--all--other": {
+    "messageformat": "{adminName} changed who can add member labels to \"All members.\""
+  },
+  "icu:GroupV2--access-member-label--all--unknown": {
+    "messageformat": "An admin changed who can add member labels to \"All members.\""
   },
   "icu:GroupV2--access-invite-link--disabled--you": {
     "messageformat": "הִשְׁבַּתָּ אישור מנהלן עבור קישור הקבוצה."
@@ -4490,6 +4655,12 @@
   "icu:CompositionArea__ConfirmGifSelection__ReplaceButton": {
     "messageformat": "החלפה"
   },
+  "icu:CompositionArea--viewOnceToggle": {
+    "messageformat": "צפייה חד–פעמית"
+  },
+  "icu:CompositionArea--viewOnceMediaPlaceholder": {
+    "messageformat": "מדיה לצפייה חד פעמית"
+  },
   "icu:CompositionInput__editing-message": {
     "messageformat": "עריכת הודעה"
   },
@@ -4501,6 +4672,9 @@
   },
   "icu:ContactModal--rm-admin": {
     "messageformat": "הסרת תפקיד מנהל/ת"
+  },
+  "icu:ContactModal--rm-admin--clear-label": {
+    "messageformat": "זה יסיר גם את תווית החבר/ה."
   },
   "icu:ContactModal--make-admin": {
     "messageformat": "עשה מנהלן"
@@ -4520,6 +4694,30 @@
   "icu:ContactModal--voice": {
     "messageformat": "שיחה קולית"
   },
+  "icu:ContactModal--mute-audio": {
+    "messageformat": "השתקת שמע"
+  },
+  "icu:ContactModal--confirm-mute-body": {
+    "messageformat": "בטוח שבא לך להשתיק את {contact}?"
+  },
+  "icu:ContactModal--confirm-mute-primary-button": {
+    "messageformat": "השתקה"
+  },
+  "icu:ContactModal--remove-from-call": {
+    "messageformat": "Remove from call"
+  },
+  "icu:GroupMemberLabelInfoModal--title": {
+    "messageformat": "תוויות חבר/ה"
+  },
+  "icu:GroupMemberLabelInfoModal--description": {
+    "messageformat": "אפשר להשתמש בתווית חבר/ה לתיאור הזהות או התפקיד שלך בקבוצה. תוויות מוצגות רק בתוך הקבוצה."
+  },
+  "icu:GroupMemberLabelInfoModal--add-label": {
+    "messageformat": "הגדרת תווית"
+  },
+  "icu:GroupMemberLabelInfoModal--edit-label": {
+    "messageformat": "עריכת התווית שלך"
+  },
   "icu:showChatColorEditor": {
     "messageformat": "צבע צ'אט"
   },
@@ -4534,6 +4732,39 @@
   },
   "icu:ConversationDetails--group-link": {
     "messageformat": "קישור קבוצה"
+  },
+  "icu:ConversationDetails--member-label": {
+    "messageformat": "תוויות"
+  },
+  "icu:ConversationDetails--member-label--placeholder": {
+    "messageformat": "הזנת תווית החבר/ה שלך"
+  },
+  "icu:ConversationDetails--member-label--description": {
+    "messageformat": "הגדרת תווית לתיאור זהות או תפקיד בקבוצה. תוויות מוצגות רק בתוך הקבוצה."
+  },
+  "icu:ConversationDetails--member-label--preview": {
+    "messageformat": "תצוגה מקדימה"
+  },
+  "icu:ConversationDetails--member-label--hello": {
+    "messageformat": "שלום!"
+  },
+  "icu:ConversationDetails--member-label--list-header": {
+    "messageformat": "חברי קבוצה עם תוויות"
+  },
+  "icu:ConversationDetails--member-label--no-members": {
+    "messageformat": "אין חברים אחרים עם תוויות"
+  },
+  "icu:ConversationDetails--member-label--saving": {
+    "messageformat": "שינויים בשמירה…"
+  },
+  "icu:ConversationDetails--member-label--error-title": {
+    "messageformat": "לא ניתן לשמור תווית חבר/ה"
+  },
+  "icu:ConversationDetails--member-label--error-generic": {
+    "messageformat": "כדאי לבדוק את החיבור שלך ולנסות שוב."
+  },
+  "icu:ConversationDetails--member-label--error-permissions": {
+    "messageformat": "רק מנהלים יכולים להגדיר תוויות חברים בקבוצה זו."
   },
   "icu:ConversationDetails--disappearing-messages-label": {
     "messageformat": "הודעות נעלמות"
@@ -4565,8 +4796,8 @@
   "icu:ConversationDetails--group-info-label": {
     "messageformat": "מי יכול לערוך מידע קבוצה"
   },
-  "icu:ConversationDetails--group-info-info": {
-    "messageformat": "בחר מי יכול לערוך את השם, התמונה, התיאור וקוצב זמן ההודעות הנעלמות של הקבוצה."
+  "icu:ConversationDetails--group-info-info-v2": {
+    "messageformat": "ניתן לבחור מי יוכל לערוך את השם, התמונה, התיאור, ההודעות הנעלמות וההודעות המוצמדות של הקבוצה."
   },
   "icu:ConversationDetails--add-members-label": {
     "messageformat": "מי יכול להוסיף חברי קבוצה"
@@ -4579,6 +4810,21 @@
   },
   "icu:ConversationDetails--announcement-info": {
     "messageformat": "בחר מי יכול לשלוח הודעות אל הקבוצה."
+  },
+  "icu:ConversationDetails--member-label--label": {
+    "messageformat": "Who can add member labels"
+  },
+  "icu:ConversationDetails--member-label--info": {
+    "messageformat": "Choose who can add member labels in this group."
+  },
+  "icu:ConversationDetails--label-clear-warning--title": {
+    "messageformat": "תוויות החברים יימחקו"
+  },
+  "icu:ConversationDetails--label-clear-warning--description": {
+    "messageformat": "שינוי ההרשאה ל״רק מנהלים״ ימחק תוויות חבר/ה שהוגדרו על ידי משתמשים שאינם מנהלים בקבוצה זו."
+  },
+  "icu:ConversationDetails--label-clear-warning--continue": {
+    "messageformat": "המשך"
   },
   "icu:ConversationDetails--requests-and-invites": {
     "messageformat": "בקשות והזמנות"
@@ -4633,6 +4879,9 @@
   },
   "icu:ConversationDetailsMembershipList--add-members": {
     "messageformat": "הוסף חברי קבוצה"
+  },
+  "icu:ConversationDetailsMembershipList--add-member-label": {
+    "messageformat": "הוספת תווית חבר/ה"
   },
   "icu:ConversationDetailsMembershipList--show-all": {
     "messageformat": "ראה הכל"
@@ -4781,6 +5030,9 @@
   "icu:DeleteMessagesModal--title": {
     "messageformat": "{count, plural, one {למחוק הודעה?} two {למחוק {count,number} הודעות?} many {למחוק {count,number} הודעות?} other {למחוק {count,number} הודעות?}}"
   },
+  "icu:DeleteMessagesModal--title-2": {
+    "messageformat": "{count, plural, one {למחוק הודעה שנבחרה?} two {למחוק {count,number} הודעות שנבחרו?} many {למחוק {count,number} הודעות שנבחרו?} other {למחוק {count,number} הודעות שנבחרו?}}"
+  },
   "icu:DeleteMessagesModal--description": {
     "messageformat": "{count, plural, one {עבור מי בא לך למחוק את ההודעה זו?} two {עבור מי בא לך למחוק את ההודעות האלה?} many {עבור מי בא לך למחוק את ההודעות האלה?} other {עבור מי בא לך למחוק את ההודעות האלה?}}"
   },
@@ -4799,6 +5051,12 @@
   "icu:DeleteMessagesModal--deleteForEveryone": {
     "messageformat": "מחיקה עבור כולם"
   },
+  "icu:DeleteMessagesModal--adminDeleteConfirmation--title": {
+    "messageformat": "למחוק עבור כולם?"
+  },
+  "icu:DeleteMessagesModal--adminDeleteConfirmation--description": {
+    "messageformat": "{count, plural, one {כמנהל/ת, חברי הקבוצה יראו שמחקת את ההודעה הזו.} two {כמנהל/ת, חברי הקבוצה יראו שמחקת את ההודעות האלה.} many {כמנהל/ת, חברי הקבוצה יראו שמחקת את ההודעות האלה.} other {כמנהל/ת, חברי הקבוצה יראו שמחקת את ההודעות האלה.}}"
+  },
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
     "messageformat": "מחיקה מכל המכשירים"
   },
@@ -4807,6 +5065,27 @@
   },
   "icu:DeleteMessagesModal__toast--TooManyMessagesToDeleteForEveryone": {
     "messageformat": "{count, plural, one {אפשר לבחור עד הודעה {count,number} למחוק עבור כולם} two {אפשר לבחור עד {count,number} הודעות למחוק עבור כולם} many {אפשר לבחור עד {count,number} הודעות למחוק עבור כולם} other {אפשר לבחור עד {count,number} הודעות למחוק עבור כולם}}"
+  },
+  "icu:DiscardDraftDialog__title": {
+    "messageformat": "Discard draft?"
+  },
+  "icu:DiscardDraftDialog__description": {
+    "messageformat": "This action can't be undone."
+  },
+  "icu:DeleteAttachmentModal__Title": {
+    "messageformat": "למחוק את הפריט?"
+  },
+  "icu:DeleteAttachmentModal__Body": {
+    "messageformat": "זה ימחק את הפריט הזה לצמיתות. גם מלל הודעה שמשויך לפריט הזה יימחק."
+  },
+  "icu:DeleteAttachmentModal__Close": {
+    "messageformat": "סגירה"
+  },
+  "icu:DeleteAttachmentModal__Delete": {
+    "messageformat": "מחיקה"
+  },
+  "icu:DeleteAttachmentModal__Cancel": {
+    "messageformat": "ביטול"
   },
   "icu:SelectModeActions__toast--TooManyMessagesToForward": {
     "messageformat": "אפשר להעביר רק עד 30 הודעות"
@@ -5126,6 +5405,9 @@
   "icu:AudioListItem__subtitle--audio": {
     "messageformat": "שמע"
   },
+  "icu:ContactListItem__subtitle": {
+    "messageformat": "איש קשר"
+  },
   "icu:LinkPreviewItem__alt": {
     "messageformat": "פתיחת קישור בדפדפן"
   },
@@ -5140,6 +5422,18 @@
   },
   "icu:MediaGallery__tab__links": {
     "messageformat": "קישורים"
+  },
+  "icu:MediaGallery__sort": {
+    "messageformat": "מיון לפי"
+  },
+  "icu:MediaGallery__sort--header": {
+    "messageformat": "מיון לפי"
+  },
+  "icu:MediaGallery__sort__date": {
+    "messageformat": "תאריך"
+  },
+  "icu:MediaGallery__sort__size": {
+    "messageformat": "גודל"
   },
   "icu:MediaGallery__EmptyState__title--media": {
     "messageformat": "אין מדיה"
@@ -5157,10 +5451,7 @@
     "messageformat": "אין קישורים"
   },
   "icu:MediaGallery__EmptyState__description--links-2": {
-    "messageformat": "קבצים ששלחת וקיבלת יופיעו כאן"
-  },
-  "icu:MediaGallery__EmptyState__description--documents": {
-    "messageformat": "קבצים ששלחת וקיבלת יופיעו כאן"
+    "messageformat": "לינקים ששלחת וקיבלת יופיעו כאן"
   },
   "icu:MediaGallery__EmptyState__title--documents": {
     "messageformat": "אין קבצים"
@@ -5168,8 +5459,23 @@
   "icu:MediaGallery__EmptyState__description--documents-2": {
     "messageformat": "קבצים ששלחת וקיבלת יופיעו כאן"
   },
-  "icu:MediaGallery__EmptyState__description--links": {
-    "messageformat": "קבצים ששלחת וקיבלת יופיעו כאן"
+  "icu:MediaGallery__ContextMenu__ViewInChat": {
+    "messageformat": "הצגה בצ׳אט"
+  },
+  "icu:MediaGallery__ContextMenu__Forward": {
+    "messageformat": "העבר הלאה"
+  },
+  "icu:MediaGallery__ContextMenu__Save": {
+    "messageformat": "שמור"
+  },
+  "icu:MediaGallery__ContextMenu__Send": {
+    "messageformat": "שלח הודעה"
+  },
+  "icu:MediaGallery__ContextMenu__Copy": {
+    "messageformat": "העתקת קישור"
+  },
+  "icu:MediaGallery__ContextMenu__Delete": {
+    "messageformat": "מחיקה"
   },
   "icu:MediaQualitySelector--button": {
     "messageformat": "בחר איכות מדיה"
@@ -5384,6 +5690,10 @@
   "icu:AnnouncementsOnlyGroupBanner--admins": {
     "messageformat": "מנהלנים"
   },
+  "icu:Avatar__View": {
+    "messageformat": "צפיה",
+    "limit": 7
+  },
   "icu:AvatarEditor--choose": {
     "messageformat": "בחר יצגן"
   },
@@ -5462,15 +5772,6 @@
   "icu:Preferences__button--set-up": {
     "messageformat": "הגדרה"
   },
-  "icu:Preferences__internal__local-backups": {
-    "messageformat": "גיבויים מקומיים"
-  },
-  "icu:Preferences__internal__export-local-backup": {
-    "messageformat": "ייצוא…"
-  },
-  "icu:Preferences__internal__export-local-backup--description": {
-    "messageformat": "לייצא גיבוי מוצפן מקומי לתיקייה ולאמת אותו"
-  },
   "icu:Preferences__internal__validate-backup--description": {
     "messageformat": "לייצא גיבוי מוצפן לזיכרון ולהריץ עליו אימות"
   },
@@ -5511,19 +5812,19 @@
     "messageformat": "תוכן התראה"
   },
   "icu:PlaintextExport--PreferencesRow--Header": {
-    "messageformat": "ייצוא היסטוריית הצ׳אט"
+    "messageformat": "ייצוא היסטוריית צ׳אט"
   },
   "icu:PlaintextExport--PreferencesRow--Description": {
-    "messageformat": "ייצוא עותק JSON שניתן לקריאה על ידי מכונה של כל הצ'אטים. הודעות נעלמות לא ייכללו בייצוא."
+    "messageformat": "יצוא עותק JSON של כל הצ׳אטים שניתן לקריאה על ידי מכונה. הודעות נעלמות לא ייכללו בייצוא."
   },
   "icu:PlaintextExport--ActionButton": {
     "messageformat": "יצוא"
   },
   "icu:PlaintextExport--Confirmation--Header": {
-    "messageformat": "לייצא את היסטוריית הצ'אט?"
+    "messageformat": "לייצא היסטוריית צ'אט?"
   },
   "icu:PlaintextExport--Confirmation--Description": {
-    "messageformat": "<bold>זהירות!</bold> אין לשתף את הקובץ הזה עם אנשים אחרים. היסטוריית הצ'אט תישמר במחשב, ואפליקציות אחרות יוכלו לגשת אליה בהתאם להרשאות במחשב."
+    "messageformat": "<bold>זהירות!</bold> אין לשתף את הקובץ הזה עם אנשים אחרים. היסטוריית הצ'אט תישמר במחשב, ואפליקציות אחרות יוכלו לגשת אליה בהתאם להרשאות המחשב שלך."
   },
   "icu:PlaintextExport--Confirmation--IncludeMedia": {
     "messageformat": "לכלול מדיה <secondary>(קובץ גדול יותר)</secondary>"
@@ -5532,13 +5833,13 @@
     "messageformat": "המשך"
   },
   "icu:PlaintextExport--Confirmation--WaitingLabel": {
-    "messageformat": "ממתין לפעולה"
+    "messageformat": "בהמתנה לקלט"
   },
   "icu:PlaintextExport--OSPrompt--Mac": {
-    "messageformat": "ייצוא היסטוריית הצ'אט"
+    "messageformat": "ייצוא היסטוריית צ'אט"
   },
   "icu:PlaintextExport--OSPrompt--Windows": {
-    "messageformat": "אימות זהות נדרש לצורך ייצוא היסטוריית הצ'אט."
+    "messageformat": "יש לאמת את הזהות שלך על מנת לייצא את היסטוריית הצ׳אט."
   },
   "icu:PlaintextExport--OSPrompt--description--Linux": {
     "messageformat": "יצוא"
@@ -5547,10 +5848,10 @@
     "messageformat": "נדרש אימות כדי לייצא את היסטוריית הצ'אט שלך."
   },
   "icu:PlaintextExport--ProgressDialog--Header": {
-    "messageformat": "ייצוא היסטוריית הצ'אט"
+    "messageformat": "היסטוריית צ׳אט בתהליך יצוא"
   },
   "icu:PlaintextExport--ProgressDialog--Progress": {
-    "messageformat": "ייצוא {currentBytes} מתוך {totalBytes} ({percentage,number,percent})..."
+    "messageformat": "הושלם יצוא של {currentBytes} מתוך {totalBytes} ({percentage,number,percent})…"
   },
   "icu:PlaintextExport--ProgressDialog--TimeWarning": {
     "messageformat": "זה עשוי לקחת כמה דקות"
@@ -5559,40 +5860,58 @@
     "messageformat": "הייצוא הושלם"
   },
   "icu:PlaintextExport--CompleteDialog--Description": {
-    "messageformat": "<bold>זהירות</bold> חשוב לשמור את קובץ הייצוא במקום מאובטח ולא לשתף אותו עם אנשים אחרים. אפליקציות אחרות במחשב יכולות לגשת אליו בהתאם להרשאות המערכת. "
+    "messageformat": "<bold>זהירות:</bold> חשוב לשמור את קובץ הייצוא במקום מאובטח ולא לשתף אותו עם אף אחד. אפליקציות אחרות במחשב יכולות לגשת אליו בהתאם להרשאות המחשב שלך. "
   },
   "icu:PlaintextExport--CompleteDialog--ShowFiles--Mac": {
-    "messageformat": "הצג ב-Finder"
+    "messageformat": "הצגה ב–Finder"
   },
   "icu:PlaintextExport--CompleteDialog--ShowFiles--Linux": {
-    "messageformat": "הראה בתיקייה"
+    "messageformat": "הצגה בתיקייה"
   },
   "icu:PlaintextExport--CompleteDialog--ShowFiles--Windows": {
-    "messageformat": "הראה בתיקייה"
+    "messageformat": "הצגה בתיקייה"
   },
   "icu:PlaintextExport--Error--General--Title": {
-    "messageformat": "שגיאה בייצוא היסטוריית הצ'אט"
+    "messageformat": "שגיאה בייצוא היסטוריית צ'אט"
   },
   "icu:PlaintextExport--Error--General--Description": {
-    "messageformat": "אירעה שגיאה ולא ניתן היה לייצא את היסטוריית הצ'אט"
+    "messageformat": "אירעה שגיאה ולא ניתן היה לייצא את היסטוריית הצ'אט."
   },
   "icu:PlaintextExport--Error--NotEnoughStorage--Title": {
     "messageformat": "אין מספיק מקום אחסון"
   },
   "icu:PlaintextExport--Error--NotEnoughStorage--Detail": {
-    "messageformat": "אי-אפשר לייצא את היסטוריית הצ'אט כי אין מספיק מקום פנוי במחשב. יש לפנות {bytes} מקום ולנסות שוב."
+    "messageformat": "לא ניתן לייצא את היסטוריית הצ'אט כי אין מספיק מקום פנוי במחשב. יש לפנות {bytes} ולנסות שוב."
   },
   "icu:PlaintextExport--Error--RanOutOfStorage--Title": {
-    "messageformat": "לא ניתן לייצא את היסטוריית הצ'אט"
+    "messageformat": "לא ניתן לייצא היסטוריית צ'אט"
   },
   "icu:PlaintextExport--Error--RanOutOfStorage--Detail": {
     "messageformat": "לא ניתן לייצא את היסטוריית הצ'אט כי אין מספיק מקום פנוי במחשב. יש לפנות {bytes} מקום ולנסות שוב."
   },
   "icu:PlaintextExport--Error--DiskPermssions--Title": {
-    "messageformat": "לא ניתן לייצא את היסטוריית הצ'אט"
+    "messageformat": "לא ניתן לייצא היסטוריית צ'אט"
   },
   "icu:PlaintextExport--Error--DiskPermssions--Detail": {
-    "messageformat": "לא ניתן אפשר לייצא את היסטוריית הצ'אט כי ל-Signal אין הרשאות לכתוב קבצים לדיסק. שינוי הרשאות הדיסק או עדכון הגדרות המערכת עשויים לפתור את הבעיה ולאפשר ייצוא מחדש."
+    "messageformat": "לא ניתן לייצא את היסטוריית הצ'אט כי ל–Signal אין הרשאה לכתוב קבצים לדיסק. כדאי לשנות את הרשאות הדיסק או לעדכן את הגדרות המערכת שלך ולנסות לייצא שוב."
+  },
+  "icu:LocalBackupExport--ProgressDialog--Header": {
+    "messageformat": "ייצוא גיבוי"
+  },
+  "icu:LocalBackupExport--CompleteDialog--Header": {
+    "messageformat": "ייצוא הגיבוי הושלם"
+  },
+  "icu:LocalBackupExport--CompleteDialog--RestoreInstructionsHeader": {
+    "messageformat": "לשחזור גיבוי זה:"
+  },
+  "icu:LocalBackupExport--CompleteDialog--RestoreInstructionsTransfer": {
+    "messageformat": "העברת תיקיית הגיבוי לאחסון המכשיר"
+  },
+  "icu:LocalBackupExport--CompleteDialog--RestoreInstructionsInstall": {
+    "messageformat": "התקנת עותק חדש של Signal במכשיר"
+  },
+  "icu:LocalBackupExport--CompleteDialog--RestoreInstructionsRestore": {
+    "messageformat": "לחץ/י על ״שחזור או העברה״ ובחר/י ״גיבוי במכשיר״"
   },
   "icu:NotificationProfile--moon-icon": {
     "messageformat": "סמל ירח"
@@ -5889,13 +6208,13 @@
     "messageformat": "גיבויים של שולחן העבודה"
   },
   "icu:Preferences__local-backups-section__description": {
-    "messageformat": "הגיבויים מוצפנים באמצעות מפתח ומאוחסנים במחשב שלך."
+    "messageformat": "Your backup is end-to-end encrypted and stored on your computer."
   },
   "icu:Preferences--local-backups-off-description": {
     "messageformat": "יצירת גיבוי מוצפן מקצה לקצה שאפשר לשחזר בטלפון שלך. "
   },
   "icu:Preferences--local-backups-restore-info": {
-    "messageformat": "כדי לשחזר גיבוי, יש להתקין עותק חדש של Signal. צריך לפתוח את האפליקציה וללחוץ על ״שחזור גיבוי״, ואז לאתר את תיקיית הגיבוי. <learnMoreLink>למידע נוסף.</learnMoreLink>"
+    "messageformat": "To restore a backup, install a new copy of Signal on your phone. Open the app and tap “Restore or transfer.” <learnMoreLink>Learn more.</learnMoreLink>"
   },
   "icu:Preferences--local-backups-setup-folder": {
     "messageformat": "בחירת תיקיה"
@@ -5910,10 +6229,10 @@
     "messageformat": "סיים"
   },
   "icu:Preferences--local-backups--view-backup-key--os-prompt--mac": {
-    "messageformat": "הצגת מפתח הגיבוי שלך"
+    "messageformat": "להציג את מפתח הגיבוי שלך"
   },
   "icu:Preferences--local-backups--view-backup-key--os-prompt--windows": {
-    "messageformat": "אימות זהות נדרש להצגת מפתח הגיבוי."
+    "messageformat": "יש לאמת את הזהות שלך על מנת להציג את מפתח הגיבוי."
   },
   "icu:Preferences--local-backups--view-backup-key--os-prompt-description--linux": {
     "messageformat": "הצגת מפתח גיבוי"
@@ -5951,6 +6270,15 @@
   "icu:Preferences--local-backups-see-backup-key-again": {
     "messageformat": "צפייה חוזרת במפתח"
   },
+  "icu:Preferences__local-backups-last-backup": {
+    "messageformat": "גיבוי אחרון"
+  },
+  "icu:Preferences__local-backups-last-backup-never": {
+    "messageformat": "אף פעם"
+  },
+  "icu:Preferences__local-backups-backup-now": {
+    "messageformat": "לגבות כעת"
+  },
   "icu:Preferences__local-backups-folder": {
     "messageformat": "תיקיית גיבוי"
   },
@@ -5964,13 +6292,13 @@
     "messageformat": "מפתח הגיבוי הועתק"
   },
   "icu:Preferences__local-backups--enable--os-prompt--mac": {
-    "messageformat": "אפשר גיבויים"
+    "messageformat": "להפעיל גיבויים"
   },
   "icu:Preferences__local-backups--enable--os-prompt--windows": {
-    "messageformat": "אימות זהות נדרש להפעלת גיבויים."
+    "messageformat": "יש לאמת את הזהות שלך על מנת להפעיל גיבויים."
   },
   "icu:Preferences__local-backups--enable--os-prompt-description--linux": {
-    "messageformat": "אפשר גיבויים"
+    "messageformat": "הפעלת גיבויים"
   },
   "icu:Preferences__local-backups--enable--os-prompt-message--linux": {
     "messageformat": "נדרש אימות כדי להפעיל גיבויים."
@@ -6964,7 +7292,7 @@
     "messageformat": "נערך"
   },
   "icu:MessageMetadata__pinned": {
-    "messageformat": "Pinned"
+    "messageformat": "מוצמד"
   },
   "icu:DraftGifMessageSendModal__Title": {
     "messageformat": "הוסף הודעה"
@@ -7227,11 +7555,11 @@
   "icu:WhatsNew__modal-title": {
     "messageformat": "מה חדש"
   },
-  "icu:PreferencesDonations__title": {
-    "messageformat": "פרטיות לפני רווחים"
+  "icu:PreferencesDonations__title-v2": {
+    "messageformat": "גאים להיות עמותה ללא מטרות רווח"
   },
-  "icu:PreferencesDonations__description": {
-    "messageformat": "שליחת הודעות פרטית, ממומנת על ידך. בלי מודעות, בלי מעקב, בלי פשרות. תורמים עכשיו ותומכים ב–Signal. <readMoreLink>למידע נוסף</readMoreLink>"
+  "icu:PreferencesDonations__description-v2": {
+    "messageformat": "ניתן לתרום כדי לתמוך בהודעות פרטיות זה עוזר לשמור על Signal עצמאית וללא פרסומות. <readMoreLink>למידע נוסף</readMoreLink>"
   },
   "icu:PreferencesDonations__donate-button": {
     "messageformat": "לתרומה"
@@ -7256,6 +7584,21 @@
   },
   "icu:PreferencesDonations__privacy-modal-content": {
     "messageformat": "<paragraph>Signal לא אוספת או מאחסנת את המידע האישי שלך בעת ביצוע תרומה.</paragraph><paragraph>אנחנו משתמשים ב–Stripe בתור מעבד התשלומים שלנו כדי לקבל את התרומות שלך. אנחנו לא ניגשים לשום מידע שהם מקבלים ממך ולא מאחסנים או שומרים אותו.</paragraph><paragraph>Signal אינה מקשרת את התרומה שלך לחשבון Signal שלך ואין לה אפשרות לעשות זאת.</paragraph><paragraph>תודה על התמיכה שלך!</paragraph>"
+  },
+  "icu:PreferencesDonations__privacy-modal-intro": {
+    "messageformat": "כעמותה עצמאית ללא מטרות רווח, Signal מחויבת להודעות ולשיחות פרטיות. בלי פרסומות, בלי מעקב, בלי ריגול. תרמו היום כדי לתמוך ב-Signal."
+  },
+  "icu:PreferencesDonations__privacy-modal-list-1": {
+    "messageformat": "ניתן לקבל תג לפרופיל בעת תרומה"
+  },
+  "icu:PreferencesDonations__privacy-modal-list-2": {
+    "messageformat": "הפרטיות שלך היא המשימה שלנו"
+  },
+  "icu:PreferencesDonations__privacy-modal-list-3": {
+    "messageformat": "Signal היא עמותה ללא מטרות רווח."
+  },
+  "icu:PreferencesDonations__privacy-modal-icon-accessibility-label": {
+    "messageformat": "סמל לב בסגנון הלוגו של Signal"
   },
   "icu:PreferencesDonations__privacy-modal-ok": {
     "messageformat": "אישור"
@@ -7347,6 +7690,15 @@
   "icu:DonateFlow__discard-dialog-remove-info": {
     "messageformat": "הסרת מידע"
   },
+  "icu:DonateFlow__discard-paypal-dialog-body": {
+    "messageformat": "עזיבה תבטל את התרומה שלך."
+  },
+  "icu:DonateFlow__discard-paypal-dialog-discard": {
+    "messageformat": "עזיבה"
+  },
+  "icu:DonateFlow__discard-paypal-dialog-cancel": {
+    "messageformat": "להישאר בדף"
+  },
   "icu:DonateFlow__continue": {
     "messageformat": "המשך"
   },
@@ -7392,6 +7744,15 @@
   "icu:Donations__Toast__ConfirmationNeeded": {
     "messageformat": "יש לך תרומה בתהליך הממתינה לאישור."
   },
+  "icu:Donations__Toast__PaypalConfirmationNeeded": {
+    "messageformat": "יש לך תרומה בתהליך הממתינה לאישור."
+  },
+  "icu:Donations__Toast__PaypalCanceled": {
+    "messageformat": "תרומת PayPal בוטלה"
+  },
+  "icu:Donations__Toast__PaypalError": {
+    "messageformat": "שגיאה בעיבוד תרומת PayPal. לא חויבת."
+  },
   "icu:Donations__BadgeApplicationFailed__Title": {
     "messageformat": "התרומה בוצעה בהצלחה, אבל לא הצלחנו לעדכן את הגדרות התג שלך"
   },
@@ -7407,11 +7768,41 @@
   "icu:Donations__DonationInterrupted__RetryButton": {
     "messageformat": "נסה שוב"
   },
+  "icu:Donations__PaymentMethod": {
+    "messageformat": "אמצעי תשלום"
+  },
   "icu:Donations__PaymentMethodDeclined": {
     "messageformat": "אמצעי התשלום נדחה"
   },
   "icu:Donations__PaymentMethodDeclined__Description": {
     "messageformat": "יש לנסות שיטת תשלום אחרת או ליצור קשר עם הבנק שלך לקבלת מידע נוסף."
+  },
+  "icu:DonateFlow__PaymentCardIcon__AccessibilityLabel": {
+    "messageformat": "סמל כרטיס תשלום"
+  },
+  "icu:DonateFlow__CreditOrDebitCard": {
+    "messageformat": "כרטיס אשראי או דביט"
+  },
+  "icu:DonateFlow__Paypal__AccessibilityLabel": {
+    "messageformat": "PayPal"
+  },
+  "icu:DonateFlow__Paypal__Cancel": {
+    "messageformat": "ביטול"
+  },
+  "icu:DonateFlow__Paypal__CompleteDonation": {
+    "messageformat": "השלמת תרומה"
+  },
+  "icu:Donations__PaypalCanceled": {
+    "messageformat": "תרומת PayPal בוטלה"
+  },
+  "icu:Donations__PaypalCanceled__Description": {
+    "messageformat": "לא חויבת. יש לנסות שוב או להשתמש באמצעי תשלום אחר."
+  },
+  "icu:Donations__PaypalError": {
+    "messageformat": "שגיאה בעיבוד תרומת PayPal"
+  },
+  "icu:Donations__PaypalError__Description": {
+    "messageformat": "לא חויבת. יש לנסות שוב או להשתמש באמצעי תשלום אחר."
   },
   "icu:Donations__Failed3dsValidation": {
     "messageformat": "וידוא נכשל"
@@ -7474,88 +7865,112 @@
     "messageformat": "אפשר לשנות את זה במכשיר הנייד שלך תחת הגדרות > תרומה ל–Signal > תגים"
   },
   "icu:CallQualitySurvey__CloseButton__AccessibilityLabel": {
-    "messageformat": "Close"
+    "messageformat": "סגור"
   },
   "icu:CallQualitySurvey__BackButton__AccessibilityLabel": {
-    "messageformat": "Back"
+    "messageformat": "הקודם"
   },
   "icu:CallQualitySurvey__HowWasYourCall__PageTitle": {
-    "messageformat": "How was your call?"
+    "messageformat": "איך הייתה השיחה שלך?"
   },
   "icu:CallQualitySurvey__HowWasYourCall__PageDescription": {
-    "messageformat": "This helps us improve calls in Signal. No personally identifiable information will be stored."
+    "messageformat": "זה עוזר לנו לשפר את השיחות ב–Signal. לא יאוחסן מידע אישי מזהה."
   },
   "icu:CallQualitySurvey__HowWasYourCall__Response__HadIssues": {
-    "messageformat": "Had issues"
+    "messageformat": "היו בעיות"
   },
   "icu:CallQualitySurvey__HowWasYourCall__Response__Great": {
-    "messageformat": "Great"
+    "messageformat": "נהדרת"
   },
   "icu:CallQualitySurvey__WhatIssuesDidYouHave__PageTitle": {
-    "messageformat": "What issues did you have?"
+    "messageformat": "אילו בעיות היו לך?"
   },
   "icu:CallQualitySurvey__WhatIssuesDidYouHave__IssuesList__Heading": {
-    "messageformat": "Select all that apply"
+    "messageformat": "יש לבחור את כל האפשריות המתאימות"
   },
   "icu:CallQualitySurvey__Issue--AUDIO": {
-    "messageformat": "Audio issue"
+    "messageformat": "בעיית שמע"
   },
   "icu:CallQualitySurvey__Issue--AUDIO_STUTTERING": {
-    "messageformat": "Audio stuttering"
+    "messageformat": "שמע מקוטע"
   },
   "icu:CallQualitySurvey__Issue--AUDIO_LOCAL_ECHO": {
-    "messageformat": "I heard echo"
+    "messageformat": "שמעתי הד"
   },
   "icu:CallQualitySurvey__Issue--AUDIO_REMOTE_ECHO": {
-    "messageformat": "Others heard echo"
+    "messageformat": "אחרים שמעו הד"
   },
   "icu:CallQualitySurvey__Issue--AUDIO_DROP": {
-    "messageformat": "Audio cut out"
+    "messageformat": "הפסקת שמע"
   },
   "icu:CallQualitySurvey__Issue--VIDEO": {
-    "messageformat": "Video issue"
+    "messageformat": "בעיית וידאו"
   },
   "icu:CallQualitySurvey__Issue--VIDEO_NO_CAMERA": {
-    "messageformat": "Camera didn't work"
+    "messageformat": "המצלמה לא עבדה"
   },
   "icu:CallQualitySurvey__Issue--VIDEO_LOW_QUALITY": {
-    "messageformat": "Poor video quality"
+    "messageformat": "איכות וידאו ירודה"
   },
   "icu:CallQualitySurvey__Issue--VIDEO_LOW_RESOLUTION": {
-    "messageformat": "Low resolution"
+    "messageformat": "רזולוציה נמוכה"
   },
   "icu:CallQualitySurvey__Issue--CALL_DROPPED": {
-    "messageformat": "Call dropped"
+    "messageformat": "השיחה התנתקה"
   },
   "icu:CallQualitySurvey__Issue--OTHER": {
-    "messageformat": "Something else"
+    "messageformat": "משהו אחר"
   },
   "icu:CallQualitySurvey__WhatIssuesDidYouHave__SomethingElse__TextArea__AccessibilityLabel": {
-    "messageformat": "Issues description"
+    "messageformat": "תיאור הבעיות"
   },
   "icu:CallQualitySurvey__WhatIssuesDidYouHave__SomethingElse__TextArea__HelpText": {
-    "messageformat": "Please include any details relevant to the issue. Anything you share here will be kept private and will only be used to help improve calls in Signal."
+    "messageformat": "נא לכלול כל פרט רלוונטי לבעיה. כל דבר שתשתפ/י כאן יישאר פרטי וישמש רק כדי לעזור לשפר את השיחות ב–Signal."
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__SomethingElse__TextArea__ErrorText": {
+    "messageformat": "נא לתאר את הבעיה"
   },
   "icu:CallQualitySurvey__WhatIssuesDidYouHave__ContinueButton": {
-    "messageformat": "Continue"
+    "messageformat": "המשך"
+  },
+  "icu:CallQualitySurvey__WhatIssuesDidYouHave__ContinueButton__DisabledTooltip": {
+    "messageformat": "יש לבחור כדי להמשיך"
   },
   "icu:CallQualitySurvey__ConfirmSubmission__PageTitle": {
-    "messageformat": "Help us improve"
+    "messageformat": "נשמח לעזרתך כדי להשתפר"
   },
-  "icu:CallQualitySurvey__ConfirmSubmission__PageDescription": {
-    "messageformat": "This helps us learn more about calls and what is working or not working. You can view your debug log before submitting."
+  "icu:CallQualitySurvey__ConfirmSubmission__PageDescriptionWithDiagnosticLink": {
+    "messageformat": "שליחה תשתף משוב יחד עם <diagnosticInfoLink>מידע טכני על השיחה</diagnosticInfoLink>. ניתן לשתף יומן ניפוי באגים כדי לסייע בשיפור איכות השיחה."
   },
   "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__Label": {
-    "messageformat": "Share debug log"
+    "messageformat": "שיתוף יומן ניפוי באגים"
   },
   "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__ViewButton": {
-    "messageformat": "View"
+    "messageformat": "צפיה"
   },
-  "icu:CallQualitySurvey__ConfirmSubmission__ShareDebugLog__HelpText": {
-    "messageformat": "Debug logs contain low level app information and do not reveal any of your message contents."
+  "icu:CallQualitySurvey__ConfirmSubmission__PrivacyNote": {
+    "messageformat": "המידע שמשותף איתנו מכיל מידע טכני בסיסי על האפליקציה ואינו כולל את תוכן השיחות שלך."
+  },
+  "icu:CallDiagnosticWindow__title": {
+    "messageformat": "מידע אבחוני"
   },
   "icu:CallQualitySurvey__ConfirmSubmission__SubmitButton": {
-    "messageformat": "Submit"
+    "messageformat": "שלח"
+  },
+  "icu:CallQualitySurvey__ConfirmSubmission__Submitting": {
+    "messageformat": "שליחת הסקר מתבצעת..."
+  },
+  "icu:CallQualitySurvey__SubmissionFailed": {
+    "messageformat": "שליחת הסקר נכשלה"
+  },
+  "icu:CallQualitySurvey__SubmissionFailed__Retry": {
+    "messageformat": "נסה שוב"
+  },
+  "icu:CallQualitySurvey__SubmissionSuccess": {
+    "messageformat": "תודה על המשוב!"
+  },
+  "icu:Megaphone__ExpandNarrowSidebar": {
+    "messageformat": "יש להרחיב את הסרגל הצדדי לאינטראקציה עם המגפון"
   },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "גרסה זו מכילה מספר של שפצורים קטנים ותיקוני תקלים כדי לשמור על Signal שירוץ באופן חלק.",
@@ -7585,16 +8000,16 @@
     "messageformat": "התאמות קטנות, תיקוני באגים ושיפורי ביצועים. תודה על השימוש ב-Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__7.79-1": {
-    "messageformat": "עדכנו את העיצוב של סרגלי הגלילה ברחבי האפליקציה, כדי להפוך אותם לאחידים יותר מבחינה ויזואלית."
+  "icu:WhatsNew__7.90--0": {
+    "messageformat": "שמירה על הפרטיות עם חמש חבילות סטיקרים רשמיות חדשות מסדרת האמנים של Signal."
   },
-  "icu:WhatsNew__7.79-2": {
-    "messageformat": "שיפרנו את פעולות ההעתק הדבק וההדבקה, כך שקל יותר לסמן את כל הטקסט ולהחליף אותו בלי שהעיצוב הישן יעבור יחד איתו. תודה, <brianHarder></brianHarder>!"
+  "icu:WhatsNew__8.0--0": {
+    "messageformat": "הגיבויים המאובטחים של Signal כבר כאן! אפשר להפעיל גיבויים אוטומטיים מוצפנים מקצה לקצה כדי שלא תאבדו הודעות במעבר לטלפון חדש או בהתקנה מחדש של Signal. אפשר לגבות את כל ההודעות ואת 45 ימי המדיה האחרונים בחינם, או לשלם תשלום חודשי קטן כדי לקבל 100GB של אחסון לגיבוי כל הקבצים המצורפים. יש ללחוץ על גיבויים בהגדרות Signal שלך כדי להתחיל. תודה לכל מי שעזרו לבדוק את הפיצ׳ר הזה במהלך תקופת הבטא!"
   },
-  "icu:WhatsNew__7.80-1": {
-    "messageformat": "הסקרים של Signal הגיעו! סקרים הם דרך קלה לראות מה חברי הצ׳אט הקבוצתי שלך באמת חושבים. אפשר ליצור סקר עם אפשרויות לארוחת ערב או כל בחירה חשובה אחרת. כל מי שבקבוצה יכול להצביע ולראות את התשובות של האחרים, ויש לך אפשרות להחליט אם לאפשר הצבעה לכמה אפשרויות שונות או לא."
+  "icu:WhatsNew__8.2--0": {
+    "messageformat": "עכשיו אפשר לשלוח מדיה לצפייה חד–פעמית גם מ–Signal לשולחן העבודה. תמונות וסרטונים בודדים שנשלחו כהודעות לצפייה חד–פעמית יוסרו אוטומטית משרשור השיחה לאחר שנצפו."
   },
-  "icu:WhatsNew__7.81-1": {
-    "messageformat": "גלריית המדיה כוללת כעת שתי כרטיסיות חדשות להודעות שמע ולתצוגות מקדימות של קישורים."
+  "icu:WhatsNew__8.3--0": {
+    "messageformat": "Now you can optionally add a member label to describe yourself or your role in a group chat. Set your group member label to \"Referee\" or \"Goalie\" in your local rec league soccer chat to help kick things off when new teammates join, then choose a different label with your job title in the company chat. Member labels appear next to your profile name in that group, and group admins can control whether or not they are enabled for everyone."
   }
 }

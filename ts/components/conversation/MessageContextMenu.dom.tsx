@@ -1,10 +1,10 @@
 // Copyright 2023 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, { type ReactNode } from 'react';
+import React, { useRef, type ReactNode } from 'react';
 import type { LocalizerType } from '../../types/I18N.std.js';
 import { AxoMenuBuilder } from '../../axo/AxoMenuBuilder.dom.js';
-import { isPinnedMessagesReceiveEnabled } from '../../util/isPinnedMessagesEnabled.std.js';
+import { isInternalFeaturesEnabled } from '../../util/isInternalFeaturesEnabled.dom.js';
 
 type MessageContextMenuProps = Readonly<{
   i18n: LocalizerType;
@@ -12,6 +12,7 @@ type MessageContextMenuProps = Readonly<{
   onOpenChange?: (open: boolean) => void;
   disabled?: boolean;
   shouldShowAdditional: boolean;
+  onDebugMessage: (() => void) | null;
   onDownload: (() => void) | null;
   onEdit: (() => void) | null;
   onReplyToMessage: (() => void) | null;
@@ -36,6 +37,7 @@ export function MessageContextMenu({
   onOpenChange,
   disabled,
   shouldShowAdditional,
+  onDebugMessage,
   onDownload,
   onEdit,
   onReplyToMessage,
@@ -53,12 +55,20 @@ export function MessageContextMenu({
   onUnpinMessage,
   children,
 }: MessageContextMenuProps): JSX.Element {
+  const shouldReturnFocusToTrigger = useRef(true);
+
   return (
     <AxoMenuBuilder.Root renderer={renderer} onOpenChange={onOpenChange}>
       <AxoMenuBuilder.Trigger disabled={disabled}>
         {children}
       </AxoMenuBuilder.Trigger>
-      <AxoMenuBuilder.Content>
+      <AxoMenuBuilder.Content
+        onCloseAutoFocus={e => {
+          if (!shouldReturnFocusToTrigger.current) {
+            e.preventDefault();
+          }
+        }}
+      >
         {shouldShowAdditional && (
           <>
             {onDownload && (
@@ -67,7 +77,14 @@ export function MessageContextMenu({
               </AxoMenuBuilder.Item>
             )}
             {onReplyToMessage && (
-              <AxoMenuBuilder.Item symbol="reply" onSelect={onReplyToMessage}>
+              <AxoMenuBuilder.Item
+                symbol="reply"
+                onSelect={() => {
+                  // onReplyToMessage will focus the quill input
+                  shouldReturnFocusToTrigger.current = false;
+                  onReplyToMessage();
+                }}
+              >
                 {i18n('icu:MessageContextMenu__reply')}
               </AxoMenuBuilder.Item>
             )}
@@ -84,7 +101,14 @@ export function MessageContextMenu({
           </AxoMenuBuilder.Item>
         )}
         {onForward && (
-          <AxoMenuBuilder.Item symbol="forward" onSelect={onForward}>
+          <AxoMenuBuilder.Item
+            symbol="forward"
+            onSelect={() => {
+              // forward modal takes focus
+              shouldReturnFocusToTrigger.current = false;
+              onForward();
+            }}
+          >
             {i18n('icu:MessageContextMenu__forward')}
           </AxoMenuBuilder.Item>
         )}
@@ -94,7 +118,14 @@ export function MessageContextMenu({
           </AxoMenuBuilder.Item>
         )}
         {onEdit && (
-          <AxoMenuBuilder.Item symbol="pencil" onSelect={onEdit}>
+          <AxoMenuBuilder.Item
+            symbol="pencil"
+            onSelect={() => {
+              // onEdit will focus the quill input
+              shouldReturnFocusToTrigger.current = false;
+              onEdit();
+            }}
+          >
             {i18n('icu:edit')}
           </AxoMenuBuilder.Item>
         )}
@@ -108,12 +139,12 @@ export function MessageContextMenu({
             {i18n('icu:copy')}
           </AxoMenuBuilder.Item>
         )}
-        {isPinnedMessagesReceiveEnabled() && onPinMessage && (
+        {onPinMessage && (
           <AxoMenuBuilder.Item symbol="pin" onSelect={onPinMessage}>
             {i18n('icu:MessageContextMenu__PinMessage')}
           </AxoMenuBuilder.Item>
         )}
-        {isPinnedMessagesReceiveEnabled() && onUnpinMessage && (
+        {onUnpinMessage && (
           <AxoMenuBuilder.Item symbol="pin-slash" onSelect={onUnpinMessage}>
             {i18n('icu:MessageContextMenu__UnpinMessage')}
           </AxoMenuBuilder.Item>
@@ -140,6 +171,17 @@ export function MessageContextMenu({
           >
             {i18n('icu:retryDeleteForEveryone')}
           </AxoMenuBuilder.Item>
+        )}
+        {isInternalFeaturesEnabled() && onDebugMessage && (
+          <>
+            <AxoMenuBuilder.Separator />
+            <AxoMenuBuilder.Group>
+              <AxoMenuBuilder.Label>Internal</AxoMenuBuilder.Label>
+              <AxoMenuBuilder.Item symbol="copy" onSelect={onDebugMessage}>
+                Copy & debug message
+              </AxoMenuBuilder.Item>
+            </AxoMenuBuilder.Group>
+          </>
         )}
       </AxoMenuBuilder.Content>
     </AxoMenuBuilder.Root>

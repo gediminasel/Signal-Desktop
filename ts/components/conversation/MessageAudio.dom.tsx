@@ -143,7 +143,7 @@ function PlayedDot({
  * `context` is required for displaying separate MessageAudio instances in
  * MessageDetails and Message React components.
  */
-export function MessageAudio(props: Props): JSX.Element {
+export function MessageAudio(props: Props): React.JSX.Element {
   const {
     active,
     buttonRef,
@@ -377,6 +377,7 @@ export function MessageAudio(props: Props): JSX.Element {
 
       {!withContentBelow && !collapseMetadata && (
         <MessageMetadata
+          canRetryDeleteForEveryone={false}
           direction={direction}
           expirationLength={expirationLength}
           expirationTimestamp={expirationTimestamp}
@@ -387,6 +388,7 @@ export function MessageAudio(props: Props): JSX.Element {
           isShowingImage={false}
           isSticker={false}
           pushPanelForConversation={pushPanelForConversation}
+          retryDeleteForEveryone={shouldNeverBeCalled}
           retryMessageSend={shouldNeverBeCalled}
           status={status}
           textPending={textPending}

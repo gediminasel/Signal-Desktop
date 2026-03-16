@@ -14,7 +14,7 @@ export default {
   component: CompositionRecording,
 } satisfies Meta<Props>;
 
-export function Default(): JSX.Element {
+export function Default(): React.JSX.Element {
   const [active, setActive] = useState(false);
 
   const cancel = action('cancel');
@@ -46,8 +46,6 @@ export function Default(): JSX.Element {
           onCancel={handleCancel}
           onSend={handleSend}
           errorRecording={_ => action('error')()}
-          addAttachment={action('addAttachment')}
-          completeRecording={action('completeRecording')}
           saveDraftRecordingIfNeeded={action('saveDraftRecordingIfNeeded')}
           showToast={action('showToast')}
           hideToast={action('hideToast')}

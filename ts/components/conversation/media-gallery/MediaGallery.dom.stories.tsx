@@ -4,7 +4,10 @@
 import React, { useState, useCallback } from 'react';
 import { action } from '@storybook/addon-actions';
 import type { Meta } from '@storybook/react';
-import type { MediaTabType } from '../../../types/MediaItem.std.js';
+import type {
+  MediaTabType,
+  MediaSortOrderType,
+} from '../../../types/MediaItem.std.js';
 import type { Props } from './MediaGallery.dom.js';
 import { MediaGallery } from './MediaGallery.dom.js';
 import { PanelHeader } from './PanelHeader.dom.js';
@@ -39,10 +42,12 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   links: overrideProps.links || [],
   documents: overrideProps.documents || [],
   tab: overrideProps.tab || 'media',
+  sortOrder: overrideProps.sortOrder || 'date',
 
   initialLoad: action('initialLoad'),
   loadMore: action('loadMore'),
   saveAttachment: action('saveAttachment'),
+  pushPanelForConversation: action('pushPanelForConversation'),
   playAudio: action('playAudio'),
   showLightbox: action('showLightbox'),
   kickOffAttachmentDownload: action('kickOffAttachmentDownload'),
@@ -51,8 +56,9 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   renderMediaItem: props => <MediaItem {...props} />,
 });
 
-function Panel(props: Props): JSX.Element {
+function Panel(props: Props): React.JSX.Element {
   const [tab, setTab] = useState<MediaTabType>(props.tab);
+  const [sortOrder, setSortOrder] = useState<MediaSortOrderType>('date');
 
   const [loading, setLoading] = useState(false);
 
@@ -70,19 +76,35 @@ function Panel(props: Props): JSX.Element {
   );
 
   return (
-    <div>
-      <PanelHeader i18n={i18n} tab={tab} setTab={setTab} />
-      <MediaGallery
-        {...props}
-        tab={tab}
-        loading={loading}
-        loadMore={loadMore}
-      />
+    <div className="ConversationPanel">
+      <div className="ConversationPanel__header">
+        <button
+          aria-label={i18n('icu:goBack')}
+          className="ConversationPanel__header__back-button"
+          type="button"
+        />
+        <PanelHeader
+          i18n={i18n}
+          tab={tab}
+          setTab={setTab}
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
+        />
+      </div>
+      <div className="ConversationPanel__body">
+        <MediaGallery
+          {...props}
+          tab={tab}
+          loading={loading}
+          loadMore={loadMore}
+          sortOrder={sortOrder}
+        />
+      </div>
     </div>
   );
 }
 
-export function Populated(): JSX.Element {
+export function Populated(): React.JSX.Element {
   const documents = createRandomDocuments(Date.now() - days(5), days(5));
   const media = createPreparedMediaItems(createRandomMedia);
   const props = createProps({ documents, media });
@@ -90,21 +112,21 @@ export function Populated(): JSX.Element {
   return <Panel {...props} />;
 }
 
-export function NoDocuments(): JSX.Element {
+export function NoDocuments(): React.JSX.Element {
   const media = createPreparedMediaItems(createRandomMedia);
   const props = createProps({ media, haveOldestDocument: true });
 
   return <Panel {...props} />;
 }
 
-export function NoMedia(): JSX.Element {
+export function NoMedia(): React.JSX.Element {
   const documents = createPreparedMediaItems(createRandomDocuments);
   const props = createProps({ documents, haveOldestMedia: true });
 
   return <Panel {...props} />;
 }
 
-export function OneEach(): JSX.Element {
+export function OneEach(): React.JSX.Element {
   const media = createRandomMedia(Date.now(), days(1)).slice(0, 1);
   const audio = createRandomAudio(Date.now(), days(1)).slice(0, 1);
   const documents = createRandomDocuments(Date.now(), days(1)).slice(0, 1);
@@ -115,7 +137,7 @@ export function OneEach(): JSX.Element {
   return <Panel {...props} />;
 }
 
-export function Empty(): JSX.Element {
+export function Empty(): React.JSX.Element {
   const props = createProps({
     haveOldestMedia: true,
     haveOldestAudio: true,

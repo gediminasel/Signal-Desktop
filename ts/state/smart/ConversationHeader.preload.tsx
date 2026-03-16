@@ -37,17 +37,37 @@ import {
 import {
   getConversationByServiceIdSelector,
   getConversationSelector,
-  getHasPanelOpen,
   isMissingRequiredProfileSharing as getIsMissingRequiredProfileSharing,
   getSelectedMessageIds,
 } from '../selectors/conversations.dom.js';
+import { getHasPanelOpen } from '../selectors/nav.std.js';
 import { getHasStoriesSelector } from '../selectors/stories2.dom.js';
 import { getIntl, getTheme, getUserACI } from '../selectors/user.std.js';
-import { useItemsActions } from '../ducks/items.preload.js';
-import { getLocalDeleteWarningShown } from '../selectors/items.dom.js';
 import { isConversationEverUnregistered } from '../../util/isConversationUnregistered.dom.js';
 import { isDirectConversation } from '../../util/whatTypeOfConversation.dom.js';
 import type { DurationInSeconds } from '../../util/durations/index.std.js';
+import { selectAudioPlayerActive } from '../selectors/audioPlayer.preload.js';
+import type { SmartCollidingAvatarsProps } from './CollidingAvatars.dom.js';
+import { SmartCollidingAvatars } from './CollidingAvatars.dom.js';
+import type { SmartMiniPlayerProps } from './MiniPlayer.preload.js';
+import { SmartMiniPlayer } from './MiniPlayer.preload.js';
+import { SmartPinnedMessagesBar } from './PinnedMessagesBar.preload.js';
+import { getContactSpoofingWarningSelector } from '../selectors/timeline.preload.js';
+import { useNavActions } from '../ducks/nav.std.js';
+
+function renderCollidingAvatars(
+  props: SmartCollidingAvatarsProps
+): React.JSX.Element {
+  return <SmartCollidingAvatars {...props} />;
+}
+
+function renderMiniPlayer(props: SmartMiniPlayerProps): React.JSX.Element {
+  return <SmartMiniPlayer {...props} />;
+}
+
+function renderPinnedMessagesBar(): React.JSX.Element {
+  return <SmartPinnedMessagesBar />;
+}
 
 export type OwnProps = {
   id: string;
@@ -108,13 +128,20 @@ export const SmartConversationHeader = memo(function SmartConversationHeader({
   const activeCall = useSelector(getActiveCallState);
   const hasActiveCall = Boolean(activeCall);
 
+  const contactSpoofingWarningSelector = useSelector(
+    getContactSpoofingWarningSelector
+  );
+  const contactSpoofingWarning = contactSpoofingWarningSelector(conversation);
+
+  const activeAudioPlayer = useSelector(selectAudioPlayerActive);
+  const shouldShowMiniPlayer = activeAudioPlayer != null;
+
   const {
     destroyMessages,
     leaveGroup,
     onArchive,
     onMarkUnread,
     onMoveToInbox,
-    pushPanelForConversation,
     setDisappearingMessages,
     setMuteExpiration,
     setPinned,
@@ -125,7 +152,10 @@ export const SmartConversationHeader = memo(function SmartConversationHeader({
     blockConversation,
     reportSpam,
     deleteConversation,
+    acknowledgeGroupMemberNameCollisions,
+    reviewConversationNameCollision,
   } = useConversationsActions();
+  const { pushPanelForConversation } = useNavActions();
   const {
     onOutgoingAudioCallInConversation,
     onOutgoingVideoCallInConversation,
@@ -266,11 +296,6 @@ export const SmartConversationHeader = memo(function SmartConversationHeader({
 
   const minimalConversation = useMinimalConversation(conversation);
 
-  const localDeleteWarningShown = useSelector(getLocalDeleteWarningShown);
-  const { putItem } = useItemsActions();
-  const setLocalDeleteWarningShown = () =>
-    putItem('localDeleteWarningShown', true);
-
   return (
     <ConversationHeader
       addedByName={addedByName}
@@ -282,7 +307,6 @@ export const SmartConversationHeader = memo(function SmartConversationHeader({
       hasPanelShowing={hasPanelShowing}
       hasStories={hasStories}
       i18n={i18n}
-      localDeleteWarningShown={localDeleteWarningShown}
       isMissingMandatoryProfileSharing={isMissingMandatoryProfileSharing}
       isSelectMode={isSelectMode}
       isSignalConversation={isSignalConversation(conversation)}
@@ -317,9 +341,16 @@ export const SmartConversationHeader = memo(function SmartConversationHeader({
       onViewAllMedia={onViewAllMedia}
       onViewUserStories={onViewUserStories}
       outgoingCallButtonStyle={outgoingCallButtonStyle}
-      setLocalDeleteWarningShown={setLocalDeleteWarningShown}
-      sharedGroupNames={conversation.sharedGroupNames}
       theme={theme}
+      contactSpoofingWarning={contactSpoofingWarning}
+      renderCollidingAvatars={renderCollidingAvatars}
+      shouldShowMiniPlayer={shouldShowMiniPlayer}
+      renderMiniPlayer={renderMiniPlayer}
+      renderPinnedMessagesBar={renderPinnedMessagesBar}
+      acknowledgeGroupMemberNameCollisions={
+        acknowledgeGroupMemberNameCollisions
+      }
+      reviewConversationNameCollision={reviewConversationNameCollision}
     />
   );
 });

@@ -17,6 +17,7 @@ import {
   MediaItem,
   type PropsType as MediaItemPropsType,
 } from './MediaItem.preload.js';
+import { useNavActions } from '../ducks/nav.std.js';
 
 const log = createLogger('AllMedia');
 
@@ -24,7 +25,7 @@ export type PropsType = {
   conversationId: string;
 };
 
-function renderMediaItem(props: MediaItemPropsType): JSX.Element {
+function renderMediaItem(props: MediaItemPropsType): React.JSX.Element {
   return <MediaItem {...props} />;
 }
 
@@ -42,6 +43,7 @@ export const SmartAllMedia = memo(function SmartAllMedia({
     haveOldestDocument,
     loading,
     tab,
+    sortOrder,
   } = useSelector(getMediaGalleryState);
   const { initialLoad, loadMore } = useMediaGalleryActions();
   const {
@@ -49,6 +51,7 @@ export const SmartAllMedia = memo(function SmartAllMedia({
     kickOffAttachmentDownload,
     cancelAttachmentDownload,
   } = useConversationsActions();
+  const { pushPanelForConversation } = useNavActions();
   const { showLightbox } = useLightboxActions();
   const { loadVoiceNoteAudio } = useAudioPlayerActions();
   const i18n = useSelector(getIntl);
@@ -106,11 +109,13 @@ export const SmartAllMedia = memo(function SmartAllMedia({
       links={links}
       documents={documents}
       tab={tab}
+      sortOrder={sortOrder}
       showLightbox={showLightbox}
       playAudio={playAudio}
       kickOffAttachmentDownload={kickOffAttachmentDownload}
       cancelAttachmentDownload={cancelAttachmentDownload}
       saveAttachment={saveAttachment}
+      pushPanelForConversation={pushPanelForConversation}
       renderMediaItem={renderMediaItem}
     />
   );
