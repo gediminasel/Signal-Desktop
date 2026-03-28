@@ -184,6 +184,9 @@ import {
   isCallFailure,
   shouldShowCallQualitySurvey,
 } from '../util/callQualitySurvey.dom.js';
+import * as RemoteConfig from '../RemoteConfig.dom.js';
+import { isAlpha, isBeta, isProduction } from '../util/version.std.js';
+import { parseIntOrThrow } from '../util/parseIntOrThrow.std.js';
 
 const { i18n } = window.SignalContext;
 
@@ -572,8 +575,11 @@ export class CallingClass {
   #localPreviewContainer: HTMLDivElement | undefined;
   #localPreview: HTMLVideoElement | undefined;
   #reduxInterface?: CallingReduxInterface;
+  #_sfuUrl?: string;
 
-  public _sfuUrl?: string;
+  public get sfuUrl(): string | undefined {
+    return itemStorage.get('sfuUrl') ?? this.#_sfuUrl;
+  }
 
   public _iceServerOverride?: GetIceServersResultType | string;
 
@@ -606,7 +612,7 @@ export class CallingClass {
       throw new Error('CallingClass.initialize: Invalid uxActions.');
     }
 
-    this._sfuUrl = sfuUrl;
+    this.#_sfuUrl = sfuUrl;
 
     RingRTC.setConfig({
       field_trials: undefined,
@@ -622,10 +628,14 @@ export class CallingClass {
     RingRTC.handleRejectedIncomingCallRequest =
       this.#handleRejectedIncomingCallRequest.bind(this);
     RingRTC.handleLogMessage = this.#handleLogMessage.bind(this);
+    // @ts-expect-error needs ringrtc update
     RingRTC.handleSendHttpRequest = this.#handleSendHttpRequest.bind(this);
+    // @ts-expect-error needs ringrtc update
     RingRTC.handleSendCallMessage = this.#handleSendCallMessage.bind(this);
+    // @ts-expect-error needs ringrtc update
     RingRTC.handleSendCallMessageToGroup =
       this.#handleSendCallMessageToGroup.bind(this);
+    // @ts-expect-error needs ringrtc update
     RingRTC.handleGroupCallRingUpdate =
       this.#handleGroupCallRingUpdate.bind(this);
 
@@ -847,25 +857,32 @@ export class CallingClass {
 
   async createCallLink(): Promise<CallLinkType> {
     strictAssert(
-      this._sfuUrl,
+      this.sfuUrl,
       'createCallLink() missing SFU URL; not creating call link'
     );
 
-    const sfuUrl = this._sfuUrl;
+    const { sfuUrl } = this;
     const userId = Aci.parseFromServiceIdString(
       itemStorage.user.getCheckedAci()
     );
 
     const rootKey = CallLinkRootKey.generate();
+    // @ts-expect-error needs ringrtc update
+    const rootKeyBytes: Uint8Array<ArrayBuffer> = rootKey.bytes;
     const roomId = rootKey.deriveRoomId();
-    const roomIdHex = Bytes.toHex(roomId);
+    // @ts-expect-error needs ringrtc update
+    const roomIdBytes: Uint8Array<ArrayBuffer> = roomId;
+    const roomIdHex = Bytes.toHex(roomIdBytes);
     const logId = `createCallLink(${roomIdHex})`;
 
     log.info(`${logId}: Creating call link`);
 
     const adminKey = CallLinkRootKey.generateAdminPassKey();
+    // @ts-expect-error needs ringrtc update
+    const adminKeyBytes: Uint8Array<ArrayBuffer> = adminKey;
 
-    const context = CreateCallLinkCredentialRequestContext.forRoomId(roomId);
+    const context =
+      CreateCallLinkCredentialRequestContext.forRoomId(roomIdBytes);
     const requestBase64 = Bytes.toBase64(context.getRequest().serialize());
 
     const { credential: credentialBase64 } =
@@ -884,10 +901,10 @@ export class CallingClass {
       genericServerPublicParams
     );
 
-    const secretParams = CallLinkSecretParams.deriveFromRootKey(rootKey.bytes);
+    const secretParams = CallLinkSecretParams.deriveFromRootKey(rootKeyBytes);
 
     const credentialPresentation = credential
-      .present(roomId, userId, genericServerPublicParams, secretParams)
+      .present(roomIdBytes, userId, genericServerPublicParams, secretParams)
       .serialize();
     const serializedPublicParams = secretParams.getPublicParams().serialize();
 
@@ -913,7 +930,7 @@ export class CallingClass {
     const callLink: CallLinkType = {
       roomId: roomIdHex,
       rootKey: maybeUpdatedRootKey,
-      adminKey: Bytes.toBase64(adminKey),
+      adminKey: Bytes.toBase64(adminKeyBytes),
       storageNeedsSync: true,
       ...state,
     };
@@ -925,11 +942,11 @@ export class CallingClass {
 
   async deleteCallLink(callLink: CallLinkType): Promise<void> {
     strictAssert(
-      this._sfuUrl,
+      this.sfuUrl,
       'createCallLink() missing SFU URL; not deleting call link'
     );
 
-    const sfuUrl = this._sfuUrl;
+    const { sfuUrl } = this;
     const logId = `deleteCallLink(${callLink.roomId})`;
     log.info(logId);
 
@@ -962,10 +979,10 @@ export class CallingClass {
     name: string
   ): Promise<CallLinkStateType> {
     strictAssert(
-      this._sfuUrl,
+      this.sfuUrl,
       'updateCallLinkName() missing SFU URL; not update call link name'
     );
-    const sfuUrl = this._sfuUrl;
+    const { sfuUrl } = this;
     const logId = `updateCallLinkName(${callLink.roomId})`;
 
     log.info(`${logId}: Updating call link name`);
@@ -1000,10 +1017,10 @@ export class CallingClass {
     restrictions: CallLinkRestrictions
   ): Promise<CallLinkStateType> {
     strictAssert(
-      this._sfuUrl,
+      this.sfuUrl,
       'updateCallLinkRestrictions() missing SFU URL; not update call link restrictions'
     );
-    const sfuUrl = this._sfuUrl;
+    const { sfuUrl } = this;
     const logId = `updateCallLinkRestrictions(${callLink.roomId})`;
 
     log.info(`${logId}: Updating call link restrictions`);
@@ -1043,7 +1060,7 @@ export class CallingClass {
   async readCallLink(
     callLinkRootKey: CallLinkRootKey
   ): Promise<CallLinkStateType | null> {
-    if (!this._sfuUrl) {
+    if (!this.sfuUrl) {
       throw new Error('readCallLink() missing SFU URL; not handling call link');
     }
 
@@ -1055,7 +1072,7 @@ export class CallingClass {
       await getCallLinkAuthCredentialPresentation(callLinkRootKey);
 
     const result = await RingRTC.readCallLink(
-      this._sfuUrl,
+      this.sfuUrl,
       authCredentialPresentation.serialize(),
       callLinkRootKey
     );
@@ -1078,7 +1095,7 @@ export class CallingClass {
     preferLocalVideo = true,
   }: Readonly<{
     callLinkRootKey: CallLinkRootKey;
-    adminPasskey: Uint8Array | undefined;
+    adminPasskey: Uint8Array<ArrayBuffer> | undefined;
     hasLocalAudio: boolean;
     preferLocalVideo?: boolean;
   }>): Promise<
@@ -1304,7 +1321,7 @@ export class CallingClass {
       return statefulPeekInfo;
     }
 
-    if (!this._sfuUrl) {
+    if (!this.sfuUrl) {
       throw new Error('Missing SFU URL; not peeking group call');
     }
 
@@ -1327,7 +1344,7 @@ export class CallingClass {
     const membershipProof = Bytes.fromString(proof);
 
     return RingRTC.peekGroupCall(
-      this._sfuUrl,
+      this.sfuUrl,
       membershipProof,
       this.#getGroupCallMembers(conversationId)
     );
@@ -1349,7 +1366,7 @@ export class CallingClass {
       );
     }
 
-    if (!this._sfuUrl) {
+    if (!this.sfuUrl) {
       throw new Error('Missing SFU URL; not peeking call link call');
     }
 
@@ -1358,7 +1375,7 @@ export class CallingClass {
       await getCallLinkAuthCredentialPresentation(callLinkRootKey);
 
     const result = await RingRTC.peekCallLinkCall(
-      this._sfuUrl,
+      this.sfuUrl,
       authCredentialPresentation.serialize(),
       callLinkRootKey
     );
@@ -1401,7 +1418,7 @@ export class CallingClass {
       return existing;
     }
 
-    if (!this._sfuUrl) {
+    if (!this.sfuUrl) {
       throw new Error('Missing SFU URL; not connecting group call');
     }
 
@@ -1409,16 +1426,16 @@ export class CallingClass {
     log.info(logId);
 
     const groupIdBuffer = Bytes.fromBase64(groupId);
-    const dredDuration = 0;
 
     let isRequestingMembershipProof = false;
+    const config = this.#getRemoteAndOverrideConfigValues();
 
     const outerGroupCall = RingRTC.getGroupCall(
       groupIdBuffer,
-      this._sfuUrl,
+      this.sfuUrl,
       new Uint8Array(),
       AUDIO_LEVEL_INTERVAL_MS,
-      dredDuration,
+      config.dredDuration,
       {
         ...this.#getGroupCallObserver(conversationId, CallMode.Group),
         async requestMembershipProof(groupCall) {
@@ -1468,8 +1485,8 @@ export class CallingClass {
     roomId: string;
     authCredentialPresentation: CallLinkAuthCredentialPresentation;
     callLinkRootKey: CallLinkRootKey;
-    adminPasskey: Uint8Array | undefined;
-    endorsementsPublicKey: Uint8Array;
+    adminPasskey: Uint8Array<ArrayBuffer> | undefined;
+    endorsementsPublicKey: Uint8Array<ArrayBuffer>;
   }): GroupCall {
     const existing = this.#getGroupCall(roomId);
     if (existing) {
@@ -1485,23 +1502,22 @@ export class CallingClass {
     const logId = `connectCallLinkCall(${roomId}`;
     log.info(logId);
 
-    if (!this._sfuUrl) {
+    if (!this.sfuUrl) {
       throw new Error(
         `${logId}: Missing SFU URL; not connecting group call link call`
       );
     }
-
-    const dredDuration = 0;
+    const config = this.#getRemoteAndOverrideConfigValues();
 
     const outerGroupCall = RingRTC.getCallLinkCall(
-      this._sfuUrl,
+      this.sfuUrl,
       endorsementsPublicKey,
       authCredentialPresentation.serialize(),
       callLinkRootKey,
       adminPasskey,
       new Uint8Array(),
       AUDIO_LEVEL_INTERVAL_MS,
-      dredDuration,
+      config.dredDuration,
       this.#getGroupCallObserver(roomId, CallMode.Adhoc)
     );
 
@@ -1867,7 +1883,13 @@ export class CallingClass {
     const ourAci = itemStorage.user.getCheckedAci();
     const reason = `sendProfileKeysForAdhocCall(${roomId})`;
     peekInfo.devices.forEach(async device => {
-      const aci = device.userId ? this.#formatUserId(device.userId) : null;
+      let aci: AciString | null = null;
+
+      if (device.userId) {
+        // @ts-expect-error needs ringrtc update
+        const userIdBytes: Uint8Array<ArrayBuffer> = device.userId;
+        aci = this.#formatUserId(userIdBytes);
+      }
       if (
         !aci ||
         aci === ourAci ||
@@ -2137,7 +2159,7 @@ export class CallingClass {
     }
   }
 
-  #formatUserId(userId: Uint8Array): AciString | null {
+  #formatUserId(userId: Uint8Array<ArrayBuffer>): AciString | null {
     const uuid = bytesToUuid(userId);
     if (uuid && isAciString(uuid)) {
       return uuid;
@@ -2152,11 +2174,20 @@ export class CallingClass {
   public formatGroupCallPeekInfoForRedux(
     peekInfo: PeekInfo
   ): GroupCallPeekInfoType {
-    const creatorAci = peekInfo.creator && bytesToUuid(peekInfo.creator);
+    let creatorAci: string | undefined;
+
+    if (peekInfo.creator) {
+      // @ts-expect-error needs ringrtc update
+      const creatorBytes: Uint8Array<ArrayBuffer> = peekInfo.creator;
+      creatorAci = bytesToUuid(creatorBytes);
+    }
+
     return {
       acis: peekInfo.devices.map(peekDeviceInfo => {
         if (peekDeviceInfo.userId) {
-          const uuid = this.#formatUserId(peekDeviceInfo.userId);
+          // @ts-expect-error needs ringrtc update
+          const userIdBytes: Uint8Array<ArrayBuffer> = peekDeviceInfo.userId;
+          const uuid = this.#formatUserId(userIdBytes);
           if (uuid) {
             return uuid;
           }
@@ -2171,7 +2202,11 @@ export class CallingClass {
         );
       }),
       pendingAcis: compact(
-        peekInfo.pendingUsers.map(userId => this.#formatUserId(userId))
+        peekInfo.pendingUsers.map(userId => {
+          // @ts-expect-error needs ringrtc update;
+          const userIdBytes: Uint8Array<ArrayBuffer> = userId;
+          return this.#formatUserId(userIdBytes);
+        })
       ),
       creatorAci:
         creatorAci !== undefined
@@ -2217,7 +2252,9 @@ export class CallingClass {
         ? this.formatGroupCallPeekInfoForRedux(peekInfo)
         : undefined,
       remoteParticipants: remoteDeviceStates.map(remoteDeviceState => {
-        let aci = bytesToUuid(remoteDeviceState.userId);
+        // @ts-expect-error needs ringrtc update
+        const userIdBytes: Uint8Array<ArrayBuffer> = remoteDeviceState.userId;
+        let aci = bytesToUuid(userIdBytes);
         if (!aci) {
           log.error(
             'formatGroupCallForRedux: could not convert remote participant UUID Uint8Array to string; using fallback UUID'
@@ -2814,27 +2851,38 @@ export class CallingClass {
       return false;
     }
     for (let i = 0; i < a.availableCameras.length; i += 1) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const aCamera = a.availableCameras[i]!;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const bCamera = a.availableCameras[i]!;
       if (
-        a.availableCameras[i].deviceId !== b.availableCameras[i].deviceId ||
-        a.availableCameras[i].groupId !== b.availableCameras[i].groupId ||
-        a.availableCameras[i].label !== b.availableCameras[i].label
+        aCamera.deviceId !== bCamera.deviceId ||
+        aCamera.groupId !== bCamera.groupId ||
+        aCamera.label !== bCamera.label
       ) {
         return false;
       }
     }
     for (let i = 0; i < a.availableMicrophones.length; i += 1) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const aMicrophone = a.availableMicrophones[i]!;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const bMicrophone = b.availableMicrophones[i]!;
       if (
-        a.availableMicrophones[i].name !== b.availableMicrophones[i].name ||
-        a.availableMicrophones[i].uniqueId !==
-          b.availableMicrophones[i].uniqueId
+        aMicrophone.name !== bMicrophone.name ||
+        aMicrophone.uniqueId !== bMicrophone.uniqueId
       ) {
         return false;
       }
     }
     for (let i = 0; i < a.availableSpeakers.length; i += 1) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const aSpeaker = a.availableSpeakers[i]!;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const bSpeaker = b.availableSpeakers[i]!;
       if (
-        a.availableSpeakers[i].name !== b.availableSpeakers[i].name ||
-        a.availableSpeakers[i].uniqueId !== b.availableSpeakers[i].uniqueId
+        aSpeaker.name !== bSpeaker.name ||
+        aSpeaker.uniqueId !== bSpeaker.uniqueId
       ) {
         return false;
       }
@@ -3214,8 +3262,8 @@ export class CallingClass {
   }
 
   async #handleSendCallMessage(
-    recipient: Uint8Array,
-    data: Uint8Array,
+    recipient: Uint8Array<ArrayBuffer>,
+    data: Uint8Array<ArrayBuffer>,
     urgency: CallMessageUrgency
   ): Promise<boolean> {
     const userId = bytesToUuid(recipient);
@@ -3231,10 +3279,10 @@ export class CallingClass {
 
   // Used to send a variety of group call messages, including the initial call message
   async #handleSendCallMessageToGroup(
-    groupIdBytes: Uint8Array,
-    data: Uint8Array,
+    groupIdBytes: Uint8Array<ArrayBuffer>,
+    data: Uint8Array<ArrayBuffer>,
     urgency: CallMessageUrgency,
-    overrideRecipients: Array<Uint8Array> = []
+    overrideRecipients: Array<Uint8Array<ArrayBuffer>> = []
   ): Promise<boolean> {
     const groupId = Bytes.toBase64(groupIdBytes);
     const conversation = window.ConversationController.get(groupId);
@@ -3302,9 +3350,9 @@ export class CallingClass {
   }
 
   async #handleGroupCallRingUpdate(
-    groupIdBytes: Uint8Array,
+    groupIdBytes: Uint8Array<ArrayBuffer>,
     ringId: bigint,
-    ringerBytes: Uint8Array,
+    ringerBytes: Uint8Array<ArrayBuffer>,
     update: RingUpdate
   ): Promise<void> {
     log.info(`handleGroupCallRingUpdate(): got ring update ${update}`);
@@ -3762,7 +3810,7 @@ export class CallingClass {
     url: string,
     method: HttpMethod,
     headers: { [name: string]: string },
-    body: Uint8Array | undefined
+    body: Uint8Array<ArrayBuffer> | undefined
   ) {
     const httpMethod = RINGRTC_HTTP_METHOD_TO_OUR_HTTP_METHOD.get(method);
     if (httpMethod === undefined) {
@@ -3820,6 +3868,59 @@ export class CallingClass {
     return null;
   }
 
+  #getRemoteAndOverrideConfigValues(): {
+    dredDuration: number | undefined;
+    isDirectVp9Enabled: boolean | undefined;
+    directMaxBitrate: number | undefined;
+    isGroupVp9Enabled: boolean | undefined;
+    groupMaxBitrate: number | undefined;
+  } {
+    function dredDuration(version: string): number | undefined {
+      const override = itemStorage.get('dredDuration');
+      if (override) {
+        return override;
+      }
+
+      if (isProduction(version)) {
+        return tryParseInt(
+          RemoteConfig.getValue('desktop.calling.dredDuration.prod')
+        );
+      }
+
+      if (isBeta(version)) {
+        return tryParseInt(
+          RemoteConfig.getValue('desktop.calling.dredDuration.beta')
+        );
+      }
+
+      if (isAlpha(version)) {
+        return tryParseInt(
+          RemoteConfig.getValue('desktop.calling.dredDuration.alpha')
+        );
+      }
+
+      return undefined;
+    }
+
+    function tryParseInt(v: string | undefined): number | undefined {
+      try {
+        return parseIntOrThrow(v, 'invalid');
+      } catch (e) {
+        return undefined;
+      }
+    }
+
+    const version = window.SignalContext.getVersion();
+
+    return {
+      dredDuration: dredDuration(version),
+      isDirectVp9Enabled: itemStorage.get('isDirectVp9Enabled'),
+      directMaxBitrate: itemStorage.get('directMaxBitrate'),
+      isGroupVp9Enabled: itemStorage.get('isGroupVp9Enabled'),
+      groupMaxBitrate: itemStorage.get('directMaxBitrate'),
+    };
+  }
+
   async #getIceServers(): Promise<Array<IceServerType>> {
     function iceServerConfigToList(
       iceServerConfig: GetIceServersResultType
@@ -3875,11 +3976,15 @@ export class CallingClass {
     if (this._iceServerOverride) {
       if (typeof this._iceServerOverride === 'string') {
         if (ICE_SERVER_IS_IP_LIKE.test(this._iceServerOverride)) {
-          iceServers[0].urls = [this._iceServerOverride];
-          iceServers = [iceServers[0]];
+          const iceServer = iceServers[0];
+          strictAssert(iceServer, 'Missing iceServers[0]');
+          iceServer.urls = [this._iceServerOverride];
+          iceServers = [iceServer];
         } else {
-          iceServers[1].urls = [this._iceServerOverride];
-          iceServers = [iceServers[1]];
+          const iceServer = iceServers[1];
+          strictAssert(iceServer, 'Missing iceServers[1]');
+          iceServer.urls = [this._iceServerOverride];
+          iceServers = [iceServer];
         }
       } else {
         iceServers = iceServerConfigToList(this._iceServerOverride);
@@ -3917,6 +4022,7 @@ export class CallingClass {
     }
 
     const iceServers = await this.#getIceServers();
+    const config = this.#getRemoteAndOverrideConfigValues();
 
     // We do this again, since getIceServers is a call that can take some time
     if (call.endedReason) {
@@ -3937,7 +4043,7 @@ export class CallingClass {
       hideIp: shouldRelayCalls || isContactUntrusted,
       dataMode: DataMode.Normal,
       audioLevelsIntervalMillis: AUDIO_LEVEL_INTERVAL_MS,
-      dredDuration: 0,
+      dredDuration: config.dredDuration,
     };
 
     log.info('CallingClass.handleStartCall(): Proceeding');

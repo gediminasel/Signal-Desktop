@@ -157,6 +157,12 @@ export function CallingPip({
   const [width, setWidth] = React.useState(
     isWindowLarge ? PIP_WIDTH_LARGE : PIP_WIDTH_NORMAL
   );
+  const [localVideoWidth, setLocalVideoWidth] = React.useState(
+    isWindowLarge ? LOCAL_VIDEO_LARGE_WIDTH : LOCAL_VIDEO_NORMAL_WIDTH
+  );
+  const [localVideoHeight, setLocalVideoHeight] = React.useState(
+    isWindowLarge ? LOCAL_VIDEO_LARGE_HEIGHT : LOCAL_VIDEO_NORMAL_HEIGHT
+  );
   const realHeight = height * pipSizeMult;
   const realWidth = width * pipSizeMult;
 
@@ -203,7 +209,7 @@ export function CallingPip({
         distanceToRightEdge = innerWidth - (offsetX + realWidth);
       }
 
-      const snapCandidates: Array<SnapCandidate> = [
+      const snapCandidates = [
         {
           mode: PositionMode.SnapToLeft,
           distanceToEdge: distanceToLeftEdge,
@@ -220,7 +226,7 @@ export function CallingPip({
           mode: PositionMode.SnapToBottom,
           distanceToEdge: innerHeight - (offsetY + realHeight),
         },
-      ];
+      ] as const satisfies Array<SnapCandidate>;
 
       // This fallback is mostly for TypeScript, because `minBy` says it can return
       //   `undefined`.
@@ -244,7 +250,7 @@ export function CallingPip({
           });
           break;
         default:
-          throw missingCaseError(snapTo.mode);
+          throw missingCaseError(snapTo);
       }
     }
   }, [realHeight, realWidth, isRTL, positionState, setPositionState]);

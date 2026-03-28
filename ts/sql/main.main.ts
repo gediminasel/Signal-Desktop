@@ -45,13 +45,27 @@ export type WorkerRequest = Readonly<
     }
   | {
       type: 'sqlCall:read';
+      encoding: 'js';
       method: keyof ServerReadableDirectInterface;
       args: ReadonlyArray<unknown>;
     }
   | {
+      type: 'sqlCall:read';
+      encoding: 'serialized';
+      method: keyof ServerReadableDirectInterface;
+      data: Uint8Array<ArrayBuffer>;
+    }
+  | {
       type: 'sqlCall:write';
+      encoding: 'js';
       method: keyof ServerWritableDirectInterface;
       args: ReadonlyArray<unknown>;
+    }
+  | {
+      type: 'sqlCall:write';
+      encoding: 'serialized';
+      method: keyof ServerWritableDirectInterface;
+      data: Uint8Array<ArrayBuffer>;
     }
 >;
 
@@ -171,6 +185,7 @@ export class MainSQL {
 
     this.#onReady = (async () => {
       const primary = this.#pool[0];
+      strictAssert(primary, 'Missing primary');
       const rest = this.#pool.slice(1);
 
       await this.#send(primary, {
@@ -271,26 +286,56 @@ export class MainSQL {
     method: Method,
     ...args: Parameters<ServerReadableDirectInterface[Method]>
   ): Promise<ReturnType<ServerReadableDirectInterface[Method]>> {
+    return this.#sqlRead({
+      type: 'sqlCall:read',
+      method,
+      encoding: 'js',
+      args,
+    }) as Promise<ReturnType<ServerReadableDirectInterface[Method]>>;
+  }
+
+  public async sqlReadSerialized<
+    Method extends keyof ServerReadableDirectInterface,
+  >(
+    method: Method,
+    data: Uint8Array<ArrayBuffer>
+  ): Promise<Uint8Array<ArrayBuffer>> {
+    return this.#sqlRead({
+      type: 'sqlCall:read',
+      method,
+      encoding: 'serialized',
+      data,
+    }) as Promise<Uint8Array<ArrayBuffer>>;
+  }
+
+  async #sqlRead(
+    request: Extract<WorkerRequest, { type: 'sqlCall:read' }>
+  ): Promise<unknown> {
     type SqlCallResult = Readonly<{
-      result: ReturnType<ServerReadableDirectInterface[Method]>;
+      result: unknown;
       duration: number;
     }>;
+
+    if (request.method === 'pageBackupMessages' && this.#pauseWaiters == null) {
+      throw new Error(
+        'pageBackupMessages can only run after pauseWriteAccess()'
+      );
+    }
 
     // pageMessages runs over several queries and needs to have access to
     // the same temporary table, it also creates temporary insert/update
     // triggers so it has to run on the same connection that updates the tables
-    const isPaging = PAGING_QUERIES.has(method);
+    const isPaging = PAGING_QUERIES.has(request.method);
 
     const entry = isPaging ? this.#pool[0] : this.#getWorker();
     strictAssert(entry != null, 'Must have a pool entry');
 
-    const { result, duration } = await this.#send<SqlCallResult>(entry, {
-      type: 'sqlCall:read',
-      method,
-      args,
-    });
+    const { result, duration } = await this.#send<SqlCallResult>(
+      entry,
+      request
+    );
 
-    this.#traceDuration(method, duration);
+    this.#traceDuration(request.method, duration);
 
     return result;
   }
@@ -299,9 +344,33 @@ export class MainSQL {
     method: Method,
     ...args: Parameters<ServerWritableDirectInterface[Method]>
   ): Promise<ReturnType<ServerWritableDirectInterface[Method]>> {
-    type Result = ReturnType<ServerWritableDirectInterface[Method]>;
+    return this.#sqlWrite({
+      type: 'sqlCall:write',
+      method,
+      encoding: 'js',
+      args,
+    }) as Promise<ReturnType<ServerWritableDirectInterface[Method]>>;
+  }
+
+  public async sqlWriteSerialized<
+    Method extends keyof ServerWritableDirectInterface,
+  >(
+    method: Method,
+    data: Uint8Array<ArrayBuffer>
+  ): Promise<Uint8Array<ArrayBuffer>> {
+    return this.#sqlWrite({
+      type: 'sqlCall:write',
+      method,
+      encoding: 'serialized',
+      data,
+    }) as Promise<Uint8Array<ArrayBuffer>>;
+  }
+
+  async #sqlWrite(
+    request: Extract<WorkerRequest, { type: 'sqlCall:write' }>
+  ): Promise<unknown> {
     type SqlCallResult = Readonly<{
-      result: Result;
+      result: unknown;
       duration: number;
     }>;
 
@@ -313,14 +382,14 @@ export class MainSQL {
     }
 
     const primary = this.#pool[0];
+    strictAssert(primary, 'Missing primary');
 
-    const { result, duration } = await this.#send<SqlCallResult>(primary, {
-      type: 'sqlCall:write',
-      method,
-      args,
-    });
+    const { result, duration } = await this.#send<SqlCallResult>(
+      primary,
+      request
+    );
 
-    this.#traceDuration(method, duration);
+    this.#traceDuration(request.method, duration);
 
     return result;
   }
@@ -387,6 +456,8 @@ export class MainSQL {
 
   async #terminate(request: WorkerRequest): Promise<void> {
     const primary = this.#pool[0];
+    strictAssert(primary, 'Missing primary');
+
     const rest = this.#pool.slice(1);
 
     // Terminate non-primary workers first
@@ -526,6 +597,8 @@ export class MainSQL {
   // Find first pool entry with minimal load
   #getWorker(): PoolEntry {
     let min = this.#pool[0];
+    strictAssert(min, 'Missing min');
+
     for (const entry of this.#pool) {
       if (min && min.load < entry.load) {
         continue;

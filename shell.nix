@@ -5,8 +5,13 @@
 let
 in
 pkgs.mkShell {
-  buildInputs = [
-    pkgs.nodejs_24
-    pkgs.pnpm_10
+  buildInputs = with pkgs; [
+    nodejs_24
+    pnpm_10
+    jq
+    nix-update
+    nix-direnv
+    nixVersions.latest
+    gclient2nix
   ];
 }

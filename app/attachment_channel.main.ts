@@ -25,6 +25,7 @@ import { access } from 'node:fs/promises';
 import {
   type DecryptAttachmentToSinkOptionsType,
   decryptAttachmentV2ToSink,
+  type IntegrityCheckType,
 } from '../ts/AttachmentCrypto.node.js';
 import * as Bytes from '../ts/Bytes.std.js';
 import type { MessageAttachmentsCursorType } from '../ts/sql/Interface.std.js';
@@ -68,6 +69,7 @@ import {
   getStickersPath,
   getTempPath,
 } from './attachments.node.js';
+import { isValidDigest, isValidPlaintextHash } from '../ts/types/Crypto.std.js';
 
 const { isNumber } = lodash;
 
@@ -98,8 +100,8 @@ type RangeFinderContextType = Readonly<
       }
     | {
         type: 'incremental';
-        digest: Uint8Array;
-        incrementalMac: Uint8Array;
+        integrityCheck: IntegrityCheckType;
+        incrementalMac: Uint8Array<ArrayBuffer>;
         chunkSize: number;
         keysBase64: string;
         size: number;
@@ -113,8 +115,8 @@ type RangeFinderContextType = Readonly<
 >;
 
 type DigestLRUEntryType = Readonly<{
-  key: Buffer;
-  digest: Uint8Array;
+  key: Buffer<ArrayBuffer>;
+  digest: Uint8Array<ArrayBuffer>;
 }>;
 
 const digestLRU = new LRUCache<string, DigestLRUEntryType>({
@@ -154,10 +156,7 @@ async function safeDecryptToSink(
         theirChunkSize: ctx.chunkSize,
         theirIncrementalMac: ctx.incrementalMac,
         type: 'standard',
-        integrityCheck: {
-          type: 'encrypted',
-          digest: ctx.digest,
-        },
+        integrityCheck: ctx.integrityCheck,
       };
 
       const controller = new AbortController();
@@ -703,9 +702,26 @@ export async function handleAttachmentRequest(req: Request): Promise<Response> {
       // When trying to view in-progress downloads, we need more information
       // to validate the file before returning data.
 
-      const digestBase64 = url.searchParams.get('digest');
-      if (digestBase64 == null) {
-        return new Response('Missing digest', { status: 400 });
+      const digestBase64 = url.searchParams.get('digest') ?? undefined;
+      const plaintextHashHex =
+        url.searchParams.get('plaintextHash') ?? undefined;
+
+      let integrityCheck: IntegrityCheckType;
+
+      if (isValidPlaintextHash(plaintextHashHex)) {
+        integrityCheck = {
+          type: 'plaintext',
+          plaintextHash: Bytes.fromHex(plaintextHashHex),
+        };
+      } else if (isValidDigest(digestBase64)) {
+        integrityCheck = {
+          type: 'encrypted',
+          digest: Bytes.fromBase64(digestBase64),
+        };
+      } else {
+        return new Response('Missing/invalid plaintextHash or digest', {
+          status: 400,
+        });
       }
 
       const incrementalMacBase64 = url.searchParams.get('incrementalMac');
@@ -724,7 +740,7 @@ export async function handleAttachmentRequest(req: Request): Promise<Response> {
       context = {
         type: 'incremental',
         chunkSize,
-        digest: Bytes.fromBase64(digestBase64),
+        integrityCheck,
         incrementalMac: Bytes.fromBase64(incrementalMacBase64),
         keysBase64,
         path,
@@ -792,11 +808,10 @@ function handleRangeRequest({
 
   // Chromium only sends open-ended ranges: "start-"
   const match = range.match(/^bytes=(\d+)-$/);
-  if (match == null) {
+  if (match == null || match[1] == null) {
     log.error(`invalid range header: ${range}`);
     return create200Response();
   }
-
   const startParam = safeParseInteger(match[1]);
   if (startParam == null) {
     log.error(`invalid range header: ${range}`);

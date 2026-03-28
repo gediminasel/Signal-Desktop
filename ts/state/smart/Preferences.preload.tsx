@@ -29,7 +29,6 @@ import {
   setPhoneNumberDiscoverability,
 } from '../../textsecure/WebAPI.preload.js';
 import { DEFAULT_CONVERSATION_COLOR } from '../../types/Colors.std.js';
-import { isChatFoldersEnabled } from '../../util/isChatFoldersEnabled.dom.js';
 import { saveAttachmentToDisk } from '../../util/migrations.preload.js';
 import { format } from '../../types/PhoneNumber.std.js';
 import {
@@ -61,7 +60,7 @@ import { writeProfile } from '../../services/writeProfile.preload.js';
 import { keyTransparency } from '../../services/keyTransparency.preload.js';
 import { getConversation } from '../../util/getConversation.preload.js';
 import { waitForEvent } from '../../shims/events.dom.js';
-import { DAY, MINUTE } from '../../util/durations/index.std.js';
+import { DAY } from '../../util/durations/index.std.js';
 import { sendSyncRequests } from '../../textsecure/syncRequests.preload.js';
 import { SmartUpdateDialog } from './UpdateDialog.preload.js';
 import { Preferences } from '../../components/Preferences.dom.js';
@@ -80,7 +79,6 @@ import { renderToastManagerWithoutMegaphone } from './ToastManager.preload.js';
 import { useToastActions } from '../ducks/toast.preload.js';
 import { DataReader, DataWriter } from '../../sql/Client.preload.js';
 import { deleteAllMyStories } from '../../util/deleteAllMyStories.preload.js';
-import { isLocalBackupsEnabled } from '../../util/isLocalBackupsEnabled.dom.js';
 import { SmartPreferencesDonations } from './PreferencesDonations.preload.js';
 import { useDonationsActions } from '../ducks/donations.preload.js';
 import { generateDonationReceiptBlob } from '../../util/generateDonationReceipt.dom.js';
@@ -102,10 +100,7 @@ import {
 } from './PreferencesNotificationProfiles.preload.js';
 
 import type { SettingsLocation } from '../../types/Nav.std.js';
-import type {
-  StorageAccessType,
-  ZoomFactorType,
-} from '../../types/Storage.d.ts';
+import type { StorageAccessType } from '../../types/Storage.d.ts';
 import type { ThemeType } from '../../util/preload.preload.js';
 import type { WidthBreakpoint } from '../../components/_util.std.js';
 import { DialogType } from '../../types/Dialogs.std.js';
@@ -121,6 +116,8 @@ import type { SmartPreferencesChatFoldersPageProps } from './PreferencesChatFold
 import type { SmartPreferencesEditChatFolderPageProps } from './PreferencesEditChatFolderPage.preload.js';
 import type { ExternalProps as SmartNotificationProfilesProps } from './PreferencesNotificationProfiles.preload.js';
 import { useMegaphonesActions } from '../ducks/megaphones.preload.js';
+import type { ZoomFactorType } from '../../types/StorageKeys.std.js';
+import { isLocalBackupsEnabled } from '../../util/isLocalBackupsEnabled.preload.js';
 
 const DEFAULT_NOTIFICATION_SETTING = 'message';
 
@@ -261,10 +258,7 @@ export function SmartPreferences(): React.JSX.Element | null {
   // The weird ones
 
   const makeSyncRequest = async () => {
-    const contactSyncComplete = waitForEvent(
-      'contactSync:complete',
-      5 * MINUTE
-    );
+    const contactSyncComplete = waitForEvent('contactSync:complete');
     return Promise.all([sendSyncRequests(), contactSyncComplete]);
   };
 
@@ -582,7 +576,10 @@ export function SmartPreferences(): React.JSX.Element | null {
     Settings.isContentProtectionSupported(OS);
   const isContentProtectionNeeded = Settings.isContentProtectionNeeded(OS);
 
-  const backupLocalBackupsEnabled = isLocalBackupsEnabled(items.remoteConfig);
+  const backupLocalBackupsEnabled = isLocalBackupsEnabled({
+    currentVersion: version,
+    remoteConfig: items.remoteConfig,
+  });
   const backupFreeMediaDays = getMessageQueueTime(items.remoteConfig) / DAY;
 
   const isPlaintextExportEnabled = isFeaturedEnabledSelector({
@@ -606,7 +603,8 @@ export function SmartPreferences(): React.JSX.Element | null {
     defaultValue: StorageAccessType[K],
     callback?: (value: StorageAccessType[K]) => void
   ): [StorageAccessType[K], (value: StorageAccessType[K]) => void] {
-    const value = items[key] ?? defaultValue;
+    const value =
+      (items[key] as StorageAccessType[K] | undefined) ?? defaultValue;
     const setter = (newValue: StorageAccessType[K]) => {
       putItem(key, newValue);
       callback?.(newValue);
@@ -782,6 +780,25 @@ export function SmartPreferences(): React.JSX.Element | null {
     drop(itemStorage.put('cqsTestMode', value));
   }, []);
 
+  const setDredDuration = useCallback((value: number | undefined) => {
+    drop(itemStorage.put('dredDuration', value));
+  }, []);
+  const setIsDirectVp9Enabled = useCallback((value: boolean | undefined) => {
+    drop(itemStorage.put('isDirectVp9Enabled', value));
+  }, []);
+  const setDirectMaxBitrate = useCallback((value: number | undefined) => {
+    drop(itemStorage.put('directMaxBitrate', value));
+  }, []);
+  const setIsGroupVp9Enabled = useCallback((value: boolean | undefined) => {
+    drop(itemStorage.put('isGroupVp9Enabled', value));
+  }, []);
+  const setGroupMaxBitrate = useCallback((value: number | undefined) => {
+    drop(itemStorage.put('groupMaxBitrate', value));
+  }, []);
+  const setSfuUrl = useCallback((value: string | undefined) => {
+    drop(itemStorage.put('sfuUrl', value));
+  }, []);
+
   if (currentLocation.tab !== NavTab.Settings) {
     return null;
   }
@@ -823,7 +840,6 @@ export function SmartPreferences(): React.JSX.Element | null {
           backupLocalBackupsEnabled={backupLocalBackupsEnabled}
           badge={badge}
           blockedCount={blockedCount}
-          chatFoldersFeatureEnabled={isChatFoldersEnabled(version)}
           currentChatFoldersCount={currentChatFoldersCount}
           cloudBackupStatus={cloudBackupStatus}
           customColors={customColors}
@@ -997,6 +1013,18 @@ export function SmartPreferences(): React.JSX.Element | null {
           }
           cqsTestMode={cqsTestMode}
           setCqsTestMode={setCqsTestMode}
+          dredDuration={items.dredDuration}
+          setDredDuration={setDredDuration}
+          setIsDirectVp9Enabled={setIsDirectVp9Enabled}
+          isDirectVp9Enabled={items.isDirectVp9Enabled}
+          setDirectMaxBitrate={setDirectMaxBitrate}
+          directMaxBitrate={items.directMaxBitrate}
+          setIsGroupVp9Enabled={setIsGroupVp9Enabled}
+          isGroupVp9Enabled={items.isGroupVp9Enabled}
+          setGroupMaxBitrate={setGroupMaxBitrate}
+          groupMaxBitrate={items.groupMaxBitrate}
+          sfuUrl={items.sfuUrl}
+          setSfuUrl={setSfuUrl}
         />
       </AxoProvider>
     </StrictMode>

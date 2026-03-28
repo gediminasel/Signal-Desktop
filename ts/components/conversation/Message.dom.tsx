@@ -109,7 +109,7 @@ import { getColorForCallLink } from '../../util/getColorForCallLink.std.js';
 import { getKeyFromCallLink } from '../../util/callLinks.std.js';
 import { InAnotherCallTooltip } from './InAnotherCallTooltip.dom.js';
 import { formatFileSize } from '../../util/formatFileSize.std.js';
-import { assertDev } from '../../util/assert.std.js';
+import { assertDev, strictAssert } from '../../util/assert.std.js';
 import { AttachmentStatusIcon } from './AttachmentStatusIcon.dom.js';
 import { TapToViewNotAvailableType } from '../TapToViewNotAvailableModal.dom.js';
 import type { DataPropsType as TapToViewNotAvailablePropsType } from '../TapToViewNotAvailableModal.dom.js';
@@ -183,6 +183,8 @@ export enum MessageInteractivity {
   Static = 'Static',
   /** Enable some interactions for embedded messages (ex: PinnedMessagesPanel) */
   Embed = 'Embed',
+  /** Hidden, like in a collapsed CollapseSet */
+  Hidden = 'Hidden',
 }
 
 export type AudioAttachmentProps = {
@@ -371,7 +373,7 @@ export type PropsData = {
 };
 
 export type PropsHousekeeping = {
-  containerElementRef: RefObject<HTMLElement>;
+  containerElementRef: RefObject<HTMLElement | null>;
   containerWidthBreakpoint: WidthBreakpoint;
   disableScroll?: boolean;
   getPreferredBadge: PreferredBadgeSelectorType;
@@ -496,17 +498,19 @@ const MessageReactions = forwardRef(function MessageReactions(
   const reactionsContainerRefMerger = useRef(createRefMerger());
 
   // Take the first three groups for rendering
-  const toRender = take(ordered, 3).map(res => {
-    const isMe = res.some(re => Boolean(re.from.isMe));
-    const count = res.length;
-    const { emoji } = res[0];
+  const toRender = take(ordered, 3).map(group => {
+    const isMe = group.some(re => Boolean(re.from.isMe));
+    const count = group.length;
+    const firstReaction = group[0];
+    strictAssert(firstReaction, 'Missing firstReaction');
+    const { emoji } = firstReaction;
 
     let label: string;
     if (isMe) {
       label = i18n('icu:Message__reaction-emoji-label--you', { emoji });
     } else if (count === 1) {
       label = i18n('icu:Message__reaction-emoji-label--single', {
-        title: res[0].from.title,
+        title: firstReaction.from.title,
         emoji,
       });
     } else {
@@ -652,18 +656,19 @@ const MessageReactions = forwardRef(function MessageReactions(
 });
 
 export class Message extends React.PureComponent<Props, State> {
-  public focusRef: React.RefObject<HTMLDivElement> = React.createRef();
+  public focusRef: React.RefObject<HTMLDivElement | null> = React.createRef();
 
-  public audioButtonRef: React.RefObject<HTMLButtonElement> = React.createRef();
+  public audioButtonRef: React.RefObject<HTMLButtonElement | null> =
+    React.createRef();
 
-  public reactionsContainerRef: React.RefObject<HTMLDivElement> =
+  public reactionsContainerRef: React.RefObject<HTMLDivElement | null> =
     React.createRef();
 
   #hasSelectedTextRef: React.MutableRefObject<boolean> = {
     current: false,
   };
 
-  #metadataRef: React.RefObject<HTMLDivElement> = React.createRef();
+  #metadataRef: React.RefObject<HTMLDivElement | null> = React.createRef();
 
   public expirationCheckInterval: NodeJS.Timeout | undefined;
 
@@ -1581,7 +1586,6 @@ export class Message extends React.PureComponent<Props, State> {
         false,
         'renderAttachment(): Invalid case for permanently undownloadable attachment'
       );
-      return null;
     }
 
     const containerClassName = classNames(
@@ -2619,6 +2623,7 @@ export class Message extends React.PureComponent<Props, State> {
     }
 
     const onlyPreview = previews[0];
+    strictAssert(onlyPreview, 'Missing onlyPreview');
     return Boolean(onlyPreview.isCallLink);
   }
 
@@ -2627,6 +2632,7 @@ export class Message extends React.PureComponent<Props, State> {
 
     if (this.#shouldShowJoinButton()) {
       const firstPreview = previews[0];
+      strictAssert(firstPreview, 'Missing firstPreview');
       const inAnotherCall = Boolean(
         activeCallConversationId &&
         (!firstPreview.callLinkRoomId ||
@@ -2748,6 +2754,7 @@ export class Message extends React.PureComponent<Props, State> {
 
     if (previews && previews.length) {
       const first = previews[0];
+      strictAssert(first, 'Missing first');
       const { image } = first;
 
       return isImageAttachment(image);
@@ -2764,6 +2771,7 @@ export class Message extends React.PureComponent<Props, State> {
     }
 
     const first = attachments[0];
+    strictAssert(first, 'Missing first');
 
     return Boolean(first.pending);
   }
@@ -3292,6 +3300,7 @@ export class Message extends React.PureComponent<Props, State> {
       event.stopPropagation();
 
       const attachment = attachments[0];
+      strictAssert(attachment, 'Missing attachment');
 
       showLightbox({ attachment, messageId: id });
     }
@@ -3537,7 +3546,7 @@ export class Message extends React.PureComponent<Props, State> {
         'aria-checked': isSelected,
         'aria-labelledby': `message-accessibility-label:${id}`,
         'aria-describedby': `message-accessibility-description:${id}`,
-        tabIndex: 0,
+        tabIndex: interactivity !== MessageInteractivity.Hidden ? 0 : undefined,
         onClick: event => {
           event.preventDefault();
           onToggleSelect(!isSelected, event.shiftKey);

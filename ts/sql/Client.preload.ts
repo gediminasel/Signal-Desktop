@@ -19,7 +19,7 @@ import { assertDev, softAssert } from '../util/assert.std.js';
 import { mapObjectWithSpec } from '../util/mapObjectWithSpec.std.js';
 import { maybeDeleteAttachmentFile } from '../util/migrations.preload.js';
 import { cleanDataForIpc } from './cleanDataForIpc.std.js';
-import createTaskWithTimeout from '../textsecure/TaskWithTimeout.std.js';
+import { runTaskWithTimeout } from '../textsecure/TaskWithTimeout.std.js';
 import { isValidUuid, isValidUuidV7 } from '../util/isValidUuid.std.js';
 import { formatJobForInsert } from '../jobs/formatJobForInsert.std.js';
 import {
@@ -301,7 +301,7 @@ function specToBytes<Input, Output>(
   spec: ObjectMappingSpecType,
   data: Input
 ): Output {
-  return mapObjectWithSpec<string, Uint8Array>(spec, data, x =>
+  return mapObjectWithSpec<string, Uint8Array<ArrayBuffer>>(spec, data, x =>
     Bytes.fromBase64(x)
   );
 }
@@ -310,7 +310,7 @@ function specFromBytes<Input, Output>(
   spec: ObjectMappingSpecType,
   data: Input
 ): Output {
-  return mapObjectWithSpec<Uint8Array, string>(spec, data, x =>
+  return mapObjectWithSpec<Uint8Array<ArrayBuffer>, string>(spec, data, x =>
     Bytes.toBase64(x)
   );
 }
@@ -904,10 +904,10 @@ async function invokeWithTimeout(
   name: string,
   ...args: Array<unknown>
 ): Promise<void> {
-  return createTaskWithTimeout(
+  return runTaskWithTimeout(
     () => ipc.invoke(name, ...args),
     `callChannel call to ${name}`
-  )();
+  );
 }
 
 export function pauseWriteAccess(): Promise<void> {

@@ -3,6 +3,8 @@
 
 import React, { memo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import { isEqual } from 'lodash';
+
 import { Timeline } from '../../components/conversation/Timeline.dom.js';
 import { useCallingActions } from '../ducks/calling.preload.js';
 import { useConversationsActions } from '../ducks/conversations.preload.js';
@@ -17,48 +19,32 @@ import {
 } from '../selectors/conversations.dom.js';
 import { getSelectedConversationId } from '../selectors/nav.std.js';
 import { getIntl, getTheme } from '../selectors/user.std.js';
-import type { PropsType as SmartContactSpoofingReviewDialogPropsType } from './ContactSpoofingReviewDialog.preload.js';
 import { SmartContactSpoofingReviewDialog } from './ContactSpoofingReviewDialog.preload.js';
 import { SmartHeroRow } from './HeroRow.preload.js';
-import {
-  SmartTimelineItem,
-  type SmartTimelineItemProps,
-} from './TimelineItem.preload.js';
+import { SmartTimelineItem } from './TimelineItem.preload.js';
 import { SmartTypingBubble } from './TypingBubble.preload.js';
 import { AttachmentDownloadManager } from '../../jobs/AttachmentDownloadManager.preload.js';
-import { isInFullScreenCall as getIsInFullScreenCall } from '../selectors/calling.std.js';
+import {
+  getActiveCall,
+  getCallSelector,
+  isInFullScreenCall as getIsInFullScreenCall,
+} from '../selectors/calling.std.js';
+import { getMidnight } from '../../types/NotificationProfile.std.js';
+
+import type { PropsType as SmartContactSpoofingReviewDialogPropsType } from './ContactSpoofingReviewDialog.preload.js';
+import type { RenderItemProps } from './TimelineItem.preload.js';
+import { getCallHistorySelector } from '../selectors/callHistory.std.js';
+import { getCallIdFromEra } from '../../util/callDisposition.preload.js';
+import { mapItemsIntoCollapseSets } from '../../util/CollapseSet.std.js';
+import type { CollapseSet } from '../../util/CollapseSet.std.js';
 
 type ExternalProps = {
   id: string;
 };
 
-function renderItem({
-  containerElementRef,
-  containerWidthBreakpoint,
-  conversationId,
-  interactivity,
-  isBlocked,
-  isGroup,
-  isOldestTimelineItem,
-  messageId,
-  nextMessageId,
-  previousMessageId,
-  unreadIndicatorPlacement,
-}: SmartTimelineItemProps): React.JSX.Element {
+function renderItem(props: RenderItemProps): React.JSX.Element {
   return (
-    <SmartTimelineItem
-      containerElementRef={containerElementRef}
-      containerWidthBreakpoint={containerWidthBreakpoint}
-      conversationId={conversationId}
-      interactivity={interactivity}
-      isBlocked={isBlocked}
-      isGroup={isGroup}
-      isOldestTimelineItem={isOldestTimelineItem}
-      messageId={messageId}
-      previousMessageId={previousMessageId}
-      nextMessageId={nextMessageId}
-      unreadIndicatorPlacement={unreadIndicatorPlacement}
-    />
+    <SmartTimelineItem key={props.item.id} {...props} renderItem={renderItem} />
   );
 }
 
@@ -95,6 +81,9 @@ export const SmartTimeline = memo(function SmartTimeline({
   const isInFullScreenCall = useSelector(getIsInFullScreenCall);
   const conversation = conversationSelector(id);
   const conversationMessages = conversationMessagesSelector(id);
+  const callHistorySelector = useSelector(getCallHistorySelector);
+  const activeCall = useSelector(getActiveCall);
+  const callSelector = useSelector(getCallSelector);
 
   const {
     clearInvitedServiceIdsForNewlyCreatedGroup,
@@ -142,6 +131,56 @@ export const SmartTimeline = memo(function SmartTimeline({
     totalUnseen,
   } = conversationMessages;
 
+  const previousCollapseSet = React.useRef<Array<CollapseSet> | undefined>(
+    undefined
+  );
+  const midnightToday = getMidnight(Date.now());
+  const { collapseSets, updatedOldestLastSeenIndex, updatedScrollToIndex } =
+    React.useMemo(() => {
+      const result = mapItemsIntoCollapseSets({
+        activeCall,
+        allowMultidaySets: false,
+        callHistorySelector,
+        callSelector,
+        getCallIdFromEra,
+        items,
+        messages,
+        midnightToday,
+        oldestUnseenIndex,
+        scrollToIndex,
+      });
+
+      const { resultUnseenIndex, resultScrollToIndex } = result;
+      let { resultSets } = result;
+
+      // Params messages changes a lot, items less often, call selectors possibly a lot.
+      // But we need to massage items based on the values from these params. So, if we
+      // generate the same data, we would like to return the same object.
+      if (
+        previousCollapseSet.current &&
+        isEqual(resultSets, previousCollapseSet.current)
+      ) {
+        resultSets = previousCollapseSet.current;
+      }
+
+      previousCollapseSet.current = resultSets;
+
+      return {
+        collapseSets: resultSets,
+        updatedOldestLastSeenIndex: resultUnseenIndex,
+        updatedScrollToIndex: resultScrollToIndex,
+      };
+    }, [
+      activeCall,
+      callHistorySelector,
+      callSelector,
+      items,
+      messages,
+      midnightToday,
+      oldestUnseenIndex,
+      scrollToIndex,
+    ]);
+
   const isConversationSelected = selectedConversationId === id;
   const isIncomingMessageRequest =
     !acceptedMessageRequest && removalStage !== 'justNotification';
@@ -172,7 +211,7 @@ export const SmartTimeline = memo(function SmartTimeline({
       isIncomingMessageRequest={isIncomingMessageRequest}
       isNearBottom={isNearBottom}
       isSomeoneTyping={isSomeoneTyping}
-      items={items}
+      items={collapseSets}
       loadNewerMessages={loadNewerMessages}
       loadNewestMessages={loadNewestMessages}
       loadOlderMessages={loadOlderMessages}
@@ -183,12 +222,12 @@ export const SmartTimeline = memo(function SmartTimeline({
       updateVisibleMessages={
         AttachmentDownloadManager.updateVisibleTimelineMessages
       }
-      oldestUnseenIndex={oldestUnseenIndex}
+      oldestUnseenIndex={updatedOldestLastSeenIndex}
       renderContactSpoofingReviewDialog={renderContactSpoofingReviewDialog}
       renderHeroRow={renderHeroRow}
       renderItem={renderItem}
       renderTypingBubble={renderTypingBubble}
-      scrollToIndex={scrollToIndex}
+      scrollToIndex={updatedScrollToIndex}
       scrollToIndexCounter={scrollToIndexCounter}
       scrollToOldestUnreadMention={scrollToOldestUnreadMention}
       setCenterMessage={setCenterMessage}

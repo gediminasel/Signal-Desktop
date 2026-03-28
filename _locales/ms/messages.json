@@ -4032,22 +4032,22 @@
     "messageformat": "Seorang pentadbir telah mengubah orang yang dapat mengedit keahlian kumpulan kepada \"Semua ahli\"."
   },
   "icu:GroupV2--access-member-label--admins--you": {
-    "messageformat": "You changed who can add member labels to \"Only admins.\""
+    "messageformat": "Anda telah menukar orang yang boleh menambah label ahli kepada \"Hanya pentadbir.\""
   },
   "icu:GroupV2--access-member-label--admins--other": {
-    "messageformat": "{adminName} changed who can add member labels to \"Only admins.\""
+    "messageformat": "{adminName} mengubah orang yang boleh menambah label ahli kepada \"Hanya pentadbir.\""
   },
   "icu:GroupV2--access-member-label--admins--unknown": {
-    "messageformat": "An admin changed who can add member labels to \"Only admins.\""
+    "messageformat": "Pentadbir telah mengubah orang yang boleh menambah label ahli kepada \"Hanya pentadbir.\""
   },
   "icu:GroupV2--access-member-label--all--you": {
-    "messageformat": "You changed who can add member labels to \"All members.\""
+    "messageformat": "Anda mengubah orang yang boleh menambah label ahli kepada \"Semua ahli.\""
   },
   "icu:GroupV2--access-member-label--all--other": {
-    "messageformat": "{adminName} changed who can add member labels to \"All members.\""
+    "messageformat": "{adminName} mengubah orang yang boleh menambah label ahli kepada \"Semua ahli.\""
   },
   "icu:GroupV2--access-member-label--all--unknown": {
-    "messageformat": "An admin changed who can add member labels to \"All members.\""
+    "messageformat": "Pentadbir telah mengubah orang yang boleh menambah label ahli kepada \"Semua ahli.\""
   },
   "icu:GroupV2--access-invite-link--disabled--you": {
     "messageformat": "Anda telah menyahdayakan kelulusan pentadbir untuk pautan kumpulan."
@@ -4704,7 +4704,7 @@
     "messageformat": "Redamkan"
   },
   "icu:ContactModal--remove-from-call": {
-    "messageformat": "Remove from call"
+    "messageformat": "Alih keluar daripada panggilan"
   },
   "icu:GroupMemberLabelInfoModal--title": {
     "messageformat": "Label ahli"
@@ -4812,10 +4812,10 @@
     "messageformat": "Pilih orang yang boleh menghantar mesej ke kumpulan."
   },
   "icu:ConversationDetails--member-label--label": {
-    "messageformat": "Who can add member labels"
+    "messageformat": "Siapa yang boleh menambah label ahli"
   },
   "icu:ConversationDetails--member-label--info": {
-    "messageformat": "Choose who can add member labels in this group."
+    "messageformat": "Pilih siapa yang boleh menambah label ahli dalam kumpulan ini."
   },
   "icu:ConversationDetails--label-clear-warning--title": {
     "messageformat": "Label ahli akan dikosongkan"
@@ -5055,7 +5055,11 @@
     "messageformat": "Padam untuk semua orang?"
   },
   "icu:DeleteMessagesModal--adminDeleteConfirmation--description": {
-    "messageformat": "{count, plural, other {Sebagai pentadbir, ahli kumpulan akan melihat anda memadam mesej ini.}}"
+    "messageformat": "{count, plural, other {Sebagai pentadbir, ahli kumpulan akan melihat anda memadam mesej ini.}}",
+    "ignoreUnused": true
+  },
+  "icu:DeleteMessagesModal--adminDeleteConfirmation--description__rollout": {
+    "messageformat": "{count, plural, other {Ahli kumpulan yang menggunakan versi terkini Signal akan melihat bahawa anda telah memadam mesej ini.}}"
   },
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
     "messageformat": "Padam daripada semua peranti"
@@ -5067,10 +5071,10 @@
     "messageformat": "{count, plural, other {Anda hanya boleh memilih sehingga {count,number} mesej untuk dipadamkan untuk semua orang}}"
   },
   "icu:DiscardDraftDialog__title": {
-    "messageformat": "Discard draft?"
+    "messageformat": "Buang Draf?"
   },
   "icu:DiscardDraftDialog__description": {
-    "messageformat": "This action can't be undone."
+    "messageformat": "Tindakan ini tidak boleh dibatalkan."
   },
   "icu:DeleteAttachmentModal__Title": {
     "messageformat": "Padam item?"
@@ -6208,13 +6212,13 @@
     "messageformat": "Sandaran desktop"
   },
   "icu:Preferences__local-backups-section__description": {
-    "messageformat": "Your backup is end-to-end encrypted and stored on your computer."
+    "messageformat": "Sandaran anda disulitkan hujung-ke-hujung dan disimpan di komputer anda."
   },
   "icu:Preferences--local-backups-off-description": {
     "messageformat": "Cipta sandaran disulitkan hujung ke hujung yang boleh anda pulihkan pada telefon anda. "
   },
   "icu:Preferences--local-backups-restore-info": {
-    "messageformat": "To restore a backup, install a new copy of Signal on your phone. Open the app and tap “Restore or transfer.” <learnMoreLink>Learn more.</learnMoreLink>"
+    "messageformat": "Untuk memulihkan sandaran, pasang salinan baharu Signal pada telefon anda. Buka aplikasi dan ketik &quot;Pulihkan atau pindahkan.&quot; <learnMoreLink>Ketahui lebih lanjut.</learnMoreLink>"
   },
   "icu:Preferences--local-backups-setup-folder": {
     "messageformat": "Pilih folder"
@@ -6284,6 +6288,18 @@
   },
   "icu:Preferences__local-backups-folder__change": {
     "messageformat": "Tukar"
+  },
+  "icu:Preferences__local-backups-turn-off": {
+    "messageformat": "Matikan sandaran"
+  },
+  "icu:Preferences__local-backups-turn-off-action": {
+    "messageformat": "Matikan"
+  },
+  "icu:Preferences__local-backups-turn-off-confirmation": {
+    "messageformat": "Anda tidak lagi boleh membuat sandaran pada komputer ini melainkan anda mengaktifkannya semula."
+  },
+  "icu:Preferences__local-backups-turn-off-delete": {
+    "messageformat": "Padamkan sandaran saya daripada komputer ini"
   },
   "icu:Preferences__local-backups-copy-key": {
     "messageformat": "Salin ke papan klip"
@@ -8000,16 +8016,7 @@
     "messageformat": "Sedikit pengubahsuaian, pembaikan pepijat dan peningkatan prestasi. Terima kasih kerana menggunakan Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__7.90--0": {
-    "messageformat": "Jadikan privasi kekal dengan lima pek pelekat rasmi baharu dalam Siri Artis Signal: \"Chug the Mouse\" oleh Amanda Cotan, \"Cozy Season\" oleh Miguel Ángel Camprubí, \"Croco's Feelings\" oleh Tiffany Beucher, \"My Daily Life 2\" oleh Plastic Thing dan \"Rocky Talk\" oleh Lexi Vay."
-  },
-  "icu:WhatsNew__8.0--0": {
-    "messageformat": "Sandaran selamat Signal telah tiba! Kini anda boleh memilih untuk mendayakan sandaran automatik yang disulitkan hujung ke hujung, supaya anda tidak akan kehilangan mesej apabila mendapat telefon baharu atau memasang semula Signal. Anda boleh menyandarkan semua mesej anda dan media bagi 45 hari terakhir secara percuma, atau membayar yuran bulanan yang kecil untuk mendapatkan storan 100 GB bagi menyandarkan setiap lampiran. Ketik pada sandaran dalam tetapan Signal untuk mula. Terima kasih kepada semua yang membantu menguji ciri ini sepanjang tempoh beta!"
-  },
-  "icu:WhatsNew__8.2--0": {
-    "messageformat": "Kini anda boleh menghantar mesej media lihat sekali daripada Signal Desktop juga. Foto dan video individu yang dihantar sebagai mesej lihat sekali akan dialih keluar secara automatik daripada jaluran perbualan selepas ia dilihat."
-  },
   "icu:WhatsNew__8.3--0": {
-    "messageformat": "Now you can optionally add a member label to describe yourself or your role in a group chat. Set your group member label to \"Referee\" or \"Goalie\" in your local rec league soccer chat to help kick things off when new teammates join, then choose a different label with your job title in the company chat. Member labels appear next to your profile name in that group, and group admins can control whether or not they are enabled for everyone."
+    "messageformat": "Sekarang anda boleh menambah label ahli secara pilihan untuk menggambarkan diri atau peranan anda dalam sembang kumpulan. Label ahli akan dipaparkan di sebelah nama profil anda dalam kumpulan dan pentadbir kumpulan boleh mengawal sama ada ia dihidupkan untuk semua orang atau tidak."
   }
 }

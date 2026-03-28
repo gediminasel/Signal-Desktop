@@ -22,6 +22,7 @@ import {
   getPlatform,
 } from '../selectors/user.std.js';
 import {
+  getSelectedMessageIds,
   getTargetedMessage,
   getTargetedMessageSource,
 } from '../selectors/conversations.dom.js';
@@ -41,22 +42,26 @@ import { renderAudioAttachment } from './renderAudioAttachment.preload.js';
 import { renderReactionPicker } from './renderReactionPicker.dom.js';
 import type { MessageRequestState } from '../../components/conversation/MessageRequestActionsConfirmation.dom.js';
 import { TargetedMessageSource } from '../ducks/conversationsEnums.std.js';
-import type { MessageInteractivity } from '../../components/conversation/Message.dom.js';
+import { MessageInteractivity } from '../../components/conversation/Message.dom.js';
 import { useNavActions } from '../ducks/nav.std.js';
 import { DataReader } from '../../sql/Client.preload.js';
 import { isInternalFeaturesEnabled } from '../../util/isInternalFeaturesEnabled.dom.js';
+import type { CollapseSet } from '../../util/CollapseSet.std.js';
+
+export type RenderItemProps = Omit<SmartTimelineItemProps, 'renderItem'>;
 
 export type SmartTimelineItemProps = {
-  containerElementRef: RefObject<HTMLElement>;
+  containerElementRef: RefObject<HTMLElement | null>;
   containerWidthBreakpoint: WidthBreakpoint;
   conversationId: string;
   interactivity: MessageInteractivity;
   isBlocked: boolean;
   isGroup: boolean;
   isOldestTimelineItem: boolean;
-  messageId: string;
+  item: CollapseSet;
   nextMessageId: undefined | string;
   previousMessageId: undefined | string;
+  renderItem: (props: RenderItemProps) => React.JSX.Element;
   unreadIndicatorPlacement: undefined | UnreadIndicatorPlacement;
 };
 
@@ -78,54 +83,73 @@ export const SmartTimelineItem = memo(function SmartTimelineItem(
     isBlocked,
     isGroup,
     isOldestTimelineItem,
-    messageId,
+    item,
     nextMessageId,
     previousMessageId,
+    renderItem,
     unreadIndicatorPlacement,
   } = props;
 
+  const messageId = item.id;
   const i18n = useSelector(getIntl);
   const getPreferredBadge = useSelector(getPreferredBadgeSelector);
   const interactionMode = useSelector(getInteractionMode);
   const theme = useSelector(getTheme);
   const platform = useSelector(getPlatform);
+  const selectedMessageIds = useSelector(getSelectedMessageIds);
 
-  const item = useTimelineItem(messageId, conversationId);
+  const itemFromSelector = useTimelineItem(messageId, conversationId);
   const previousItem = useTimelineItem(previousMessageId, conversationId);
   const nextItem = useTimelineItem(nextMessageId, conversationId);
   const targetedMessage = useSelector(getTargetedMessage);
   const targetedMessageSource = useSelector(getTargetedMessageSource);
   const isTargeted = Boolean(
+    interactivity !== MessageInteractivity.Hidden &&
     targetedMessage &&
     messageId === targetedMessage.id &&
     targetedMessageSource !== TargetedMessageSource.Reset
   );
   const isNextItemCallingNotification = nextItem?.type === 'callHistory';
 
-  const shouldCollapseAbove = areMessagesInSameGroup(
-    previousItem,
-    unreadIndicatorPlacement === UnreadIndicatorPlacement.JustAbove,
-    item
-  );
-  const shouldCollapseBelow = areMessagesInSameGroup(
-    item,
-    unreadIndicatorPlacement === UnreadIndicatorPlacement.JustBelow,
-    nextItem
-  );
-  const shouldHideMetadata = shouldCurrentMessageHideMetadata(
-    shouldCollapseBelow,
-    item,
-    nextItem
-  );
+  const shouldCollapseAbove =
+    item.type === 'none' &&
+    areMessagesInSameGroup(
+      previousItem,
+      unreadIndicatorPlacement === UnreadIndicatorPlacement.JustAbove,
+      itemFromSelector
+    );
+  const shouldCollapseBelow =
+    item.type === 'none' &&
+    areMessagesInSameGroup(
+      itemFromSelector,
+      unreadIndicatorPlacement === UnreadIndicatorPlacement.JustBelow,
+      nextItem
+    );
+  const shouldHideMetadata =
+    item.type === 'none' &&
+    shouldCurrentMessageHideMetadata(
+      shouldCollapseBelow,
+      itemFromSelector,
+      nextItem
+    );
   const shouldRenderDateHeader =
     isOldestTimelineItem ||
     Boolean(
-      item &&
+      itemFromSelector &&
       previousItem &&
       // This comparison avoids strange header behavior for out-of-order messages.
-      item.timestamp > previousItem.timestamp &&
-      !isSameDay(previousItem.timestamp, item.timestamp)
+      itemFromSelector.timestamp > previousItem.timestamp &&
+      !isSameDay(previousItem.timestamp, itemFromSelector.timestamp)
     );
+
+  const processedTimelineItem =
+    item.type !== 'none' && itemFromSelector
+      ? {
+          type: 'collapseSet' as const,
+          data: item,
+          timestamp: itemFromSelector.timestamp,
+        }
+      : itemFromSelector;
 
   const {
     blockGroupLinkRequests,
@@ -213,7 +237,7 @@ export const SmartTimelineItem = memo(function SmartTimelineItem(
 
   return (
     <TimelineItem
-      item={item}
+      item={processedTimelineItem}
       id={messageId}
       containerElementRef={containerElementRef}
       containerWidthBreakpoint={containerWidthBreakpoint}
@@ -222,6 +246,7 @@ export const SmartTimelineItem = memo(function SmartTimelineItem(
       getSharedGroupNames={getSharedGroupNames}
       isNextItemCallingNotification={isNextItemCallingNotification}
       isTargeted={isTargeted}
+      isSelectMode={selectedMessageIds != null}
       renderAudioAttachment={renderAudioAttachment}
       renderContact={renderContact}
       renderReactionPicker={renderReactionPicker}
@@ -264,12 +289,14 @@ export const SmartTimelineItem = memo(function SmartTimelineItem(
       retryDeleteForEveryone={retryDeleteForEveryone}
       retryMessageSend={retryMessageSend}
       sendPollVote={sendPollVote}
+      renderItem={renderItem}
       returnToActiveCall={returnToActiveCall}
       saveAttachment={saveAttachment}
       saveAttachments={saveAttachments}
       scrollToPollMessage={scrollToPollMessage}
       scrollToQuotedMessage={scrollToQuotedMessage}
       targetMessage={targetMessage}
+      targetedMessage={targetedMessage}
       setQuoteByMessageId={setQuoteByMessageId}
       setMessageToEdit={setMessageToEdit}
       showContactModal={showContactModal}

@@ -1104,7 +1104,7 @@
     "messageformat": "{name} fait partie de vos contacts système"
   },
   "icu:AboutContactModal__add-member-label": {
-    "messageformat": "Ajouter une étiquette de membre"
+    "messageformat": "Créer une étiquette de membre"
   },
   "icu:AboutContactModal__your-qr-code": {
     "messageformat": "Votre code QR"
@@ -4032,22 +4032,22 @@
     "messageformat": "Un administrateur a défini l'autorisation d'ajouter des membres sur \"Tous les membres\"."
   },
   "icu:GroupV2--access-member-label--admins--you": {
-    "messageformat": "You changed who can add member labels to \"Only admins.\""
+    "messageformat": "Vous avez défini l'autorisation de créer des étiquettes de membre sur \"Les administrateurs\"."
   },
   "icu:GroupV2--access-member-label--admins--other": {
-    "messageformat": "{adminName} changed who can add member labels to \"Only admins.\""
+    "messageformat": "{adminName} a défini l'autorisation de créer des étiquettes de membre sur \"Les administrateurs\"."
   },
   "icu:GroupV2--access-member-label--admins--unknown": {
-    "messageformat": "An admin changed who can add member labels to \"Only admins.\""
+    "messageformat": "Un admin a défini l'autorisation de créer des étiquettes de membre sur \"Les administrateurs\"."
   },
   "icu:GroupV2--access-member-label--all--you": {
-    "messageformat": "You changed who can add member labels to \"All members.\""
+    "messageformat": "Vous avez défini l'autorisation de créer des étiquettes de membre sur \"Tous les membres\"."
   },
   "icu:GroupV2--access-member-label--all--other": {
-    "messageformat": "{adminName} changed who can add member labels to \"All members.\""
+    "messageformat": "{adminName} a défini l'autorisation de créer des étiquettes de membre sur \"Tous les membres\"."
   },
   "icu:GroupV2--access-member-label--all--unknown": {
-    "messageformat": "An admin changed who can add member labels to \"All members.\""
+    "messageformat": "Un admin a défini l'autorisation de créer des étiquettes de membre sur \"Tous les membres\"."
   },
   "icu:GroupV2--access-invite-link--disabled--you": {
     "messageformat": "Vous avez désactivé l'approbation des adhésions via le lien du groupe."
@@ -4704,16 +4704,16 @@
     "messageformat": "Oui"
   },
   "icu:ContactModal--remove-from-call": {
-    "messageformat": "Remove from call"
+    "messageformat": "Retirer de l'appel"
   },
   "icu:GroupMemberLabelInfoModal--title": {
     "messageformat": "Étiquettes de membre"
   },
   "icu:GroupMemberLabelInfoModal--description": {
-    "messageformat": "Ajoutez une étiquette de membre pour vous décrire ou indiquer votre rôle dans ce groupe. Votre étiquette ne s'affichera que dans ce groupe."
+    "messageformat": "Créez une étiquette de membre pour vous décrire ou indiquer votre rôle dans ce groupe. Votre étiquette ne s'affichera que dans ce groupe."
   },
   "icu:GroupMemberLabelInfoModal--add-label": {
-    "messageformat": "Ajouter une étiquette"
+    "messageformat": "Créer une étiquette"
   },
   "icu:GroupMemberLabelInfoModal--edit-label": {
     "messageformat": "Modifier mon étiquette"
@@ -4740,7 +4740,7 @@
     "messageformat": "Saisissez votre étiquette de membre"
   },
   "icu:ConversationDetails--member-label--description": {
-    "messageformat": "Ajoutez une étiquette de membre pour vous décrire ou indiquer votre rôle dans ce groupe. Votre étiquette ne s'affichera que dans ce groupe."
+    "messageformat": "Créez une étiquette de membre pour vous décrire ou indiquer votre rôle dans ce groupe. Votre étiquette ne s'affichera que dans ce groupe."
   },
   "icu:ConversationDetails--member-label--preview": {
     "messageformat": "Aperçu"
@@ -4812,10 +4812,10 @@
     "messageformat": "Choisissez qui peut envoyer des messages au groupe."
   },
   "icu:ConversationDetails--member-label--label": {
-    "messageformat": "Who can add member labels"
+    "messageformat": "Qui peut créer des étiquettes de membre"
   },
   "icu:ConversationDetails--member-label--info": {
-    "messageformat": "Choose who can add member labels in this group."
+    "messageformat": "Choisissez qui peut créer des étiquettes de membre dans ce groupe."
   },
   "icu:ConversationDetails--label-clear-warning--title": {
     "messageformat": "Les étiquettes de membre seront supprimées"
@@ -5055,7 +5055,11 @@
     "messageformat": "Supprimer pour tout le monde ?"
   },
   "icu:DeleteMessagesModal--adminDeleteConfirmation--description": {
-    "messageformat": "{count, plural, one {Les membres du groupe verront que vous avez supprimé ce message en tant qu'admin.} other {Les membres du groupe verront que vous avez supprimé ces messages en tant qu'admin.}}"
+    "messageformat": "{count, plural, one {Les membres du groupe verront que vous avez supprimé ce message en tant qu'admin.} other {Les membres du groupe verront que vous avez supprimé ces messages en tant qu'admin.}}",
+    "ignoreUnused": true
+  },
+  "icu:DeleteMessagesModal--adminDeleteConfirmation--description__rollout": {
+    "messageformat": "{count, plural, one {Les membres du groupe disposant des dernières versions de Signal verront que vous avez supprimé ce message.} other {Les membres du groupe disposant des dernières versions de Signal verront que vous avez supprimé ces messages.}}"
   },
   "icu:DeleteMessagesModal--deleteFromAllDevices": {
     "messageformat": "Supprimer sur tous les appareils"
@@ -5067,10 +5071,10 @@
     "messageformat": "{count, plural, one {Vous ne pouvez sélectionner que {count,number} message à supprimer pour tout le monde.} other {Vous ne pouvez sélectionner qu'un maximum de {count,number} messages à supprimer pour tout le monde.}}"
   },
   "icu:DiscardDraftDialog__title": {
-    "messageformat": "Discard draft?"
+    "messageformat": "Supprimer le brouillon ?"
   },
   "icu:DiscardDraftDialog__description": {
-    "messageformat": "This action can't be undone."
+    "messageformat": "Cette action est irréversible."
   },
   "icu:DeleteAttachmentModal__Title": {
     "messageformat": "Supprimer cet élément ?"
@@ -6208,13 +6212,13 @@
     "messageformat": "Sauvegardes locales"
   },
   "icu:Preferences__local-backups-section__description": {
-    "messageformat": "Your backup is end-to-end encrypted and stored on your computer."
+    "messageformat": "Votre sauvegarde est chiffrée de bout en bout et stockée sur votre ordinateur."
   },
   "icu:Preferences--local-backups-off-description": {
     "messageformat": "Créez une sauvegarde chiffrée de bout en bout, que vous pouvez restaurer sur votre téléphone. "
   },
   "icu:Preferences--local-backups-restore-info": {
-    "messageformat": "To restore a backup, install a new copy of Signal on your phone. Open the app and tap “Restore or transfer.” <learnMoreLink>Learn more.</learnMoreLink>"
+    "messageformat": "Pour restaurer une sauvegarde, réinstallez Signal sur votre téléphone. Ouvrez l'appli et touchez &quot;Restaurer ou transférer le compte&quot;. <learnMoreLink>En savoir plus</learnMoreLink>."
   },
   "icu:Preferences--local-backups-setup-folder": {
     "messageformat": "Choisir un dossier"
@@ -6284,6 +6288,18 @@
   },
   "icu:Preferences__local-backups-folder__change": {
     "messageformat": "Modifier"
+  },
+  "icu:Preferences__local-backups-turn-off": {
+    "messageformat": "Désactiver les sauvegardes"
+  },
+  "icu:Preferences__local-backups-turn-off-action": {
+    "messageformat": "Désactiver"
+  },
+  "icu:Preferences__local-backups-turn-off-confirmation": {
+    "messageformat": "Vous ne pourrez plus créer de sauvegardes sur cet ordinateur, à moins de les réactiver."
+  },
+  "icu:Preferences__local-backups-turn-off-delete": {
+    "messageformat": "Supprimer ma sauvegarde de cet ordinateur"
   },
   "icu:Preferences__local-backups-copy-key": {
     "messageformat": "Copier dans le presse-papiers"
@@ -8000,16 +8016,7 @@
     "messageformat": "Au menu de cette version : quelques ajustements de plus, quelques petits bugs en moins et des gains de performance. Merci d'utiliser Signal !",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__7.90--0": {
-    "messageformat": "Artiste dans l'âme ? Vous allez adorer nos cinq nouveaux packs de stickers, que des artistes ont spécialement créés pour Signal. Et comme tout ce que nous faisons, ils sont chiffrés dans les règles de l'art. Signal, c'est la confidentialité à 360° – même pour les stickers."
-  },
-  "icu:WhatsNew__8.0--0": {
-    "messageformat": "Les sauvegardes sécurisées Signal sont là ! Chiffrées de bout en bout, les sauvegardes sécurisées permettent de sauvegarder tous vos messages automatiquement. Besoin de changer de téléphone ou de réinstaller Signal ? Vos contenus restent à portée de main. Vous pouvez sauvegarder gratuitement tous vos messages ainsi que vos médias des 45 derniers jours. Ou opter pour le forfait payant et stocker jusqu'à 100 Go de médias en contrepartie d'un petit montant mensuel. Prêt à vous lancer ? Cliquez sur \"Sauvegardes\" dans les paramètres Signal. Merci à toutes celles et ceux qui nous ont aidés à tester la version bêta !"
-  },
-  "icu:WhatsNew__8.2--0": {
-    "messageformat": "Maintenant, vous pouvez aussi envoyer des médias à vue unique depuis Signal Desktop. Une fois vues, les photos et vidéos envoyées sous forme de messages éphémères sont automatiquement supprimées du fil de conversation."
-  },
   "icu:WhatsNew__8.3--0": {
-    "messageformat": "Now you can optionally add a member label to describe yourself or your role in a group chat. Set your group member label to \"Referee\" or \"Goalie\" in your local rec league soccer chat to help kick things off when new teammates join, then choose a different label with your job title in the company chat. Member labels appear next to your profile name in that group, and group admins can control whether or not they are enabled for everyone."
+    "messageformat": "Dans les conversations de groupe, vous pouvez maintenant créer une étiquette de membre pour vous décrire ou indiquer votre rôle. Comme dans la vraie vie, vous pouvez porter plusieurs casquettes : affichez votre intitulé de poste dans vos conversations pros et autoproclamez-vous \"L'artiste\" ou \"La chouchoute de Mamie\" dans votre groupe familial. Ces étiquettes n'apparaissent que dans le groupe concerné, à côté de votre nom de profil. Et les admins choisissent qui peut en créer."
   }
 }

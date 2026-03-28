@@ -61,6 +61,9 @@ export const PinnedMessagesPanel = memo(function PinnedMessagesPanel(
   }, []);
 
   useSizeObserver(containerElementRef, size => {
+    if (size.hidden) {
+      return;
+    }
     setContainerWidthBreakpoint(getWidthBreakpoint(size.width));
   });
 
@@ -80,9 +83,16 @@ export const PinnedMessagesPanel = memo(function PinnedMessagesPanel(
                 isBlocked: props.conversation.isBlocked ?? false,
                 isGroup: props.conversation.type === 'group',
                 isOldestTimelineItem: pinnedMessageIndex === 0,
-                messageId: pinnedMessage.messageId,
+                item: {
+                  type: 'none' as const,
+                  id: pinnedMessage.messageId,
+                  messages: undefined,
+                },
                 nextMessageId: next?.messageId,
                 previousMessageId: prev?.messageId,
+                renderItem: () => {
+                  throw new Error('not implemented');
+                },
                 unreadIndicatorPlacement: undefined,
               })}
             </Fragment>

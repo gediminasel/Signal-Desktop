@@ -69,7 +69,7 @@ export type LinkPreviewMetadata = {
 };
 
 export type LinkPreviewImage = {
-  data: Uint8Array;
+  data: Uint8Array<ArrayBuffer>;
   contentType: MIMEType;
 };
 
@@ -247,7 +247,7 @@ const emptyHtmlDocument = (): HTMLDocument =>
 //   (This fallback could, perhaps, be smarter based on user locale.)
 // [0]: https://www.w3.org/International/questions/qa-html-encoding-declarations.en
 const parseHtmlBytes = (
-  bytes: Readonly<Uint8Array>,
+  bytes: Readonly<Uint8Array<ArrayBuffer>>,
   httpCharset: string | null
 ): HTMLDocument => {
   const hasBom = bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf;
@@ -307,7 +307,7 @@ const parseHtmlBytes = (
 };
 
 const getHtmlDocument = async (
-  body: AsyncIterable<string | Uint8Array>,
+  body: AsyncIterable<string | Uint8Array<ArrayBuffer>>,
   httpCharset: string | null,
   abortSignal: AbortSignal,
   logger: Pick<LoggerType, 'warn'> = log
@@ -541,6 +541,7 @@ export async function fetchLinkPreviewMetadata(
   }
 
   const document = await getHtmlDocument(
+    // @ts-expect-error ReadableStream should actually be giving us ArrayBuffers
     response.body,
     contentType.charset,
     abortSignal,
@@ -584,8 +585,8 @@ export async function fetchLinkPreviewImage(
     window.localStorage && localStorage.getItem('screenshotServerUrl');
   const maxImageContentLength =
     screenshotServer && href.startsWith(screenshotServer)
-      ? 5 * MAX_IMAGE_CONTENT_LENGTH
-      : MAX_IMAGE_CONTENT_LENGTH;
+      ? 5 * MAX_IMAGE_BYTES_TO_LOAD
+      : MAX_IMAGE_BYTES_TO_LOAD;
   try {
     response = await fetchWithRedirects(
       fetchFn,
@@ -627,8 +628,8 @@ async function processImageResponse(
     window.localStorage && localStorage.getItem('screenshotServerUrl');
   const maxImageContentLength =
     screenshotServer && response.url.startsWith(screenshotServer)
-      ? 5 * MAX_IMAGE_CONTENT_LENGTH
-      : MAX_IMAGE_CONTENT_LENGTH;
+      ? 5 * MAX_IMAGE_BYTES_TO_LOAD
+      : MAX_IMAGE_BYTES_TO_LOAD;
   const contentLength = parseContentLength(
     response.headers.get('Content-Length')
   );
@@ -651,7 +652,7 @@ async function processImageResponse(
     return null;
   }
 
-  let data: Uint8Array;
+  let data: Uint8Array<ArrayBuffer>;
   try {
     data = await response.buffer();
   } catch (err) {

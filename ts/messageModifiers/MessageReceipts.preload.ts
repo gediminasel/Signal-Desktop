@@ -105,7 +105,8 @@ const processReceiptBatcher = createWaitBatcher({
         continue;
       }
       // All receipts have the same sentAt, so we can grab it from the first
-      const sentAt = receiptsForMessageSentAt[0].receiptSync.messageSentAt;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const sentAt = receiptsForMessageSentAt[0]!.receiptSync.messageSentAt;
 
       const messagesMatchingTimestamp =
         // eslint-disable-next-line no-await-in-loop
@@ -389,7 +390,8 @@ function getTargetMessage({
     `);
   }
 
-  const message = matchingMessages[0];
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const message = matchingMessages[0]!;
   return window.MessageCache.register(new MessageModel(message));
 }
 const wasDeliveredWithSealedSender = (
@@ -483,7 +485,8 @@ export function getNewLastSeenByUser(
 
   for (const sourceConversationId of Object.keys(sendStateByConversationId)) {
     if (
-      sendStateByConversationId[sourceConversationId].status !== SendStatus.Read
+      sendStateByConversationId[sourceConversationId]?.status !==
+      SendStatus.Read
     ) {
       continue;
     }

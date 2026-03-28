@@ -54,7 +54,7 @@ export function MessageContextMenu({
   onPinMessage,
   onUnpinMessage,
   children,
-}: MessageContextMenuProps): JSX.Element {
+}: MessageContextMenuProps): React.JSX.Element {
   const shouldReturnFocusToTrigger = useRef(true);
 
   return (

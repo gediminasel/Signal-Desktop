@@ -76,6 +76,10 @@ const conversations = shuffle([
   ...Array.from(Array(20), getDefaultConversation),
 ]);
 
+const [conversation1, conversation2] = conversations;
+strictAssert(conversation1, 'Missing conversation1');
+strictAssert(conversation2, 'Missing conversation2');
+
 function conversationSelector(conversationId?: string) {
   strictAssert(conversationId, 'Missing conversation id');
   const found = conversations.find(conversation => {
@@ -127,9 +131,11 @@ const validateBackupResult: ExportResultType = {
     distributionLists: 5,
     messages: 6,
     notificationProfiles: 2,
+    skippedConversations: 0,
     skippedMessages: 7,
     stickerPacks: 8,
     fixedDirectMessages: 9,
+    unknownConversationReferences: {},
   },
 };
 
@@ -241,7 +247,7 @@ function renderDonationsPane(props: {
   me: typeof me;
   donationReceipts: ReadonlyArray<DonationReceipt>;
   saveAttachmentToDisk: (options: {
-    data: Uint8Array;
+    data: Uint8Array<ArrayBuffer>;
     name: string;
     baseDir?: string | undefined;
   }) => Promise<{ fullPath: string; name: string } | null>;
@@ -260,7 +266,6 @@ function renderDonationsPane(props: {
       clearWorkflow={action('clearWorkflow')}
       initialCurrency="usd"
       resumeWorkflow={action('resumeWorkflow')}
-      isDonationPaypalEnabled
       isOnline
       settingsLocation={props.settingsLocation}
       setSettingsLocation={props.setSettingsLocation}
@@ -412,7 +417,6 @@ export default {
     availableLocales: ['en'],
     availableMicrophones,
     availableSpeakers,
-    chatFoldersFeatureEnabled: true,
     backupFreeMediaDays: 45,
     backupKeyViewed: false,
     backupLocalBackupsEnabled: false,
@@ -643,6 +647,18 @@ export default {
     },
     cqsTestMode: false,
     setCqsTestMode: action('setCqsTestMode'),
+    dredDuration: 0,
+    setDredDuration: action('setDredDuration'),
+    directMaxBitrate: 1000000,
+    setDirectMaxBitrate: action('setDirectMaxBitrate'),
+    isDirectVp9Enabled: true,
+    setIsDirectVp9Enabled: action('setIsDirectVp9Enabled'),
+    groupMaxBitrate: 1000000,
+    setGroupMaxBitrate: action('setGroupMaxBitrate'),
+    isGroupVp9Enabled: false,
+    setIsGroupVp9Enabled: action('setIsDirectVp9Enabled'),
+    sfuUrl: 'https://sfu.voip.signal.org',
+    setSfuUrl: action('setSfuUrl'),
   } satisfies PropsType,
 } satisfies Meta<PropsType>;
 
@@ -734,7 +750,7 @@ const threeProfiles = [
     allowAllCalls: true,
     allowAllMentions: true,
 
-    allowedMembers: new Set([conversations[0].id, conversations[1].id]),
+    allowedMembers: new Set([conversation1.id, conversation2.id]),
     scheduleEnabled: true,
 
     scheduleStartTime: 1800,
@@ -763,7 +779,7 @@ const threeProfiles = [
     allowAllCalls: true,
     allowAllMentions: true,
 
-    allowedMembers: new Set([conversations[0].id, conversations[1].id]),
+    allowedMembers: new Set([conversation1.id, conversation2.id]),
     scheduleEnabled: true,
 
     scheduleStartTime: 100,
@@ -792,7 +808,7 @@ const threeProfiles = [
     allowAllCalls: true,
     allowAllMentions: true,
 
-    allowedMembers: new Set([conversations[0].id, conversations[1].id]),
+    allowedMembers: new Set([conversation1.id, conversation2.id]),
     scheduleEnabled: true,
 
     scheduleStartTime: 1800,
@@ -810,7 +826,7 @@ const threeProfiles = [
     deletedAtTimestampMs: undefined,
     storageNeedsSync: true,
   },
-];
+] as const;
 
 NotificationsPageWithThreeProfiles.args = {
   settingsLocation: { page: SettingsPage.Notifications },

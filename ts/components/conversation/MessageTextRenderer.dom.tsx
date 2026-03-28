@@ -514,6 +514,9 @@ export function extractLinks(
       if (!indices || !match.groups) {
         continue;
       }
+      if (indices[1] === undefined || indices[2] === undefined) {
+        continue;
+      }
       const index = indices[1][1];
       const lastIndex = indices[2][1];
       const url = goLinkAddress + match.groups.val;

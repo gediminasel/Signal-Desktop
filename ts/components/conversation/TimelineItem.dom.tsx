@@ -53,7 +53,7 @@ import type { PropsType as ProfileChangeNotificationPropsType } from './ProfileC
 import { ProfileChangeNotification } from './ProfileChangeNotification.dom.js';
 import type { PropsType as PaymentEventNotificationPropsType } from './PaymentEventNotification.dom.js';
 import { PaymentEventNotification } from './PaymentEventNotification.dom.js';
-import type { PropsType as PollTerminateNotificationPropsType } from './PollTerminateNotification.dom.js';
+import type { PollTerminateNotificationDataType } from './PollTerminateNotification.dom.js';
 import { PollTerminateNotification } from './PollTerminateNotification.dom.js';
 import type { PropsDataType as ConversationMergeNotificationPropsType } from './ConversationMergeNotification.dom.js';
 import { ConversationMergeNotification } from './ConversationMergeNotification.dom.js';
@@ -70,6 +70,11 @@ import {
 import type { MessageRequestState } from './MessageRequestActionsConfirmation.dom.js';
 import type { MessageInteractivity } from './Message.dom.js';
 import type { PinMessageData } from '../../model-types.js';
+import type { AciString } from '../../types/ServiceId.std.js';
+import type { RenderItemProps } from '../../state/smart/TimelineItem.preload.js';
+import type { CollapseSet } from '../../util/CollapseSet.std.js';
+import { CollapseSetViewer } from './CollapseSet.dom.js';
+import type { TargetedMessageType } from '../../state/selectors/conversations.dom.js';
 
 type CallHistoryType = {
   type: 'callHistory';
@@ -78,6 +83,10 @@ type CallHistoryType = {
 type ChatSessionRefreshedType = {
   type: 'chatSessionRefreshed';
   data: null;
+};
+type CollapseSetType = {
+  type: 'collapseSet';
+  data: CollapseSet;
 };
 type DeliveryIssueType = {
   type: 'deliveryIssue';
@@ -165,16 +174,14 @@ type MessageRequestResponseNotificationType = {
 };
 type PollTerminateNotificationType = {
   type: 'pollTerminate';
-  data: Omit<
-    PollTerminateNotificationPropsType,
-    'i18n' | 'scrollToPollMessage'
-  >;
+  data: PollTerminateNotificationDataType;
 };
 
 export type TimelineItemType = (
   | CallHistoryType
   | ChangeNumberNotificationType
   | ChatSessionRefreshedType
+  | CollapseSetType
   | ConversationMergeNotificationType
   | DeliveryIssueType
   | GroupNotificationType
@@ -199,7 +206,7 @@ export type TimelineItemType = (
 ) & { timestamp: number };
 
 type PropsLocalType = {
-  containerElementRef: RefObject<HTMLElement>;
+  containerElementRef: RefObject<HTMLElement | null>;
   conversationId: string;
   getSharedGroupNames: GetSharedGroupNamesType;
   item?: TimelineItemType;
@@ -208,9 +215,14 @@ type PropsLocalType = {
   isBlocked: boolean;
   isGroup: boolean;
   isNextItemCallingNotification: boolean;
+  isSelectMode: boolean;
   isTargeted: boolean;
   scrollToPinnedMessage: (pinMessage: PinMessageData) => void;
-  scrollToPollMessage: (messageId: string, conversationId: string) => unknown;
+  scrollToPollMessage: (
+    pollAuthorAci: AciString,
+    pollTimestamp: number,
+    conversationId: string
+  ) => unknown;
   targetMessage: (messageId: string, conversationId: string) => unknown;
   shouldRenderDateHeader: boolean;
   onOpenEditNicknameAndNoteModal: (contactId: string) => void;
@@ -218,8 +230,10 @@ type PropsLocalType = {
   platform: string;
   renderContact: SmartContactRendererType<React.JSX.Element>;
   renderUniversalTimerNotification: () => React.JSX.Element;
+  renderItem: (props: RenderItemProps) => React.JSX.Element;
   i18n: LocalizerType;
   interactionMode: InteractionModeType;
+  targetedMessage: TargetedMessageType | undefined;
   theme: ThemeType;
 };
 
@@ -252,6 +266,7 @@ export const TimelineItem = memo(function TimelineItem({
   isBlocked,
   isGroup,
   isNextItemCallingNotification,
+  isSelectMode,
   isTargeted,
   item,
   onOpenEditNicknameAndNoteModal,
@@ -261,6 +276,7 @@ export const TimelineItem = memo(function TimelineItem({
   platform,
   renderUniversalTimerNotification,
   returnToActiveCall,
+  renderItem,
   scrollToPinnedMessage,
   scrollToPollMessage,
   targetMessage,
@@ -269,6 +285,7 @@ export const TimelineItem = memo(function TimelineItem({
   shouldCollapseBelow,
   shouldHideMetadata,
   shouldRenderDateHeader,
+  targetedMessage,
   theme,
   ...reducedProps
 }: PropsType): React.JSX.Element | null {
@@ -300,6 +317,22 @@ export const TimelineItem = memo(function TimelineItem({
         platform={platform}
         i18n={i18n}
         theme={theme}
+      />
+    );
+  } else if (item.type === 'collapseSet') {
+    itemContents = (
+      <CollapseSetViewer
+        {...item.data}
+        containerElementRef={containerElementRef}
+        containerWidthBreakpoint={reducedProps.containerWidthBreakpoint}
+        conversationId={conversationId}
+        isBlocked={isBlocked}
+        isGroup={isGroup}
+        isSelectMode={isSelectMode}
+        renderItem={renderItem}
+        targetedMessage={targetedMessage}
+        toggleDeleteMessagesModal={reducedProps.toggleDeleteMessagesModal}
+        i18n={i18n}
       />
     );
   } else {

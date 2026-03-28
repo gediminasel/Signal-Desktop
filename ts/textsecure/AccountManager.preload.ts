@@ -31,7 +31,7 @@ import type {
   KyberPreKeyType,
   PniKeyMaterialType,
 } from './Types.d.ts';
-import createTaskWithTimeout from './TaskWithTimeout.std.js';
+import { runTaskWithTimeout } from './TaskWithTimeout.std.js';
 import * as Bytes from '../Bytes.std.js';
 import * as Errors from '../types/errors.std.js';
 import {
@@ -86,6 +86,8 @@ import { signalProtocolStore } from '../SignalProtocolStore.preload.js';
 import { itemStorage } from './Storage.preload.js';
 import { deriveAccessKeyFromProfileKey } from '../util/zkgroup.node.js';
 import { wrappingAdd24 } from '../util/wrappingAdd.std.js';
+import { everDone as registrationEverDone } from '../util/registration.preload.js';
+import { isAciString } from '../util/isAciString.std.js';
 
 const { isNumber, omit, orderBy } = lodash;
 
@@ -151,8 +153,8 @@ type CreateAccountSharedOptionsType = Readonly<{
   verificationCode: string;
   aciKeyPair: KeyPairType;
   pniKeyPair: KeyPairType;
-  profileKey: Uint8Array;
-  masterKey: Uint8Array | undefined;
+  profileKey: Uint8Array<ArrayBuffer>;
+  masterKey: Uint8Array<ArrayBuffer> | undefined;
   accountEntropyPool: string | undefined;
 }>;
 
@@ -164,11 +166,11 @@ type CreatePrimaryDeviceOptionsType = Readonly<{
   ourPni?: undefined;
   userAgent?: undefined;
   ephemeralBackupKey?: undefined;
-  mediaRootBackupKey: Uint8Array;
+  mediaRootBackupKey: Uint8Array<ArrayBuffer>;
 
   readReceipts: true;
 
-  accessKey: Uint8Array;
+  accessKey: Uint8Array<ArrayBuffer>;
   sessionId: string;
 }> &
   CreateAccountSharedOptionsType;
@@ -180,8 +182,8 @@ export type CreateLinkedDeviceOptionsType = Readonly<{
   ourAci: AciString;
   ourPni: PniString;
   userAgent?: string;
-  ephemeralBackupKey: Uint8Array | undefined;
-  mediaRootBackupKey: Uint8Array | undefined;
+  ephemeralBackupKey: Uint8Array<ArrayBuffer> | undefined;
+  mediaRootBackupKey: Uint8Array<ArrayBuffer> | undefined;
 
   readReceipts: boolean;
 
@@ -250,7 +252,7 @@ function signedPreKeyToUploadSignedPreKey({
 
 export type ConfirmNumberResultType = Readonly<{
   deviceName: string;
-  backupFile: Uint8Array | undefined;
+  backupFile: Uint8Array<ArrayBuffer> | undefined;
 }>;
 
 export default class AccountManager extends EventTarget {
@@ -266,9 +268,10 @@ export default class AccountManager extends EventTarget {
 
   async #queueTask<T>(task: () => Promise<T>): Promise<T> {
     this.pendingQueue = this.pendingQueue || new PQueue({ concurrency: 1 });
-    const taskWithTimeout = createTaskWithTimeout(task, 'AccountManager task');
 
-    return this.pendingQueue.add(taskWithTimeout);
+    return this.pendingQueue.add(() =>
+      runTaskWithTimeout(task, 'AccountManager task')
+    );
   }
 
   encryptDeviceName(
@@ -1033,8 +1036,20 @@ export default class AccountManager extends EventTarget {
     const numberChanged =
       !previousACI && previousNumber && previousNumber !== number;
 
-    let cleanStart = !previousACI && !previousPNI && !previousNumber;
-    if (uuidChanged || numberChanged) {
+    let cleanStart =
+      !previousACI &&
+      !previousPNI &&
+      !previousNumber &&
+      !registrationEverDone();
+
+    // To be extra safe, clear everything if we know registration happened but there's no
+    // existing identifier
+    const hadPreviousIdentifier =
+      isAciString(previousACI) || Boolean(previousNumber);
+    const missingCriticalData =
+      registrationEverDone() && !hadPreviousIdentifier;
+
+    if (uuidChanged || numberChanged || missingCriticalData) {
       if (uuidChanged) {
         log.warn(
           'createAccount: New uuid is different from old uuid; deleting all previous data'
@@ -1043,6 +1058,11 @@ export default class AccountManager extends EventTarget {
       if (numberChanged) {
         log.warn(
           'createAccount: New number is different from old number; deleting all previous data'
+        );
+      }
+      if (missingCriticalData) {
+        log.error(
+          'createAccount: device had been registered but had no previous identifier'
         );
       }
 

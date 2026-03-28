@@ -18,7 +18,7 @@ jobs:
     - name: Setup pnpm
       uses: pnpm/action-setup@v4
     - name: Setup node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version-file: '.nvmrc'
         cache: 'pnpm'
@@ -58,6 +58,7 @@ jobs:
     - run: pnpm run lint
     - run: pnpm run lint-deps
     # - run: pnpm run lint-license-comments
+    # - run: pnpm run lint-intl
 
     - name: Check acknowledgments file is up to date
       run: pnpm run build:acknowledgments
@@ -86,7 +87,7 @@ jobs:
     - name: Setup pnpm
       uses: pnpm/action-setup@v4
     - name: Setup node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version-file: '.nvmrc'
         cache: 'pnpm'

@@ -55,6 +55,7 @@ import { Address } from '../types/Address.std.js';
 import { QualifiedAddress } from '../types/QualifiedAddress.std.js';
 import { normalizeStoryDistributionId } from '../types/StoryDistributionId.std.js';
 import type { ServiceIdString, AciString } from '../types/ServiceId.std.js';
+import type { TextAttachmentType } from '../types/Attachment.std.js';
 import {
   fromPniObject,
   isPniString,
@@ -75,7 +76,7 @@ import { signalProtocolStore } from '../SignalProtocolStore.preload.js';
 import { SignalService as Proto } from '../protobuf/index.std.js';
 import { deriveGroupFields, MASTER_KEY_LENGTH } from '../groups.preload.js';
 
-import createTaskWithTimeout from './TaskWithTimeout.std.js';
+import { runTaskWithTimeout } from './TaskWithTimeout.std.js';
 import {
   processAttachment,
   processDataMessage,
@@ -176,7 +177,7 @@ import {
 
 import { toNumber } from '../util/toNumber.std.js';
 
-const { isBoolean, isNumber, isString, noop, omit } = lodash;
+const { isBoolean, isNumber, isString, noop } = lodash;
 
 const log = createLogger('MessageReceiver');
 
@@ -189,7 +190,7 @@ type UnsealedEnvelope = Readonly<
     unidentifiedDeliveryReceived?: boolean;
     contentHint?: number;
     groupId?: string;
-    cipherTextBytes?: Uint8Array;
+    cipherTextBytes?: Uint8Array<ArrayBuffer>;
     cipherTextType?: number;
     certificate?: SenderCertificate;
     unsealedContent?: UnidentifiedSenderMessageContent;
@@ -199,7 +200,7 @@ type UnsealedEnvelope = Readonly<
 type DecryptResult = Readonly<
   | {
       envelope: UnsealedEnvelope;
-      plaintext: Uint8Array;
+      plaintext: Uint8Array<ArrayBuffer>;
     }
   | {
       envelope?: UnsealedEnvelope;
@@ -208,12 +209,12 @@ type DecryptResult = Readonly<
 >;
 
 type DecryptSealedSenderResult = Readonly<{
-  plaintext: Uint8Array;
+  plaintext: Uint8Array<ArrayBuffer>;
   wasEncrypted: boolean;
 }>;
 
 type InnerDecryptResultType = Readonly<{
-  plaintext: Uint8Array;
+  plaintext: Uint8Array<ArrayBuffer>;
   wasEncrypted: boolean;
 }>;
 
@@ -242,10 +243,6 @@ enum TaskType {
 export type MessageReceiverOptions = {
   storage: Storage;
   serverTrustRoots: Array<string>;
-};
-
-const TASK_WITH_TIMEOUT_OPTIONS = {
-  timeout: 2 * durations.MINUTE,
 };
 
 const LOG_UNEXPECTED_URGENT_VALUES = false;
@@ -390,13 +387,13 @@ export default class MessageReceiver
 
       if (request.requestType === ServerRequestType.ApiEmptyQueue) {
         drop(
-          this.#incomingQueue.add(
-            createTaskWithTimeout(
+          this.#incomingQueue.add(() =>
+            runTaskWithTimeout(
               async () => {
                 this.#onEmpty();
               },
               'incomingQueue/onEmpty',
-              TASK_WITH_TIMEOUT_OPTIONS
+              'short-lived'
             )
           )
         );
@@ -486,12 +483,8 @@ export default class MessageReceiver
     };
 
     drop(
-      this.#incomingQueue.add(
-        createTaskWithTimeout(
-          job,
-          'incomingQueue/websocket',
-          TASK_WITH_TIMEOUT_OPTIONS
-        )
+      this.#incomingQueue.add(() =>
+        runTaskWithTimeout(job, 'incomingQueue/websocket', 'short-lived')
       )
     );
   }
@@ -509,13 +502,11 @@ export default class MessageReceiver
 
   #addCachedMessagesToQueue(): Promise<void> {
     log.info('addCachedMessagesToQueue');
-    return this.#incomingQueue.add(
-      createTaskWithTimeout(
+    return this.#incomingQueue.add(() =>
+      runTaskWithTimeout(
         async () => this.#queueAllCached(),
         'incomingQueue/queueAllCached',
-        {
-          timeout: 10 * durations.MINUTE,
-        }
+        'long-running'
       )
     );
   }
@@ -546,11 +537,11 @@ export default class MessageReceiver
         TaskType.Encrypted
       );
 
-    return this.#incomingQueue.add(
-      createTaskWithTimeout(
+    return this.#incomingQueue.add(() =>
+      runTaskWithTimeout(
         waitForIncomingQueue,
         'drain/waitForIncoming',
-        TASK_WITH_TIMEOUT_OPTIONS
+        'short-lived'
       )
     );
   }
@@ -731,11 +722,11 @@ export default class MessageReceiver
 
   async #dispatchAndWait(id: string, event: Event): Promise<void> {
     drop(
-      this.#appQueue.add(
-        createTaskWithTimeout(
+      this.#appQueue.add(() =>
+        runTaskWithTimeout(
           async () => Promise.all(this.dispatchEvent(event)),
           `dispatchEvent(${event.type}, ${id})`,
-          TASK_WITH_TIMEOUT_OPTIONS
+          'short-lived'
         )
       )
     );
@@ -763,9 +754,7 @@ export default class MessageReceiver
         ? this.#encryptedQueue
         : this.#decryptedQueue;
 
-    return queue.add(
-      createTaskWithTimeout(task, id, TASK_WITH_TIMEOUT_OPTIONS)
-    );
+    return queue.add(() => runTaskWithTimeout(task, id, 'short-lived'));
   }
 
   #onEmpty(): void {
@@ -795,12 +784,8 @@ export default class MessageReceiver
 
       // We don't await here because we don't want this to gate future message processing
       drop(
-        this.#appQueue.add(
-          createTaskWithTimeout(
-            emitEmpty,
-            'emitEmpty',
-            TASK_WITH_TIMEOUT_OPTIONS
-          )
+        this.#appQueue.add(() =>
+          runTaskWithTimeout(emitEmpty, 'emitEmpty', 'short-lived')
         )
       );
     };
@@ -828,11 +813,11 @@ export default class MessageReceiver
     const waitForCacheAddBatcher = async () => {
       await this.#decryptAndCacheBatcher.onIdle();
       drop(
-        this.#incomingQueue.add(
-          createTaskWithTimeout(
+        this.#incomingQueue.add(() =>
+          runTaskWithTimeout(
             waitForIncomingQueue,
             'onEmpty/waitForIncoming',
-            TASK_WITH_TIMEOUT_OPTIONS
+            'short-lived'
           )
         )
       );
@@ -848,10 +833,9 @@ export default class MessageReceiver
     }
 
     for await (const batch of this.#getAllFromCache()) {
-      const max = batch.length;
-      for (let i = 0; i < max; i += 1) {
+      for (const item of batch) {
         // eslint-disable-next-line no-await-in-loop
-        await this.#queueCached(batch[i]);
+        await this.#queueCached(item);
       }
     }
     log.info('queueAllCached - finished');
@@ -969,11 +953,11 @@ export default class MessageReceiver
       this.#clearRetryTimeout();
       this.#retryCachedTimeout = setTimeout(() => {
         drop(
-          this.#incomingQueue.add(
-            createTaskWithTimeout(
+          this.#incomingQueue.add(() =>
+            runTaskWithTimeout(
               async () => this.#queueAllCached(),
               'queueAllCached',
-              TASK_WITH_TIMEOUT_OPTIONS
+              'short-lived'
             )
           )
         );
@@ -1000,7 +984,7 @@ export default class MessageReceiver
 
     const decrypted: Array<
       Readonly<{
-        plaintext: Uint8Array;
+        plaintext: Uint8Array<ArrayBuffer>;
         data: UnprocessedType;
         envelope: UnsealedEnvelope;
       }>
@@ -1208,21 +1192,21 @@ export default class MessageReceiver
 
   async #queueDecryptedEnvelope(
     envelope: UnsealedEnvelope,
-    plaintext: Uint8Array
+    plaintext: Uint8Array<ArrayBuffer>
   ): Promise<void> {
     const id = getEnvelopeId(envelope);
     log.info('queueing decrypted envelope', id);
 
     const task = this.#handleDecryptedEnvelope.bind(this, envelope, plaintext);
-    const taskWithTimeout = createTaskWithTimeout(
-      task,
-      `queueDecryptedEnvelope ${id}`,
-      TASK_WITH_TIMEOUT_OPTIONS
-    );
 
     try {
       await this.#addToQueue(
-        taskWithTimeout,
+        () =>
+          runTaskWithTimeout(
+            task,
+            `queueDecryptedEnvelope ${id}`,
+            'short-lived'
+          ),
         `handleDecryptedEnvelope(${id})`,
         TaskType.Decrypted
       );
@@ -1314,7 +1298,7 @@ export default class MessageReceiver
   // Called after `decryptEnvelope` decrypted the message.
   async #handleDecryptedEnvelope(
     envelope: UnsealedEnvelope,
-    plaintext: Uint8Array
+    plaintext: Uint8Array<ArrayBuffer>
   ): Promise<void> {
     if (this.#stoppingProcessing) {
       return;
@@ -1444,7 +1428,7 @@ export default class MessageReceiver
       return { plaintext: undefined, envelope };
     }
 
-    let ciphertext: Uint8Array;
+    let ciphertext: Uint8Array<ArrayBuffer>;
     if (envelope.content) {
       ciphertext = envelope.content;
     } else {
@@ -1692,7 +1676,7 @@ export default class MessageReceiver
     );
   }
 
-  #unpad(paddedPlaintext: Uint8Array): Uint8Array {
+  #unpad(paddedPlaintext: Uint8Array<ArrayBuffer>): Uint8Array<ArrayBuffer> {
     for (let i = paddedPlaintext.length - 1; i >= 0; i -= 1) {
       if (paddedPlaintext[i] === 0x80) {
         return new Uint8Array(paddedPlaintext.subarray(0, i));
@@ -1834,7 +1818,7 @@ export default class MessageReceiver
   async #innerDecrypt(
     stores: LockedStores,
     envelope: UnsealedEnvelope,
-    ciphertext: Uint8Array,
+    ciphertext: Uint8Array<ArrayBuffer>,
     serviceIdKind: ServiceIdKind
   ): Promise<InnerDecryptResultType | undefined> {
     const {
@@ -1960,7 +1944,7 @@ export default class MessageReceiver
   async #decrypt(
     stores: LockedStores,
     envelope: UnsealedEnvelope,
-    ciphertext: Uint8Array,
+    ciphertext: Uint8Array<ArrayBuffer>,
     serviceIdKind: ServiceIdKind
   ): Promise<InnerDecryptResultType | undefined> {
     const uuid = envelope.sourceServiceId;
@@ -2171,30 +2155,33 @@ export default class MessageReceiver
       // If a text attachment has a link preview we remove it from the
       // textAttachment data structure and instead process the preview and add
       // it as a "preview" property for the message attributes.
-      const { text, preview: unprocessedPreview } =
-        msg.attachment.textAttachment;
+      const {
+        preview: unprocessedPreview,
+        background,
+        ...textAttachment
+      } = msg.attachment.textAttachment;
       if (unprocessedPreview) {
         preview = processPreview([unprocessedPreview]);
-      } else if (!text) {
+      } else if (!textAttachment.text) {
         throw new Error('Text attachments must have text or link preview!');
       }
 
       attachments.push({
-        size: text?.length ?? 0,
+        size: textAttachment.text?.length ?? 0,
         contentType: TEXT_ATTACHMENT,
         textAttachment: {
-          ...omit(msg.attachment.textAttachment, 'preview'),
+          ...textAttachment,
           textStyle: isKnownProtoEnumMember(
             Proto.TextAttachment.Style,
-            msg.attachment.textAttachment.textStyle
+            textAttachment.textStyle
           )
-            ? msg.attachment.textAttachment.textStyle
+            ? textAttachment.textStyle
             : 0,
-        },
+          gradient: background?.gradient,
+          color: background?.color,
+        } satisfies TextAttachmentType,
         blurHash: generateBlurHash(
-          (msg.attachment.textAttachment.background?.color ||
-            msg.attachment.textAttachment.background?.gradient?.startColor) ??
-            undefined
+          background?.color ?? background?.gradient?.startColor ?? undefined
         ),
       });
     }
@@ -2592,7 +2579,7 @@ export default class MessageReceiver
 
   async #innerHandleContentMessage(
     incomingEnvelope: UnsealedEnvelope,
-    plaintext: Uint8Array
+    plaintext: Uint8Array<ArrayBuffer>
   ): Promise<void> {
     const content = Proto.Content.decode(plaintext);
     const envelope = await this.#maybeUpdateTimestamp(incomingEnvelope);
@@ -2654,7 +2641,7 @@ export default class MessageReceiver
 
   #handleDecryptionError(
     envelope: UnsealedEnvelope,
-    decryptionError: Uint8Array
+    decryptionError: Uint8Array<ArrayBuffer>
   ): void {
     const logId = getEnvelopeId(envelope);
     log.info(`handleDecryptionError: ${logId}`);
@@ -2689,7 +2676,7 @@ export default class MessageReceiver
   async #handleSenderKeyDistributionMessage(
     stores: LockedStores,
     envelope: UnsealedEnvelope,
-    distributionMessage: Uint8Array
+    distributionMessage: Uint8Array<ArrayBuffer>
   ): Promise<void> {
     const envelopeId = getEnvelopeId(envelope);
     log.info(`handleSenderKeyDistributionMessage/${envelopeId}`);

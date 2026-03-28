@@ -5,6 +5,8 @@ set -ex
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 
+cd "$SCRIPT_DIR/.."
+
 curl_github() {
   curl ${GITHUB_TOKEN:+" -u \":$GITHUB_TOKEN\""} "$@"
 }
@@ -27,33 +29,20 @@ sed -E -i "s/(electron_)../\1$electronVersion/" $SCRIPT_DIR/package.nix
 sed -E -i "s/(SOURCE_DATE_EPOCH = )[0-9]+/\1$releaseEpoch/" $SCRIPT_DIR/package.nix
 
 sed -E -i "s/(withAppleEmojis \? )false/\1true/" $SCRIPT_DIR/package.nix
-nix-update signal-desktop --subpackage sticker-creator --version="$latestVersion"
+# nix-update signal-desktop --subpackage sticker-creator --version="$latestVersion"
 sed -E -i "s/(withAppleEmojis \? )true/\1false/" $SCRIPT_DIR/package.nix
-update-source-version signal-desktop \
-  --ignore-same-version \
-  --source-key=pnpmDeps
 
-update-source-version signal-desktop.libsignal-node \
-  "$libsignalClientVersion"
-update-source-version signal-desktop.libsignal-node \
-  --ignore-same-version \
-  --source-key=cargoDeps.vendorStaging
-update-source-version signal-desktop.libsignal-node \
-  --ignore-same-version \
-  --source-key=npmDeps
+update_nix_version() {
+  local file="$1"
+  local new_version="$2"
+  sed -i "s|version = \"[^\"]*\";|version = \"${new_version}\";|" "$file"
+}
 
-update-source-version signal-desktop.signal-sqlcipher \
-  "$signalSqlcipherVersion"
-update-source-version signal-desktop.signal-sqlcipher \
-  --ignore-same-version \
-  --source-key=cargoDeps.vendorStaging
-update-source-version signal-desktop.signal-sqlcipher \
-  --ignore-same-version \
-  --source-key=pnpmDeps
+update_nix_version "$SCRIPT_DIR/package.nix" "$latestVersion"
+update_nix_version "$SCRIPT_DIR/libsignal-node.nix" "$libsignalClientVersion"
+update_nix_version "$SCRIPT_DIR/ringrtc.nix" "$ringrtcVersion"
+update_nix_version "$SCRIPT_DIR/signal-sqlcipher.nix" "$signalSqlcipherVersion"
 
-update-source-version signal-desktop.ringrtc "$ringrtcVersion"
-update-source-version signal-desktop.ringrtc \
-  --ignore-same-version \
-  --source-key=cargoDeps.vendorStaging
+bash $SCRIPT_DIR/update_hashes.sh
 
 gclient2nix generate "https://github.com/signalapp/webrtc@$webrtcVersion" > $SCRIPT_DIR/webrtc-sources.json

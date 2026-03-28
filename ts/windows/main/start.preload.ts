@@ -87,7 +87,7 @@ if (
       return message?.attributes;
     },
     getReduxState: () => window.reduxStore.getState(),
-    getSfuUrl: () => calling._sfuUrl,
+    getSfuUrl: () => calling.sfuUrl,
     getIceServerOverride: () => calling._iceServerOverride,
     getSocketStatus: () => getSocketStatus(),
     getStorageItem: (name: keyof StorageAccessType) => itemStorage.get(name),
@@ -101,8 +101,8 @@ if (
       }
       window.Flags[name] = value;
     },
-    setSfuUrl: (url: string) => {
-      calling._sfuUrl = url;
+    setSfuUrl: async (url: string) => {
+      await itemStorage.put('sfuUrl', url);
     },
     setIceServerOverride: (
       override: GetIceServersResultType | string | undefined
@@ -132,7 +132,7 @@ if (
         backgroundColor: '#3b82f6',
       });
       const dataURL = canvas.toDataURL({ format: 'png' });
-      const base64Data = dataURL.split(',')[1];
+      const [base64Data] = dataURL.split(',');
       const data = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
 
       await conversation.enqueueMessageForSend(

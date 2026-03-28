@@ -43,7 +43,7 @@ import {
   toPniObject,
   toServiceIdObject,
 } from '../util/ServiceId.node.js';
-import createTaskWithTimeout from './TaskWithTimeout.std.js';
+import { runTaskWithTimeout } from './TaskWithTimeout.std.js';
 import type { CallbackResultType } from './Types.d.ts';
 import type {
   SerializedCertificateType,
@@ -161,8 +161,8 @@ export type OutgoingTextAttachmentType = Omit<TextAttachmentType, 'preview'> & {
 };
 
 export type GroupV2InfoType = {
-  groupChange?: Uint8Array;
-  masterKey: Uint8Array;
+  groupChange?: Uint8Array<ArrayBuffer>;
+  masterKey: Uint8Array<ArrayBuffer>;
   revision: number;
   members: ReadonlyArray<ServiceIdString>;
 };
@@ -221,7 +221,7 @@ export type SharedMessageOptionsType = Readonly<{
   pinMessage?: SendPinMessageType;
   pollCreate?: PollCreateType;
   preview?: ReadonlyArray<OutgoingLinkPreviewType>;
-  profileKey?: Uint8Array;
+  profileKey?: Uint8Array<ArrayBuffer>;
   quote?: OutgoingQuoteType;
   reaction?: ReactionType;
   sticker?: OutgoingStickerType;
@@ -285,7 +285,7 @@ class Message {
 
   preview?: ReadonlyArray<OutgoingLinkPreviewType>;
 
-  profileKey?: Uint8Array;
+  profileKey?: Uint8Array<ArrayBuffer>;
 
   quote?: OutgoingQuoteType;
 
@@ -765,20 +765,18 @@ export class MessageSender {
 
     const queue = this.pendingMessages[id];
 
-    const taskWithTimeout = createTaskWithTimeout(
-      runJob,
-      `queueJobForServiceId ${serviceId} ${id}`
+    return queue.add(() =>
+      runTaskWithTimeout(runJob, `queueJobForServiceId ${serviceId} ${id}`)
     );
-
-    return queue.add(taskWithTimeout);
   }
 
   // Attachment upload functions
 
-  static getRandomPadding(): Uint8Array {
+  static getRandomPadding(): Uint8Array<ArrayBuffer> {
     // Generate a random int from 1 and 512
     const buffer = getRandomBytes(2);
-    const paddingLength = (new Uint16Array(buffer)[0] & 0x1ff) + 1;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const paddingLength = (new Uint16Array(buffer)[0]! & 0x1ff) + 1;
 
     // Generate a random padding buffer of the chosen size
     return getRandomBytes(paddingLength);
@@ -835,7 +833,7 @@ export class MessageSender {
 
   async getDataOrEditMessage(
     options: Readonly<MessageOptionsType>
-  ): Promise<Uint8Array> {
+  ): Promise<Uint8Array<ArrayBuffer>> {
     const message = await this.getHydratedMessage(options);
     const dataMessage = message.toProto();
 
@@ -908,7 +906,7 @@ export class MessageSender {
     expireTimer,
     expireTimerVersion,
     pollVote,
-  }: PollVoteBuildOptions): Promise<Uint8Array> {
+  }: PollVoteBuildOptions): Promise<Uint8Array<ArrayBuffer>> {
     const proto = this.createDataMessageProtoForPollVote({
       groupV2,
       timestamp,
@@ -1030,7 +1028,7 @@ export class MessageSender {
     bodyRanges?: Array<RawBodyRange>;
     fileAttachment?: UploadedAttachmentType;
     groupV2?: GroupV2InfoType;
-    profileKey: Uint8Array;
+    profileKey: Uint8Array<ArrayBuffer>;
     textAttachment?: OutgoingTextAttachmentType;
   }): Promise<Proto.StoryMessage.Params> {
     let attachment: Proto.StoryMessage.Params['attachment'];
@@ -1122,7 +1120,7 @@ export class MessageSender {
   getTypingContentMessage(
     options: Readonly<{
       recipientId?: ServiceIdString;
-      groupId?: Uint8Array;
+      groupId?: Uint8Array<ArrayBuffer>;
       groupMembers: ReadonlyArray<ServiceIdString>;
       isTyping: boolean;
       timestamp?: number;
@@ -1504,8 +1502,8 @@ export class MessageSender {
     storyMessage,
     storyMessageRecipients,
   }: Readonly<{
-    encodedDataMessage?: Uint8Array;
-    encodedEditMessage?: Uint8Array;
+    encodedDataMessage?: Uint8Array<ArrayBuffer>;
+    encodedEditMessage?: Uint8Array<ArrayBuffer>;
     timestamp: number;
     destinationE164: string | undefined;
     destinationServiceId: ServiceIdString | undefined;
@@ -1546,7 +1544,7 @@ export class MessageSender {
         ): Promise<Proto.SyncMessage.Sent.UnidentifiedDeliveryStatus.Params> => {
           const conv = window.ConversationController.get(conversationId);
           const serviceId = conv?.getServiceId();
-          let destinationPniIdentityKey: Uint8Array | null = null;
+          let destinationPniIdentityKey: Uint8Array<ArrayBuffer> | null = null;
           if (conv) {
             if (isPniString(serviceId)) {
               const pniIdentityKey =
@@ -2174,7 +2172,8 @@ export class MessageSender {
         `syncViewOnceOpen: ${viewOnceOpens.length} opens provided. Can only handle one.`
       );
     }
-    const { senderAci, timestamp } = viewOnceOpens[0];
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const { senderAci, timestamp } = viewOnceOpens[0]!;
 
     if (!senderAci) {
       throw new Error('syncViewOnceOpen: Missing senderAci');
@@ -2219,7 +2218,7 @@ export class MessageSender {
     options: Readonly<{
       e164s: Array<string>;
       acis: Array<AciString>;
-      groupIds: Array<Uint8Array>;
+      groupIds: Array<Uint8Array<ArrayBuffer>>;
     }>
   ): SingleProtoJobData {
     const myAci = itemStorage.user.getCheckedAci();
@@ -2265,7 +2264,7 @@ export class MessageSender {
   static getMessageRequestResponseSync(
     options: Readonly<{
       threadAci?: AciString;
-      groupId?: Uint8Array;
+      groupId?: Uint8Array<ArrayBuffer>;
       type: number;
     }>
   ): SingleProtoJobData {
@@ -2360,7 +2359,7 @@ export class MessageSender {
     destinationE164: string | undefined,
     destinationAci: AciString | undefined,
     state: number,
-    identityKey: Readonly<Uint8Array>
+    identityKey: Readonly<Uint8Array<ArrayBuffer>>
   ): SingleProtoJobData {
     const myAci = itemStorage.user.getCheckedAci();
 
@@ -2538,7 +2537,7 @@ export class MessageSender {
 
   static getNullMessage(
     options: Readonly<{
-      padding?: Uint8Array;
+      padding?: Uint8Array<ArrayBuffer>;
     }> = {}
   ): Proto.Content.Params {
     return {
@@ -2568,7 +2567,7 @@ export class MessageSender {
   }: Readonly<{
     contentHint: number;
     messageId?: string;
-    proto: Uint8Array;
+    proto: Uint8Array<ArrayBuffer>;
     sendType: SendTypesType;
     timestamp: number;
     urgent: boolean;

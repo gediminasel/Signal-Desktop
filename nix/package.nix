@@ -52,14 +52,14 @@ let
     '';
   });
 
-  version = "8.5.0";
+  version = "8.7.0-lel";
 
   src = ../.;
 
   sticker-creator = stdenv.mkDerivation (finalAttrs: {
     pname = "signal-desktop-sticker-creator";
     inherit version;
-    src = src + "/sticker-creator";
+    src = ../sticker-creator;
 
     pnpmDeps = fetchPnpmDeps {
       inherit (finalAttrs) pname src version;
@@ -150,13 +150,13 @@ stdenv.mkDerivation (finalAttrs: {
       ;
     inherit pnpm;
     fetcherVersion = 3;
-    hash = "sha256-8YyTActjWzLm9ps9n6XCHz0p1dr2twOu+qRhn5QJmCA=";
+    hash = "sha256-IqzuEyLUlcPC5ben4zNmDBrCjtwpYaqDVCaRWkAACtk=";
   };
 
   env = {
     ELECTRON_SKIP_BINARY_DOWNLOAD = "1";
     SIGNAL_ENV = "production";
-    SOURCE_DATE_EPOCH = 1773262210;
+    SOURCE_DATE_EPOCH = 1774720744;
   }
   // lib.optionalAttrs stdenv.hostPlatform.isDarwin {
     # Disable code signing during local macOS builds.

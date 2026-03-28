@@ -15,11 +15,11 @@ import { ConversationHero } from './ConversationHero.dom.js';
 import { getDefaultConversation } from '../../test-helpers/getDefaultConversation.std.js';
 import { TypingBubble } from './TypingBubble.dom.js';
 import { ReadStatus } from '../../messages/MessageReadStatus.std.js';
-import type { WidthBreakpoint } from '../_util.std.js';
 import { ThemeType } from '../../types/Util.std.js';
 import { MessageInteractivity, TextDirection } from './Message.dom.js';
 import { PaymentEventKind } from '../../types/Payment.std.js';
 import type { PropsData as TimelineMessageProps } from './TimelineMessage.dom.js';
+import type { RenderItemProps } from '../../state/smart/TimelineItem.preload.js';
 
 const { i18n } = window.SignalContext;
 
@@ -350,14 +350,10 @@ const actions = () => ({
 });
 
 const renderItem = ({
-  messageId,
+  item,
   containerElementRef,
   containerWidthBreakpoint,
-}: {
-  messageId: string;
-  containerElementRef: React.RefObject<HTMLElement>;
-  containerWidthBreakpoint: WidthBreakpoint;
-}) => (
+}: RenderItemProps) => (
   <TimelineItem
     getPreferredBadge={() => undefined}
     getSharedGroupNames={() => []}
@@ -365,6 +361,7 @@ const renderItem = ({
     isTargeted={false}
     isBlocked={false}
     isGroup={false}
+    isSelectMode={false}
     i18n={i18n}
     interactivity={MessageInteractivity.Normal}
     interactionMode="keyboard"
@@ -374,10 +371,11 @@ const renderItem = ({
     containerElementRef={containerElementRef}
     containerWidthBreakpoint={containerWidthBreakpoint}
     conversationId=""
-    item={items[messageId]}
+    item={items[item.id]}
     handleDebugMessage={action('handleDebugMessage')}
     renderAudioAttachment={() => <div>*AudioAttachment*</div>}
     renderContact={() => <div>*ContactName*</div>}
+    renderItem={renderItem}
     renderReactionPicker={() => <div />}
     renderUniversalTimerNotification={() => (
       <div>*UniversalTimerNotification*</div>
@@ -386,6 +384,7 @@ const renderItem = ({
     shouldCollapseBelow={false}
     shouldHideMetadata={false}
     shouldRenderDateHeader={false}
+    targetedMessage={undefined}
     {...actions()}
   />
 );
@@ -458,7 +457,13 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
   isConversationSelected: true,
   isIncomingMessageRequest: overrideProps.isIncomingMessageRequest ?? false,
   isInFullScreenCall: false,
-  items: overrideProps.items ?? Object.keys(items),
+  items:
+    overrideProps.items ??
+    Object.keys(items).map(id => ({
+      type: 'none' as const,
+      id,
+      messages: undefined,
+    })),
   messageChangeCounter: 0,
   messageLoadingState: null,
   isNearBottom: null,
@@ -482,7 +487,10 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
 });
 
 export function OldestAndNewest(): React.JSX.Element {
-  const props = useProps();
+  const props = useProps({
+    haveOldest: true,
+    haveNewest: true,
+  });
 
   return <Timeline {...props} />;
 }
@@ -542,12 +550,6 @@ export function TargetIndexToTop(): React.JSX.Element {
   const props = useProps({
     scrollToIndex: 0,
   });
-
-  return <Timeline {...props} />;
-}
-
-export function TypingIndicator(): React.JSX.Element {
-  const props = useProps({ isSomeoneTyping: true });
 
   return <Timeline {...props} />;
 }
