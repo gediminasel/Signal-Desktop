@@ -746,6 +746,9 @@
   "icu:fileSizeWarning": {
     "messageformat": "សុំទោស, ឯកសារដែលបានជ្រើសរើស លើសពីទំហំសារដែលបានកំណត់។ {limit,number} {units}"
   },
+  "icu:videoFileSizeWarning": {
+    "messageformat": "សូមអភ័យទោស ឯកសារវីដេអូដែលបានជ្រើសរើសគឺលើសពីទំហំសារដែលបានកំហិត។ {limit,number}{units}"
+  },
   "icu:unableToLoadAttachment": {
     "messageformat": "មិនអាចផ្ទុកឯកសារភ្ជាប់ដែលបានជ្រើសរើស។"
   },
@@ -1787,6 +1790,12 @@
   "icu:Preferences__EditChatFolderPage__CancelButton": {
     "messageformat": "បោះបង់"
   },
+  "icu:Preferences__PrivacyPage__ShowStatusIcon__Label": {
+    "messageformat": "Show status icon"
+  },
+  "icu:Preferences__PrivacyPage__ShowStatusIcon__Description": {
+    "messageformat": "Show an icon in message details when they were delivered using sealed sender."
+  },
   "icu:Preferences__PrivacyPage__KeyTransparency__Label": {
     "messageformat": "ការផ្ទៀងផ្ទាត់សោដោយស្វ័យប្រវត្តិ"
   },
@@ -2372,6 +2381,9 @@
   "icu:ConversationDetails--support-center": {
     "messageformat": "មជ្ឈមណ្ឌលគាំទ្រ"
   },
+  "icu:ConversationDetails__GroupTerminatedBanner": {
+    "messageformat": "ក្រុមនេះបានបញ្ចប់ហើយ"
+  },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "មើលលេខសុវត្ថិភាព"
   },
@@ -2551,6 +2563,27 @@
   },
   "icu:youUpdatedTheGroup": {
     "messageformat": "អ្នកបានធ្វើបច្ចុប្បន្នភាពក្រុម។"
+  },
+  "icu:collapsedGroupUpdates": {
+    "messageformat": "{count, plural, other {ការធ្វើបច្ចុប្បន្នភាពក្រុមចំនួន {count,number}}}"
+  },
+  "icu:multidayCollapse__container": {
+    "messageformat": "{containerDescription} · {dayCountSummary}"
+  },
+  "icu:multidayCollapse__dayCountSummary": {
+    "messageformat": "{dayCount, plural, other {{dayCount,number} ថ្ងៃ}}"
+  },
+  "icu:collapsedChatUpdates": {
+    "messageformat": "{count, plural, other {ការធ្វើបច្ចុប្បន្នភាពការជជែក {count,number}}}"
+  },
+  "icu:collapsedTimerChanges": {
+    "messageformat": "{count, plural, other {ការផ្លាស់ប្តូរកម្មវិធីកំណត់ម៉ោងឱ្យសារបាត់ដោយស្វ័យប្រវត្តិចំនួន {count,number} · {endingState}}}"
+  },
+  "icu:collapsedTimerChanges--disabled": {
+    "messageformat": "{count, plural, other {ការផ្លាស់ប្តូរកម្មវិធីកំណត់ម៉ោងឱ្យសារបាត់ដោយស្វ័យប្រវត្តិចំនួន {count,number} · បានបិទ}}"
+  },
+  "icu:collapsedCallEvents": {
+    "messageformat": "{count, plural, other {ព្រឹត្តិការណ៍ហៅទូរសព្ទ {count,number}}}"
   },
   "icu:updatedGroupAvatar": {
     "messageformat": "រូបតំណាងក្រុមត្រូវបានធ្វើបច្ចុប្បន្នភាព។"
@@ -3017,8 +3050,8 @@
   "icu:Message--tap-to-view--incoming--expired-toast": {
     "messageformat": "អ្នកបានមើលសារនេះហើយ។"
   },
-  "icu:Message--tap-to-view--outgoing--expired-toast": {
-    "messageformat": "សារដែលមើលបានតែម្តងមិនត្រូវបានរក្សាទុកក្នុងប្រវត្តិជជែករបស់អ្នកទេ។"
+  "icu:Message--tap-to-view--outgoing--expired-toast-2": {
+    "messageformat": "មេឌៀដែលមើលបានតែម្តងត្រូវបានលុបបន្ទាប់ពីផ្ញើ"
   },
   "icu:Message--tap-to-view--video": {
     "messageformat": "វីដេអូមើលបានតែម្តង"
@@ -3485,8 +3518,17 @@
   "icu:ConversationHero--profile-names": {
     "messageformat": "<clickable>ឈ្មោះប្រូហ្វាល់</clickable>មិនត្រូវបានផ្ទៀងផ្ទាត់ទេ"
   },
+  "icu:ConversationHero--name-not-verified": {
+    "messageformat": "Name not verified"
+  },
   "icu:ConversationHero--signal-official-chat": {
     "messageformat": "នេះជាការជជែកជាផ្លូវការ និងតែមួយគត់ពី Signal"
+  },
+  "icu:ConversationHero--signal-official-account": {
+    "messageformat": "Official account"
+  },
+  "icu:ConversationHero--signal-official-account--description": {
+    "messageformat": "The only official chat from Signal. Keep up to date with news and release notes."
   },
   "icu:ConversationHero--release-notes": {
     "messageformat": "ទទួលបានដំណឹង និងកំណត់ចំណាំនៃការចេញផ្សាយថ្មីៗ។"
@@ -3767,9 +3809,6 @@
   "icu:CallingAdhocCallInfo__ShareViaSignal": {
     "messageformat": "ចែករំលែកតំណហៅទូរសព្ទតាមរយៈ Signal"
   },
-  "icu:CallingAdhocCallInfo__RemoveClient": {
-    "messageformat": "ដកម្នាក់នេះចេញពីការហៅ"
-  },
   "icu:CallingAdhocCallInfo__RemoveClientDialogBody": {
     "messageformat": "ដក {name} ចេញពីការហៅឬ?"
   },
@@ -3932,11 +3971,23 @@
   "icu:GroupV2--join--requested": {
     "messageformat": "ការស្នើសុំរបស់អ្នកដើម្បីចូលក្រុម ត្រូវបានផ្ញើទៅកាន់អ្នកគ្រប់គ្រងក្រុម។ អ្នកនឹងទទួលដំណឹង នៅពេលគេមានសកម្មភាព។"
   },
+  "icu:GroupV2--join--group-terminated": {
+    "messageformat": "មិនអាចចូលរួមក្រុមនេះបានទេ។"
+  },
   "icu:GroupV2--join--general-join-failure--title": {
     "messageformat": "តំណមានបញ្ហា"
   },
   "icu:GroupV2--join--general-join-failure": {
     "messageformat": "មិនអាចចូលរួមក្រុម។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។"
+  },
+  "icu:GroupV2--terminate-group-in-progress": {
+    "messageformat": "កំពុងបញ្ចប់ក្រុម…"
+  },
+  "icu:TerminateGroupFailedModal__description": {
+    "messageformat": "មិនអាចបញ្ចប់ក្រុមបានទេ។ សូមពិនិត្យមើលសេវាអ៊ីនធឺណិតរបស់អ្នក រួចព្យាយាមម្តងទៀត។"
+  },
+  "icu:TerminateGroupFailedModal__try-again": {
+    "messageformat": "ព្យាយាមម្តងទៀត"
   },
   "icu:GroupV2--admin": {
     "messageformat": "អ្នកគ្រប់គ្រង"
@@ -4379,6 +4430,15 @@
   "icu:GroupV2--summary": {
     "messageformat": "សមាជិក ឬការកំណត់របស់ក្រុមនេះបានផ្លាស់ប្តូរ។"
   },
+  "icu:GroupV2--terminated--you": {
+    "messageformat": "អ្នកបានបញ្ចប់ក្រុម"
+  },
+  "icu:GroupV2--terminated--other": {
+    "messageformat": "{memberName} បានបញ្ចប់ក្រុម"
+  },
+  "icu:GroupV2--terminated--unknown": {
+    "messageformat": "ក្រុមនេះបានបញ្ចប់ហើយ"
+  },
   "icu:GroupV1--Migration--disabled--link": {
     "messageformat": "ដំឡើងកម្រិតរបស់ក្រុមនេះ ដើម្បីបើកដំណើរការមុខងារថ្មីៗដូចជា @លើកឈ្មោះ និងអ្នកគ្រប់គ្រង។ សមាជិកដែលមិនបានចែករំលែកឈ្មោះ ឬរូបថតរបស់ពួកគេនៅក្នុងក្រុមនេះទេនឹងត្រូវបានបបួលឲ្យចូលរួម។ <learnMoreLink>ស្វែងយល់បន្ថែម។</learnMoreLink>"
   },
@@ -4655,6 +4715,9 @@
   "icu:CompositionArea__ConfirmGifSelection__ReplaceButton": {
     "messageformat": "ប្តូរ"
   },
+  "icu:CompositionArea--group-terminated": {
+    "messageformat": "អ្នកមិនអាចផ្ញើសារបានទេ ពីព្រោះក្រុមនេះបានបញ្ចប់ហើយ។"
+  },
   "icu:CompositionArea--viewOnceToggle": {
     "messageformat": "មើលបានតែម្តង"
   },
@@ -4832,11 +4895,26 @@
   "icu:ConversationDetailsActions--leave-group": {
     "messageformat": "ចាកចេញពីក្រុម"
   },
+  "icu:ConversationDetailsActions--terminate-group": {
+    "messageformat": "បញ្ចប់ក្រុម"
+  },
   "icu:ConversationDetailsActions--block-group": {
     "messageformat": "ទប់ស្កាត់ក្រុម"
   },
   "icu:ConversationDetailsActions--unblock-group": {
     "messageformat": "ឈប់ទប់ស្កាត់ក្រុម"
+  },
+  "icu:ConversationDetailsActions--report-spam": {
+    "messageformat": "រាយការណ៍សារឥតបានការ"
+  },
+  "icu:ConversationDetailsActions--archive": {
+    "messageformat": "ទុកការជជែកក្នុងបណ្ណសារ"
+  },
+  "icu:ConversationDetailsActions--unarchive": {
+    "messageformat": "លុបការជជែកពីបណ្ណសារ"
+  },
+  "icu:ConversationDetailsActions--delete": {
+    "messageformat": "លុបការជជែក"
   },
   "icu:ConversationDetailsActions--leave-group-must-choose-new-admin": {
     "messageformat": "មុនពេលអ្នកចាកចេញ អ្នកត្រូវជ្រើសរើសអ្នកគ្រប់គ្រងយ៉ាងហោចណាស់ម្នាក់សម្រាប់ក្រុមនេះ។"
@@ -4849,6 +4927,18 @@
   },
   "icu:ConversationDetailsActions--leave-group-modal-confirm": {
     "messageformat": "ចាកចេញ"
+  },
+  "icu:ConversationDetailsActions--prompt-terminate-group-modal-title": {
+    "messageformat": "បញ្ចប់ \"{groupName}\" ឬ?"
+  },
+  "icu:ConversationDetailsActions--prompt-terminate-group-modal-content": {
+    "messageformat": "សមាជិកនឹងលែងអាចផ្ញើសារ ឬចាប់ផ្តើមការហៅទូរសព្ទនៅក្នុងក្រុមបានទៀតហើយ។ ពួកគេនឹងត្រូវបានជូនដំណឹងថាអ្នកបានបញ្ចប់ក្រុម ហើយនឹងនៅតែអាចចូលមើលប្រវត្តិសារបាន។"
+  },
+  "icu:ConversationDetailsActions--terminate-group-modal-confirm": {
+    "messageformat": "បញ្ចប់ក្រុម"
+  },
+  "icu:ConversationDetailsActions--confirm-terminate-group-confirm-modal-content": {
+    "messageformat": "ការធ្វើបែបនេះនឹងបញ្ចប់ក្រុមជារៀងរហូត។ តើអ្នកប្រាកដថាចង់បន្តឬ?"
   },
   "icu:ConversationDetailsActions--unblock-group-modal-title": {
     "messageformat": "ឈប់ទប់ស្កាត់ក្រុម \"{groupName}\" ឬ?"
@@ -4868,6 +4958,18 @@
   "icu:ConversationDetailsActions--unblock-group-modal-confirm": {
     "messageformat": "ឈប់ទប់ស្កាត់"
   },
+  "icu:ConversationDetailsActions--report-spam-modal-content-direct": {
+    "messageformat": "Signal អាចនឹងត្រូវបានជូនដំណឹងថាបុគ្គលនេះប្រហែលជាកំពុងផ្ញើសារឥតបានការ។ Signal មិនអាចមើលឃើញខ្លឹមសារនៃការជជែកណាមួយឡើយ។"
+  },
+  "icu:ConversationDetailsActions--report-spam-modal-content-group": {
+    "messageformat": "Signal នឹងត្រូវបានជូនដំណឹងថាបុគ្គលដែលបានអញ្ជើញអ្នកឱ្យចូលរួមក្នុងក្រុមនេះ ប្រហែលជាកំពុងផ្ញើសារឥតបានការ។ Signal មិនអាចមើលឃើញខ្លឹមសារនៃការជជែកណាមួយឡើយ។"
+  },
+  "icu:ConversationDetailsActions--report-spam-modal-report-spam": {
+    "messageformat": "រាយការណ៍សារឥតបានការ"
+  },
+  "icu:ConversationDetailsActions--report-spam-modal-report-and-block": {
+    "messageformat": "រាយការណ៍ និងទប់ស្កាត់"
+  },
   "icu:ConversationDetailsHeader--members": {
     "messageformat": "{number, plural, other {សមាជិក {number,number} នាក់}}"
   },
@@ -4876,6 +4978,9 @@
   },
   "icu:ConversationDetailsMembershipList--title": {
     "messageformat": "{number, plural, other {សមាជិក {number,number} នាក់}}"
+  },
+  "icu:ConversationDetailsMembershipList--terminated-title": {
+    "messageformat": "{number, plural, other {អតីតសមាជិក {number,number} នាក់}}"
   },
   "icu:ConversationDetailsMembershipList--add-members": {
     "messageformat": "បន្ថែមសមាជិក"
@@ -5195,6 +5300,9 @@
   },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "គន្លឹះសុវត្ថិភាព"
+  },
+  "icu:MessageRequestWarning__safety-tips-v2": {
+    "messageformat": "Safety tips"
   },
   "icu:ContactSpoofing__same-name--link": {
     "messageformat": "ពិនិត្យសំណើដោយយកចិត្តទុកដាក់។ Signal បានរកឃើញឈ្មោះទំនាក់ទំនងមួយផ្សេងទៀតដែលមានឈ្មោះដូចគ្នា។ <reviewRequestLink>ពិនិត្យសំណើ</reviewRequestLink>"
@@ -5797,6 +5905,15 @@
   "icu:Preferences__link-previews--description": {
     "messageformat": "ដើម្បីផ្លាស់ប្តូរការកំណត់នេះ សូមបើកកម្មវិធី Signal នៅលើឧបករណ៍ចល័តរបស់អ្នក ហើយចូលទៅកាន់ការកំណត់ > ការជជែក"
   },
+  "icu:Preferences__link-previews--new-description": {
+    "messageformat": "Retrieve link previews directly from websites for messages you send."
+  },
+  "icu:Preferences__address-book-photos--title": {
+    "messageformat": "Use address book photos"
+  },
+  "icu:Preferences__address-book-photos--description": {
+    "messageformat": "Display contact photos from your address book if available."
+  },
   "icu:Preferences__auto-convert-emoji--title": {
     "messageformat": "បំប្លែងសញ្ញាអារម្មណ៍ដែលបានវាយបញ្ចូលទៅជារូបអារម្មណ៍"
   },
@@ -6232,35 +6349,35 @@
   "icu:Preferences--local-backups-view-backup-key-done": {
     "messageformat": "រួចរាល់"
   },
-  "icu:Preferences--local-backups--view-backup-key--os-prompt--mac": {
-    "messageformat": "បង្ហាញសោបម្រុងទុករបស់អ្នក"
+  "icu:Preferences--local-backups--view-recovery-key--os-prompt--mac": {
+    "messageformat": "បង្ហាញសោស្តាររបស់អ្នក"
   },
-  "icu:Preferences--local-backups--view-backup-key--os-prompt--windows": {
-    "messageformat": "ផ្ទៀងផ្ទាត់អត្តសញ្ញាណរបស់អ្នក ដើម្បីមើលសោបម្រុងទុករបស់អ្នក។"
+  "icu:Preferences--local-backups--view-recovery-key--os-prompt--windows": {
+    "messageformat": "ផ្ទៀងផ្ទាត់អត្តសញ្ញាណរបស់អ្នក ដើម្បីមើលសោស្តាររបស់អ្នក។"
   },
-  "icu:Preferences--local-backups--view-backup-key--os-prompt-description--linux": {
-    "messageformat": "មើលសោបម្រុងទុក"
+  "icu:Preferences--local-backups--view-recovery-key--os-prompt-description--linux": {
+    "messageformat": "មើលសោស្តារ"
   },
-  "icu:Preferences--local-backups--view-backup-key--os-prompt-message--linux": {
-    "messageformat": "ត្រូវមានការផ្ទៀងផ្ទាត់ដើម្បីមើលសោបម្រុងទុករបស់អ្នក។"
+  "icu:Preferences--local-backups--view-recovery-key--os-prompt-message--linux": {
+    "messageformat": "តម្រូវឱ្យមានការផ្ទៀងផ្ទាត់ភាពត្រឹមត្រូវដើម្បីមើលសោស្តាររបស់អ្នក។"
   },
-  "icu:Preferences--local-backups-backup-key-text-box": {
-    "messageformat": "ប្រអប់អក្សរសោបម្រុងទុក"
+  "icu:Preferences--local-backups-recovery-key-text-box": {
+    "messageformat": "សោស្តារ"
   },
   "icu:Preferences--local-backups-enter-backup-key": {
     "messageformat": "បញ្ចូលសោ"
   },
-  "icu:Preferences--local-backups-record-backup-key": {
-    "messageformat": "កត់ត្រាសោបម្រុងទុករបស់អ្នក"
+  "icu:Preferences--local-backups-record-recovery-key": {
+    "messageformat": "កត់ត្រាសោស្តាររបស់អ្នក"
   },
   "icu:Preferences--local-backups-record-backup-key-description": {
     "messageformat": "តម្រូវឱ្យមានសោនេះដើម្បីស្តារគណនី និងទិន្នន័យរបស់អ្នក។ ទុកសោនេះនៅកន្លែងដែលមានសុវត្ថិភាព។ ប្រសិនបើអ្នកបាត់វា អ្នកនឹងមិនអាចស្តារគណនីរបស់អ្នកមកវិញបានទេ។ <learnMoreLink>ស្វែងយល់បន្ថែម។</learnMoreLink>"
   },
-  "icu:Preferences--local-backups-confirm-backup-key": {
-    "messageformat": "បញ្ជាក់សោបម្រុងទុករបស់អ្នក"
+  "icu:Preferences--local-backups-confirm-recovery-key": {
+    "messageformat": "បញ្ជាក់សោស្តាររបស់អ្នក"
   },
-  "icu:Preferences--local-backups-confirm-backup-key-description": {
-    "messageformat": "បញ្ចូលសោបម្រុងទុកដែលអ្នកទើបតែបានកត់ត្រា"
+  "icu:Preferences--local-backups-confirm-recovery-key-description": {
+    "messageformat": "បញ្ចូលសោស្តារដែលអ្នកទើបតែបានកត់ត្រា"
   },
   "icu:Preferences__local-backups-confirm-key-modal-title": {
     "messageformat": "រក្សាសោរបស់អ្នកឱ្យមានសុវត្ថិភាព"
@@ -6286,9 +6403,6 @@
   "icu:Preferences__local-backups-folder": {
     "messageformat": "ថតឯកសារបម្រុងទុក"
   },
-  "icu:Preferences__local-backups-folder__change": {
-    "messageformat": "ផ្លាស់ប្តូរ"
-  },
   "icu:Preferences__local-backups-turn-off": {
     "messageformat": "បិទការបម្រុងទុក"
   },
@@ -6304,8 +6418,8 @@
   "icu:Preferences__local-backups-copy-key": {
     "messageformat": "ចម្លងទៅឃ្លីបបត"
   },
-  "icu:Preferences__local-backups-copied-key": {
-    "messageformat": "សោបម្រុងទុកត្រូវបានចម្លង"
+  "icu:Preferences__local-backups-copied-recovery-key": {
+    "messageformat": "បានចម្លងសោស្តារ"
   },
   "icu:Preferences__local-backups--enable--os-prompt--mac": {
     "messageformat": "បើកការបម្រុងទុក"
@@ -6319,17 +6433,29 @@
   "icu:Preferences__local-backups--enable--os-prompt-message--linux": {
     "messageformat": "ត្រូវមានការផ្ទៀងផ្ទាត់ ដើម្បីបើកការបម្រុងទុក។"
   },
+  "icu:Preferences__local-backups-auth-error--unauthorized": {
+    "messageformat": "សកម្មភាពនេះមិនអាចបញ្ចប់បានទេ ពីព្រោះការផ្ទៀងផ្ទាត់ប្រព័ន្ធមិនបានជោគជ័យ។ សូមព្យាយាមម្តងទៀត ឬបើកកម្មវិធី Signal នៅលើឧបករណ៍ចល័តរបស់អ្នក ហើយចូលទៅកាន់ការកំណត់ការបម្រុងទុក ដើម្បីមើលសោស្តាររបស់អ្នក។"
+  },
   "icu:Preferences__view-key": {
     "messageformat": "មើលសោ"
   },
-  "icu:Preferences__backup-key": {
-    "messageformat": "សោបម្រុងទុក"
+  "icu:Preferences__recovery-key": {
+    "messageformat": "សោស្តារ"
   },
-  "icu:Preferences__backup-key-description": {
-    "messageformat": "សោបម្រុងទុករបស់អ្នកគឺជាលេខកូដ 64 ខ្ទង់ដែលប្រើដើម្បីស្ដារការបម្រុងទុករបស់អ្នក"
+  "icu:Preferences__recovery-key-description": {
+    "messageformat": "សោស្តាររបស់អ្នកគឺជាលេខកូដ 64 តួអក្សរដែលប្រើដើម្បីស្ដារការបម្រុងទុករបស់អ្នក"
   },
   "icu:Preferences__backup-other-ways": {
     "messageformat": "វិធីផ្សេងទៀតដើម្បីបម្រុងទុក"
+  },
+  "icu:Preferences__recovery-key-updated__title": {
+    "messageformat": "សោស្តាររបស់អ្នកបានផ្លាស់ប្តូរ"
+  },
+  "icu:Preferences__recovery-key-updated__description": {
+    "messageformat": "សោស្តាររបស់អ្នកត្រូវបានធ្វើបច្ចុប្បន្នភាព។ ការបម្រុងទុកថ្មីណាមួយដែលអ្នកធ្វើឡើងអាចស្ដារបានដោយប្រើសោស្តារថ្មីរបស់អ្នកប៉ុណ្ណោះ។"
+  },
+  "icu:Preferences__recovery-key-updated__view-key": {
+    "messageformat": "មើលសោថ្មី"
   },
   "icu:Preferences--blocked-count": {
     "messageformat": "{num, plural, other {{num,number} ឈ្មោះទំនាក់ទំនង}}"
@@ -6394,8 +6520,14 @@
   "icu:Preferences--read-receipts": {
     "messageformat": "ទទួលបានការអាន"
   },
+  "icu:Preferences--read-receipts--description": {
+    "messageformat": "If disabled, you won't see read receipts from others."
+  },
   "icu:Preferences--typing-indicators": {
     "messageformat": "វាស់ការវាយអក្សរ"
+  },
+  "icu:Preferences--typing-indicators--description": {
+    "messageformat": "If disabled, you won't see typing indicators from others."
   },
   "icu:Preferences--updates": {
     "messageformat": "កំណែថ្មី"
@@ -6682,6 +6814,9 @@
   "icu:MyStories__delete": {
     "messageformat": "លុបរឿងរ៉ាវនេះឬ? វាក៏នឹងត្រូវបានលុបផងដែរសម្រាប់អ្នករាល់គ្នាដែលបានទទួលវា។"
   },
+  "icu:MyStories__delete-group-story-for-me": {
+    "messageformat": "លុបរឿងរ៉ាវនេះ? វានឹងត្រូវបានលុបចេញសម្រាប់អ្នកតែប៉ុណ្ណោះ ដោយសារតែក្រុមនេះបានបញ្ចប់ហើយ។"
+  },
   "icu:payment-event-notification-message-you-label": {
     "messageformat": "អ្នកបានចាប់ផ្តើមការបង់ប្រាក់ទៅ {receiver}"
   },
@@ -6903,6 +7038,9 @@
   },
   "icu:StoriesSettings__view-receipts--label": {
     "messageformat": "មុខងារមើលសារ"
+  },
+  "icu:StoriesSettings__view-receipts--new-description": {
+    "messageformat": "See and share when stories are viewed. If disabled, you won't see when others view your story."
   },
   "icu:StoriesSettings__view-receipts--description": {
     "messageformat": "ដើម្បីផ្លាស់ប្តូរការកំណត់នេះ សូមបើកកម្មវិធី Signal នៅលើឧបករណ៍ចល័តរបស់អ្នក ហើយចូលទៅកាន់ការកំណត់ -> រឿងរ៉ាវ"
@@ -7553,6 +7691,18 @@
   "icu:ProfileNameWarningModal__list--item3--direct": {
     "messageformat": "កុំចែករំលែកព័ត៌មានផ្ទាល់ខ្លួនជាមួយមនុស្សដែលអ្នកមិនស្គាល់"
   },
+  "icu:ProfileNameWarningModal__warning--signal-cant-verify": {
+    "messageformat": "Signal can’t verify names and photos"
+  },
+  "icu:ProfileNameWarningModal__warning--signal-wont-contact": {
+    "messageformat": "Signal will never contact you for your registration code, PIN, or recovery key"
+  },
+  "icu:ProfileNameWarningModal__warning--be-cautious": {
+    "messageformat": "Be cautious of accounts that impersonate others"
+  },
+  "icu:ProfileNameWarningModal__warning--dont-share-info": {
+    "messageformat": "Don't share personal information with people you don't know"
+  },
   "icu:ProfileNameWarningModal__description--group": {
     "messageformat": "ឈ្មោះក្រុមត្រូវបានជ្រើសរើសដោយសមាជិកក្រុម។"
   },
@@ -8015,8 +8165,5 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "ការកែប្រែបន្តិចបន្តួច ការដោះស្រាយបញ្ហា និងការបង្កើនប្រតិបត្តិការ។ សូមអរគុណចំពោះការប្រើប្រាស់ Signal!",
     "ignoreUnused": true
-  },
-  "icu:WhatsNew__8.3--0": {
-    "messageformat": "ឥឡូវនេះ អ្នកអាចដាក់ស្លាកសមាជិកជាជម្រើសបាន ដើម្បីពណ៌នាអំពីខ្លួនអ្នក ឬតួនាទីរបស់អ្នកនៅក្នុងការជជែកជាក្រុម។ កំណត់ស្លាកសមាជិកក្រុមរបស់អ្នកទៅជា \"អាជ្ញាកណ្តាល\" ឬ \"អ្នកចាំទី\" នៅក្នុងការជជែកអំពីការប្រកួតបាល់ទាត់ក្នុងស្រុក ដើម្បីជួយចាប់ផ្តើមនៅពេលដែលមិត្តរួមក្រុមថ្មីចូលរួម បន្ទាប់មកជ្រើសរើសស្លាកផ្សេងដែលមានមុខតំណែងការងាររបស់អ្នកនៅក្នុងការជជែករបស់ក្រុមហ៊ុន។ ស្លាកសមាជិកបង្ហាញនៅជិតឈ្មោះប្រូហ្វាល់នៅក្នុងក្រុមនោះ ហើយអ្នកគ្រប់គ្រងក្រុមជាអ្នកកំណត់ថាតើមុខងារនេះអាចបើកសម្រាប់មនុស្សគ្រប់គ្នាឬទេ។"
   }
 }

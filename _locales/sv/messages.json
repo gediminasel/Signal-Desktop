@@ -746,6 +746,9 @@
   "icu:fileSizeWarning": {
     "messageformat": "Tyvärr, filen du har valt överstiger maximalt tillåten filstorlek. {limit,number} {units}"
   },
+  "icu:videoFileSizeWarning": {
+    "messageformat": "Tyvärr, den valda videofilen överskrider storleksgränsen för meddelanden. {limit,number} {units}"
+  },
   "icu:unableToLoadAttachment": {
     "messageformat": "Det gick inte att läsa in vald bilaga"
   },
@@ -1787,6 +1790,12 @@
   "icu:Preferences__EditChatFolderPage__CancelButton": {
     "messageformat": "Avbryt"
   },
+  "icu:Preferences__PrivacyPage__ShowStatusIcon__Label": {
+    "messageformat": "Show status icon"
+  },
+  "icu:Preferences__PrivacyPage__ShowStatusIcon__Description": {
+    "messageformat": "Show an icon in message details when they were delivered using sealed sender."
+  },
   "icu:Preferences__PrivacyPage__KeyTransparency__Label": {
     "messageformat": "Automatisk nyckelverifiering"
   },
@@ -2372,6 +2381,9 @@
   "icu:ConversationDetails--support-center": {
     "messageformat": "Supportcenter"
   },
+  "icu:ConversationDetails__GroupTerminatedBanner": {
+    "messageformat": "Gruppen har avslutats"
+  },
   "icu:SafetyNumberNotification__viewSafetyNumber": {
     "messageformat": "Visa säkerhetsnummer"
   },
@@ -2551,6 +2563,27 @@
   },
   "icu:youUpdatedTheGroup": {
     "messageformat": "Du uppdaterade gruppen."
+  },
+  "icu:collapsedGroupUpdates": {
+    "messageformat": "{count, plural, one {{count,number} gruppuppdatering} other {{count,number} gruppuppdateringar}}"
+  },
+  "icu:multidayCollapse__container": {
+    "messageformat": "{containerDescription} · {dayCountSummary}"
+  },
+  "icu:multidayCollapse__dayCountSummary": {
+    "messageformat": "{dayCount, plural, one {{dayCount,number} dag} other {{dayCount,number} dagar}}"
+  },
+  "icu:collapsedChatUpdates": {
+    "messageformat": "{count, plural, one {{count,number} chattuppdatering} other {{count,number} chattuppdateringar}}"
+  },
+  "icu:collapsedTimerChanges": {
+    "messageformat": "{count, plural, one {{count,number} ändring av timer för försvinnande meddelanden · {endingState}} other {{count,number} ändringar av timer för försvinnande meddelanden · {endingState}}}"
+  },
+  "icu:collapsedTimerChanges--disabled": {
+    "messageformat": "{count, plural, one {{count,number} ändring av timer för försvinnande meddelanden · Inaktiverad} other {{count,number} ändringar av timer för försvinnande meddelanden · Inaktiverad}}"
+  },
+  "icu:collapsedCallEvents": {
+    "messageformat": "{count, plural, one {{count,number} samtalshändelse} other {{count,number} samtalshändelser}}"
   },
   "icu:updatedGroupAvatar": {
     "messageformat": "Gruppavatar uppdaterades."
@@ -3017,8 +3050,8 @@
   "icu:Message--tap-to-view--incoming--expired-toast": {
     "messageformat": "Du har redan sett det här meddelandet."
   },
-  "icu:Message--tap-to-view--outgoing--expired-toast": {
-    "messageformat": "Visa en gång-meddelanden lagras inte i chatthistoriken."
+  "icu:Message--tap-to-view--outgoing--expired-toast-2": {
+    "messageformat": "Visa en gång-media raderas efter att ha skickats"
   },
   "icu:Message--tap-to-view--video": {
     "messageformat": "Visa tillfällig video"
@@ -3485,8 +3518,17 @@
   "icu:ConversationHero--profile-names": {
     "messageformat": "<clickable>Profilnamn</clickable> verifieras inte"
   },
+  "icu:ConversationHero--name-not-verified": {
+    "messageformat": "Name not verified"
+  },
   "icu:ConversationHero--signal-official-chat": {
     "messageformat": "Det här är den officiella och enda chatten från Signal"
+  },
+  "icu:ConversationHero--signal-official-account": {
+    "messageformat": "Official account"
+  },
+  "icu:ConversationHero--signal-official-account--description": {
+    "messageformat": "The only official chat from Signal. Keep up to date with news and release notes."
   },
   "icu:ConversationHero--release-notes": {
     "messageformat": "Håll dig uppdaterad med nyheter och versionsinformation."
@@ -3767,9 +3809,6 @@
   "icu:CallingAdhocCallInfo__ShareViaSignal": {
     "messageformat": "Dela samtalslänk via Signal"
   },
-  "icu:CallingAdhocCallInfo__RemoveClient": {
-    "messageformat": "Ta bort den här personen från samtalet"
-  },
   "icu:CallingAdhocCallInfo__RemoveClientDialogBody": {
     "messageformat": "Ta bort {name} från samtalet?"
   },
@@ -3932,11 +3971,23 @@
   "icu:GroupV2--join--requested": {
     "messageformat": "Din förfrågan om att gå med har skickats till gruppadministratören. Du får en notis när administratören vidtar åtgärder."
   },
+  "icu:GroupV2--join--group-terminated": {
+    "messageformat": "Det går inte att gå med i den här gruppen."
+  },
   "icu:GroupV2--join--general-join-failure--title": {
     "messageformat": "Länkfel"
   },
   "icu:GroupV2--join--general-join-failure": {
     "messageformat": "Det gick inte att gå med i gruppen. Försök igen senare."
+  },
+  "icu:GroupV2--terminate-group-in-progress": {
+    "messageformat": "Avslutar grupp …"
+  },
+  "icu:TerminateGroupFailedModal__description": {
+    "messageformat": "Det gick inte att avsluta gruppen. Kontrollera din anslutning och försök igen."
+  },
+  "icu:TerminateGroupFailedModal__try-again": {
+    "messageformat": "Försök igen"
   },
   "icu:GroupV2--admin": {
     "messageformat": "Administratör"
@@ -4379,6 +4430,15 @@
   "icu:GroupV2--summary": {
     "messageformat": "Gruppens medlemmar eller inställningar har ändrats."
   },
+  "icu:GroupV2--terminated--you": {
+    "messageformat": "Du avslutade gruppen"
+  },
+  "icu:GroupV2--terminated--other": {
+    "messageformat": "{memberName} avslutade gruppen"
+  },
+  "icu:GroupV2--terminated--unknown": {
+    "messageformat": "Gruppen har avslutats"
+  },
   "icu:GroupV1--Migration--disabled--link": {
     "messageformat": "Uppgradera den här gruppen för att aktivera nya funktioner som @omnämnanden och administratörer. Medlemmar som inte har delat sitt namn eller foto i den här gruppen kommer att bjudas in att gå med. <learnMoreLink>Läs mer.</learnMoreLink>"
   },
@@ -4655,6 +4715,9 @@
   "icu:CompositionArea__ConfirmGifSelection__ReplaceButton": {
     "messageformat": "Ersätt"
   },
+  "icu:CompositionArea--group-terminated": {
+    "messageformat": "Du kan inte skicka meddelanden eftersom gruppen har avslutats."
+  },
   "icu:CompositionArea--viewOnceToggle": {
     "messageformat": "Visa en gång"
   },
@@ -4832,11 +4895,26 @@
   "icu:ConversationDetailsActions--leave-group": {
     "messageformat": "Lämna grupp"
   },
+  "icu:ConversationDetailsActions--terminate-group": {
+    "messageformat": "Avsluta gruppen"
+  },
   "icu:ConversationDetailsActions--block-group": {
     "messageformat": "Blockera grupp"
   },
   "icu:ConversationDetailsActions--unblock-group": {
     "messageformat": "Avblockera grupp"
+  },
+  "icu:ConversationDetailsActions--report-spam": {
+    "messageformat": "Rapportera skräppost"
+  },
+  "icu:ConversationDetailsActions--archive": {
+    "messageformat": "Arkivera chatt"
+  },
+  "icu:ConversationDetailsActions--unarchive": {
+    "messageformat": "Avarkivera chatt"
+  },
+  "icu:ConversationDetailsActions--delete": {
+    "messageformat": "Ta bort chatt"
   },
   "icu:ConversationDetailsActions--leave-group-must-choose-new-admin": {
     "messageformat": "Innan du lämnar måste du välja minst en ny administratör för den här gruppen."
@@ -4849,6 +4927,18 @@
   },
   "icu:ConversationDetailsActions--leave-group-modal-confirm": {
     "messageformat": "Lämna"
+  },
+  "icu:ConversationDetailsActions--prompt-terminate-group-modal-title": {
+    "messageformat": "Avsluta \"{groupName}\"?"
+  },
+  "icu:ConversationDetailsActions--prompt-terminate-group-modal-content": {
+    "messageformat": "Medlemmar kommer inte längre att kunna skicka meddelanden eller starta samtal i gruppen. De får en notis om att du avslutade gruppen och har fortfarande tillgång till meddelandehistoriken."
+  },
+  "icu:ConversationDetailsActions--terminate-group-modal-confirm": {
+    "messageformat": "Avsluta gruppen"
+  },
+  "icu:ConversationDetailsActions--confirm-terminate-group-confirm-modal-content": {
+    "messageformat": "Detta avslutar gruppen permanent. Är du säker på att du vill fortsätta?"
   },
   "icu:ConversationDetailsActions--unblock-group-modal-title": {
     "messageformat": "Avblockera gruppen \"{groupName}\"?"
@@ -4868,6 +4958,18 @@
   "icu:ConversationDetailsActions--unblock-group-modal-confirm": {
     "messageformat": "Avblockera"
   },
+  "icu:ConversationDetailsActions--report-spam-modal-content-direct": {
+    "messageformat": "Signal kommer att meddelas om att denna person kanske skickar skräppost. Signal kan inte se innehållet i några chattar."
+  },
+  "icu:ConversationDetailsActions--report-spam-modal-content-group": {
+    "messageformat": "Signal kommer att meddelas om att den person som bjöd in dig till denna grupp kanske skickar spam. Signal kan inte se innehållet i några chattar."
+  },
+  "icu:ConversationDetailsActions--report-spam-modal-report-spam": {
+    "messageformat": "Rapportera skräppost"
+  },
+  "icu:ConversationDetailsActions--report-spam-modal-report-and-block": {
+    "messageformat": "Rapportera och blockera"
+  },
   "icu:ConversationDetailsHeader--members": {
     "messageformat": "{number, plural, one {{number,number} medlem} other {{number,number} medlemmar}}"
   },
@@ -4876,6 +4978,9 @@
   },
   "icu:ConversationDetailsMembershipList--title": {
     "messageformat": "{number, plural, one {{number,number} medlem} other {{number,number} medlemmar}}"
+  },
+  "icu:ConversationDetailsMembershipList--terminated-title": {
+    "messageformat": "{number, plural, one {{number,number} tidigare medlem} other {{number,number} tidigare medlemmar}}"
   },
   "icu:ConversationDetailsMembershipList--add-members": {
     "messageformat": "Lägg till medlemmar"
@@ -5195,6 +5300,9 @@
   },
   "icu:MessageRequestWarning__safety-tips": {
     "messageformat": "Säkerhetstips"
+  },
+  "icu:MessageRequestWarning__safety-tips-v2": {
+    "messageformat": "Safety tips"
   },
   "icu:ContactSpoofing__same-name--link": {
     "messageformat": "Granska förfrågningar noggrant. Signal hittade en annan kontakt med samma namn. <reviewRequestLink>Granska förfrågan</reviewRequestLink>"
@@ -5797,6 +5905,15 @@
   "icu:Preferences__link-previews--description": {
     "messageformat": "Om du vill ändra den här inställningen öppnar du Signal-appen på din mobila enhet och navigerar till Inställningar > Chattar"
   },
+  "icu:Preferences__link-previews--new-description": {
+    "messageformat": "Retrieve link previews directly from websites for messages you send."
+  },
+  "icu:Preferences__address-book-photos--title": {
+    "messageformat": "Use address book photos"
+  },
+  "icu:Preferences__address-book-photos--description": {
+    "messageformat": "Display contact photos from your address book if available."
+  },
   "icu:Preferences__auto-convert-emoji--title": {
     "messageformat": "Konvertera skrivna uttryckssymboler till emojier"
   },
@@ -6232,35 +6349,35 @@
   "icu:Preferences--local-backups-view-backup-key-done": {
     "messageformat": "Klar"
   },
-  "icu:Preferences--local-backups--view-backup-key--os-prompt--mac": {
-    "messageformat": "visa din säkerhetskopieringsnyckel"
+  "icu:Preferences--local-backups--view-recovery-key--os-prompt--mac": {
+    "messageformat": "visa din återställningsnyckel"
   },
-  "icu:Preferences--local-backups--view-backup-key--os-prompt--windows": {
-    "messageformat": "Verifiera din identitet för att se din säkerhetskopieringsnyckel."
+  "icu:Preferences--local-backups--view-recovery-key--os-prompt--windows": {
+    "messageformat": "Verifiera din identitet för att visa din återställningsnyckel."
   },
-  "icu:Preferences--local-backups--view-backup-key--os-prompt-description--linux": {
-    "messageformat": "Visa säkerhetskopieringsnyckel"
+  "icu:Preferences--local-backups--view-recovery-key--os-prompt-description--linux": {
+    "messageformat": "Visa återställningsnyckel"
   },
-  "icu:Preferences--local-backups--view-backup-key--os-prompt-message--linux": {
-    "messageformat": "Autentisering krävs för att visa din säkerhetskopieringsnyckel."
+  "icu:Preferences--local-backups--view-recovery-key--os-prompt-message--linux": {
+    "messageformat": "Autentisering krävs för att visa din återställningsnyckel."
   },
-  "icu:Preferences--local-backups-backup-key-text-box": {
-    "messageformat": "Textruta för säkerhetskopieringsnyckel"
+  "icu:Preferences--local-backups-recovery-key-text-box": {
+    "messageformat": "Återställningsnyckel"
   },
   "icu:Preferences--local-backups-enter-backup-key": {
     "messageformat": "Ange nyckel"
   },
-  "icu:Preferences--local-backups-record-backup-key": {
-    "messageformat": "Spara din säkerhetskopieringsnyckel"
+  "icu:Preferences--local-backups-record-recovery-key": {
+    "messageformat": "Spara din återställningsnyckel"
   },
   "icu:Preferences--local-backups-record-backup-key-description": {
     "messageformat": "Denna nyckel krävs för att återställa ditt konto och dina data. Förvara den här nyckeln på ett säkert ställe. Om du förlorar den kommer du inte att kunna återställa ditt konto.<learnMoreLink>Läs mer.</learnMoreLink>"
   },
-  "icu:Preferences--local-backups-confirm-backup-key": {
-    "messageformat": "Bekräfta din säkerhetskopieringsnyckel"
+  "icu:Preferences--local-backups-confirm-recovery-key": {
+    "messageformat": "Bekräfta din återställningsnyckel"
   },
-  "icu:Preferences--local-backups-confirm-backup-key-description": {
-    "messageformat": "Ange säkerhetskopieringsnyckeln som du just spelade in"
+  "icu:Preferences--local-backups-confirm-recovery-key-description": {
+    "messageformat": "Ange återställningsnyckeln som du just registrerat"
   },
   "icu:Preferences__local-backups-confirm-key-modal-title": {
     "messageformat": "Förvara din nyckel säkert"
@@ -6286,9 +6403,6 @@
   "icu:Preferences__local-backups-folder": {
     "messageformat": "Mapp för säkerhetskopior"
   },
-  "icu:Preferences__local-backups-folder__change": {
-    "messageformat": "Ändra"
-  },
   "icu:Preferences__local-backups-turn-off": {
     "messageformat": "Stäng av säkerhetskopiering"
   },
@@ -6304,8 +6418,8 @@
   "icu:Preferences__local-backups-copy-key": {
     "messageformat": "Kopiera till urklipp"
   },
-  "icu:Preferences__local-backups-copied-key": {
-    "messageformat": "Säkerhetskopieringsnyckel kopierad"
+  "icu:Preferences__local-backups-copied-recovery-key": {
+    "messageformat": "Återställningsnyckeln kopierad"
   },
   "icu:Preferences__local-backups--enable--os-prompt--mac": {
     "messageformat": "Aktivera säkerhetskopior"
@@ -6319,17 +6433,29 @@
   "icu:Preferences__local-backups--enable--os-prompt-message--linux": {
     "messageformat": "Autentisering krävs för att aktivera säkerhetskopior."
   },
+  "icu:Preferences__local-backups-auth-error--unauthorized": {
+    "messageformat": "Den här åtgärden kunde inte slutföras eftersom systemautentiseringen misslyckades. Försök igen eller öppna Signal-appen på din mobila enhet och gå till inställningarna för säkerhetskopiering för att visa din återställningsnyckel."
+  },
   "icu:Preferences__view-key": {
     "messageformat": "Visa nyckel"
   },
-  "icu:Preferences__backup-key": {
-    "messageformat": "Säkerhetskopieringsnyckel"
+  "icu:Preferences__recovery-key": {
+    "messageformat": "Återställningsnyckel"
   },
-  "icu:Preferences__backup-key-description": {
-    "messageformat": "Din säkerhetskopieringsnyckel är en 64-siffrig kod som används för att återställa din säkerhetskopia"
+  "icu:Preferences__recovery-key-description": {
+    "messageformat": "Din återställningsnyckel är en kod med 64 tecken som används för att återställa din säkerhetskopia"
   },
   "icu:Preferences__backup-other-ways": {
     "messageformat": "Andra sätt att säkerhetskopiera"
+  },
+  "icu:Preferences__recovery-key-updated__title": {
+    "messageformat": "Din återställningsnyckel har ändrats"
+  },
+  "icu:Preferences__recovery-key-updated__description": {
+    "messageformat": "Din återställningsnyckel har uppdaterats. Nya säkerhetskopior som du skapar kan bara återställas med din nya återställningsnyckel."
+  },
+  "icu:Preferences__recovery-key-updated__view-key": {
+    "messageformat": "Visa ny nyckel"
   },
   "icu:Preferences--blocked-count": {
     "messageformat": "{num, plural, one {{num,number} kontakt} other {{num,number} kontakter}}"
@@ -6394,8 +6520,14 @@
   "icu:Preferences--read-receipts": {
     "messageformat": "Läskvitton"
   },
+  "icu:Preferences--read-receipts--description": {
+    "messageformat": "If disabled, you won't see read receipts from others."
+  },
   "icu:Preferences--typing-indicators": {
     "messageformat": "Skrivindikatorer"
+  },
+  "icu:Preferences--typing-indicators--description": {
+    "messageformat": "If disabled, you won't see typing indicators from others."
   },
   "icu:Preferences--updates": {
     "messageformat": "Uppdateringar"
@@ -6682,6 +6814,9 @@
   "icu:MyStories__delete": {
     "messageformat": "Ta bort den här storyn? Den kommer också att tas bort för alla som har mottagit den."
   },
+  "icu:MyStories__delete-group-story-for-me": {
+    "messageformat": "Radera den här storyn? Den raderas bara för dig eftersom gruppen har avslutats."
+  },
   "icu:payment-event-notification-message-you-label": {
     "messageformat": "Du har påbörjat en betalning till {receiver}"
   },
@@ -6903,6 +7038,9 @@
   },
   "icu:StoriesSettings__view-receipts--label": {
     "messageformat": "Visa kvitton"
+  },
+  "icu:StoriesSettings__view-receipts--new-description": {
+    "messageformat": "See and share when stories are viewed. If disabled, you won't see when others view your story."
   },
   "icu:StoriesSettings__view-receipts--description": {
     "messageformat": "Om du vill ändra den här inställningen öppnar du Signal-appen på din mobila enhet och navigerar till Inställningar > Stories"
@@ -7553,6 +7691,18 @@
   "icu:ProfileNameWarningModal__list--item3--direct": {
     "messageformat": "Dela inte personlig information med personer du inte känner"
   },
+  "icu:ProfileNameWarningModal__warning--signal-cant-verify": {
+    "messageformat": "Signal can’t verify names and photos"
+  },
+  "icu:ProfileNameWarningModal__warning--signal-wont-contact": {
+    "messageformat": "Signal will never contact you for your registration code, PIN, or recovery key"
+  },
+  "icu:ProfileNameWarningModal__warning--be-cautious": {
+    "messageformat": "Be cautious of accounts that impersonate others"
+  },
+  "icu:ProfileNameWarningModal__warning--dont-share-info": {
+    "messageformat": "Don't share personal information with people you don't know"
+  },
   "icu:ProfileNameWarningModal__description--group": {
     "messageformat": "Gruppnamn väljs av medlemmar i gruppen."
   },
@@ -8015,8 +8165,5 @@
   "icu:WhatsNew__bugfixes--6": {
     "messageformat": "Små justeringer, buggfixar och prestandaförbättringar. Tack för att du använder Signal!",
     "ignoreUnused": true
-  },
-  "icu:WhatsNew__8.3--0": {
-    "messageformat": "Nu kan du välja att lägga till en medlemsetikett för att beskriva dig själv eller din roll i en gruppchatt. Medlemsetiketter visas bredvid ditt profilnamn i gruppen, och gruppadministratörer kan styra om de är aktiverade för alla."
   }
 }

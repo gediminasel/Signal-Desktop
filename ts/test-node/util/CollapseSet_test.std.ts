@@ -4,26 +4,30 @@
 import { assert } from 'chai';
 import { v4 as generateUuid } from 'uuid';
 
-import { getMidnight } from '../../types/NotificationProfile.std.js';
-import { mapItemsIntoCollapseSets } from '../../util/CollapseSet.std.js';
-import { generateAci } from '../../types/ServiceId.std.js';
-import { ReadStatus } from '../../messages/MessageReadStatus.std.js';
-import { SeenStatus } from '../../MessageSeenStatus.std.js';
-import { DurationInSeconds } from '../../util/durations/duration-in-seconds.std.js';
+import { getMidnight } from '../../types/NotificationProfile.std.ts';
+import {
+  mapItemsIntoCollapseSets,
+  MAX_COLLAPSE_SET_SIZE,
+} from '../../util/CollapseSet.std.ts';
+import { ReadStatus } from '../../messages/MessageReadStatus.std.ts';
+import { SeenStatus } from '../../MessageSeenStatus.std.ts';
+import { DurationInSeconds } from '../../util/durations/duration-in-seconds.std.ts';
 import {
   CallDirection,
   CallMode,
   CallType,
   DirectCallStatus,
-} from '../../types/CallDisposition.std.js';
-import { DAY } from '../../util/durations/constants.std.js';
+} from '../../types/CallDisposition.std.ts';
+import { DAY } from '../../util/durations/constants.std.ts';
 
-import type { CallHistoryDetails } from '../../types/CallDisposition.std.js';
+import type { CallHistoryDetails } from '../../types/CallDisposition.std.ts';
 import type {
   MessageLookupType,
   MessageType,
-} from '../../state/ducks/conversations.preload.js';
-import type { CollapseSet } from '../../util/CollapseSet.std.js';
+} from '../../state/ducks/conversations.preload.ts';
+import type { CollapseSet } from '../../util/CollapseSet.std.ts';
+import type { MessageAttributesType } from '../../model-types.d.ts';
+import { generateAci } from '../../test-helpers/serviceIdUtils.std.ts';
 
 describe('util/CollapseSets', () => {
   describe('mapItemsIntoCollapseSets', () => {
@@ -167,6 +171,350 @@ describe('util/CollapseSets', () => {
         expectedScrollToIndex,
         'resultScrollToIndex'
       );
+      assert.isNull(resultUnseenIndex);
+    });
+    it('returns single set for all non-groupv2 items included in group sets', () => {
+      const groupMessage = {
+        ...getDefaultMessage('unused'),
+        type: 'group-v2-change' as const,
+        groupV2Change: {
+          details: [{ type: 'create' as const }],
+        },
+      };
+      // The best test is if these are all right next to group messages; otherwise
+      // it's only testing whether they group against their neighbors...
+      const itemsToMixIn = [
+        // The first set is included
+        {
+          ...getDefaultMessage('unused'),
+          type: 'profile-change' as const,
+          profileChange: {
+            type: 'name' as const,
+            oldName: 'Someone',
+            newName: 'Sometwo',
+          },
+          changedId: generateAci(),
+        },
+        {
+          ...getDefaultMessage('unused'),
+          type: 'poll-terminate' as const,
+          pollTerminateNotification: {
+            question: 'What is the best?',
+            pollTimestamp: yesterday,
+          },
+          changedId: generateAci(),
+        },
+        {
+          ...getDefaultMessage('unused'),
+          type: 'keychange' as const,
+          key_changed: generateAci(),
+        },
+        {
+          ...getDefaultMessage('unused'),
+          type: 'change-number-notification' as const,
+          changedId: generateAci(),
+        },
+        {
+          ...getDefaultMessage('unused'),
+          type: 'pinned-message-notification' as const,
+          pinMessage: {
+            targetAuthorAci: generateAci(),
+            targetSentTimestamp: yesterday,
+          },
+        },
+        {
+          ...getDefaultMessage('unused'),
+          type: 'verified-change' as const,
+          verified: true,
+          verifiedChanged: generateAci(),
+        },
+        // From here on, they should not be included
+        {
+          ...getDefaultMessage('unused'),
+          type: 'group-v2-change' as const,
+          groupV2Change: {
+            details: [{ type: 'terminated' as const }],
+          },
+        },
+        {
+          ...getDefaultMessage('unused'),
+          type: 'chat-session-refreshed' as const,
+        },
+        {
+          ...getDefaultMessage('unused'),
+          type: 'conversation-merge' as const,
+        },
+        {
+          ...getDefaultMessage('unused'),
+          type: 'delivery-issue' as const,
+        },
+        {
+          ...getDefaultMessage('unused'),
+          type: 'group-v1-migration' as const,
+        },
+        {
+          ...getDefaultMessage('unused'),
+          type: 'group' as const,
+        },
+        {
+          ...getDefaultMessage('unused'),
+          type: 'joined-signal-notification' as const,
+        },
+        {
+          ...getDefaultMessage('unused'),
+          type: 'phone-number-discovery' as const,
+        },
+        {
+          ...getDefaultMessage('unused'),
+          type: 'universal-timer-notification' as const,
+        },
+        {
+          ...getDefaultMessage('unused'),
+          type: 'contact-removed-notification' as const,
+        },
+        {
+          ...getDefaultMessage('unused'),
+          type: 'title-transition-notification' as const,
+        },
+        {
+          ...getDefaultMessage('unused'),
+          type: 'message-request-response-event' as const,
+        },
+      ];
+      const items = [];
+      const messages: Record<string, MessageAttributesType> = {};
+      let i = 0;
+
+      for (const item of itemsToMixIn) {
+        const firstId = `id${i}`;
+        items.push(firstId);
+        messages[firstId] = {
+          ...groupMessage,
+          id: firstId,
+        };
+
+        i += 1;
+
+        const secondId = `id${i}`;
+        items.push(secondId);
+        messages[secondId] = {
+          ...item,
+          id: secondId,
+        };
+
+        i += 1;
+      }
+
+      const expectedSets: Array<CollapseSet> = [
+        {
+          id: 'id0',
+          type: 'group-updates',
+          messages: [
+            {
+              id: 'id0',
+              isUnseen: false,
+              extraItems: undefined,
+            },
+            {
+              id: 'id1',
+              isUnseen: false,
+              extraItems: undefined,
+              atDateBoundary: false,
+            },
+            {
+              id: 'id2',
+              isUnseen: false,
+              extraItems: undefined,
+              atDateBoundary: false,
+            },
+            {
+              id: 'id3',
+              isUnseen: false,
+              extraItems: undefined,
+              atDateBoundary: false,
+            },
+            {
+              id: 'id4',
+              isUnseen: false,
+              extraItems: undefined,
+              atDateBoundary: false,
+            },
+            {
+              id: 'id5',
+              isUnseen: false,
+              extraItems: undefined,
+              atDateBoundary: false,
+            },
+            {
+              id: 'id6',
+              isUnseen: false,
+              extraItems: undefined,
+              atDateBoundary: false,
+            },
+            {
+              id: 'id7',
+              isUnseen: false,
+              extraItems: undefined,
+              atDateBoundary: false,
+            },
+            {
+              id: 'id8',
+              isUnseen: false,
+              extraItems: undefined,
+              atDateBoundary: false,
+            },
+            {
+              id: 'id9',
+              isUnseen: false,
+              extraItems: undefined,
+              atDateBoundary: false,
+            },
+            {
+              id: 'id10',
+              isUnseen: false,
+              extraItems: undefined,
+              atDateBoundary: false,
+            },
+            {
+              id: 'id11',
+              isUnseen: false,
+              extraItems: undefined,
+              atDateBoundary: false,
+            },
+            {
+              id: 'id12',
+              isUnseen: false,
+              extraItems: undefined,
+              atDateBoundary: false,
+            },
+          ],
+        },
+        {
+          id: 'id13',
+          type: 'none',
+          messages: undefined,
+        },
+        {
+          id: 'id14',
+          type: 'none',
+          messages: undefined,
+        },
+        {
+          id: 'id15',
+          type: 'none',
+          messages: undefined,
+        },
+        {
+          id: 'id16',
+          type: 'none',
+          messages: undefined,
+        },
+        {
+          id: 'id17',
+          type: 'none',
+          messages: undefined,
+        },
+        {
+          id: 'id18',
+          type: 'none',
+          messages: undefined,
+        },
+        {
+          id: 'id19',
+          type: 'none',
+          messages: undefined,
+        },
+        {
+          id: 'id20',
+          type: 'none',
+          messages: undefined,
+        },
+        {
+          id: 'id21',
+          type: 'none',
+          messages: undefined,
+        },
+        {
+          id: 'id22',
+          type: 'none',
+          messages: undefined,
+        },
+        {
+          id: 'id23',
+          type: 'none',
+          messages: undefined,
+        },
+        {
+          id: 'id24',
+          type: 'none',
+          messages: undefined,
+        },
+        {
+          id: 'id25',
+          type: 'none',
+          messages: undefined,
+        },
+        {
+          id: 'id26',
+          type: 'none',
+          messages: undefined,
+        },
+        {
+          id: 'id27',
+          type: 'none',
+          messages: undefined,
+        },
+        {
+          id: 'id28',
+          type: 'none',
+          messages: undefined,
+        },
+        {
+          id: 'id29',
+          type: 'none',
+          messages: undefined,
+        },
+        {
+          id: 'id30',
+          type: 'none',
+          messages: undefined,
+        },
+        {
+          id: 'id31',
+          type: 'none',
+          messages: undefined,
+        },
+        {
+          id: 'id32',
+          type: 'none',
+          messages: undefined,
+        },
+        {
+          id: 'id33',
+          type: 'none',
+          messages: undefined,
+        },
+        {
+          id: 'id34',
+          type: 'none',
+          messages: undefined,
+        },
+        {
+          id: 'id35',
+          type: 'none',
+          messages: undefined,
+        },
+      ];
+
+      const { resultSets, resultScrollToIndex, resultUnseenIndex } =
+        mapItemsIntoCollapseSets({
+          ...defaultParams,
+          items,
+          messages,
+        });
+
+      assert.deepEqual(resultSets, expectedSets);
+      assert.isNull(resultScrollToIndex);
       assert.isNull(resultUnseenIndex);
     });
 
@@ -634,20 +982,20 @@ describe('util/CollapseSets', () => {
           },
         },
         id2: {
-          ...getDefaultMessage('id2', yesterday),
+          ...getDefaultMessage('id2'),
           type: 'timer-notification',
           expirationTimerUpdate: {
             expireTimer: DurationInSeconds.fromHours(3),
           },
         },
         id3: {
-          ...getDefaultMessage('id3', yesterday),
+          ...getDefaultMessage('id3'),
           type: 'timer-notification',
           expirationTimerUpdate: {
             expireTimer: DurationInSeconds.fromHours(4),
           },
         },
-        id4: getDefaultMessage('id4', yesterday),
+        id4: getDefaultMessage('id4'),
       };
 
       const expectedSets: Array<CollapseSet> = [
@@ -770,21 +1118,21 @@ describe('util/CollapseSets', () => {
           },
         },
         id8: {
-          ...getDefaultMessage('id8', yesterday),
+          ...getDefaultMessage('id8'),
           type: 'group-v2-change',
           groupV2Change: {
             details: [{ type: 'group-link-reset' }],
           },
         },
         id9: {
-          ...getDefaultMessage('id9', yesterday),
+          ...getDefaultMessage('id9'),
           type: 'group-v2-change',
           groupV2Change: {
             details: [{ type: 'group-link-reset' }],
           },
         },
         id10: {
-          ...getDefaultMessage('id10', yesterday),
+          ...getDefaultMessage('id10'),
         },
       };
 
@@ -919,7 +1267,7 @@ describe('util/CollapseSets', () => {
           },
         },
         id5: {
-          ...getDefaultMessage('id5', yesterday),
+          ...getDefaultMessage('id5'),
           type: 'group-v2-change',
           groupV2Change: {
             details: [{ type: 'group-link-reset' }],
@@ -1041,14 +1389,14 @@ describe('util/CollapseSets', () => {
           },
         },
         id7: {
-          ...getDefaultMessage('id7', yesterday),
+          ...getDefaultMessage('id7'),
           type: 'group-v2-change',
           groupV2Change: {
             details: [{ type: 'group-link-reset' }],
           },
         },
         id8: {
-          ...getDefaultMessage('id8', yesterday),
+          ...getDefaultMessage('id8'),
           type: 'group-v2-change',
           groupV2Change: {
             details: [{ type: 'group-link-reset' }],
@@ -1145,14 +1493,14 @@ describe('util/CollapseSets', () => {
       ];
       const messages: MessageLookupType = {
         id0: {
-          ...getDefaultMessage('id0', yesterday),
+          ...getDefaultMessage('id0'),
           type: 'group-v2-change',
           groupV2Change: {
             details: [{ type: 'group-link-reset' }],
           },
         },
         id1: {
-          ...getDefaultMessage('id1', yesterday),
+          ...getDefaultMessage('id1'),
           type: 'group-v2-change',
           groupV2Change: {
             details: [{ type: 'group-link-reset' }],
@@ -1219,6 +1567,53 @@ describe('util/CollapseSets', () => {
         });
 
       assert.deepEqual(resultSets, expectedSets);
+      assert.isNull(resultScrollToIndex);
+      assert.isNull(resultUnseenIndex);
+    });
+
+    it('limits collapse set size based on MAX_COLLAPSE_SET_SIZE', () => {
+      const items = [];
+      const messages: Record<string, MessageAttributesType> = {};
+
+      const max = MAX_COLLAPSE_SET_SIZE * 3 + 1;
+      for (let i = 0; i < max; i += 1) {
+        const id = `id${i}`;
+        items.push(id);
+        messages[id] = {
+          ...getDefaultMessage(id),
+          type: 'group-v2-change',
+          groupV2Change: {
+            details: [{ type: 'group-link-reset' }],
+          },
+        };
+      }
+
+      const { resultSets, resultScrollToIndex, resultUnseenIndex } =
+        mapItemsIntoCollapseSets({
+          ...defaultParams,
+          items,
+          messages,
+        });
+
+      assert.strictEqual(resultSets.length, 4);
+
+      assert.strictEqual(
+        resultSets[0]?.messages?.length,
+        MAX_COLLAPSE_SET_SIZE,
+        'first set'
+      );
+      assert.strictEqual(
+        resultSets[1]?.messages?.length,
+        MAX_COLLAPSE_SET_SIZE,
+        'second set'
+      );
+      assert.strictEqual(
+        resultSets[2]?.messages?.length,
+        MAX_COLLAPSE_SET_SIZE,
+        'third set'
+      );
+      assert.strictEqual(resultSets[3]?.type, 'none', 'fourth set');
+
       assert.isNull(resultScrollToIndex);
       assert.isNull(resultUnseenIndex);
     });
@@ -1294,21 +1689,21 @@ describe('util/CollapseSets', () => {
           },
         },
         id8: {
-          ...getDefaultMessage('id8', yesterday),
+          ...getDefaultMessage('id8'),
           type: 'group-v2-change',
           groupV2Change: {
             details: [{ type: 'group-link-reset' }],
           },
         },
         id9: {
-          ...getDefaultMessage('id9', yesterday),
+          ...getDefaultMessage('id9'),
           type: 'group-v2-change',
           groupV2Change: {
             details: [{ type: 'group-link-reset' }],
           },
         },
         id10: {
-          ...getDefaultMessage('id10', yesterday),
+          ...getDefaultMessage('id10'),
         },
       };
 

@@ -5,21 +5,21 @@ import * as React from 'react';
 import { v4 as uuid } from 'uuid';
 import { action } from '@storybook/addon-actions';
 import type { Meta } from '@storybook/react';
-import { DurationInSeconds } from '../../util/durations/index.std.js';
-import type { PropsType } from './Timeline.dom.js';
-import { Timeline } from './Timeline.dom.js';
-import type { TimelineItemType } from './TimelineItem.dom.js';
-import { TimelineItem } from './TimelineItem.dom.js';
-import { StorybookThemeContext } from '../../../.storybook/StorybookThemeContext.std.js';
-import { ConversationHero } from './ConversationHero.dom.js';
-import { getDefaultConversation } from '../../test-helpers/getDefaultConversation.std.js';
-import { TypingBubble } from './TypingBubble.dom.js';
-import { ReadStatus } from '../../messages/MessageReadStatus.std.js';
-import { ThemeType } from '../../types/Util.std.js';
-import { MessageInteractivity, TextDirection } from './Message.dom.js';
-import { PaymentEventKind } from '../../types/Payment.std.js';
-import type { PropsData as TimelineMessageProps } from './TimelineMessage.dom.js';
-import type { RenderItemProps } from '../../state/smart/TimelineItem.preload.js';
+import { DurationInSeconds } from '../../util/durations/index.std.ts';
+import type { PropsType } from './Timeline.dom.tsx';
+import { Timeline } from './Timeline.dom.tsx';
+import type { TimelineItemType } from './TimelineItem.dom.tsx';
+import { TimelineItem } from './TimelineItem.dom.tsx';
+import { StorybookThemeContext } from '../../../.storybook/StorybookThemeContext.std.ts';
+import { ConversationHero } from './ConversationHero.dom.tsx';
+import { getDefaultConversation } from '../../test-helpers/getDefaultConversation.std.ts';
+import { TypingBubble } from './TypingBubble.dom.tsx';
+import { ReadStatus } from '../../messages/MessageReadStatus.std.ts';
+import { ThemeType } from '../../types/Util.std.ts';
+import { MessageInteractivity, TextDirection } from './Message.dom.tsx';
+import { PaymentEventKind } from '../../types/Payment.std.ts';
+import type { PropsData as TimelineMessageProps } from './TimelineMessage.dom.tsx';
+import type { RenderItemProps } from '../../state/smart/TimelineItem.preload.tsx';
 
 const { i18n } = window.SignalContext;
 
@@ -49,6 +49,7 @@ function mockMessageTimelineItem(
       canReply: true,
       canReplyPrivately: true,
       canRetry: true,
+      canSendPollVote: true,
       conversationId: 'conversation-id',
       conversationTitle: 'Conversation Title',
       conversationType: 'group',
@@ -362,6 +363,7 @@ const renderItem = ({
     isBlocked={false}
     isGroup={false}
     isSelectMode={false}
+    isSelected={false}
     i18n={i18n}
     interactivity={MessageInteractivity.Normal}
     interactionMode="keyboard"
@@ -410,8 +412,12 @@ const renderHeroRow = () => {
         avatarUrl={getAvatarPath()}
         badge={undefined}
         conversationType="direct"
-        id={getDefaultConversation().id}
+        hasNickname={false}
+        hasProfileName
         i18n={i18n}
+        id={getDefaultConversation().id}
+        isGroupNameVerified={false}
+        isInSystemContacts={false}
         isMe={false}
         phoneNumber={getPhoneNumber()}
         profileName={getProfileName()}
@@ -455,6 +461,7 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
   haveOldest: overrideProps.haveOldest ?? false,
   isBlocked: false,
   isConversationSelected: true,
+  isGroupTerminated: false,
   isIncomingMessageRequest: overrideProps.isIncomingMessageRequest ?? false,
   isInFullScreenCall: false,
   items:

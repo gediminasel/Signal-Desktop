@@ -1,17 +1,17 @@
 // Copyright 2025 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { systemPreferences } from 'electron';
+import { app, systemPreferences } from 'electron';
 import { exec } from 'node:child_process';
 import {
   checkAvailability as checkAvailabilityWindowsUcv,
   requestVerification as requestVerificationWindowsUcv,
 } from '@signalapp/windows-ucv';
 
-import { createLogger } from '../../logging/log.std.js';
-import OS from './osMain.node.js';
-import { missingCaseError } from '../missingCaseError.std.js';
-import { toLogFormat } from '../../types/errors.std.js';
+import { createLogger } from '../../logging/log.std.ts';
+import OS from './osMain.node.ts';
+import { missingCaseError } from '../missingCaseError.std.ts';
+import { toLogFormat } from '../../types/errors.std.ts';
 
 const log = createLogger('promptOSAuthMain');
 
@@ -24,7 +24,6 @@ export type PromptOSAuthResultType =
   | 'error'
   | 'success'
   | 'unauthorized'
-  | 'unauthorized-no-windows-ucv'
   | 'unsupported';
 
 /**
@@ -32,9 +31,6 @@ export type PromptOSAuthResultType =
  * before viewing sensitive account credentials.
  * Return values: 'success' indicates successful authentication.
  * 'unauthorized' indicates authentication is possible, but failed or was canceled.
- * 'unauthorized-no-windows-ucv' indicates the Windows API was not available or not setup.
- * Because this is the default case on Windows without Windows Hello enabled,
- * this response should be treated as an auth failure, and not bypassed.
  * 'unsupported' indicates the OS is not supported. Authentication can be skipped
  * or user asked to use a fallback method (e.g. using the primary mobile device).
  */
@@ -75,11 +71,10 @@ async function promptOSAuthWindows(
   text: string
 ): Promise<PromptOSAuthResultType> {
   // For Windows a verification device is required for the UserConsentVerifier API.
-  // If unavailable, then the UI must fail and require the user to setup verification.
   const availability = await checkAvailabilityWindowsUcv();
   log.info(`Windows UCV availability=${availability}`);
   if (availability !== 'available') {
-    return 'unauthorized-no-windows-ucv';
+    return 'unsupported';
   }
 
   const result = await requestVerificationWindowsUcv(text);
@@ -166,7 +161,11 @@ async function isPromptOSAuthAvailableLinux(
   });
 
   if (!isActionRegistered) {
-    if (OS.isAppImage()) {
+    if (!app.isPackaged) {
+      log.info(
+        'isPromptOsAuthAvailable: action not registered due to non-packaged app'
+      );
+    } else if (OS.isAppImage()) {
       log.warn(
         'isPromptOsAuthAvailable: action not registered due to AppImage'
       );

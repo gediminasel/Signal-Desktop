@@ -5,7 +5,7 @@
   pnpm_10,
   fetchPnpmDeps,
   pnpmConfigHook,
-  electron_40,
+  electron_41,
   python3,
   makeWrapper,
   callPackage,
@@ -16,6 +16,7 @@
   replaceVars,
   noto-fonts-color-emoji,
   nixosTests,
+  node-gyp,
 
   # command line arguments which are always set e.g "--password-store=kwallet6"
   commandLineArgs ? "",
@@ -23,7 +24,7 @@
 let
   nodejs = nodejs_24;
   pnpm = pnpm_10;
-  electron = electron_40;
+  electron = electron_41;
 
   libsignal-node = callPackage ./libsignal-node.nix { inherit nodejs; };
   signal-sqlcipher = callPackage ./signal-sqlcipher.nix { inherit pnpm nodejs; };
@@ -52,7 +53,7 @@ let
     '';
   });
 
-  version = "8.7.0-lel";
+  version = "8.11.0-lel";
 
   src = ../.;
 
@@ -65,7 +66,7 @@ let
       inherit (finalAttrs) pname src version;
       inherit pnpm;
       fetcherVersion = 3;
-      hash = "sha256-WbdYcI5y01gdS9AIzy4VZZ6eFaTHaVPscTawLSsHzlc=";
+      hash = "sha256-CPZkybD/rCBMBK9qUSweBdLr9hXu0Ztn8fekqrRzUR4=";
     };
 
     strictDeps = true;
@@ -100,6 +101,7 @@ stdenv.mkDerivation (finalAttrs: {
     makeWrapper
     python3
     jq
+    node-gyp
   ]
   ++ lib.optionals stdenv.hostPlatform.isDarwin [
     xcodebuild
@@ -110,7 +112,7 @@ stdenv.mkDerivation (finalAttrs: {
   buildInputs = [noto-fonts-color-emoji-png];
 
   patches = [
-    (replaceVars ./replace-apple-emoji-with-noto-emoji.patch {
+    (replaceVars ./replace-emoji-with-noto-emoji.patch {
       noto-emoji-pngs = "${noto-fonts-color-emoji-png}/share/noto-fonts-color-emoji-png";
     })
   ];
@@ -134,11 +136,11 @@ stdenv.mkDerivation (finalAttrs: {
     # language-pack postprocessing), and they expect a different macOS
     # app layout than nixpkgs' Electron provides.
     substituteInPlace package.json \
-      --replace-fail '"artifactBuildCompleted": "ts/scripts/artifact-build-completed.node.js",' "" \
-      --replace-fail '"afterSign": "ts/scripts/after-sign.node.js",' "" \
-      --replace-fail '"afterPack": "ts/scripts/after-pack.node.js",' "" \
-      --replace-fail '"sign": "./ts/scripts/sign-macos.node.js",' "" \
-      --replace-fail '"afterAllArtifactBuild": "ts/scripts/after-all-artifact-build.node.js",' ""
+      --replace-fail '"artifactBuildCompleted": "scripts/artifact-build-completed.mjs",' "" \
+      --replace-fail '"afterSign": "scripts/after-sign.mjs",' "" \
+      --replace-fail '"afterPack": "scripts/after-pack.mjs",' "" \
+      --replace-fail '"sign": "scripts/sign-macos.mjs",' "" \
+      --replace-fail '"afterAllArtifactBuild": "scripts/after-all-artifact-build.mjs",' ""
   '';
 
   pnpmDeps = fetchPnpmDeps {
@@ -150,13 +152,13 @@ stdenv.mkDerivation (finalAttrs: {
       ;
     inherit pnpm;
     fetcherVersion = 3;
-    hash = "sha256-IqzuEyLUlcPC5ben4zNmDBrCjtwpYaqDVCaRWkAACtk=";
+    hash = "sha256-YlZgsjVqdnSWlTOmhNNwOoeNoTT/+iXarG9ks2oaJLs=";
   };
 
   env = {
     ELECTRON_SKIP_BINARY_DOWNLOAD = "1";
     SIGNAL_ENV = "production";
-    SOURCE_DATE_EPOCH = 1774720744;
+    SOURCE_DATE_EPOCH = 1777504156;
   }
   // lib.optionalAttrs stdenv.hostPlatform.isDarwin {
     # Disable code signing during local macOS builds.
@@ -211,7 +213,7 @@ stdenv.mkDerivation (finalAttrs: {
     # Build it explicitly against Electron headers ahead of packaging.
     export npm_config_nodedir=${electron.headers}
     pushd node_modules/fs-xattr
-    pnpm exec node-gyp rebuild
+    pnpm exec electron-builder node-gyp-rebuild
     popd
     test -f node_modules/fs-xattr/build/Release/xattr.node
   '';

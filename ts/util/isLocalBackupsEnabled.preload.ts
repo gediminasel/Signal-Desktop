@@ -1,21 +1,21 @@
 // Copyright 2025 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { ReadonlyObjectDeep } from 'type-fest/source/readonly-deep.js';
-import { isEnabled, type ConfigMapType } from '../RemoteConfig.dom.js';
+import type { ReadonlyDeep } from 'type-fest';
+import { isEnabled, type ConfigMapType } from '../RemoteConfig.dom.ts';
 import {
   isFeaturedEnabledNoRedux,
   isFeaturedEnabledSelector,
-} from './isFeatureEnabled.dom.js';
-import { itemStorage } from '../textsecure/Storage.preload.js';
-import { isNightly } from './version.std.js';
-import { isTestOrMockEnvironment } from '../environment.std.js';
+} from './isFeatureEnabled.dom.ts';
+import { itemStorage } from '../textsecure/Storage.preload.ts';
+import { isNightly } from './version.std.ts';
+import { isTestOrMockEnvironment } from '../environment.std.ts';
 
 const IOS_USER_AGENT = 'OWI';
 
 export function isLocalBackupsEnabled(reduxArgs?: {
   currentVersion: string;
-  remoteConfig: ReadonlyObjectDeep<ConfigMapType> | undefined;
+  remoteConfig: ReadonlyDeep<ConfigMapType> | undefined;
 }): boolean {
   // This is a temporary guard until iOS supports importing local backups
   // Android no longer sends its OWA agent string, so we have to rely on iOS

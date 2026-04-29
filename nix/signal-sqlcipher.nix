@@ -27,13 +27,13 @@ stdenv.mkDerivation (finalAttrs: {
   pnpmDeps = fetchPnpmDeps {
     inherit (finalAttrs) pname version src;
     inherit pnpm; # may be different than top-level pnpm
-    fetcherVersion = 1;
+    fetcherVersion = 3;
     hash = "sha256-regaYG+SDvIgdnHQVR1GG1A1FSBXpzFfLuyTEdMt1kQ=";
   };
 
   cargoRoot = "deps/extension";
   cargoDeps = rustPlatform.fetchCargoVendor {
-    name = "sqlcipher-signal-exentsion";
+    name = "sqlcipher-signal-extension";
     inherit (finalAttrs) src cargoRoot;
     hash = "sha256-NtJPwRvjU1WsOxgb2vpokes9eL4DkEcbDaEmML7zsqQ=";
   };

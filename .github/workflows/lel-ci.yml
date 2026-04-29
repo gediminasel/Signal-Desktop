@@ -14,7 +14,7 @@ jobs:
     steps:
     - run: lsb_release -a
     - run: uname -a
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Setup pnpm
       uses: pnpm/action-setup@v4
     - name: Setup node.js
@@ -24,7 +24,7 @@ jobs:
         cache: 'pnpm'
         cache-dependency-path: 'pnpm-lock.yaml'
     - name: Cache .electron-gyp
-      uses: actions/cache@v4
+      uses: actions/cache@v5.0.4
       with:
         path: ~/.electron-gyp
         key: electron-gyp-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
@@ -32,19 +32,17 @@ jobs:
     # - name: Setup sccache
     #   uses: mozilla-actions/sccache-action@v0.0.7
     # - name: Restore sccache
-    #   uses: actions/cache@v4
+    #   uses: actions/cache@v5.0.4
     #   with:
     #     path: ${{ env.SCCACHE_PATH }}
     #     key: sccache-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'patches/**') }}
 
-    - name: Restore cached .eslintcache and tsconfig.tsbuildinfo
-      uses: actions/cache/restore@v4
+    - name: Restore cached tsconfig.tsbuildinfo
+      uses: actions/cache/restore@v5.0.4
       id: cache-lint
       with:
-        path: |
-          .eslintcache
-          tsconfig.tsbuildinfo
-        key: lint-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'patches/**', '.eslintrc.js', '.eslint/**', 'tsconfig.json') }}
+        path: tsconfig.tsbuildinfo
+        key: lint-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'patches/**', 'tsconfig.json') }}
 
     - name: Install Desktop node_modules
       run: pnpm install
@@ -53,13 +51,24 @@ jobs:
         # CXX: sccache g++
         # SCCACHE_GHA_ENABLED: "true"
         NPM_CONFIG_LOGLEVEL: verbose
+        # We rebuild in `electron:install-app-deps` that doesn't look at this
+        # environment variable
+        NPM_CONFIG_NODE_GYP: echo
+
+    - name: Install Sticker Creator node_modules
+      run: pnpm install
+      working-directory: sticker-creator
 
     - run: pnpm run generate
-    - run: pnpm run lint
+    - run: pnpm run lint-prettier
+    - run: pnpm run lint-css
+    - run: pnpm run check:types
+    - run: pnpm run oxlint --format=github
     - run: pnpm run lint-deps
     # - run: pnpm run lint-license-comments
     # - run: pnpm run lint-intl
-
+    - run: pnpm run lint-knip:all --reporter github-actions
+    - run: pnpm run lint-knip:prod --reporter github-actions
     - name: Check acknowledgments file is up to date
       run: pnpm run build:acknowledgments
       env:
@@ -67,12 +76,10 @@ jobs:
 
     - run: git diff --exit-code
 
-    - name: Update cached .eslintcache and tsconfig.tsbuildinfo
-      uses: actions/cache/save@v4
+    - name: Update cached tsconfig.tsbuildinfo
+      uses: actions/cache/save@v5.0.4
       with:
-        path: |
-          .eslintcache
-          tsconfig.tsbuildinfo
+        path: tsconfig.tsbuildinfo
         key: ${{ steps.cache-lint.outputs.cache-primary-key }}
 
   linux:
@@ -83,7 +90,7 @@ jobs:
     steps:
     - run: lsb_release -a
     - run: uname -a
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Setup pnpm
       uses: pnpm/action-setup@v4
     - name: Setup node.js
@@ -93,7 +100,7 @@ jobs:
         cache: 'pnpm'
         cache-dependency-path: 'pnpm-lock.yaml'
     - name: Cache .electron-gyp
-      uses: actions/cache@v4
+      uses: actions/cache@v5.0.4
       with:
         path: ~/.electron-gyp
         key: electron-gyp-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
@@ -104,7 +111,7 @@ jobs:
     # - name: Setup sccache
     #   uses: mozilla-actions/sccache-action@v0.0.7
     # - name: Restore sccache
-    #   uses: actions/cache@v4
+    #   uses: actions/cache@v5.0.4
     #   with:
     #     path: ${{ env.SCCACHE_PATH }}
     #     key: sccache-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'patches/**') }}
@@ -116,12 +123,13 @@ jobs:
         # CXX: sccache g++
         # SCCACHE_GHA_ENABLED: "true"
         NPM_CONFIG_LOGLEVEL: verbose
+        # We rebuild in `electron:install-app-deps` that doesn't look at this
+        # environment variable
+        NPM_CONFIG_NODE_GYP: echo
 
-    - run: pnpm run generate
     - run: pnpm run prepare-beta-build
+    - run: pnpm run generate
 
-    - name: Create bundle
-      run: pnpm run build:esbuild:prod
     # - name: Create preload cache
     #   run: xvfb-run --auto-servernum pnpm run build:preload-cache
     #   continue-on-error: true
@@ -159,7 +167,7 @@ jobs:
 
     - name: Upload artifacts
       id: upload-artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7.0.0
       with:
         name: deb-package
         path: release//signal-desktop*.deb
@@ -177,38 +185,35 @@ jobs:
     - run: systeminfo
     - run: git config --global core.autocrlf false
     - run: git config --global core.eol lf
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Setup pnpm
       uses: pnpm/action-setup@v4
     - name: Setup node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version-file: '.nvmrc'
         cache: 'pnpm'
         cache-dependency-path: 'pnpm-lock.yaml'
     - name: Cache .electron-gyp
-      uses: actions/cache@v4
+      uses: actions/cache@v5.0.4
       with:
-        path: ${{ env.SCCACHE_PATH }}\.electron-gyp
+        path: ~/.electron-gyp
         key: electron-gyp-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
 
-    - run: pnpm install -g node-gyp@10.0.1
-
+    - run: touch noop.js
     - name: Install Desktop node_modules
       run: pnpm install
       env:
-        CHILD_CONCURRENCY: 1
         NPM_CONFIG_LOGLEVEL: verbose
+        NPM_CONFIG_NODE_GYP: ${{ github.workspace }}\noop.js
 
-    - run: pnpm run generate
-    - run: pnpm run test-node
     - run: copy package.json temp.json
     - run: del package.json
     - run: type temp.json | findstr /v certificateSubjectName | findstr /v certificateSha1 > package.json
     - run: pnpm run prepare-beta-build
+    - run: pnpm run generate
+    - run: pnpm run test-node
 
-    - name: Create bundle
-      run: pnpm run build:esbuild:prod
     - name: Create preload cache
       run: pnpm run build:preload-cache
       env:
@@ -229,7 +234,7 @@ jobs:
 
     - name: Upload artifacts
       id: upload-artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7.0.0
       with:
         name: installer-exe
         path: release//signal-desktop*.exe

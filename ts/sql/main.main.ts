@@ -6,15 +6,16 @@ import { Worker } from 'node:worker_threads';
 import { format } from 'node:util';
 import { app } from 'electron';
 
-import { strictAssert } from '../util/assert.std.js';
-import { explodePromise } from '../util/explodePromise.std.js';
-import type { LoggerType } from '../types/Logging.std.js';
-import * as Errors from '../types/errors.std.js';
-import { SqliteErrorKind } from './errors.std.js';
+import { strictAssert } from '../util/assert.std.ts';
+import { explodePromise } from '../util/explodePromise.std.ts';
+import { getAppRootDir } from '../util/appRootDir.main.ts';
+import type { LoggerType } from '../types/Logging.std.ts';
+import * as Errors from '../types/errors.std.ts';
+import { SqliteErrorKind } from './errors.std.ts';
 import type {
   ServerReadableDirectInterface,
   ServerWritableDirectInterface,
-} from './Interface.std.js';
+} from './Interface.std.ts';
 
 const MIN_TRACE_DURATION = 40;
 
@@ -92,7 +93,7 @@ export type WrappedWorkerResponse =
           }>
         | undefined;
       errorKind: SqliteErrorKind | undefined;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       response: any;
     }>
   | WrappedWorkerLogEntry;
@@ -144,10 +145,10 @@ export class MainSQL {
   #seq = 0;
   #logger?: LoggerType;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  #onResponse = new Map<number, ResponseEntry<any>>();
+  // oxlint-disable-next-line typescript/no-explicit-any
+  readonly #onResponse = new Map<number, ResponseEntry<any>>();
 
-  #shouldLogQueryTime: (queryName: string) => boolean;
+  readonly #shouldLogQueryTime: (queryName: string) => boolean;
   #shouldTrackQueryStats = false;
 
   #queryStats?: {
@@ -377,7 +378,7 @@ export class MainSQL {
     while (this.#pauseWaiters != null) {
       const { promise, resolve } = explodePromise<void>();
       this.#pauseWaiters.push(resolve);
-      // eslint-disable-next-line no-await-in-loop
+      // oxlint-disable-next-line no-await-in-loop
       await promise;
     }
 
@@ -428,7 +429,7 @@ export class MainSQL {
     }
 
     const seq = this.#seq;
-    // eslint-disable-next-line no-bitwise
+    // oxlint-disable-next-line no-bitwise
     this.#seq = (this.#seq + 1) >>> 0;
 
     const { promise: result, resolve, reject } = explodePromise<Response>();
@@ -445,11 +446,11 @@ export class MainSQL {
     entry.worker.postMessage(wrappedRequest);
 
     try {
-      // eslint-disable-next-line no-param-reassign
+      // oxlint-disable-next-line no-param-reassign
       entry.load += 1;
       return await result;
     } finally {
-      // eslint-disable-next-line no-param-reassign
+      // oxlint-disable-next-line no-param-reassign
       entry.load -= 1;
     }
   }
@@ -507,7 +508,7 @@ export class MainSQL {
     this.#logger?.info(
       `Top ${maxQueriesToLog} queries by cumulative duration (ms) over last ${epochDuration}ms` +
         `${epochName ? ` during '${epochName}'` : ''}: ` +
-        `${sortedByCumulativeDuration
+        sortedByCumulativeDuration
           .slice(0, maxQueriesToLog)
           .map(stats => {
             return (
@@ -517,7 +518,7 @@ export class MainSQL {
               `count: ${stats.count}`
             );
           })
-          .join(' ||| ')}` +
+          .join(' ||| ') +
         `; Total cumulative duration of all SQL queries during this epoch: ${this.#roundDuration(cumulativeDuration)}ms`
     );
   }
@@ -551,12 +552,7 @@ export class MainSQL {
   }
 
   #createWorker(): CreateWorkerResultType {
-    const scriptPath = join(
-      app.getAppPath(),
-      'ts',
-      'sql',
-      'mainWorker.node.js'
-    );
+    const scriptPath = join(getAppRootDir(), 'bundles', 'workers', 'sql.js');
 
     const worker = new Worker(scriptPath);
 

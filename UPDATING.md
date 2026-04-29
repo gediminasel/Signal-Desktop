@@ -1,7 +1,11 @@
 # Updating the fork
 
 ```
-git fetch upstream
+nix flake update
+```
+
+```
+git fetch upstream -p
 git merge upstream/main
 ```
 

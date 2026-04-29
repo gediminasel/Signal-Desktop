@@ -3,10 +3,10 @@
 
 import { ipcRenderer } from 'electron';
 import { serialize, deserialize } from 'node:v8';
-import { createLogger } from '../logging/log.std.js';
-import { runTaskWithTimeout } from '../textsecure/TaskWithTimeout.std.js';
-import { explodePromise } from '../util/explodePromise.std.js';
-import { missingCaseError } from '../util/missingCaseError.std.js';
+import { createLogger } from '../logging/log.std.ts';
+import { runTaskWithTimeout } from '../textsecure/TaskWithTimeout.std.ts';
+import { explodePromise } from '../util/explodePromise.std.ts';
+import { missingCaseError } from '../util/missingCaseError.std.ts';
 
 const log = createLogger('channels');
 
@@ -27,11 +27,9 @@ export async function ipcInvoke<T>(
   name: string,
   args: ReadonlyArray<unknown>
 ): Promise<T> {
-  const fnName = String(name);
-
   if (shutdownPromise && name !== 'close') {
     throw new Error(
-      `Rejecting SQL channel job (${access}, ${fnName}); ` +
+      `Rejecting SQL channel job (${access}, ${name}); ` +
         'application is shutting down'
     );
   }
@@ -59,7 +57,7 @@ export async function ipcInvoke<T>(
         resolveShutdown?.();
       }
     }
-  }, `SQL channel call (${access}, ${fnName})`);
+  }, `SQL channel call (${access}, ${name})`);
 }
 
 export async function doShutdown(): Promise<void> {

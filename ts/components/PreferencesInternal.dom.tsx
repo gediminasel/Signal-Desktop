@@ -6,23 +6,24 @@ import classNames from 'classnames';
 import { v4 as uuid } from 'uuid';
 
 import type { RowType } from '@signalapp/sqlcipher';
-import type { LocalizerType } from '../types/I18N.std.js';
-import { toLogFormat } from '../types/errors.std.js';
-import { formatFileSize } from '../util/formatFileSize.std.js';
-import { SECOND } from '../util/durations/index.std.js';
-import type { ValidationResultType as BackupValidationResultType } from '../services/backups/index.preload.js';
-import { SettingsRow, FlowingSettingsControl } from './PreferencesUtil.dom.js';
-import type { MessageCountBySchemaVersionType } from '../sql/Interface.std.js';
+import type { LocalizerType } from '../types/I18N.std.ts';
+import { toLogFormat } from '../types/errors.std.ts';
+import { formatFileSize } from '../util/formatFileSize.std.ts';
+import { SECOND } from '../util/durations/index.std.ts';
+import type { ValidationResultType as BackupValidationResultType } from '../services/backups/index.preload.ts';
+import { SettingsRow, FlowingSettingsControl } from './PreferencesUtil.dom.tsx';
+import type { MessageCountBySchemaVersionType } from '../sql/Interface.std.ts';
 import type { MessageAttributesType } from '../model-types.d.ts';
-import type { DonationReceipt } from '../types/Donations.std.js';
-import { createLogger } from '../logging/log.std.js';
-import { isStagingServer } from '../util/isStagingServer.dom.js';
-import { getHumanDonationAmount } from '../util/currency.dom.js';
-import { AutoSizeTextArea } from './AutoSizeTextArea.dom.js';
-import { AxoButton } from '../axo/AxoButton.dom.js';
-import { AxoSwitch } from '../axo/AxoSwitch.dom.js';
-import type { VisibleRemoteMegaphoneType } from '../types/Megaphone.std.js';
-import { internalGetTestMegaphone } from '../util/getTestMegaphone.std.js';
+import type { DonationReceipt } from '../types/Donations.std.ts';
+import type { StorageAccessType } from '../types/StorageKeys.std.ts';
+import { createLogger } from '../logging/log.std.ts';
+import { isStagingServer } from '../util/isStagingServer.dom.ts';
+import { getHumanDonationAmount } from '../util/currency.dom.ts';
+import { AutoSizeTextArea } from './AutoSizeTextArea.dom.tsx';
+import { AxoButton } from '../axo/AxoButton.dom.tsx';
+import { AxoSwitch } from '../axo/AxoSwitch.dom.tsx';
+import type { VisibleRemoteMegaphoneType } from '../types/Megaphone.std.ts';
+import { internalGetTestMegaphone } from '../util/getTestMegaphone.std.ts';
 
 const log = createLogger('PreferencesInternal');
 
@@ -53,6 +54,8 @@ export function PreferencesInternal({
   setGroupMaxBitrate,
   sfuUrl,
   setSfuUrl,
+  forceKeyTransparencyCheck,
+  keyTransparencySelfHealth,
 }: {
   i18n: LocalizerType;
   validateBackup: () => Promise<BackupValidationResultType>;
@@ -90,6 +93,8 @@ export function PreferencesInternal({
   setGroupMaxBitrate: (value: number | undefined) => void;
   sfuUrl: string | undefined;
   setSfuUrl: (value: string | undefined) => void;
+  forceKeyTransparencyCheck: () => Promise<void>;
+  keyTransparencySelfHealth: StorageAccessType['keyTransparencySelfHealth'];
 }): React.JSX.Element {
   const [messageCountBySchemaVersion, setMessageCountBySchemaVersion] =
     useState<MessageCountBySchemaVersionType>();
@@ -239,7 +244,7 @@ export function PreferencesInternal({
     };
 
     try {
-      await internalAddDonationReceipt(testReceipt);
+      internalAddDonationReceipt(testReceipt);
     } catch (error) {
       log.error('Error adding test receipt:', toLogFormat(error));
     }
@@ -275,6 +280,31 @@ export function PreferencesInternal({
     },
     []
   );
+
+  // Key Transparancy
+
+  const [isKeyTransparencyRunning, setIsKeyTransparencyRunning] =
+    useState(false);
+
+  const handleKeyTransparencyCheck = useCallback(async () => {
+    setIsKeyTransparencyRunning(true);
+    try {
+      await forceKeyTransparencyCheck();
+    } finally {
+      setIsKeyTransparencyRunning(false);
+    }
+  }, [forceKeyTransparencyCheck]);
+
+  let keyTransparencySymbol: undefined | 'check-circle-fill' | 'error-fill';
+  if (keyTransparencySelfHealth == null) {
+    keyTransparencySymbol = undefined;
+  } else if (keyTransparencySelfHealth === 'ok') {
+    keyTransparencySymbol = 'check-circle-fill';
+  } else if (keyTransparencySelfHealth === 'fail') {
+    keyTransparencySymbol = 'error-fill';
+  } else if (keyTransparencySelfHealth === 'intermittent') {
+    keyTransparencySymbol = 'error-fill';
+  }
 
   const prevAbortControlerRef = useRef<AbortController | null>(null);
 
@@ -720,6 +750,26 @@ export function PreferencesInternal({
               placeholder="https://sfu.voip.signal.org"
               moduleClassName="Preferences__ReadonlySqlPlayground__Textarea"
             />
+          </div>
+        </FlowingSettingsControl>
+      </SettingsRow>
+      <SettingsRow title="Key Transparency">
+        <FlowingSettingsControl>
+          <div className="Preferences__two-thirds-flow">Force Self Check</div>
+          <div className="Preferences__one-third-flow Preferences__one-third-flow--justify-end">
+            <AxoButton.Root
+              symbol={keyTransparencySymbol}
+              variant="secondary"
+              size="lg"
+              onClick={handleKeyTransparencyCheck}
+              experimentalSpinner={
+                isKeyTransparencyRunning
+                  ? { 'aria-label': i18n('icu:loading') }
+                  : null
+              }
+            >
+              Check
+            </AxoButton.Root>
           </div>
         </FlowingSettingsControl>
       </SettingsRow>

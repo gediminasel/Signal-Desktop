@@ -3,22 +3,24 @@
 
 import { last } from 'lodash';
 
-import { CallMode } from '../types/CallDisposition.std.js';
-import { strictAssert } from './assert.std.js';
-import { getMidnight } from '../types/NotificationProfile.std.js';
-import { SeenStatus } from '../MessageSeenStatus.std.js';
-import { missingCaseError } from './missingCaseError.std.js';
+import { CallMode } from '../types/CallDisposition.std.ts';
+import { strictAssert } from './assert.std.ts';
+import { getMidnight } from '../types/NotificationProfile.std.ts';
+import { SeenStatus } from '../MessageSeenStatus.std.ts';
+import { missingCaseError } from './missingCaseError.std.ts';
 
 import type {
   MessageLookupType,
   MessageType,
-} from '../state/ducks/conversations.preload.js';
+} from '../state/ducks/conversations.preload.ts';
 import type {
   CallSelectorType,
   CallStateType,
-} from '../state/selectors/calling.std.js';
-import type { DurationInSeconds } from './durations/duration-in-seconds.std.js';
-import type { CallHistorySelectorType } from '../state/selectors/callHistory.std.js';
+} from '../state/selectors/calling.std.ts';
+import type { DurationInSeconds } from './durations/duration-in-seconds.std.ts';
+import type { CallHistorySelectorType } from '../state/selectors/callHistory.std.ts';
+
+export const MAX_COLLAPSE_SET_SIZE = 50;
 
 export type CollapsedMessage = {
   id: string;
@@ -51,11 +53,23 @@ export type CollapseSet =
       messages: Array<CollapsedMessage>;
     };
 
-export function canCollapseForGroupSet(type: MessageType['type']): boolean {
+function canCollapseForGroupSet(message: MessageType): boolean {
+  const { type, groupV2Change } = message;
+
   if (
-    type === 'group-v2-change' ||
+    type === 'change-number-notification' ||
     type === 'keychange' ||
-    type === 'profile-change'
+    type === 'pinned-message-notification' ||
+    type === 'poll-terminate' ||
+    type === 'profile-change' ||
+    type === 'verified-change'
+  ) {
+    return true;
+  }
+
+  if (
+    type === 'group-v2-change' &&
+    groupV2Change?.details[0]?.type !== 'terminated'
   ) {
     return true;
   }
@@ -63,7 +77,7 @@ export function canCollapseForGroupSet(type: MessageType['type']): boolean {
   return false;
 }
 
-export function canCollapseForTimerSet(message: MessageType): boolean {
+function canCollapseForTimerSet(message: MessageType): boolean {
   if (message.type === 'timer-notification') {
     return true;
   }
@@ -76,7 +90,7 @@ export function canCollapseForTimerSet(message: MessageType): boolean {
   return false;
 }
 
-export function canCollapseForCallSet(
+function canCollapseForCallSet(
   message: MessageType,
   options: {
     activeCall: CallStateType | undefined;
@@ -185,7 +199,7 @@ export function mapItemsIntoCollapseSets({
 
     const DEFAULT_SET: CollapseSet =
       currentMessage &&
-      canCollapseForGroupSet(currentMessage.type) &&
+      canCollapseForGroupSet(currentMessage) &&
       extraItems &&
       extraItems > 0
         ? {
@@ -237,9 +251,6 @@ export function mapItemsIntoCollapseSets({
       haveCompleteDay = true;
       currentDayFirstId = currentId;
     }
-    const canContinueSet =
-      !atDateBoundary ||
-      (allowMultidaySets && !isToday && havePreviousCompleteDay);
 
     // Start a new set if we just crossed the last seen indicator
     if (i === oldestUnseenIndex) {
@@ -277,11 +288,17 @@ export function mapItemsIntoCollapseSets({
       'collapseSets: expect lastCollapseSet to be defined'
     );
 
+    const canContinueSet =
+      (lastCollapseSet.type === 'none' ||
+        lastCollapseSet.messages.length < MAX_COLLAPSE_SET_SIZE) &&
+      (!atDateBoundary ||
+        (allowMultidaySets && !isToday && havePreviousCompleteDay));
+
     // Add to current set if previous and current messages are both group updates
     if (
       canContinueSet &&
-      canCollapseForGroupSet(currentMessage.type) &&
-      canCollapseForGroupSet(previousMessage.type)
+      canCollapseForGroupSet(currentMessage) &&
+      canCollapseForGroupSet(previousMessage)
     ) {
       strictAssert(
         lastCollapseSet.type !== 'timer-changes' &&
@@ -400,7 +417,7 @@ export function mapItemsIntoCollapseSets({
       strictAssert(
         lastCollapseSet.type !== 'group-updates' &&
           lastCollapseSet.type !== 'timer-changes',
-        'Should never have two matching timer items, but be in a group or timer set'
+        'Should never have two matching call items, but be in a group or timer set'
       );
 
       if (lastCollapseSet.type === 'call-events') {
@@ -474,7 +491,7 @@ export function mapItemsIntoCollapseSets({
 // In the case where an existing multiday set extends into the current day, and we then
 // discover that the set is ending in the middle of the current day, we need to split
 // lastCollapseSet into everything before today, and everything from today.
-export function maybeSplitLastCollapseSet({
+function maybeSplitLastCollapseSet({
   atDateBoundary,
   currentDayFirstId,
   haveCompleteDay,

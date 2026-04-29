@@ -5,48 +5,48 @@ import type { RefObject } from 'react';
 import React, { useCallback, memo } from 'react';
 import { useSelector } from 'react-redux';
 
-import { TimelineItem } from '../../components/conversation/TimelineItem.dom.js';
-import type { WidthBreakpoint } from '../../components/_util.std.js';
-import { useConversationsActions } from '../ducks/conversations.preload.js';
-import { useComposerActions } from '../ducks/composer.preload.js';
-import { useGlobalModalActions } from '../ducks/globalModals.preload.js';
-import { useAccountsActions } from '../ducks/accounts.preload.js';
-import { useLightboxActions } from '../ducks/lightbox.preload.js';
-import { useStoriesActions } from '../ducks/stories.preload.js';
-import { useCallingActions } from '../ducks/calling.preload.js';
-import { getPreferredBadgeSelector } from '../selectors/badges.preload.js';
+import { TimelineItem } from '../../components/conversation/TimelineItem.dom.tsx';
+import type { WidthBreakpoint } from '../../components/_util.std.ts';
+import { useConversationsActions } from '../ducks/conversations.preload.ts';
+import { useComposerActions } from '../ducks/composer.preload.ts';
+import { useGlobalModalActions } from '../ducks/globalModals.preload.ts';
+import { useAccountsActions } from '../ducks/accounts.preload.ts';
+import { useLightboxActions } from '../ducks/lightbox.preload.ts';
+import { useStoriesActions } from '../ducks/stories.preload.ts';
+import { useCallingActions } from '../ducks/calling.preload.ts';
+import { getPreferredBadgeSelector } from '../selectors/badges.preload.ts';
 import {
   getIntl,
   getInteractionMode,
   getTheme,
   getPlatform,
-} from '../selectors/user.std.js';
+} from '../selectors/user.std.ts';
 import {
   getSelectedMessageIds,
   getTargetedMessage,
   getTargetedMessageSource,
-} from '../selectors/conversations.dom.js';
-import { getSharedGroupNames } from '../../util/sharedGroupNames.dom.js';
-import { startConversation } from '../../util/startConversation.dom.js';
-import { useTimelineItem } from '../selectors/timeline.preload.js';
+} from '../selectors/conversations.dom.ts';
+import { getSharedGroupNames } from '../../util/sharedGroupNames.dom.ts';
+import { startConversation } from '../../util/startConversation.dom.ts';
+import { useTimelineItem } from '../selectors/timeline.preload.ts';
 import {
   areMessagesInSameGroup,
   shouldCurrentMessageHideMetadata,
   UnreadIndicatorPlacement,
-} from '../../util/timelineUtil.std.js';
+} from '../../util/timelineUtil.std.ts';
 
-import { SmartContactName } from './ContactName.preload.js';
-import { SmartUniversalTimerNotification } from './UniversalTimerNotification.dom.js';
-import { isSameDay } from '../../util/timestamp.std.js';
-import { renderAudioAttachment } from './renderAudioAttachment.preload.js';
-import { renderReactionPicker } from './renderReactionPicker.dom.js';
-import type { MessageRequestState } from '../../components/conversation/MessageRequestActionsConfirmation.dom.js';
-import { TargetedMessageSource } from '../ducks/conversationsEnums.std.js';
-import { MessageInteractivity } from '../../components/conversation/Message.dom.js';
-import { useNavActions } from '../ducks/nav.std.js';
-import { DataReader } from '../../sql/Client.preload.js';
-import { isInternalFeaturesEnabled } from '../../util/isInternalFeaturesEnabled.dom.js';
-import type { CollapseSet } from '../../util/CollapseSet.std.js';
+import { SmartContactName } from './ContactName.preload.tsx';
+import { SmartUniversalTimerNotification } from './UniversalTimerNotification.dom.tsx';
+import { isSameDay } from '../../util/timestamp.std.ts';
+import { renderAudioAttachment } from './renderAudioAttachment.preload.tsx';
+import { renderReactionPicker } from './renderReactionPicker.dom.tsx';
+import type { MessageRequestState } from '../../components/conversation/MessageRequestActionsConfirmation.dom.tsx';
+import { TargetedMessageSource } from '../ducks/conversationsEnums.std.ts';
+import { MessageInteractivity } from '../../components/conversation/Message.dom.tsx';
+import { useNavActions } from '../ducks/nav.std.ts';
+import { DataReader } from '../../sql/Client.preload.ts';
+import { isInternalFeaturesEnabled } from '../../util/isInternalFeaturesEnabled.dom.ts';
+import type { CollapseSet } from '../../util/CollapseSet.std.ts';
 
 export type RenderItemProps = Omit<SmartTimelineItemProps, 'renderItem'>;
 
@@ -151,6 +151,11 @@ export const SmartTimelineItem = memo(function SmartTimelineItem(
         }
       : itemFromSelector;
 
+  const isSelected =
+    selectedMessageIds?.includes(messageId) ||
+    (item.type !== 'none' &&
+      item.messages.some(message => selectedMessageIds?.includes(message.id)));
+
   const {
     blockGroupLinkRequests,
     cancelAttachmentDownload,
@@ -228,7 +233,7 @@ export const SmartTimelineItem = memo(function SmartTimelineItem(
       return;
     }
     const message = await DataReader.getMessageById(messageId);
-    // eslint-disable-next-line no-console
+    // oxlint-disable-next-line no-console
     console.debug(message);
     await window.navigator.clipboard.writeText(
       JSON.stringify(message, null, 2)
@@ -247,6 +252,7 @@ export const SmartTimelineItem = memo(function SmartTimelineItem(
       isNextItemCallingNotification={isNextItemCallingNotification}
       isTargeted={isTargeted}
       isSelectMode={selectedMessageIds != null}
+      isSelected={isSelected}
       renderAudioAttachment={renderAudioAttachment}
       renderContact={renderContact}
       renderReactionPicker={renderReactionPicker}

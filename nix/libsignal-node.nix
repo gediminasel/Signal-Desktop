@@ -12,25 +12,30 @@
   python3,
   nodejs,
 }:
+let
+  boringsslStatic = boringssl.overrideAttrs (old: {
+    cmakeFlags = (old.cmakeFlags or [ ]) ++ [ "-DBUILD_SHARED_LIBS=OFF" ];
+  });
+in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "libsignal-node";
-  version = "0.89.2";
+  version = "0.92.2";
 
   src = fetchFromGitHub {
     owner = "signalapp";
     repo = "libsignal";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-1DpMQtLLb1giDU+MWnh9bgHSB8JyvdeNzT0rlE/Vrn0=";
+    hash = "sha256-7VimtFjobM2EQl0cV0K1EIPeV015e+00ljfAfM4KNJI=";
   };
 
-  cargoHash = "sha256-vXzpbvE2QN3c62R9I1fJzR4ZWUAv1WrSJps9zflUSQE=";
+  cargoHash = "sha256-HBrg//iKNo5/TuVtf9NuVbAyrhul2VVXwC0an7jGEgs=";
 
   npmRoot = "node";
   npmDeps = fetchNpmDeps {
     name = "${finalAttrs.pname}-npm-deps";
     inherit (finalAttrs) version src;
     sourceRoot = "${finalAttrs.src.name}/${finalAttrs.npmRoot}";
-    hash = "sha256-vDWeAhF892oW4LBPzk7rPrP+JCwmltfqB5Jf+O8/7h8=";
+    hash = "sha256-BV5E898u07LLoUVMVRJCHKhp4OJJl2fc5973n16T51k=";
   };
 
   nativeBuildInputs = [
@@ -45,8 +50,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ];
 
   env = {
-    BORING_BSSL_INCLUDE_PATH = "${boringssl.dev}/include";
-    BORING_BSSL_PATH = boringssl;
+    BORING_BSSL_INCLUDE_PATH = "${boringsslStatic.dev}/include";
+    BORING_BSSL_PATH = boringsslStatic;
     NIX_LDFLAGS = if stdenv.hostPlatform.isDarwin then "-lc++" else "-lstdc++";
   };
 

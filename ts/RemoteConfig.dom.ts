@@ -5,24 +5,24 @@ import lodash from 'lodash';
 import semver from 'semver';
 import type { REMOTE_CONFIG_KEYS as KeysExpectedByLibsignalNet } from '@signalapp/libsignal-client/dist/net.js';
 
-import type { getConfig } from './textsecure/WebAPI.preload.js';
-import { createLogger } from './logging/log.std.js';
-import type { AciString } from './types/ServiceId.std.js';
-import { parseIntOrThrow } from './util/parseIntOrThrow.std.js';
-import { HOUR } from './util/durations/index.std.js';
-import * as Bytes from './Bytes.std.js';
-import { uuidToBytes } from './util/uuidToBytes.std.js';
-import { HashType } from './types/Crypto.std.js';
-import { getCountryCode } from './types/PhoneNumber.std.js';
-import { parseRemoteClientExpiration } from './util/parseRemoteClientExpiration.dom.js';
+import type { getConfig } from './textsecure/WebAPI.preload.ts';
+import { createLogger } from './logging/log.std.ts';
+import type { AciString } from './types/ServiceId.std.ts';
+import { parseIntOrThrow } from './util/parseIntOrThrow.std.ts';
+import { HOUR } from './util/durations/index.std.ts';
+import * as Bytes from './Bytes.std.ts';
+import { uuidToBytes } from './util/uuidToBytes.std.ts';
+import { HashType } from './types/Crypto.std.ts';
+import { getCountryCode } from './types/PhoneNumber.std.ts';
+import { parseRemoteClientExpiration } from './util/parseRemoteClientExpiration.dom.ts';
 import type { StorageInterface } from './types/Storage.d.ts';
-import { ToastType } from './types/Toast.dom.js';
-import { assertDev, strictAssert } from './util/assert.std.js';
+import { ToastType } from './types/Toast.dom.tsx';
+import { assertDev, strictAssert } from './util/assert.std.ts';
 import type {
   ArrayValues,
   AssertSameMembers,
   StripPrefix,
-} from './types/Util.std.js';
+} from './types/Util.std.ts';
 
 const { get, throttle } = lodash;
 
@@ -38,6 +38,8 @@ const SemverKeys = [
   'desktop.binaryServiceId.prod',
   'desktop.groupMemberLabels.edit.beta',
   'desktop.groupMemberLabels.edit.prod',
+  'desktop.groupTerminate.send.beta',
+  'desktop.groupTerminate.send.prod',
   'desktop.keyTransparency.beta',
   'desktop.keyTransparency.prod',
   'desktop.localBackups.beta',
@@ -60,6 +62,7 @@ const ScalarKeys = [
   'desktop.calling.dredDuration.beta',
   'desktop.calling.dredDuration.prod',
   'desktop.clientExpiration',
+  'desktop.heapSizeWarning',
   'desktop.internalUser',
   'desktop.loggingErrorToasts',
   'desktop.mediaQuality.levels',
@@ -81,6 +84,7 @@ const ScalarKeys = [
   'global.normalDeleteMaxAgeInSeconds',
   'global.pinned_message_limit',
   'global.textAttachmentLimitBytes',
+  'global.videoAttachments.transcodeTargetBytes',
 ] as const;
 
 // These keys should always match those in Net.REMOTE_CONFIG_KEYS, prefixed by
@@ -95,6 +99,8 @@ const KnownDesktopLibsignalNetKeys = [
   'desktop.libsignalNet.grpc.AccountsAnonymousLookupUsernameHash.beta',
   'desktop.libsignalNet.grpc.AccountsAnonymousLookupUsernameLink.2',
   'desktop.libsignalNet.grpc.AccountsAnonymousLookupUsernameLink.2.beta',
+  'desktop.libsignalNet.grpc.AttachmentsGetUploadForm',
+  'desktop.libsignalNet.grpc.AttachmentsGetUploadForm.beta',
   'desktop.libsignalNet.grpc.MessagesAnonymousSendMultiRecipientMessage.2',
   'desktop.libsignalNet.grpc.MessagesAnonymousSendMultiRecipientMessage.2.beta',
   'desktop.libsignalNet.useH2ForAuthChat',
@@ -130,13 +136,13 @@ type ConfigValueType = {
 export type ConfigMapType = {
   [key in ConfigKeyType]?: ConfigValueType;
 };
-export type ConfigListenerType = (value: ConfigValueType) => unknown;
-type ConfigListenersMapType = {
-  [key: string]: Array<ConfigListenerType>;
-};
+type ConfigListenerType = Readonly<{
+  keys: Set<ConfigKeyType>;
+  callback: () => unknown;
+}>;
 
 let config: ConfigMapType | undefined;
-const listeners: ConfigListenersMapType = {};
+const listeners = new Set<ConfigListenerType>();
 
 export type OptionsType = Readonly<{
   getConfig: typeof getConfig;
@@ -150,17 +156,17 @@ export function restoreRemoteConfigFromStorage({
 }
 
 export function onChange(
-  key: ConfigKeyType,
-  fn: ConfigListenerType
+  keys: Array<ConfigKeyType>,
+  callback: () => unknown
 ): () => void {
-  const keyListeners: Array<ConfigListenerType> = get(listeners, key, []);
-  keyListeners.push(fn);
-  listeners[key] = keyListeners;
+  const listener: ConfigListenerType = {
+    keys: new Set(keys),
+    callback,
+  };
+  listeners.add(listener);
 
   return () => {
-    if (listeners[key]) {
-      listeners[key] = listeners[key].filter(l => l !== fn);
-    }
+    listeners.delete(listener);
   };
 }
 
@@ -198,12 +204,14 @@ export const _refreshRemoteConfig = async ({
   // new configuration only includes enabled flags we can't distinguish betewen
   // a remote flag being deleted or being disabled. We synthesize that for our
   // known keys.
-  const newConfigValues: Map<string, string | undefined> = new Map(
+  const newConfigValues = new Map<string, string | undefined>(
     KnownConfigKeys.map(name => [name, undefined])
   );
   for (const [name, value] of newConfig) {
     newConfigValues.set(name, value);
   }
+
+  const changedKeys = new Set<string>();
 
   const oldConfig = config;
   let semverError = false;
@@ -248,13 +256,8 @@ export const _refreshRemoteConfig = async ({
         semverError = true;
       }
 
-      // If enablement changes at all, notify listeners
-      const currentListeners = listeners[name] || [];
       if (hasChanged) {
-        log.info(`Remote Config: Flag ${name} has changed`);
-        currentListeners.forEach(listener => {
-          listener(configValue);
-        });
+        changedKeys.add(name);
       }
 
       // Return new configuration object
@@ -265,6 +268,19 @@ export const _refreshRemoteConfig = async ({
     },
     {}
   );
+
+  if (changedKeys.size !== 0) {
+    log.info(
+      `Remote Config: Flags ${[...changedKeys].join(', ')} have changed`
+    );
+
+    // If enablement changes at all, notify listeners
+    for (const { keys, callback } of listeners) {
+      if (!keys.isDisjointFrom(changedKeys)) {
+        callback();
+      }
+    }
+  }
 
   if (semverError && config['desktop.internalUser']?.enabled) {
     window.reduxActions.toast.showToast({
@@ -336,6 +352,7 @@ export function getValue(
 }
 
 // See isRemoteConfigBucketEnabled in selectors/items.ts
+/** @knipignore Keep around for future features that might need it */
 export function isBucketValueEnabled(
   name: ConfigKeyType,
   e164: string | undefined,

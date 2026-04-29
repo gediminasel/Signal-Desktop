@@ -43,6 +43,6 @@ update_nix_version "$SCRIPT_DIR/libsignal-node.nix" "$libsignalClientVersion"
 update_nix_version "$SCRIPT_DIR/ringrtc.nix" "$ringrtcVersion"
 update_nix_version "$SCRIPT_DIR/signal-sqlcipher.nix" "$signalSqlcipherVersion"
 
-bash $SCRIPT_DIR/update_hashes.sh
-
 gclient2nix generate "https://github.com/signalapp/webrtc@$webrtcVersion" > $SCRIPT_DIR/webrtc-sources.json
+
+bash $SCRIPT_DIR/update_hashes.sh
