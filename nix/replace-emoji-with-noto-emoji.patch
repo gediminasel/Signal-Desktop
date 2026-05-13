@@ -2,11 +2,11 @@ diff --git a/app/protocol_filter.node.ts b/app/protocol_filter.node.ts
 index 483d1c4e4..66609d9e9 100644
 --- a/app/protocol_filter.node.ts
 +++ b/app/protocol_filter.node.ts
-@@ -62,6 +62,7 @@ function _createFileHandler({
+@@ -68,6 +68,7 @@ export function _createFileHandler({
    const allowedRoots = [
      userDataPath,
      installPath,
-+    "@noto-emoji-pngs@",
++    '@noto-emoji-pngs@',
      getAvatarsPath(userDataPath),
      getBadgesPath(userDataPath),
      getDraftPath(userDataPath),
@@ -14,9 +14,25 @@ diff --git a/ts/components/fun/FunEmoji.dom.tsx b/ts/components/fun/FunEmoji.dom
 index ea031e9a8..3d760a43e 100644
 --- a/ts/components/fun/FunEmoji.dom.tsx
 +++ b/ts/components/fun/FunEmoji.dom.tsx
-@@ -20,13 +20,14 @@ function getEmojiJumboUrl(
+@@ -3,7 +3,6 @@
+ import classNames from 'classnames';
+ import type { CSSProperties } from 'react';
+ import React, { useMemo, useState, useCallback } from 'react';
+-import MANIFEST from '../../../build/jumbomoji.json';
+ import {
+   getEmojiDebugLabel,
+   isSafeEmojifyEmoji,
+@@ -24,20 +23,17 @@
+ const FUN_INLINE_EMOJI_SMALL_CLASS = 'FunInlineEmoji__Small';
+ const FUN_INLINE_EMOJI_JUMBO_CLASS = 'FunInlineEmoji__Jumbo';
+ 
+-const KNOWN_JUMBOMOJI = new Set<string>(Object.values(MANIFEST).flat());
+-const MIN_JUMBOMOJI_SIZE = 33;
+-
+ function getEmojiJumboUrl(
    emoji: EmojiVariantData,
-   size: number | undefined
+-  size: number | undefined
++  _size: number | undefined
  ): string | null {
 -  if (size != null && size < MIN_JUMBOMOJI_SIZE) {
 -    return null;
@@ -25,13 +41,12 @@ index ea031e9a8..3d760a43e 100644
 -    return `emoji://jumbo?emoji=${encodeURIComponent(emoji.value)}`;
 -  }
 -  return null;
-+  const emojiToNotoName = (emoji: string): string =>
-+    `emoji_u${
-+      [...emoji]
-+        .filter(c => c != "\ufe0f")
-+        .map(c => c.codePointAt(0)?.toString(16).padStart(4, "0"))
-+        .join("_")
-+    }.png`;
++  const emojiToNotoName = (emojiV: string): string =>
++    // oxlint-disable-next-line typescript-eslint(no-misused-spread)
++    `emoji_u${[...emojiV]
++      .filter(c => c !== '\ufe0f')
++      .map(c => c.codePointAt(0)?.toString(16).padStart(4, '0'))
++      .join('_')}.png`;
 +  return `file://@noto-emoji-pngs@/${emojiToNotoName(emoji.value)}`;
  }
  

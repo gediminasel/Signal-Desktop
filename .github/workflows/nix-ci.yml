@@ -1,0 +1,27 @@
+name: Nix test
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  release:
+    types: [published]
+
+jobs:
+  test:
+    name: Run tests
+    # https://github.com/actions/runner-images#available-images
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: szenius/set-timezone@v2.0
+        with:
+          timezoneLinux: "UTC"
+      - uses: actions/checkout@v6.0.2
+      - name: Install Nix
+        uses: DeterminateSystems/determinate-nix-action@v3
+      - name: Run the Magic Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@v13
+      - name: Build signal
+        run: nix build .#default
+      - name: Check flake
+        run: nix flake check

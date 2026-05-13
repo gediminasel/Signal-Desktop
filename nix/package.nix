@@ -130,7 +130,7 @@ stdenv.mkDerivation (finalAttrs: {
 
     # https://github.com/signalapp/Signal-Desktop/issues/7667
     substituteInPlace ts/util/version.std.ts \
-      --replace-fail 'isAdhoc(version)' 'true'
+      --replace-fail '(version: string): boolean => isAdhoc(version)' '(): boolean => true'
 
     # Nix builds do not need upstream release hooks (notarization and
     # language-pack postprocessing), and they expect a different macOS
