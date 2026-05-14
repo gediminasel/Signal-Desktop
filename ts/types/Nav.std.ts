@@ -79,6 +79,7 @@ export enum SettingsPage {
   Internal = 'Internal',
 
   // Sub pages
+  Blocked = 'Blocked',
   ChatColor = 'ChatColor',
   ChatFolders = 'ChatFolders',
   DonationsDonateFlow = 'DonationsDonateFlow',
@@ -89,6 +90,8 @@ export enum SettingsPage {
   PNP = 'PNP',
   BackupsDetails = 'BackupsDetails',
   LocalBackups = 'LocalBackups',
+  LocalBackupsSetupFolder = 'LocalBackupsSetupFolder',
+  LocalBackupsSetupKey = 'LocalBackupsSetupKey',
   LocalBackupsKeyReference = 'LocalBackupsKeyReference',
 }
 

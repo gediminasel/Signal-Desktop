@@ -1,10 +1,11 @@
 // Copyright 2025 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, {
+import {
   useCallback,
   useMemo,
   type FocusEvent,
   type ReactNode,
+  type JSX,
 } from 'react';
 import {
   ChatFolderType,
@@ -90,7 +91,7 @@ const LEFT_PANE_CHAT_FOLDERS_CLASS_NAME = 'module-left-pane__chatFolders';
 
 export function LeftPaneChatFolders(
   props: LeftPaneChatFoldersProps
-): React.JSX.Element | null {
+): JSX.Element | null {
   const { i18n, currentChatFolders, onSelectedChatFolderIdChange } = props;
 
   const sortedChatFolders = useMemo(() => {
@@ -192,7 +193,7 @@ function ChatFolderSelectItem(props: {
   i18n: LocalizerType;
   chatFolder: ChatFolder;
   unreadStats: UnreadStats | null;
-}): React.JSX.Element {
+}): JSX.Element {
   const { i18n, unreadStats } = props;
 
   const badgeValue = useMemo(() => {
@@ -218,7 +219,7 @@ function ChatFolderSelectItem(props: {
               maxCount: UNREAD_BADGE_MAX_COUNT,
             }
           )}
-          aria-label={null}
+          label={null}
         />
       )}
     </AxoSelect.Item>
@@ -233,7 +234,7 @@ function ChatFolderSegmentedControlItem(props: {
   onChatFolderMarkRead: (chatFolderId: ChatFolderId) => void;
   onChatFolderUpdateMute: (chatFolderId: ChatFolderId, value: number) => void;
   onChatFolderOpenSettings: (chatFolderId: ChatFolderId) => void;
-}): React.JSX.Element {
+}): JSX.Element {
   const { i18n, unreadStats } = props;
 
   const badgeValue = useMemo(() => {
@@ -262,7 +263,7 @@ function ChatFolderSegmentedControlItem(props: {
               'icu:LeftPaneChatFolders__ItemUnreadBadge__MaxCount',
               { maxCount: UNREAD_BADGE_MAX_COUNT }
             )}
-            aria-label={null}
+            label={null}
           />
         )}
       </ExperimentalAxoSegmentedControl.Item>
@@ -386,7 +387,7 @@ function ContextMenuMuteNotificationsItem(props: {
   value: number;
   onSelect: (value: number) => void;
   children: ReactNode;
-}): React.JSX.Element {
+}): JSX.Element {
   const { value, onSelect } = props;
   const handleSelect = useCallback(() => {
     onSelect(value);

@@ -1,7 +1,7 @@
 // Copyright 2026 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { JSX, ReactNode } from 'react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { Meta } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { AxoTooltip } from './AxoTooltip.dom.tsx';
@@ -164,7 +164,7 @@ export function InDialog(): JSX.Element {
       <AxoDialog.Content size="md" escape="cancel-is-destructive">
         <AxoDialog.Header>
           <AxoDialog.Title>Title</AxoDialog.Title>
-          <AxoDialog.Close aria-label="Close" />
+          <AxoDialog.Close />
         </AxoDialog.Header>
         <AxoDialog.Body>
           <div className={tw('flex flex-col items-center-safe gap-50 py-50')}>

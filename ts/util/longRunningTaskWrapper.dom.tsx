@@ -1,7 +1,6 @@
 // Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, { StrictMode } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 
 import * as Errors from '../types/errors.std.ts';
@@ -10,10 +9,7 @@ import { createLogger } from '../logging/log.std.ts';
 import { ProgressModal } from '../components/ProgressModal.dom.tsx';
 import { clearTimeoutIfNecessary } from './clearTimeoutIfNecessary.std.ts';
 import { sleep } from './sleep.std.ts';
-// oxlint-disable-next-line signal-desktop/no-restricted-paths
-import { FunDefaultEnglishEmojiLocalizationProvider } from '../components/fun/FunEmojiLocalizationProvider.dom.tsx';
-// oxlint-disable-next-line signal-desktop/no-restricted-paths
-import { AxoProvider } from '../axo/AxoProvider.dom.tsx';
+import { AppProvider } from '../windows/AppProvider.dom.tsx';
 
 const log = createLogger('longRunningTaskWrapper');
 
@@ -43,13 +39,9 @@ export async function longRunningTaskWrapper<T>({
     log.info(`${idLog}: Creating spinner`);
     progressRoot = createRoot(progressNode);
     progressRoot.render(
-      <StrictMode>
-        <AxoProvider dir={i18n.getLocaleDirection()}>
-          <FunDefaultEnglishEmojiLocalizationProvider>
-            <ProgressModal i18n={i18n} description={spinnerText} />
-          </FunDefaultEnglishEmojiLocalizationProvider>
-        </AxoProvider>
-      </StrictMode>
+      <AppProvider>
+        <ProgressModal i18n={i18n} description={spinnerText} />
+      </AppProvider>
     );
     spinnerStart = Date.now();
   }, TWO_SECONDS);

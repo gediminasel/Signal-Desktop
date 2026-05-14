@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { Meta, StoryFn } from '@storybook/react';
-import * as React from 'react';
+import { createRef, type JSX } from 'react';
 
 import { action } from '@storybook/addon-actions';
 
@@ -26,6 +26,7 @@ import { getDefaultConversation } from '../../test-helpers/getDefaultConversatio
 import { WidthBreakpoint } from '../_util.std.ts';
 import { ThemeType } from '../../types/Util.std.ts';
 import { PaymentEventKind } from '../../types/Payment.std.ts';
+import { Emoji } from '../../axo/emoji.std.ts';
 
 const { i18n } = window.SignalContext;
 
@@ -88,7 +89,7 @@ const defaultMessageProps: TimelineMessagesProps = {
   canDownload: true,
   checkForAccount: action('checkForAccount'),
   clearTargetedMessage: action('default--clearTargetedMessage'),
-  containerElementRef: React.createRef<HTMLElement | null>(),
+  containerElementRef: createRef<HTMLElement | null>(),
   containerWidthBreakpoint: WidthBreakpoint.Wide,
   conversationColor: 'crimson',
   conversationId: 'conversationId',
@@ -111,6 +112,7 @@ const defaultMessageProps: TimelineMessagesProps = {
   isPinned: false,
   isSelected: false,
   isSelectMode: false,
+  isSignalConversation: false,
   isSMS: false,
   isSpoilerExpanded: {},
   isVoiceMessagePlayed: false,
@@ -233,7 +235,7 @@ IncomingByAnotherWithLabel.args = {
   authorTitle: getDefaultConversation().title,
   isIncoming: true,
   authorLabel: {
-    labelEmoji: '1️⃣',
+    labelEmoji: Emoji.ONE,
     labelString: 'First',
   },
 };
@@ -244,7 +246,7 @@ IncomingByMe.args = {
   isIncoming: true,
 };
 
-export function IncomingOutgoingColors(args: Props): React.JSX.Element {
+export function IncomingOutgoingColors(args: Props): JSX.Element {
   return (
     <>
       {ConversationColors.map(color =>
@@ -252,7 +254,7 @@ export function IncomingOutgoingColors(args: Props): React.JSX.Element {
           ...args,
           conversationColor: color,
           authorLabel: {
-            labelEmoji: '1️⃣',
+            labelEmoji: Emoji.ONE,
             labelString: 'First',
           },
         })
@@ -571,7 +573,7 @@ MentionIncomingMe.args = {
   text: '@Tony Stark sure',
 };
 
-export function CustomColor(args: Props): React.JSX.Element {
+export function CustomColor(args: Props): JSX.Element {
   return (
     <>
       <Quote
@@ -631,7 +633,7 @@ IsStoryReplyEmoji.args = {
       url: pngUrl,
     },
   },
-  reactionEmoji: '🏋️',
+  reactionEmoji: Emoji.getDefaultVariant(Emoji.WEIGHT_LIFTER),
 };
 
 export const Payment = Template.bind({});

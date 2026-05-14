@@ -1,7 +1,7 @@
 // Copyright 2024 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type JSX } from 'react';
 import lodash from 'lodash';
 import classNames from 'classnames';
 import { AnimatePresence, motion } from 'motion/react';
@@ -19,9 +19,8 @@ import type {
 import { Button, ButtonVariant } from './Button.dom.tsx';
 import type { ServiceIdString } from '../types/ServiceId.std.ts';
 import { handleOutsideClick } from '../util/handleOutsideClick.dom.ts';
-import { Theme } from '../util/theme.std.ts';
-import { ConfirmationDialog } from './ConfirmationDialog.dom.tsx';
 import { useReducedMotion } from '../hooks/useReducedMotion.dom.ts';
+import { AxoConfirmDialog } from '../axo/AxoConfirmDialog.dom.tsx';
 
 const { noop } = lodash;
 
@@ -52,7 +51,7 @@ export function CallingPendingParticipants({
   batchUserAction,
   denyUser,
   toggleCallLinkPendingParticipantModal,
-}: PropsType): React.JSX.Element | null {
+}: PropsType): JSX.Element | null {
   const reducedMotion = useReducedMotion();
 
   const participantCount = participants.length;
@@ -175,55 +174,47 @@ export function CallingPendingParticipants({
 
   if (confirmDialogState === ConfirmDialogState.ApproveAll) {
     return (
-      <ConfirmationDialog
-        dialogName="CallingPendingParticipants.confirmDialog"
-        actions={[
-          {
-            action: handleApproveAll,
-            style: 'affirmative',
-            text: i18n('icu:CallingPendingParticipants__ApproveAll'),
-          },
-        ]}
-        cancelText={i18n('icu:cancel')}
-        i18n={i18n}
-        theme={Theme.Dark}
+      <AxoConfirmDialog.Root
+        open
+        onOpenChange={hideConfirmDialog}
         title={i18n(
           'icu:CallingPendingParticipants__ConfirmDialogTitle--ApproveAll',
           { count: serviceIdsStagedForAction.length }
         )}
-        onClose={hideConfirmDialog}
+        description={i18n(
+          'icu:CallingPendingParticipants__ConfirmDialogBody--ApproveAll',
+          { count: serviceIdsStagedForAction.length }
+        )}
       >
-        {i18n('icu:CallingPendingParticipants__ConfirmDialogBody--ApproveAll', {
-          count: serviceIdsStagedForAction.length,
-        })}
-      </ConfirmationDialog>
+        <AxoConfirmDialog.Cancel />
+        <AxoConfirmDialog.Action variant="primary" onClick={handleApproveAll}>
+          {i18n('icu:CallingPendingParticipants__ApproveAll')}
+        </AxoConfirmDialog.Action>
+      </AxoConfirmDialog.Root>
     );
   }
 
   if (confirmDialogState === ConfirmDialogState.DenyAll) {
     return (
-      <ConfirmationDialog
-        dialogName="CallingPendingParticipants.confirmDialog"
-        actions={[
-          {
-            action: handleDenyAll,
-            style: 'affirmative',
-            text: i18n('icu:CallingPendingParticipants__DenyAll'),
-          },
-        ]}
-        cancelText={i18n('icu:cancel')}
-        i18n={i18n}
-        theme={Theme.Dark}
+      <AxoConfirmDialog.Root
+        open
+        onOpenChange={hideConfirmDialog}
         title={i18n(
           'icu:CallingPendingParticipants__ConfirmDialogTitle--DenyAll',
           { count: serviceIdsStagedForAction.length }
         )}
-        onClose={hideConfirmDialog}
+        description={i18n(
+          'icu:CallingPendingParticipants__ConfirmDialogBody--DenyAll',
+          {
+            count: serviceIdsStagedForAction.length,
+          }
+        )}
       >
-        {i18n('icu:CallingPendingParticipants__ConfirmDialogBody--DenyAll', {
-          count: serviceIdsStagedForAction.length,
-        })}
-      </ConfirmationDialog>
+        <AxoConfirmDialog.Cancel />
+        <AxoConfirmDialog.Action variant="destructive" onClick={handleDenyAll}>
+          {i18n('icu:CallingPendingParticipants__DenyAll')}
+        </AxoConfirmDialog.Action>
+      </AxoConfirmDialog.Root>
     );
   }
 

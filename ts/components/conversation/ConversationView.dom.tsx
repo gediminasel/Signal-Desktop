@@ -1,11 +1,18 @@
 // Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React from 'react';
+import {
+  useCallback,
+  type JSX,
+  type DragEvent,
+  type ClipboardEvent,
+} from 'react';
 import classNames from 'classnames';
 import { useEscapeHandling } from '../../hooks/useEscapeHandling.dom.ts';
 import { getSuggestedFilename } from '../../util/Attachment.std.ts';
 import { IMAGE_PNG, type MIMEType } from '../../types/MIME.std.ts';
+import { isSignalConversation } from '../../util/isSignalConversation.dom.ts';
+import { SignalConversationBackground } from './SignalConversationBackground.dom.tsx';
 
 export type PropsType = {
   conversationId: string;
@@ -18,10 +25,10 @@ export type PropsType = {
     files: ReadonlyArray<File>;
     flags: number | null;
   }) => void;
-  renderCompositionArea: (conversationId: string) => React.JSX.Element;
-  renderConversationHeader: (conversationId: string) => React.JSX.Element;
-  renderTimeline: (conversationId: string) => React.JSX.Element;
-  renderPanel: (conversationId: string) => React.JSX.Element | undefined;
+  renderCompositionArea: (conversationId: string) => JSX.Element;
+  renderConversationHeader: (conversationId: string) => JSX.Element;
+  renderTimeline: (conversationId: string) => JSX.Element;
+  renderPanel: (conversationId: string) => JSX.Element | undefined;
   shouldHideConversationView?: boolean;
 };
 
@@ -68,7 +75,7 @@ export function ConversationView({
   renderTimeline,
   renderPanel,
   shouldHideConversationView,
-}: PropsType): React.JSX.Element {
+}: PropsType): JSX.Element {
   const url = encodeURI(
     [
       window.SignalContext.config.userDataPath,
@@ -76,8 +83,8 @@ export function ConversationView({
       `${conversationId}.png`,
     ].join('/')
   );
-  const onDrop = React.useCallback(
-    (event: React.DragEvent<HTMLDivElement>) => {
+  const onDrop = useCallback(
+    (event: DragEvent<HTMLDivElement>) => {
       event.stopPropagation();
       event.preventDefault();
 
@@ -99,8 +106,8 @@ export function ConversationView({
     [conversationId, processAttachments]
   );
 
-  const onPaste = React.useCallback(
-    (event: React.ClipboardEvent<HTMLDivElement>) => {
+  const onPaste = useCallback(
+    (event: ClipboardEvent<HTMLDivElement>) => {
       if (hasOpenModal || hasOpenPanel) {
         return;
       }
@@ -159,6 +166,7 @@ export function ConversationView({
     isSelectMode && !hasOpenModal ? onExitSelectMode : undefined
   );
 
+  const isSignalConvo = isSignalConversation({ id: conversationId });
   return (
     <div
       className="ConversationView ConversationPanel"
@@ -170,6 +178,7 @@ export function ConversationView({
           ConversationPanel__hidden: shouldHideConversationView,
         })}
       >
+        {isSignalConvo ? <SignalConversationBackground /> : null}
         <div className="ConversationView__header">
           {renderConversationHeader(conversationId)}
         </div>

@@ -1,8 +1,8 @@
 // Copyright 2018 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { ReactNode } from 'react';
-import React, { forwardRef, useCallback, useState } from 'react';
+import type { ReactNode, MouseEvent, JSX } from 'react';
+import { forwardRef, useCallback, useState } from 'react';
 import classNames from 'classnames';
 
 import type { LocalizerType } from '../../types/Util.std.ts';
@@ -15,12 +15,12 @@ import { MessageTimestamp } from './MessageTimestamp.dom.tsx';
 import { PanelType } from '../../types/Panels.std.ts';
 import { Spinner } from '../Spinner.dom.tsx';
 import { AxoAlertDialog } from '../../axo/AxoAlertDialog.dom.tsx';
-import { ConfirmationDialog } from '../ConfirmationDialog.dom.tsx';
 import { refMerger } from '../../util/refMerger.std.ts';
 import type { Size } from '../../hooks/useSizeObserver.dom.tsx';
 import { SizeObserver } from '../../hooks/useSizeObserver.dom.tsx';
 import { AxoSymbol } from '../../axo/AxoSymbol.dom.tsx';
 import { tw } from '../../axo/tw.dom.tsx';
+import { AxoConfirmDialog } from '../../axo/AxoConfirmDialog.dom.tsx';
 
 type PropsType = {
   canRetryDeleteForEveryone: boolean;
@@ -98,14 +98,14 @@ export const MessageMetadata = forwardRef<HTMLDivElement, Readonly<PropsType>>(
       const isPaused = status === 'paused';
 
       if (isError || isPartiallySent || isPaused) {
-        let statusInfo: React.ReactNode;
+        let statusInfo: ReactNode;
         if (isError) {
           if (deletedForEveryone && canRetryDeleteForEveryone) {
             statusInfo = (
               <button
                 type="button"
                 className="module-message__metadata__tapable"
-                onClick={(event: React.MouseEvent) => {
+                onClick={(event: MouseEvent) => {
                   event.stopPropagation();
                   event.preventDefault();
 
@@ -122,7 +122,7 @@ export const MessageMetadata = forwardRef<HTMLDivElement, Readonly<PropsType>>(
               <button
                 type="button"
                 className="module-message__metadata__tapable"
-                onClick={(event: React.MouseEvent) => {
+                onClick={(event: MouseEvent) => {
                   event.stopPropagation();
                   event.preventDefault();
 
@@ -142,7 +142,7 @@ export const MessageMetadata = forwardRef<HTMLDivElement, Readonly<PropsType>>(
             <button
               type="button"
               className="module-message__metadata__tapable"
-              onClick={(event: React.MouseEvent) => {
+              onClick={(event: MouseEvent) => {
                 event.stopPropagation();
                 event.preventDefault();
 
@@ -177,30 +177,29 @@ export const MessageMetadata = forwardRef<HTMLDivElement, Readonly<PropsType>>(
       }
     }
 
-    let confirmation: React.JSX.Element | undefined;
+    let confirmation: JSX.Element | undefined;
     if (confirmationType === undefined) {
       // no-op
     } else if (confirmationType === ConfirmationType.EditError) {
       confirmation = (
-        <ConfirmationDialog
-          dialogName="MessageMetadata.confirmEditResend"
-          actions={[
-            {
-              action: () => {
-                retryMessageSend(id);
-                setConfirmationType(undefined);
-              },
-              style: 'negative',
-              text: i18n('icu:ResendMessageEdit__button'),
-            },
-          ]}
-          i18n={i18n}
-          onClose={() => {
-            setConfirmationType(undefined);
-          }}
+        <AxoConfirmDialog.Root
+          open
+          onOpenChange={() => setConfirmationType(undefined)}
+          // @ts-expect-error ConfirmationDialog migration: Needs title
+          title={null}
+          description={i18n('icu:ResendMessageEdit__body')}
         >
-          {i18n('icu:ResendMessageEdit__body')}
-        </ConfirmationDialog>
+          <AxoConfirmDialog.Cancel />
+          <AxoConfirmDialog.Action
+            variant="destructive"
+            onClick={() => {
+              retryMessageSend(id);
+              setConfirmationType(undefined);
+            }}
+          >
+            {i18n('icu:ResendMessageEdit__button')}
+          </AxoConfirmDialog.Action>
+        </AxoConfirmDialog.Root>
       );
     } else if (confirmationType === ConfirmationType.DeleteError) {
       confirmation = (
@@ -218,9 +217,7 @@ export const MessageMetadata = forwardRef<HTMLDivElement, Readonly<PropsType>>(
               </AxoAlertDialog.Description>
             </AxoAlertDialog.Body>
             <AxoAlertDialog.Footer>
-              <AxoAlertDialog.Cancel>
-                {i18n('icu:cancel')}
-              </AxoAlertDialog.Cancel>
+              <AxoAlertDialog.Cancel />
               <AxoAlertDialog.Action
                 variant="primary"
                 onClick={() => {

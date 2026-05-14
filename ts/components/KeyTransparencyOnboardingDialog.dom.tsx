@@ -1,6 +1,7 @@
 // Copyright 2026 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
-import React from 'react';
+import type { JSX } from 'react';
+
 import { openLinkInWebBrowser } from '../util/openLinkInWebBrowser.dom.ts';
 import { KEY_TRANSPARENCY_URL } from '../types/support.std.ts';
 import type { LocalizerType } from '../types/I18N.std.ts';
@@ -20,18 +21,14 @@ function openKeyTransparencyUrl() {
 
 export function KeyTransparencyOnboardingDialog(
   props: KeyTransparencyOnboardingDialogProps
-): React.JSX.Element {
+): JSX.Element {
   const { i18n, open, onOpenChange, onContinue } = props;
 
   return (
     <AxoDialog.Root open={open} onOpenChange={onOpenChange}>
       <AxoDialog.Content escape="cancel-is-noop" size="sm">
         <AxoDialog.Header>
-          <AxoDialog.Close
-            aria-label={i18n(
-              'icu:KeyTransparencyOnboardingDialog__CloseButton__AccessibilityLabel'
-            )}
-          />
+          <AxoDialog.Close />
         </AxoDialog.Header>
         <AxoDialog.Body>
           <div className={tw('mt-1.5 mb-3 flex items-center justify-center')}>

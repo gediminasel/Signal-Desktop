@@ -1,7 +1,7 @@
 // Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as React from 'react';
+import { Fragment, createRef, type JSX } from 'react';
 import { action } from '@storybook/addon-actions';
 import type { Meta } from '@storybook/react';
 import { DurationInSeconds } from '../../util/durations/index.std.ts';
@@ -16,6 +16,7 @@ import { ThemeType } from '../../types/Util.std.ts';
 import { PaymentEventKind } from '../../types/Payment.std.ts';
 import { ErrorBoundary } from './ErrorBoundary.dom.tsx';
 import { MessageInteractivity } from './Message.dom.tsx';
+import { MessageRequestResponseEvent } from '../../types/MessageRequestResponseEvent.std.ts';
 
 const { i18n } = window.SignalContext;
 
@@ -24,7 +25,7 @@ const renderReactionPicker: TimelineItemProps['renderReactionPicker'] = () => (
 );
 
 const renderContact = (conversationId: string) => (
-  <React.Fragment key={conversationId}>{conversationId}</React.Fragment>
+  <Fragment key={conversationId}>Contact name</Fragment>
 );
 
 const renderUniversalTimerNotification = () => (
@@ -35,7 +36,7 @@ const renderUniversalTimerNotification = () => (
 );
 
 const getDefaultProps = () => ({
-  containerElementRef: React.createRef<HTMLElement>(),
+  containerElementRef: createRef<HTMLElement>(),
   containerWidthBreakpoint: WidthBreakpoint.Wide,
   conversationId: 'conversation-id',
   getPreferredBadge: () => undefined,
@@ -45,6 +46,7 @@ const getDefaultProps = () => ({
   isPinned: false,
   isSelectMode: false,
   isSelected: false,
+  isSignalConversation: false,
   isTargeted: false,
   isBlocked: false,
   isGroup: false,
@@ -136,7 +138,7 @@ export default {
   title: 'Components/Conversation/TimelineItem',
 } satisfies Meta<TimelineItemProps>;
 
-export function PlainMessage(): React.JSX.Element {
+export function PlainMessage(): JSX.Element {
   const item = {
     type: 'message',
     data: {
@@ -154,8 +156,14 @@ export function PlainMessage(): React.JSX.Element {
   return <TimelineItem {...getDefaultProps()} item={item} i18n={i18n} />;
 }
 
-export function Notification(): React.JSX.Element {
+export function Notification(): JSX.Element {
   const items = [
+    {
+      type: 'messageRequestResponse',
+      data: {
+        messageRequestResponseEvent: MessageRequestResponseEvent.ACCEPT,
+      },
+    },
     {
       type: 'timerNotification',
       data: {
@@ -595,19 +603,19 @@ export function Notification(): React.JSX.Element {
   return (
     <>
       {items.map((item, index) => (
-        <React.Fragment key={index}>
+        <Fragment key={index}>
           <TimelineItem
             {...getDefaultProps()}
             item={item as TimelineItemProps['item']}
             i18n={i18n}
           />
-        </React.Fragment>
+        </Fragment>
       ))}
     </>
   );
 }
 
-export function UnknownType(): React.JSX.Element {
+export function UnknownType(): JSX.Element {
   const item = {
     type: 'random',
     data: {
@@ -623,7 +631,7 @@ export function UnknownType(): React.JSX.Element {
   );
 }
 
-export function MissingItem(): React.JSX.Element {
+export function MissingItem(): JSX.Element {
   // oxlint-disable-next-line typescript/no-explicit-any
   const item = null as any as TimelineItemProps['item'];
 

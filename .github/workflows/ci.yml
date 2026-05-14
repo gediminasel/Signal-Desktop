@@ -12,6 +12,7 @@ on:
 
 jobs:
   lint:
+    name: Lint
     runs-on: ubuntu-22.04-8-cores
     timeout-minutes: 30
 
@@ -88,6 +89,7 @@ jobs:
         key: ${{ steps.cache-lint.outputs.cache-primary-key }}
 
   macos:
+    name: MacOS
     needs: lint
     runs-on: macos-latest
     if: github.ref == 'refs/heads/main'
@@ -162,6 +164,7 @@ jobs:
         path: artifacts
 
   linux:
+    name: Linux
     needs: lint
     runs-on: ubuntu-22.04-8-cores
     timeout-minutes: 30
@@ -263,6 +266,7 @@ jobs:
         path: artifacts
 
   windows:
+    name: Windows
     needs: lint
     runs-on: windows-latest-8-cores
     timeout-minutes: 30
@@ -367,6 +371,7 @@ jobs:
       run: pnpm run lint
 
   mock-tests:
+    name: Mock Tests
     needs: lint
 
     continue-on-error: true
@@ -470,12 +475,13 @@ jobs:
         path: artifacts
 
   check-min-os-version:
+    name: Check Min OS Version
     needs: lint
 
     continue-on-error: true
     strategy:
       matrix:
-        os: [ubuntu-22.04-8-cores, macos-latest, windows-latest-8-cores]
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
@@ -498,7 +504,7 @@ jobs:
         key: electron-gyp-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
 
     - name: Install Desktop node_modules
-      if: matrix.os != 'windows-latest-8-cores'
+      if: matrix.os != 'windows-latest'
       run: pnpm install
       env:
         NPM_CONFIG_LOGLEVEL: verbose
@@ -507,10 +513,10 @@ jobs:
         NPM_CONFIG_NODE_GYP: echo
 
     - run: touch noop.js
-      if: matrix.os == 'windows-latest-8-cores'
+      if: matrix.os == 'windows-latest'
 
     - name: Install Desktop node_modules on Windows
-      if: matrix.os == 'windows-latest-8-cores'
+      if: matrix.os == 'windows-latest'
       run: pnpm install
       env:
         NPM_CONFIG_LOGLEVEL: verbose

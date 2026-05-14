@@ -1,7 +1,7 @@
 // Copyright 2025 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, { type ReactNode } from 'react';
+import { type ReactNode, type JSX } from 'react';
 import lodash from 'lodash';
 import type { Transition } from 'motion/react';
 import { motion } from 'motion/react';
@@ -39,7 +39,7 @@ export type DataProps = Readonly<{
   renderContextMenu: (
     mediaItem: ReadonlyDeep<GenericMediaItemType>,
     children: ReactNode
-  ) => React.JSX.Element;
+  ) => JSX.Element;
 }>;
 
 // Provided by smart layer
@@ -59,7 +59,7 @@ export function AudioListItem({
   onClick,
   showMessage,
   renderContextMenu,
-}: Props): React.JSX.Element {
+}: Props): JSX.Element {
   const { attachment } = mediaItem;
 
   const { fileName, size: fileSize, url } = attachment;
@@ -93,10 +93,10 @@ export function AudioListItem({
         'size-9 rounded-sm'
       )}
     >
-      {peaks.map((peak, index) => {
+      {peaks.map(peak => {
         let height: number;
         if (hasPeaks) {
-          height = Math.max(MIN_PEAK_HEIGHT, peak * MAX_PEAK_HEIGHT);
+          height = Math.max(MIN_PEAK_HEIGHT, peak.value * MAX_PEAK_HEIGHT);
         } else {
           // Intentionally zero when processing or not downloaded
           height = 0;
@@ -104,8 +104,7 @@ export function AudioListItem({
 
         return (
           <div
-            // oxlint-disable-next-line react/no-array-index-key
-            key={index}
+            key={peak.index}
             className={tw(
               'rounded-sm bg-label-placeholder p-px',
               'transition-[height] duration-250'

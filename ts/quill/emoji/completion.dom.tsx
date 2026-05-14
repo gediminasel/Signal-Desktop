@@ -1,9 +1,10 @@
 // Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import type { JSX } from 'react';
+
 import { Delta } from '@signalapp/quill-cjs';
 import Emitter from '@signalapp/quill-cjs/core/emitter.js';
-import React from 'react';
 import lodash from 'lodash';
 import type Quill from '@signalapp/quill-cjs';
 import { Popper } from 'react-popper';
@@ -14,19 +15,9 @@ import { getBlotTextPartitions, matchBlotTextPartitions } from '../util.dom.ts';
 import { handleOutsideClick } from '../../util/handleOutsideClick.dom.ts';
 import { createLogger } from '../../logging/log.std.ts';
 import { FunStaticEmoji } from '../../components/fun/FunEmoji.dom.tsx';
-import type { EmojiParentKey } from '../../components/fun/data/emojis.std.ts';
-import {
-  EmojiSkinTone,
-  getEmojiVariantByParentKeyAndSkinTone,
-  normalizeShortNameCompletionDisplay,
-} from '../../components/fun/data/emojis.std.ts';
-import type {
-  FunEmojiSearchResult,
-  FunEmojiSearch,
-} from '../../components/fun/useFunEmojiSearch.dom.tsx';
-import { type FunEmojiLocalizer } from '../../components/fun/useFunEmojiLocalizer.dom.tsx';
 import type { FunEmojiSelection } from '../../components/fun/panels/FunPanelEmojis.dom.tsx';
 import { strictAssert } from '../../util/assert.std.ts';
+import { Emoji } from '../../axo/emoji.std.ts';
 
 const { isNumber, debounce } = lodash;
 
@@ -34,14 +25,12 @@ const log = createLogger('completion');
 
 export type EmojiCompletionOptions = {
   onSelectEmoji: (emojiSelection: FunEmojiSelection) => void;
-  setEmojiPickerElement: (element: React.JSX.Element | null) => void;
-  emojiSkinToneDefault: EmojiSkinTone | null;
-  emojiSearch: FunEmojiSearch;
-  emojiLocalizer: FunEmojiLocalizer;
+  setEmojiPickerElement: (element: JSX.Element | null) => void;
+  emojiSkinToneDefault: Emoji.SkinTone | null;
 };
 
 export type InsertEmojiOptionsType = Readonly<{
-  emojiParentKey: EmojiParentKey;
+  emoji: Emoji.Parent;
   index: number;
   range: number;
   withTrailingSpace?: boolean;
@@ -49,7 +38,7 @@ export type InsertEmojiOptionsType = Readonly<{
 }>;
 
 export class EmojiCompletion {
-  results: ReadonlyArray<FunEmojiSearchResult>;
+  results: ReadonlyArray<Emoji.Parent>;
 
   index: number;
 
@@ -173,13 +162,12 @@ export class EmojiCompletion {
         leftTokenTextMatch as LeftTokenMatch;
 
       if (isSelfClosing || justPressedColon) {
-        const parentKey =
-          this.options.emojiLocalizer.getParentKeyForText(leftTokenText);
-        if (parentKey != null) {
+        const parent = Emoji.matchShortName(leftTokenText);
+        if (parent != null) {
           const numberOfColons = isSelfClosing ? 2 : 1;
 
           this.insertEmoji({
-            emojiParentKey: parentKey,
+            emoji: parent,
             index: range.index - leftTokenText.length - numberOfColons,
             range: leftTokenText.length + numberOfColons,
             justPressedColon,
@@ -193,12 +181,11 @@ export class EmojiCompletion {
       if (rightTokenTextMatch) {
         const [, rightTokenText] = rightTokenTextMatch as RightTokenMatch;
         const tokenText = leftTokenText + rightTokenText;
-        const parentKey =
-          this.options.emojiLocalizer.getParentKeyForText(tokenText);
+        const parent = Emoji.matchShortName(tokenText);
 
-        if (parentKey != null) {
+        if (parent != null) {
           this.insertEmoji({
-            emojiParentKey: parentKey,
+            emoji: parent,
             index: range.index - leftTokenText.length - 1,
             range: tokenText.length + 2,
             justPressedColon,
@@ -212,7 +199,7 @@ export class EmojiCompletion {
         return PASS_THROUGH;
       }
 
-      const showEmojiResults = this.options.emojiSearch(leftTokenText, 10);
+      const showEmojiResults = Emoji.search(leftTokenText, 10);
 
       if (showEmojiResults.length > 0) {
         this.results = showEmojiResults;
@@ -261,7 +248,7 @@ export class EmojiCompletion {
     const [, tokenText] = tokenTextMatch as TokenTextMatch;
 
     this.insertEmoji({
-      emojiParentKey: result.parentKey,
+      emoji: result,
       index: range.index - tokenText.length - 1,
       range: tokenText.length + 1,
       withTrailingSpace: true,
@@ -269,17 +256,14 @@ export class EmojiCompletion {
   }
 
   insertEmoji({
-    emojiParentKey,
+    emoji,
     index,
     range,
     withTrailingSpace = false,
     justPressedColon = false,
   }: InsertEmojiOptionsType): void {
-    const skinTone = this.options.emojiSkinToneDefault ?? EmojiSkinTone.None;
-    const emojiVariant = getEmojiVariantByParentKeyAndSkinTone(
-      emojiParentKey,
-      skinTone
-    );
+    const skinTone = this.options.emojiSkinToneDefault ?? Emoji.SkinTone.None;
+    const variant = Emoji.getVariant(emoji, skinTone);
 
     let source = this.quill.getText(index, range);
     if (justPressedColon) {
@@ -290,7 +274,7 @@ export class EmojiCompletion {
       .retain(index)
       .delete(range)
       .insert({
-        emoji: { value: emojiVariant.value, source },
+        emoji: { value: variant, source },
       });
 
     if (withTrailingSpace) {
@@ -304,7 +288,7 @@ export class EmojiCompletion {
     }
 
     this.options.onSelectEmoji({
-      variantKey: emojiVariant.key,
+      emoji: variant,
     });
 
     this.reset();
@@ -384,31 +368,23 @@ export class EmojiCompletion {
             role="listbox"
             aria-expanded
             aria-activedescendant={`emoji-result--${
-              emojiResults.length
-                ? emojiResults[emojiResultsIndex]?.parentKey
-                : ''
+              emojiResults.length ? emojiResults[emojiResultsIndex] : ''
             }`}
             tabIndex={0}
           >
             {emojiResults.map((result, index) => {
-              const emojiVariant = getEmojiVariantByParentKeyAndSkinTone(
-                result.parentKey,
-                this.options.emojiSkinToneDefault ?? EmojiSkinTone.None
+              const emojiVariant = Emoji.getVariant(
+                result,
+                this.options.emojiSkinToneDefault ?? Emoji.SkinTone.None
               );
 
-              const localeShortName =
-                this.options.emojiLocalizer.getLocaleShortName(
-                  emojiVariant.key
-                );
-
-              const normalized =
-                normalizeShortNameCompletionDisplay(localeShortName);
+              const completionLabel = Emoji.getCompletionLabel(result);
 
               return (
                 <button
                   type="button"
-                  key={result.parentKey}
-                  id={`emoji-result--${result.parentKey}`}
+                  key={result}
+                  id={`emoji-result--${result}`}
                   role="option button"
                   aria-selected={emojiResultsIndex === index}
                   onClick={() => {
@@ -428,7 +404,7 @@ export class EmojiCompletion {
                     size={16}
                   />
                   <div className="module-composition-input__suggestions__row__short-name">
-                    :{normalized}:
+                    :{completionLabel}:
                   </div>
                 </button>
               );

@@ -1,7 +1,8 @@
 // Copyright 2023 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React from 'react';
+import type { JSX } from 'react';
+
 import lodash from 'lodash';
 
 import { DialogType } from '../../types/Dialogs.std.ts';
@@ -16,10 +17,10 @@ import type { UpdatesStateType } from '../../state/ducks/updates.preload.ts';
 import { isBeta } from '../../util/version.std.ts';
 import { missingCaseError } from '../../util/missingCaseError.std.ts';
 import { roundFractionForProgressBar } from '../../util/numbers.std.ts';
-import { ConfirmationDialog } from '../ConfirmationDialog.dom.tsx';
 import { Modal } from '../Modal.dom.tsx';
 import { I18n } from '../I18n.dom.tsx';
 import { formatFileSize } from '../../util/formatFileSize.std.ts';
+import { AxoConfirmDialog } from '../../axo/AxoConfirmDialog.dom.tsx';
 
 const { noop } = lodash;
 
@@ -46,8 +47,8 @@ export function InstallScreenUpdateDialog({
   currentVersion,
   OS,
   onClose = noop,
-}: PropsType): React.JSX.Element | null {
-  const learnMoreLink = (parts: Array<string | React.JSX.Element>) => (
+}: PropsType): JSX.Element | null {
+  const learnMoreLink = (parts: Array<string | JSX.Element>) => (
     <a
       key="signal-support"
       href={UNSUPPORTED_OS_URL}
@@ -67,27 +68,26 @@ export function InstallScreenUpdateDialog({
       }
 
       return (
-        <ConfirmationDialog
-          i18n={i18n}
-          dialogName={dialogName}
-          noMouseClose
-          onClose={onClose}
-          noDefaultCancelButton
-          actions={[
-            {
-              id: 'ok',
-              text: i18n(
-                'icu:InstallScreenUpdateDialog--update-required__action-update'
-              ),
-              action: forceUpdate,
-              style: 'affirmative',
-              autoClose: false,
-            },
-          ]}
+        <AxoConfirmDialog.Root
+          open
+          onOpenChange={onClose}
           title={i18n('icu:InstallScreenUpdateDialog--update-required__title')}
+          description={i18n(
+            'icu:InstallScreenUpdateDialog--update-required__body'
+          )}
         >
-          {i18n('icu:InstallScreenUpdateDialog--update-required__body')}
-        </ConfirmationDialog>
+          <AxoConfirmDialog.Action
+            variant="primary"
+            onClick={event => {
+              event.preventDefault();
+              forceUpdate();
+            }}
+          >
+            {i18n(
+              'icu:InstallScreenUpdateDialog--update-required__action-update'
+            )}
+          </AxoConfirmDialog.Action>
+        </AxoConfirmDialog.Root>
       );
     }
 
@@ -122,7 +122,7 @@ export function InstallScreenUpdateDialog({
     dialogType === DialogType.DownloadedUpdate
   ) {
     let title = i18n('icu:autoUpdateNewVersionTitle');
-    let actionText: string | React.JSX.Element = i18n(
+    let actionText: string | JSX.Element = i18n(
       'icu:autoUpdateRestartButtonLabel'
     );
     let bodyText = i18n('icu:InstallScreenUpdateDialog--auto-update__body');
@@ -151,25 +151,22 @@ export function InstallScreenUpdateDialog({
     }
 
     return (
-      <ConfirmationDialog
-        i18n={i18n}
-        dialogName={dialogName}
+      <AxoConfirmDialog.Root
+        open
+        onOpenChange={onClose}
         title={title}
-        noMouseClose
-        noDefaultCancelButton
-        actions={[
-          {
-            id: 'ok',
-            text: actionText,
-            action: startUpdate,
-            style: 'affirmative',
-            autoClose: false,
-          },
-        ]}
-        onClose={onClose}
+        description={bodyText}
       >
-        {bodyText}
-      </ConfirmationDialog>
+        <AxoConfirmDialog.Action
+          variant="primary"
+          onClick={event => {
+            event.preventDefault();
+            startUpdate();
+          }}
+        >
+          {actionText}
+        </AxoConfirmDialog.Action>
+      </AxoConfirmDialog.Root>
     );
   }
 
@@ -204,25 +201,24 @@ export function InstallScreenUpdateDialog({
 
     if (dialogType === DialogType.Cannot_Update) {
       return (
-        <ConfirmationDialog
-          i18n={i18n}
-          dialogName={dialogName}
-          moduleClassName="InstallScreenUpdateDialog"
+        <AxoConfirmDialog.Root
+          open
+          onOpenChange={onClose}
           title={title}
-          noMouseClose
-          noDefaultCancelButton
-          actions={[
-            {
-              text: i18n('icu:autoUpdateRetry'),
-              action: startUpdate,
-              style: 'affirmative',
-              autoClose: false,
-            },
-          ]}
-          onClose={onClose}
+          // @ts-expect-error ConfirmationDialog migration: Needs description
+          description={null}
         >
+          <AxoConfirmDialog.Action
+            variant="primary"
+            onClick={event => {
+              event.preventDefault();
+              startUpdate();
+            }}
+          >
+            {i18n('icu:autoUpdateRetry')}
+          </AxoConfirmDialog.Action>
           {body}
-        </ConfirmationDialog>
+        </AxoConfirmDialog.Root>
       );
     }
 
@@ -269,7 +265,7 @@ function DownloadingModal({
 }: {
   i18n: LocalizerType;
   width: number;
-}): React.JSX.Element {
+}): JSX.Element {
   // Focus trap can't be used because there are no elements that can be
   // focused within the modal.
   return (

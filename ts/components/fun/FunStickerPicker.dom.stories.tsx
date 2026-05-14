@@ -1,6 +1,6 @@
 // Copyright 2025 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState, type JSX } from 'react';
 import { Button } from 'react-aria-components';
 import { action } from '@storybook/addon-actions';
 import { type ComponentMeta } from '../../storybook/types.std.ts';
@@ -9,7 +9,7 @@ import { FunStickerPicker } from './FunStickerPicker.dom.tsx';
 import { MOCK_RECENT_EMOJIS } from '../../test-helpers/funPickerMocks.dom.tsx';
 import { FunProvider } from './FunProvider.dom.tsx';
 import { packs, recentStickers } from '../../test-helpers/stickersMocks.std.ts';
-import { EmojiSkinTone } from './data/emojis.std.ts';
+import { Emoji } from '../../axo/emoji.std.ts';
 
 const { i18n } = window.SignalContext;
 
@@ -18,7 +18,7 @@ type TemplateProps = Omit<
   'open' | 'onOpenChange' | 'children'
 >;
 
-function Template(props: TemplateProps): React.JSX.Element {
+function Template(props: TemplateProps): JSX.Element {
   const [open, setOpen] = useState(true);
 
   const handleOpenChange = useCallback((openState: boolean) => {
@@ -33,7 +33,7 @@ function Template(props: TemplateProps): React.JSX.Element {
       recentStickers={recentStickers}
       recentGifs={[]}
       // Emojis
-      emojiSkinToneDefault={EmojiSkinTone.None}
+      emojiSkinToneDefault={Emoji.SkinTone.None}
       onEmojiSkinToneDefaultChange={() => null}
       onOpenCustomizePreferredReactionsModal={() => null}
       onSelectEmoji={() => null}
@@ -68,6 +68,6 @@ export default {
   },
 } satisfies ComponentMeta<TemplateProps>;
 
-export function Default(props: TemplateProps): React.JSX.Element {
+export function Default(props: TemplateProps): JSX.Element {
   return <Template {...props} />;
 }

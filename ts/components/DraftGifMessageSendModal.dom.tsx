@@ -1,6 +1,6 @@
 // Copyright 2025 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { type ComponentType, useEffect, useMemo, useId } from 'react';
+import { type ComponentType, useEffect, useMemo, useId, type JSX } from 'react';
 import { VisuallyHidden } from 'react-aria';
 import type { LocalizerType } from '../types/I18N.std.ts';
 import { Button, ButtonVariant } from './Button.dom.tsx';
@@ -8,11 +8,11 @@ import { Modal } from './Modal.dom.tsx';
 import type { HydratedBodyRangesType } from '../types/BodyRange.std.ts';
 import type { SmartCompositionTextAreaProps } from '../state/smart/CompositionTextArea.preload.tsx';
 import type { ThemeType } from '../types/Util.std.ts';
-import { EmojiSkinTone } from './fun/data/emojis.std.ts';
 import { FunGifPreview } from './fun/FunGif.dom.tsx';
 import type { FunGifSelection } from './fun/panels/FunPanelGifs.dom.tsx';
 import type { GifDownloadState } from '../state/smart/DraftGifMessageSendModal.preload.tsx';
 import { LoadingState } from '../util/loadable.std.ts';
+import { Emoji } from '../axo/emoji.std.ts';
 
 export type DraftGifMessageSendModalProps = Readonly<{
   i18n: LocalizerType;
@@ -33,7 +33,7 @@ export type DraftGifMessageSendModalProps = Readonly<{
 
 export function DraftGifMessageSendModal(
   props: DraftGifMessageSendModalProps
-): React.JSX.Element {
+): JSX.Element {
   const { i18n, RenderCompositionTextArea } = props;
   const descriptionId = useId();
 
@@ -98,7 +98,7 @@ export function DraftGifMessageSendModal(
         onChange={props.onChange}
         onSubmit={props.onSubmit}
         theme={props.theme}
-        emojiSkinToneDefault={EmojiSkinTone.None}
+        emojiSkinToneDefault={Emoji.SkinTone.None}
       />
     </Modal>
   );

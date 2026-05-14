@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { Meta, StoryFn } from '@storybook/react';
-import React from 'react';
 
 import { action } from '@storybook/addon-actions';
 import type { PropsType } from './StoryCreator.dom.tsx';
@@ -13,7 +12,7 @@ import {
   getDefaultGroup,
 } from '../test-helpers/getDefaultConversation.std.ts';
 import { getFakeDistributionListsWithMembers } from '../test-helpers/getFakeDistributionLists.std.ts';
-import { EmojiSkinTone } from './fun/data/emojis.std.ts';
+import { Emoji } from '../axo/emoji.std.ts';
 
 const { i18n } = window.SignalContext;
 
@@ -46,7 +45,7 @@ export default {
       'setMyStoriesToAllSignalConnections'
     ),
     signalConnections: Array.from(Array(42), getDefaultConversation),
-    emojiSkinToneDefault: EmojiSkinTone.None,
+    emojiSkinToneDefault: Emoji.SkinTone.None,
     toggleSignalConnectionsModal: action('toggleSignalConnectionsModal'),
   },
 } satisfies Meta<PropsType>;

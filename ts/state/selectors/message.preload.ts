@@ -4,7 +4,6 @@
 import lodash from 'lodash';
 import { createSelector } from 'reselect';
 import { direction as getDirection } from 'direction';
-import emojiRegex from 'emoji-regex';
 import LinkifyIt from 'linkify-it';
 import type { ReadonlyDeep } from 'type-fest';
 
@@ -73,6 +72,7 @@ import {
   isVoiceMessage,
   isIncremental,
   defaultBlurHash,
+  isDownloadable,
 } from '../../util/Attachment.std.ts';
 import type { MessageAttachmentType } from '../../types/AttachmentDownload.std.ts';
 import type {
@@ -180,6 +180,7 @@ import { LONG_MESSAGE } from '../../types/MIME.std.ts';
 import type { MessageRequestResponseNotificationData } from '../../components/conversation/MessageRequestResponseNotification.dom.tsx';
 import type { PinnedMessageNotificationData } from '../../components/conversation/pinned-messages/PinnedMessageNotification.dom.tsx';
 import type { PollTerminateNotificationDataType } from '../../components/conversation/PollTerminateNotification.dom.tsx';
+import { Emoji } from '../../axo/emoji.std.ts';
 
 const { groupBy, isEmpty, isNumber, isObject, map } = lodash;
 
@@ -808,8 +809,7 @@ function getPayment(
 
 export function cleanBodyForDirectionCheck(text: string): string {
   const MENTIONS_REGEX = getMentionsRegex();
-  const EMOJI_REGEX = emojiRegex();
-  const initial = text.replace(MENTIONS_REGEX, '').replace(EMOJI_REGEX, '');
+  const initial = Emoji.stripEmojiFromText(text.replace(MENTIONS_REGEX, ''));
 
   const linkMatches = linkify.match(initial);
 
@@ -1018,6 +1018,7 @@ const getPropsForMessage = (
     isSelectMode,
     isSMS: message.sms === true,
     isSpoilerExpanded: message.isSpoilerExpanded,
+    isSignalConversation: isSignalConversation(author),
     isSticker: Boolean(sticker),
     isTargeted,
     isTargetedCounter: isTargeted ? targetedMessageCounter : undefined,
@@ -2200,7 +2201,9 @@ export function getPropsForAttachment(
     pending,
     url: path ? getLocalAttachmentUrl(attachment) : undefined,
     incrementalUrl:
-      isIncremental(attachment) && attachment.downloadPath
+      isIncremental(attachment) &&
+      attachment.downloadPath &&
+      isDownloadable(attachment)
         ? getLocalAttachmentUrl(attachment, {
             disposition: AttachmentDisposition.Download,
           })
@@ -2661,6 +2664,9 @@ export function canForward(message: ReadonlyMessageAttributesType): boolean {
 }
 
 export function canPinMessages(conversation: ConversationType): boolean {
+  if (isSignalConversation(conversation)) {
+    return false;
+  }
   return (
     conversation.type === 'direct' ||
     (conversation.canEditGroupInfo === true && !conversation.terminated)

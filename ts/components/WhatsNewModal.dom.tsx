@@ -1,8 +1,7 @@
 // Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { ReactNode } from 'react';
-import React from 'react';
+import type { ReactNode, JSX } from 'react';
 import moment from 'moment';
 
 import { Modal } from './Modal.dom.tsx';
@@ -18,20 +17,20 @@ export type PropsType = {
 type ReleaseNotesType = {
   date: Date;
   version: string;
-  header?: React.JSX.Element;
-  features: Array<React.JSX.Element>;
+  header?: JSX.Element;
+  features: Array<JSX.Element>;
 };
 
 export function WhatsNewModal({
   i18n,
   hideWhatsNewModal,
-}: PropsType): React.JSX.Element {
+}: PropsType): JSX.Element {
   let contentNode: ReactNode;
 
   const releaseNotes: ReleaseNotesType = {
     date: new Date(window.getBuildCreation?.() || Date.now()),
     version: window.getVersion?.(),
-    features: [<I18n i18n={i18n} id="icu:WhatsNew__bugfixes--4" />],
+    features: [<I18n i18n={i18n} id="icu:WhatsNew__8.10--0" />],
   };
 
   if (releaseNotes.features.length === 1 && !releaseNotes.header) {

@@ -1,7 +1,14 @@
 // Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as React from 'react';
+import {
+  type HTMLProps,
+  type JSX,
+  forwardRef,
+  useMemo,
+  useState,
+  useEffect,
+} from 'react';
 import lodash from 'lodash';
 import classNames from 'classnames';
 import { ContactName } from './ContactName.dom.tsx';
@@ -12,29 +19,14 @@ import type { ConversationType } from '../../state/ducks/conversations.preload.t
 import type { PreferredBadgeSelectorType } from '../../state/selectors/badges.preload.ts';
 import { useEscapeHandling } from '../../hooks/useEscapeHandling.dom.ts';
 import type { ThemeType } from '../../types/Util.std.ts';
-import type {
-  EmojiParentKey,
-  EmojiVariantKey,
-} from '../fun/data/emojis.std.ts';
-import {
-  EMOJI_PARENT_KEY_CONSTANTS,
-  getEmojiDebugLabel,
-  getEmojiParentKeyByVariantKey,
-  getEmojiVariantByKey,
-  getEmojiVariantKeyByValue,
-  isEmojiVariantValue,
-} from '../fun/data/emojis.std.ts';
 import { strictAssert } from '../../util/assert.std.ts';
 import { FunStaticEmoji } from '../fun/FunEmoji.dom.tsx';
-import { useFunEmojiLocalizer } from '../fun/useFunEmojiLocalizer.dom.tsx';
-import { createLogger } from '../../logging/log.std.ts';
+import { Emoji } from '../../axo/emoji.std.ts';
 
 const { mapValues, orderBy } = lodash;
 
-const log = createLogger('ReactionViewer');
-
 export type Reaction = {
-  emoji: string;
+  emoji: Emoji.Variant;
   timestamp: number;
   from: Pick<
     ConversationType,
@@ -53,64 +45,53 @@ export type Reaction = {
 export type OwnProps = {
   getPreferredBadge: PreferredBadgeSelectorType;
   reactions: Array<Reaction>;
-  pickedReaction?: string;
+  pickedReaction?: Emoji.Variant;
   onClose?: () => unknown;
   theme: ThemeType;
 };
 
 export type Props = OwnProps &
-  Pick<React.HTMLProps<HTMLDivElement>, 'style'> &
+  Pick<HTMLProps<HTMLDivElement>, 'style'> &
   Pick<AvatarProps, 'i18n'>;
 
 const DEFAULT_EMOJI_ORDER = [
-  EMOJI_PARENT_KEY_CONSTANTS.RED_HEART,
-  EMOJI_PARENT_KEY_CONSTANTS.THUMBS_UP,
-  EMOJI_PARENT_KEY_CONSTANTS.THUMBS_DOWN,
-  EMOJI_PARENT_KEY_CONSTANTS.FACE_WITH_TEARS_OF_JOY,
-  EMOJI_PARENT_KEY_CONSTANTS.FACE_WITH_OPEN_MOUTH,
-  EMOJI_PARENT_KEY_CONSTANTS.CRYING_FACE,
-  EMOJI_PARENT_KEY_CONSTANTS.ENRAGED_FACE,
+  Emoji.HEART,
+  Emoji.THUMBS_UP,
+  Emoji.THUMBS_DOWN,
+  Emoji.JOY,
+  Emoji.OPEN_MOUTH,
+  Emoji.CRY,
+  Emoji.RAGE,
 ];
 
 type ReactionCategory = {
   count: number;
-  emoji?: string;
+  emoji?: Emoji.Variant;
   id: string;
   index: number;
 };
 
 type ReactionWithEmojiData = Reaction &
   Readonly<{
-    parentKey: EmojiParentKey;
-    variantKey: EmojiVariantKey;
+    parent: Emoji.Parent;
+    variant: Emoji.Variant;
   }>;
 
 function ReactionViewerEmoji(props: {
-  emojiVariantValue: string | undefined;
-}): React.JSX.Element | null {
-  const emojiLocalizer = useFunEmojiLocalizer();
-  strictAssert(props.emojiVariantValue != null, 'Expected an emoji');
-
-  if (!isEmojiVariantValue(props.emojiVariantValue)) {
-    log.error(
-      `Must be valid emoji variant value, got ${getEmojiDebugLabel(props.emojiVariantValue)}`
-    );
-    return null;
-  }
-
-  const emojiVariantKey = getEmojiVariantKeyByValue(props.emojiVariantValue);
-  const emojiVariant = getEmojiVariantByKey(emojiVariantKey);
+  emoji: Emoji.Variant | null;
+}): JSX.Element | null {
+  strictAssert(props.emoji != null, 'Missing emoji');
   return (
     <FunStaticEmoji
       role="img"
-      aria-label={emojiLocalizer.getLocaleShortName(emojiVariantKey)}
+      aria-label={Emoji.getDisplayLabel(props.emoji)}
       size={18}
-      emoji={emojiVariant}
+      emoji={props.emoji}
     />
   );
 }
 
-export const ReactionViewer = React.forwardRef<HTMLDivElement, Props>(
+export const ReactionViewer = forwardRef<HTMLDivElement, Props>(
   function ReactionViewerInner(
     {
       getPreferredBadge,
@@ -123,16 +104,13 @@ export const ReactionViewer = React.forwardRef<HTMLDivElement, Props>(
     },
     ref
   ) {
-    const reactionsWithEmojiData = React.useMemo(
+    const reactionsWithEmojiData = useMemo(
       () =>
         reactions
-          .map(reaction => {
-            if (!isEmojiVariantValue(reaction.emoji)) {
-              return null;
-            }
-            const variantKey = getEmojiVariantKeyByValue(reaction.emoji);
-            const parentKey = getEmojiParentKeyByVariantKey(variantKey);
-            return { ...reaction, parentKey, variantKey };
+          .map((reaction): ReactionWithEmojiData | null => {
+            const variant = reaction.emoji;
+            const parent = Emoji.getParent(reaction.emoji);
+            return { ...reaction, parent, variant };
           })
           .filter((data): data is ReactionWithEmojiData => {
             return data != null;
@@ -140,9 +118,9 @@ export const ReactionViewer = React.forwardRef<HTMLDivElement, Props>(
       [reactions]
     );
 
-    const groupedAndSortedReactions = React.useMemo(() => {
+    const groupedAndSortedReactions = useMemo(() => {
       const groups = Object.groupBy(reactionsWithEmojiData, data => {
-        return data.parentKey;
+        return data.parent;
       });
 
       return mapValues(
@@ -154,7 +132,7 @@ export const ReactionViewer = React.forwardRef<HTMLDivElement, Props>(
       );
     }, [reactionsWithEmojiData]);
 
-    const reactionCategories: Array<ReactionCategory> = React.useMemo(
+    const reactionCategories: Array<ReactionCategory> = useMemo(
       () =>
         [
           {
@@ -170,9 +148,9 @@ export const ReactionViewer = React.forwardRef<HTMLDivElement, Props>(
               const firstReaction = localUserReaction || groupedReactions[0];
               strictAssert(firstReaction, 'Missing firstReaction');
               return {
-                id: firstReaction.parentKey,
-                index: DEFAULT_EMOJI_ORDER.includes(firstReaction.parentKey)
-                  ? DEFAULT_EMOJI_ORDER.indexOf(firstReaction.parentKey)
+                id: firstReaction.parent,
+                index: DEFAULT_EMOJI_ORDER.includes(firstReaction.parent)
+                  ? DEFAULT_EMOJI_ORDER.indexOf(firstReaction.parent)
                   : Infinity,
                 emoji: firstReaction.emoji,
                 count: groupedReactions.length,
@@ -182,8 +160,9 @@ export const ReactionViewer = React.forwardRef<HTMLDivElement, Props>(
       [reactionsWithEmojiData, groupedAndSortedReactions]
     );
 
-    const [selectedReactionCategory, setSelectedReactionCategory] =
-      React.useState(pickedReaction || 'all');
+    const [selectedReactionCategory, setSelectedReactionCategory] = useState(
+      pickedReaction || 'all'
+    );
 
     // Handle escape key
     useEscapeHandling(onClose);
@@ -194,7 +173,7 @@ export const ReactionViewer = React.forwardRef<HTMLDivElement, Props>(
     // If we have previously selected a reaction type that is no longer present
     // (removed on another device, for instance) we should select another
     // reaction type
-    React.useEffect(() => {
+    useEffect(() => {
       if (
         !reactionCategories.find(({ id }) => id === selectedReactionCategory)
       ) {
@@ -251,7 +230,7 @@ export const ReactionViewer = React.forwardRef<HTMLDivElement, Props>(
                   </span>
                 ) : (
                   <>
-                    <ReactionViewerEmoji emojiVariantValue={emoji} />
+                    <ReactionViewerEmoji emoji={emoji ?? null} />
                     <span className="module-reaction-viewer__header__button__count">
                       {count}
                     </span>
@@ -292,7 +271,7 @@ export const ReactionViewer = React.forwardRef<HTMLDivElement, Props>(
                 )}
               </div>
               <div className="module-reaction-viewer__body__row__emoji">
-                <ReactionViewerEmoji emojiVariantValue={emoji} />
+                <ReactionViewerEmoji emoji={emoji} />
               </div>
             </div>
           ))}

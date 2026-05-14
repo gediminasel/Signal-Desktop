@@ -1,16 +1,14 @@
 // Copyright 2025 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
-import type { ReactNode } from 'react';
-import React from 'react';
+import type { ReactNode, JSX } from 'react';
 import { AxoAlertDialog } from '../../../axo/AxoAlertDialog.dom.tsx';
 
 export function DeleteChatFolderDialog(props: {
   title: string;
   description: ReactNode;
-  cancelText: string;
   deleteText: string;
   onConfirm: () => void;
-}): React.JSX.Element {
+}): JSX.Element {
   return (
     <AxoAlertDialog.Content escape="cancel-is-noop">
       <AxoAlertDialog.Body>
@@ -20,7 +18,7 @@ export function DeleteChatFolderDialog(props: {
         </AxoAlertDialog.Description>
       </AxoAlertDialog.Body>
       <AxoAlertDialog.Footer>
-        <AxoAlertDialog.Cancel>{props.cancelText}</AxoAlertDialog.Cancel>
+        <AxoAlertDialog.Cancel />
         <AxoAlertDialog.Action variant="destructive" onClick={props.onConfirm}>
           {props.deleteText}
         </AxoAlertDialog.Action>

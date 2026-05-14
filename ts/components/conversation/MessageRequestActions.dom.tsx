@@ -1,9 +1,8 @@
 // Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as React from 'react';
+import { useState, type JSX } from 'react';
 import { ContactName } from './ContactName.dom.tsx';
-import { Button, ButtonVariant } from '../Button.dom.tsx';
 import type { MessageRequestActionsConfirmationProps } from './MessageRequestActionsConfirmation.dom.tsx';
 import {
   MessageRequestActionsConfirmation,
@@ -16,6 +15,10 @@ import {
   useSharedGroupNamesOnMount,
   type GetSharedGroupNamesType,
 } from '../../util/sharedGroupNames.dom.ts';
+import { AxoButton } from '../../axo/AxoButton.dom.tsx';
+import { FlexWrapDetector } from '../../axo/_internal/FlexWrapDetector.dom.tsx';
+import { tw } from '../../axo/tw.dom.tsx';
+import { AxoSymbol } from '../../axo/AxoSymbol.dom.tsx';
 
 export type Props = {
   i18n: LocalizerType;
@@ -41,8 +44,8 @@ export function MessageRequestActions({
   blockConversation,
   reportSpam,
   deleteConversation,
-}: Props): React.JSX.Element {
-  const [mrState, setMrState] = React.useState(MessageRequestState.default);
+}: Props): JSX.Element {
+  const [mrState, setMrState] = useState(MessageRequestState.default);
   const sharedGroupNames = useSharedGroupNamesOnMount(
     conversationId,
     getSharedGroupNames
@@ -51,7 +54,7 @@ export function MessageRequestActions({
   const nameValue =
     conversationType === 'direct' ? conversationName : addedByName;
 
-  let message: React.JSX.Element | undefined;
+  let message: JSX.Element | undefined;
   if (conversationType === 'direct') {
     strictAssert(nameValue != null, 'nameValue is null');
     const name = (
@@ -119,66 +122,89 @@ export function MessageRequestActions({
         />
       ) : null}
       <div className="module-message-request-actions">
-        <p className="module-message-request-actions__message">{message}</p>
-        <div className="module-message-request-actions__buttons">
-          {!isBlocked && (
-            <Button
-              onClick={() => {
-                setMrState(MessageRequestState.blocking);
-              }}
-              variant={ButtonVariant.SecondaryDestructive}
-            >
-              {i18n('icu:MessageRequests--block')}
-            </Button>
+        <div
+          className={tw(
+            // oxlint-disable-next-line better-tailwindcss/no-restricted-classes
+            'mb-2 text-center type-body-medium text-[#C84118] select-none'
           )}
-          {(isReported || isBlocked) && (
-            <Button
-              onClick={() => {
-                setMrState(MessageRequestState.deleting);
-              }}
-              variant={ButtonVariant.SecondaryDestructive}
-            >
-              {i18n('icu:MessageRequests--delete')}
-            </Button>
-          )}
-          {!isReported && (
-            <Button
-              onClick={() => {
-                setMrState(MessageRequestState.reportingAndMaybeBlocking);
-              }}
-              variant={ButtonVariant.SecondaryDestructive}
-            >
-              {i18n('icu:MessageRequests--reportAndMaybeBlock')}
-            </Button>
-          )}
-          {isBlocked && (
-            <Button
-              onClick={() => {
-                setMrState(MessageRequestState.unblocking);
-              }}
-              variant={ButtonVariant.SecondaryAffirmative}
-            >
-              {i18n('icu:MessageRequests--unblock')}
-            </Button>
-          )}
-          {!isBlocked ? (
-            <Button
-              onClick={() => {
-                if (
-                  conversationType === 'direct' &&
-                  sharedGroupNames.length > 1
-                ) {
-                  acceptConversation(conversationId);
-                } else {
-                  setMrState(MessageRequestState.accepting);
-                }
-              }}
-              variant={ButtonVariant.SecondaryAffirmative}
-            >
-              {i18n('icu:MessageRequests--accept')}
-            </Button>
-          ) : null}
+        >
+          <AxoSymbol.InlineGlyph symbol="error-triangle" label={null} />
+          &nbsp;
+          {i18n('icu:MessageRequestWarning__review-carefully')}
         </div>
+        <p className="module-message-request-actions__message">{message}</p>
+        <FlexWrapDetector>
+          <div
+            className={tw(
+              'flex flex-wrap justify-center gap-2',
+              '[&>button]:min-w-24',
+              'container-scrollable:[&>button]:w-full'
+            )}
+          >
+            {!isBlocked && (
+              <AxoButton.Root
+                onClick={() => {
+                  setMrState(MessageRequestState.blocking);
+                }}
+                size="md"
+                variant="subtle-destructive"
+              >
+                {i18n('icu:MessageRequests--block')}
+              </AxoButton.Root>
+            )}
+            {(isReported || isBlocked) && (
+              <AxoButton.Root
+                onClick={() => {
+                  setMrState(MessageRequestState.deleting);
+                }}
+                size="md"
+                variant="subtle-destructive"
+              >
+                {i18n('icu:MessageRequests--delete')}
+              </AxoButton.Root>
+            )}
+            {!isReported && (
+              <AxoButton.Root
+                onClick={() => {
+                  setMrState(MessageRequestState.reportingAndMaybeBlocking);
+                }}
+                size="md"
+                variant="subtle-destructive"
+              >
+                {i18n('icu:MessageRequests--reportAndMaybeBlock')}
+              </AxoButton.Root>
+            )}
+            {isBlocked && (
+              <AxoButton.Root
+                onClick={() => {
+                  setMrState(MessageRequestState.unblocking);
+                }}
+                size="md"
+                variant="secondary"
+              >
+                {i18n('icu:MessageRequests--unblock')}
+              </AxoButton.Root>
+            )}
+            {!isBlocked ? (
+              <AxoButton.Root
+                onClick={() => {
+                  if (
+                    conversationType === 'direct' &&
+                    sharedGroupNames.length > 1
+                  ) {
+                    acceptConversation(conversationId);
+                  } else {
+                    setMrState(MessageRequestState.accepting);
+                  }
+                }}
+                size="md"
+                variant="secondary"
+              >
+                {i18n('icu:MessageRequests--accept')}
+              </AxoButton.Root>
+            ) : null}
+          </div>
+        </FlexWrapDetector>
       </div>
     </>
   );

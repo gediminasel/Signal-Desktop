@@ -1,7 +1,7 @@
 // Copyright 2026 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
-import type { ReactNode } from 'react';
-import React, { useState } from 'react';
+import type { ReactNode, JSX } from 'react';
+import { useState } from 'react';
 import type { Meta } from '@storybook/react';
 import { AxoTheme } from './AxoTheme.dom.tsx';
 import { tw } from './tw.dom.tsx';
@@ -101,7 +101,7 @@ function AxoDialogTest() {
       <AxoDialog.Content size="md" escape="cancel-is-noop">
         <AxoDialog.Header>
           <AxoDialog.Title>AxoDialog</AxoDialog.Title>
-          <AxoDialog.Close aria-label="Close" />
+          <AxoDialog.Close />
         </AxoDialog.Header>
         <AxoDialog.Body>
           <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit.</p>
@@ -137,7 +137,7 @@ function AxoAlertDialogTest() {
           </AxoAlertDialog.Description>
         </AxoAlertDialog.Body>
         <AxoAlertDialog.Footer>
-          <AxoAlertDialog.Cancel>Cancel</AxoAlertDialog.Cancel>
+          <AxoAlertDialog.Cancel />
           <AxoAlertDialog.Action variant="primary" onClick={() => null}>
             OK
           </AxoAlertDialog.Action>
@@ -176,7 +176,7 @@ function Section(props: { children: ReactNode }) {
   );
 }
 
-export function Basic(): React.JSX.Element {
+export function Basic(): JSX.Element {
   return (
     <>
       <Section>

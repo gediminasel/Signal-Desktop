@@ -1,7 +1,7 @@
 // Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React from 'react';
+import { createRef, type JSX } from 'react';
 import lodash from 'lodash';
 import { action } from '@storybook/addon-actions';
 import type { Meta } from '@storybook/react';
@@ -13,6 +13,7 @@ import { FRAME_BUFFER_SIZE } from '../calling/constants.std.ts';
 import type { CallingImageDataCache } from './CallManager.dom.tsx';
 import { MINUTE } from '../util/durations/index.std.ts';
 import { generateAci } from '../test-helpers/serviceIdUtils.std.ts';
+import { renderCallingParticipantMenu } from './CallingParticipantMenu.dom.stories.tsx';
 
 const { memoize, times } = lodash;
 
@@ -25,7 +26,8 @@ const allRemoteParticipants = times(MAX_PARTICIPANTS).map(index => ({
   demuxId: index,
   hasRemoteAudio: index % 3 !== 0,
   hasRemoteVideo: index % 4 !== 0,
-  isHandRaised: (index - 2) % 8 === 0,
+  isOnlyHandRaised: false,
+  raisedHandOrder: (index - 2) % 8 === 0 ? (index - 2) / 8 : undefined,
   mediaKeysReceived: (index + 1) % 20 !== 0,
   presenting: false,
   sharingScreen: false,
@@ -46,21 +48,18 @@ const defaultProps = {
   getFrameBuffer: memoize(() => new Uint8Array(FRAME_BUFFER_SIZE)),
   getCallingImageDataCache: memoize(() => new Map()),
   getGroupCallVideoFrameSource: fakeGetGroupCallVideoFrameSource,
-  imageDataCache: React.createRef<CallingImageDataCache>(),
+  imageDataCache: createRef<CallingImageDataCache>(),
   i18n,
   isCallReconnecting: false,
   joinedAt: new Date().getTime() - MINUTE,
   onParticipantVisibilityChanged: action('onParticipantVisibilityChanged'),
   remoteAudioLevels: new Map<number, number>(),
   remoteParticipantsCount: 1,
+  renderCallingParticipantMenu,
 };
 
 // This component is usually rendered on a call screen.
-function Container({
-  children,
-}: {
-  children: React.JSX.Element;
-}): React.JSX.Element {
+function Container({ children }: { children: JSX.Element }): JSX.Element {
   return (
     <div
       style={{
@@ -74,7 +73,7 @@ function Container({
   );
 }
 
-export function NoOverflowedParticipants(): React.JSX.Element {
+export function NoOverflowedParticipants(): JSX.Element {
   return (
     <Container>
       <GroupCallOverflowArea {...defaultProps} overflowedParticipants={[]} />
@@ -82,7 +81,7 @@ export function NoOverflowedParticipants(): React.JSX.Element {
   );
 }
 
-export function OneOverflowedParticipant(): React.JSX.Element {
+export function OneOverflowedParticipant(): JSX.Element {
   return (
     <Container>
       <GroupCallOverflowArea
@@ -93,7 +92,7 @@ export function OneOverflowedParticipant(): React.JSX.Element {
   );
 }
 
-export function ThreeOverflowedParticipants(): React.JSX.Element {
+export function ThreeOverflowedParticipants(): JSX.Element {
   return (
     <Container>
       <GroupCallOverflowArea
@@ -104,7 +103,7 @@ export function ThreeOverflowedParticipants(): React.JSX.Element {
   );
 }
 
-export function ManyOverflowedParticipants(): React.JSX.Element {
+export function ManyOverflowedParticipants(): JSX.Element {
   return (
     <Container>
       <GroupCallOverflowArea

@@ -2295,6 +2295,7 @@ button.ConversationDetails__action-button {
 
   &__message {
     @include mixins.font-body-2;
+    user-select: none;
     text-align: center;
     margin-bottom: 12px;
 
@@ -2312,20 +2313,6 @@ button.ConversationDetails__action-button {
 
     &__learn-more {
       text-decoration: none;
-    }
-  }
-
-  &__buttons {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-
-    .module-Button {
-      min-width: 80px;
-
-      &:not(:last-of-type) {
-        margin-inline-end: 8px;
-      }
     }
   }
 }
@@ -3540,8 +3527,8 @@ button.module-image__border-overlay:focus {
 }
 .module-ongoing-call {
   &__remote-video-enabled {
-    height: 100%;
-    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
     position: relative;
     &--reconnecting {
       filter: blur(15px);
@@ -3989,9 +3976,8 @@ button.module-image__border-overlay:focus {
       max-width: 100%;
 
       &__contact-name {
+        @include mixins.font-body-2-medium;
         flex-grow: 1;
-        font-size: 13px;
-        line-height: 18px;
         color: variables.$color-white;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -4003,6 +3989,11 @@ button.module-image__border-overlay:focus {
       &--clickable {
         @include mixins.button-reset;
       }
+    }
+
+    &__dropdown button {
+      // Matches CallingAudioIndicator
+      background: rgba(variables.$color-gray-80, 0.7);
     }
 
     &--hand-raised &__footer {
@@ -4017,6 +4008,10 @@ button.module-image__border-overlay:focus {
         display: none;
         color: variables.$color-black;
         margin-inline-end: 12px;
+      }
+
+      &:has(.CallingStatusIndicator--NextHandRaised) {
+        background: variables.$color-next-raised-hand;
       }
     }
 
@@ -4481,19 +4476,13 @@ button.module-image__border-overlay:focus {
       list-style-type: none;
       border-radius: 6px;
       cursor: auto;
+      user-select: none;
+    }
+    &.module-calling-participants-list__clickable {
+      cursor: pointer;
     }
     &:not(.module-calling-participants-list__me):hover {
       background-color: variables.$color-gray-62;
-
-      .module-calling-participants-list__status-icon {
-        display: none;
-      }
-      .module-calling-participants-list__menu-icon {
-        display: flex;
-      }
-    }
-    &[disabled] {
-      cursor: auto;
     }
   }
 
@@ -4505,13 +4494,8 @@ button.module-image__border-overlay:focus {
   }
 
   &__name {
-    display: inline-block;
     font-size: 13px;
     margin-inline-start: 8px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    vertical-align: middle;
-    white-space: nowrap;
   }
 
   &__header {

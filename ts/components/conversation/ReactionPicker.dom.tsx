@@ -1,7 +1,13 @@
 // Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, { useCallback, useState, useEffect } from 'react';
+import {
+  useCallback,
+  useState,
+  useEffect,
+  type HTMLProps,
+  forwardRef,
+} from 'react';
 import { Button } from 'react-aria-components';
 import { useDelayedRestoreFocus } from '../../hooks/useRestoreFocus.dom.ts';
 import type { LocalizerType, ThemeType } from '../../types/Util.std.ts';
@@ -10,24 +16,23 @@ import {
   ReactionPickerPickerEmojiButton,
   ReactionPickerPickerStyle,
 } from '../ReactionPickerPicker.dom.tsx';
-import type { EmojiVariantKey } from '../fun/data/emojis.std.ts';
-import { getEmojiVariantByKey } from '../fun/data/emojis.std.ts';
 import { FunEmojiPicker } from '../fun/FunEmojiPicker.dom.tsx';
 import type { FunEmojiSelection } from '../fun/panels/FunPanelEmojis.dom.tsx';
+import type { Emoji } from '../../axo/emoji.std.ts';
 
 export type OwnProps = {
   i18n: LocalizerType;
-  selected?: string;
+  selected?: Emoji.Variant;
   onClose?: () => unknown;
-  onPick: (emoji: string) => unknown;
-  preferredReactionEmoji: ReadonlyArray<string>;
+  onPick: (emoji: Emoji.Variant) => unknown;
+  preferredReactionEmoji: ReadonlyArray<Emoji.Variant>;
   theme?: ThemeType;
-  messageEmojis?: ReadonlyArray<EmojiVariantKey>;
+  messageEmojis?: ReadonlyArray<Emoji.Variant>;
 };
 
-export type Props = OwnProps & Pick<React.HTMLProps<HTMLDivElement>, 'style'>;
+export type Props = OwnProps & Pick<HTMLProps<HTMLDivElement>, 'style'>;
 
-export const ReactionPicker = React.forwardRef<HTMLDivElement, Props>(
+export const ReactionPicker = forwardRef<HTMLDivElement, Props>(
   function ReactionPickerInner(
     {
       i18n,
@@ -64,8 +69,7 @@ export const ReactionPicker = React.forwardRef<HTMLDivElement, Props>(
 
     const onSelectEmoji = useCallback(
       (emojiSelection: FunEmojiSelection) => {
-        const variant = getEmojiVariantByKey(emojiSelection.variantKey);
-        onPick(variant.value);
+        onPick(emojiSelection.emoji);
       },
       [onPick]
     );

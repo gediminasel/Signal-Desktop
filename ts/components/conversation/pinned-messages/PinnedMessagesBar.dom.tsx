@@ -1,7 +1,7 @@
 // Copyright 2025 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
-import type { ForwardedRef, ReactNode } from 'react';
-import React, { forwardRef, memo, useCallback, useMemo, useState } from 'react';
+import type { ForwardedRef, ReactNode, JSX } from 'react';
+import { forwardRef, memo, useCallback, useMemo, useState } from 'react';
 import { Tabs } from 'radix-ui';
 import { AnimatePresence, motion } from 'motion/react';
 import type { LocalizerType } from '../../../types/I18N.std.ts';
@@ -250,8 +250,7 @@ function Row(props: { children: ReactNode }) {
         'contain-strict',
         'flex h-14 items-center pe-3 select-none',
         'rounded-xs',
-        'outline-0 outline-border-focused',
-        'data-focused:outline-[2.5px]'
+        'outline-none data-focused:outline-focus-ring'
       )}
     >
       {props.children}
@@ -272,7 +271,7 @@ function HiddenTrigger(props: {
 
   return (
     <AriaClickable.HiddenTrigger
-      aria-label={i18n(
+      label={i18n(
         'icu:PinnedMessagesBar__GoToMessageClickableArea__AccessibilityLabel'
       )}
       onClick={handlePinGoToCurrent}
@@ -339,7 +338,7 @@ function TabTrigger(props: {
         pinNumber: props.pinNumber,
       })}
       className={tw(
-        'group flex-1 px-[7px] outline-0',
+        'group flex-1 px-[7px] outline-none',
         props.pinsCount === 3 ? 'py-px' : 'py-0.5'
       )}
     >
@@ -348,8 +347,7 @@ function TabTrigger(props: {
           'block h-full w-0.5 rounded-full',
           'bg-label-disabled',
           'group-data-[state=active]:bg-label-primary',
-          'outline-border-focused',
-          'group-focused:outline-[2.5px]'
+          'keyboard-mode:group-focus:outline-focus-ring'
         )}
       />
     </Tabs.Trigger>
@@ -366,7 +364,7 @@ type ContentProps = Readonly<{
 const Content = forwardRef(function Content(
   { i18n, pin, direction, pinsCount, ...forwardedProps }: ContentProps,
   ref: ForwardedRef<HTMLDivElement>
-): React.JSX.Element {
+): JSX.Element {
   const thumbnailUrl = useMemo(() => {
     return getThumbnailUrl(pin.message);
   }, [pin.message]);

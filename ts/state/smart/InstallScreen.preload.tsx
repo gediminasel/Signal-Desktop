@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { ComponentProps } from 'react';
-import React, { memo, useCallback } from 'react';
+import { memo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
 import { getIntl } from '../selectors/user.std.ts';
@@ -30,7 +30,8 @@ export const SmartInstallScreen = memo(function SmartInstallScreen() {
   const i18n = useSelector(getIntl);
   const installerState = useSelector(getInstallerState);
   const updates = useSelector(getUpdatesState);
-  const { startInstaller, retryBackupImport } = useInstallerActions();
+  const { continueInstallWithDataDeletion, startInstaller, retryBackupImport } =
+    useInstallerActions();
   const { startUpdate, forceUpdate } = useUpdatesActions();
   const hasExpired = useSelector(hasExpiredSelector);
 
@@ -57,6 +58,9 @@ export const SmartInstallScreen = memo(function SmartInstallScreen() {
           startUpdate,
           forceUpdate,
           retryGetQrCode: startInstaller,
+          isConfirmingDataDeletion: installerState.isConfirmingDataDeletion,
+          restartInstall: startInstaller,
+          continueInstallWithDataDeletion,
           OS: OS.getName(),
           isStaging: isStagingServer(),
         },

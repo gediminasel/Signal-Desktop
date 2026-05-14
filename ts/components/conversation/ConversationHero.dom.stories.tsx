@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { Meta, StoryFn } from '@storybook/react';
-import React, { useContext } from 'react';
+import { useContext, type JSX } from 'react';
 import casual from 'casual';
 import { action } from '@storybook/addon-actions';
 import type { Props } from './ConversationHero.dom.tsx';
@@ -12,6 +12,7 @@ import { StorybookThemeContext } from '../../../.storybook/StorybookThemeContext
 import { getDefaultConversation } from '../../test-helpers/getDefaultConversation.std.ts';
 import { ThemeType } from '../../types/Util.std.ts';
 import type { GroupV2Membership } from './conversation-details/ConversationDetailsMembershipList.dom.tsx';
+import { Emoji } from '../../axo/emoji.std.ts';
 
 const { i18n } = window.SignalContext;
 
@@ -29,7 +30,7 @@ const createMemberships = ({
   return Array.from(new Array(count)).map(
     (_, i): GroupV2Membership => ({
       isAdmin: i % 3 === 0,
-      labelEmoji: i % 6 === 0 ? '🟢' : undefined,
+      labelEmoji: i % 6 === 0 ? Emoji.GREEN_CIRCLE : undefined,
       labelString: i % 3 === 0 ? `Task Wrangler ${i}` : undefined,
       member: unknownContactIndices.includes(i)
         ? getDefaultConversation({
@@ -184,7 +185,7 @@ GroupVerifiedName.args = {
   isGroupNameVerified: true,
 };
 
-export function GroupMemberNames(args: Props): React.JSX.Element {
+export function GroupMemberNames(args: Props): JSX.Element {
   const theme = useContext(StorybookThemeContext);
   const baseProps = {
     ...args,

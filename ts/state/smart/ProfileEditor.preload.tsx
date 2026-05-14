@@ -1,9 +1,9 @@
 // Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { useSelector } from 'react-redux';
 
-import type { MutableRefObject } from 'react';
+import type { MutableRefObject, JSX } from 'react';
 
 import { ProfileEditor } from '../../components/ProfileEditor.dom.tsx';
 import { useConversationsActions } from '../ducks/conversations.preload.ts';
@@ -33,11 +33,9 @@ import { NavTab, SettingsPage } from '../../types/Nav.std.ts';
 
 import type { ProfileEditorPage } from '../../types/Nav.std.ts';
 import type { SmartUsernameEditorProps } from './UsernameEditor.preload.tsx';
-import { ConfirmationDialog } from '../../components/ConfirmationDialog.dom.tsx';
+import { AxoConfirmDialog } from '../../axo/AxoConfirmDialog.dom.tsx';
 
-function renderUsernameEditor(
-  props: SmartUsernameEditorProps
-): React.JSX.Element {
+function renderUsernameEditor(props: SmartUsernameEditorProps): JSX.Element {
   return <SmartUsernameEditor {...props} />;
 }
 
@@ -88,17 +86,20 @@ export const SmartProfileEditor = memo(function SmartProfileEditor(props: {
   const { showToast } = useToastActions();
   const { changeLocation } = useNavActions();
 
-  let errorDialog: React.JSX.Element | undefined;
+  let errorDialog: JSX.Element | undefined;
   if (hasError) {
     errorDialog = (
-      <ConfirmationDialog
-        dialogName="ProfileEditorModal.error"
-        cancelText={i18n('icu:Confirmation--confirm')}
-        i18n={i18n}
-        onClose={() => setProfileUpdateError(false)}
+      <AxoConfirmDialog.Root
+        // @ts-expect-error ConfirmationDialog migration: Needs title
+        title={null}
+        description={i18n('icu:ProfileEditorModal--error')}
+        open
+        onOpenChange={() => setProfileUpdateError(false)}
       >
-        {i18n('icu:ProfileEditorModal--error')}
-      </ConfirmationDialog>
+        <AxoConfirmDialog.Cancel>
+          {i18n('icu:Confirmation--confirm')}
+        </AxoConfirmDialog.Cancel>
+      </AxoConfirmDialog.Root>
     );
   }
 

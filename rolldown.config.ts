@@ -24,7 +24,6 @@ const external = [
   'sass',
 
   // Large libraries (3.7mb total)
-  'emoji-datasource',
   'google-libphonenumber',
 
   // Imported, but not used in production builds
@@ -60,6 +59,7 @@ const sandboxDOM = {
 
 const defaults = {
   transform: {
+    jsx: 'react-jsx',
     define: {
       'process.env.IS_BUNDLED': 'true',
       ...(isProd
@@ -183,23 +183,21 @@ export default defineConfig([
 
   // Voice Note Worker
   {
-    input: 'components/webaudiorecorder/lib/WebAudioRecorderMp3.js',
+    input: 'ts/workers/mp3Encoder.std.ts',
     transform: {
       define: {
         process: 'undefined',
         require: 'undefined',
         eval: 'undefined',
       },
-      inject: {
-        Mp3LameEncoder: '../../mp3lameencoder/lib/Mp3LameEncoder.js',
-      },
     },
     output: {
-      file: 'bundles/workers/WebAudioRecorderMp3.js',
+      file: 'bundles/workers/mp3Encoder.js',
       exports: 'named',
       generatedCode: {
         symbols: false,
       },
+      codeSplitting: false,
     },
     watch: {
       clearScreen: false,

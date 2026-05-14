@@ -1,8 +1,8 @@
 // Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { ReactElement, ReactNode } from 'react';
-import React, { useCallback, useState, useEffect } from 'react';
+import type { ReactElement, ReactNode, JSX, KeyboardEvent } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import classNames from 'classnames';
 import lodash from 'lodash';
 
@@ -26,6 +26,7 @@ import { InstallScreenSignalLogo } from './InstallScreenSignalLogo.dom.tsx';
 import { InstallScreenUpdateDialog } from './InstallScreenUpdateDialog.dom.tsx';
 import { getClassNamesFor } from '../../util/getClassNamesFor.std.ts';
 import type { UpdatesStateType } from '../../state/ducks/updates.preload.ts';
+import { AxoAlertDialog } from '../../axo/AxoAlertDialog.dom.tsx';
 
 const { noop } = lodash;
 
@@ -43,6 +44,9 @@ export type PropsType = Readonly<{
   retryGetQrCode: () => void;
   startUpdate: () => void;
   forceUpdate: () => void;
+  isConfirmingDataDeletion: boolean;
+  continueInstallWithDataDeletion: () => void;
+  restartInstall: () => void;
 }>;
 
 const getQrCodeClassName = getClassNamesFor(
@@ -62,6 +66,9 @@ export function InstallScreenQrCodeNotScannedStep({
   retryGetQrCode,
   startUpdate,
   forceUpdate,
+  isConfirmingDataDeletion,
+  restartInstall,
+  continueInstallWithDataDeletion,
   updates,
 }: Readonly<PropsType>): ReactElement {
   return (
@@ -125,6 +132,34 @@ export function InstallScreenQrCodeNotScannedStep({
           )}
         </div>
       </div>
+      {isConfirmingDataDeletion ? (
+        <AxoAlertDialog.Root open>
+          <AxoAlertDialog.Content escape="cancel-is-destructive">
+            <AxoAlertDialog.Body>
+              <AxoAlertDialog.Title>
+                {i18n('icu:Install__confirm-data-deletion__title')}
+              </AxoAlertDialog.Title>
+              <AxoAlertDialog.Description>
+                {i18n('icu:Install__confirm-data-deletion__body')}
+              </AxoAlertDialog.Description>
+            </AxoAlertDialog.Body>
+            <AxoAlertDialog.Footer>
+              <AxoAlertDialog.Action
+                variant="secondary"
+                onClick={restartInstall}
+              >
+                {i18n('icu:cancel')}
+              </AxoAlertDialog.Action>
+              <AxoAlertDialog.Action
+                variant="destructive"
+                onClick={continueInstallWithDataDeletion}
+              >
+                {i18n('icu:Install__confirm-data-deletion__continue')}
+              </AxoAlertDialog.Action>
+            </AxoAlertDialog.Footer>
+          </AxoAlertDialog.Content>
+        </AxoAlertDialog.Root>
+      ) : null}
     </div>
   );
 }
@@ -266,7 +301,7 @@ function QRCodeImage({
 }: {
   i18n: LocalizerType;
   link: string;
-}): React.JSX.Element {
+}): JSX.Element {
   const [isCopying, setIsCopying] = useState(false);
 
   // Add a development-only feature to copy a QR code to the clipboard by double-clicking.
@@ -318,9 +353,9 @@ function RetryButton({
 }: {
   onClick: () => void;
   children: ReactNode;
-}): React.JSX.Element {
+}): JSX.Element {
   const onKeyDown = useCallback(
-    (ev: React.KeyboardEvent<HTMLButtonElement>) => {
+    (ev: KeyboardEvent<HTMLButtonElement>) => {
       if (ev.key === 'Enter') {
         ev.preventDefault();
         ev.stopPropagation();
@@ -342,6 +377,6 @@ function RetryButton({
   );
 }
 
-function Paragraph(children: React.ReactNode): React.JSX.Element {
+function Paragraph(children: ReactNode): JSX.Element {
   return <p>{children}</p>;
 }

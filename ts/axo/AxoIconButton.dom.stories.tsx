@@ -1,6 +1,6 @@
 // Copyright 2025 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { Fragment } from 'react';
+import { Fragment, type JSX } from 'react';
 import type { Meta } from '@storybook/react';
 import { AxoIconButton } from './AxoIconButton.dom.tsx';
 import type { TailwindStyles } from './tw.dom.tsx';
@@ -10,7 +10,7 @@ export default {
   title: 'Axo/AxoIconButton',
 } satisfies Meta;
 
-export function Basic(): React.JSX.Element {
+export function Basic(): JSX.Element {
   return (
     <AxoIconButton.Root
       variant="secondary"
@@ -44,7 +44,7 @@ function getRows() {
   });
 }
 
-export function Variants(): React.JSX.Element {
+export function Variants(): JSX.Element {
   const variants = AxoIconButton._getAllVariants();
   return (
     <div className={tw('grid min-w-full')}>
@@ -92,7 +92,7 @@ export function Variants(): React.JSX.Element {
   );
 }
 
-export function Sizes(): React.JSX.Element {
+export function Sizes(): JSX.Element {
   return (
     <div className={tw('grid min-w-full')}>
       {AxoIconButton._getAllSizes().map((size, sizeIndex) => {
@@ -135,11 +135,11 @@ export function Sizes(): React.JSX.Element {
 
 const AllStates: Record<string, Partial<AxoIconButton.RootProps>> = {
   'disabled=true': { disabled: true },
-  'aria-pressed=false': { 'aria-pressed': false },
-  'aria-pressed=true': { 'aria-pressed': true },
+  'pressed=false': { pressed: false },
+  'pressed=true': { pressed: true },
 };
 
-export function States(): React.JSX.Element {
+export function States(): JSX.Element {
   return (
     <div className={tw('grid min-w-full')}>
       {Object.keys(AllStates).map((state, stateIndex) => {
@@ -181,7 +181,7 @@ export function States(): React.JSX.Element {
   );
 }
 
-export function Spinners(): React.JSX.Element {
+export function Spinners(): JSX.Element {
   return (
     <div className={tw('grid min-w-full')}>
       {AxoIconButton._getAllSizes().map((size, sizeIndex) => {
@@ -211,7 +211,7 @@ export function Spinners(): React.JSX.Element {
                     size={size}
                     symbol="more"
                     label="More actions"
-                    experimentalSpinner={{ 'aria-label': 'Loading' }}
+                    pending
                   />
                 </div>
               );

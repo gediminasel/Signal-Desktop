@@ -1,56 +1,37 @@
 // Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, { useEffect, useState } from 'react';
-import classNames from 'classnames';
-
+import { useEffect, useState, type JSX } from 'react';
 import { strictAssert } from '../util/assert.std.ts';
 import type { LocalizerType } from '../types/Util.std.ts';
 import type { BadgeType } from '../badges/types.std.ts';
-import { BadgeCategory } from '../badges/BadgeCategory.std.ts';
 import { Modal } from './Modal.dom.tsx';
-import { Button, ButtonSize } from './Button.dom.tsx';
 import { BadgeDescription } from './BadgeDescription.dom.tsx';
 import { BadgeImage } from './BadgeImage.dom.tsx';
 import { BadgeCarouselIndex } from './BadgeCarouselIndex.dom.tsx';
-import { BadgeSustainerInstructionsDialog } from './BadgeSustainerInstructionsDialog.dom.tsx';
+import { AxoButton } from '../axo/AxoButton.dom.tsx';
 
 export type PropsType = Readonly<{
   areWeASubscriber: boolean;
   badges: ReadonlyArray<BadgeType>;
   firstName?: string;
   i18n: LocalizerType;
-  onClose: () => unknown;
+  onClose: () => void;
+  onDonate: () => void;
   title: string;
 }>;
 
-export function BadgeDialog(props: PropsType): null | React.JSX.Element {
-  const { badges, i18n, onClose } = props;
-
-  const [isShowingInstructions, setIsShowingInstructions] = useState(false);
+export function BadgeDialog(props: PropsType): null | JSX.Element {
+  const { badges, onClose } = props;
 
   const hasBadges = badges.length > 0;
   useEffect(() => {
-    if (!hasBadges && !isShowingInstructions) {
+    if (!hasBadges) {
       onClose();
     }
-  }, [hasBadges, isShowingInstructions, onClose]);
+  }, [hasBadges, onClose]);
 
-  if (isShowingInstructions) {
-    return (
-      <BadgeSustainerInstructionsDialog
-        i18n={i18n}
-        onClose={() => setIsShowingInstructions(false)}
-      />
-    );
-  }
-
-  return hasBadges ? (
-    <BadgeDialogWithBadges
-      {...props}
-      onShowInstructions={() => setIsShowingInstructions(true)}
-    />
-  ) : null;
+  return hasBadges ? <BadgeDialogWithBadges {...props} /> : null;
 }
 
 function BadgeDialogWithBadges({
@@ -59,9 +40,9 @@ function BadgeDialogWithBadges({
   firstName,
   i18n,
   onClose,
-  onShowInstructions,
+  onDonate,
   title,
-}: PropsType & { onShowInstructions: () => unknown }): React.JSX.Element {
+}: PropsType): JSX.Element {
   const firstBadge = badges[0];
   strictAssert(
     firstBadge,
@@ -109,8 +90,14 @@ function BadgeDialogWithBadges({
           type="button"
         />
         <div className="BadgeDialog__main">
-          <BadgeImage badge={currentBadge} size={160} />
-          <div className="BadgeDialog__name">{currentBadge.name}</div>
+          <BadgeImage badge={currentBadge} size={96} />
+          <div className="BadgeDialog__name">
+            {firstName
+              ? i18n('icu:BadgeDialog__name-supports-signal', {
+                  name: firstName,
+                })
+              : currentBadge.name}
+          </div>
           <div className="BadgeDialog__description">
             <BadgeDescription
               firstName={firstName}
@@ -119,17 +106,9 @@ function BadgeDialogWithBadges({
             />
           </div>
           {!areWeASubscriber && (
-            <Button
-              className={classNames(
-                'BadgeDialog__instructions-button',
-                currentBadge.category !== BadgeCategory.Donor &&
-                  'BadgeDialog__instructions-button--hidden'
-              )}
-              onClick={onShowInstructions}
-              size={ButtonSize.Large}
-            >
+            <AxoButton.Root size="lg" variant="primary" onClick={onDonate}>
               {i18n('icu:BadgeDialog__become-a-sustainer-button')}
-            </Button>
+            </AxoButton.Root>
           )}
           <BadgeCarouselIndex
             currentIndex={currentBadgeIndex}

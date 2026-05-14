@@ -3,7 +3,7 @@
 
 import type { Meta } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
-import React, { useState } from 'react';
+import { useState, type JSX } from 'react';
 import { AxoAlertDialog } from './AxoAlertDialog.dom.tsx';
 import { AxoButton } from './AxoButton.dom.tsx';
 
@@ -65,7 +65,6 @@ const EXAMPLE_DESCRIPTION_LONG = (
 
 const EXAMPLE_ACTION = <>OK</>;
 const EXAMPLE_ACTION_LONG = <>Consectetur adipisicing elit</>;
-const EXAMPLE_CANCEL = <>Cancel</>;
 const EXAMPLE_CANCEL_LONG = <>Lorem ipsum dolor sit amet</>;
 
 function Template(props: {
@@ -100,7 +99,7 @@ function Template(props: {
         </AxoAlertDialog.Body>
         <AxoAlertDialog.Footer>
           <AxoAlertDialog.Cancel>
-            {props.extraLongText ? EXAMPLE_CANCEL_LONG : EXAMPLE_CANCEL}
+            {props.extraLongText ? EXAMPLE_CANCEL_LONG : null}
           </AxoAlertDialog.Cancel>
           <AxoAlertDialog.Action
             variant="primary"
@@ -116,18 +115,18 @@ function Template(props: {
   );
 }
 
-export function Basic(): React.JSX.Element {
+export function Basic(): JSX.Element {
   return <Template />;
 }
 
-export function VisuallyHiddenTitle(): React.JSX.Element {
+export function VisuallyHiddenTitle(): JSX.Element {
   return <Template visuallyHiddenTitle />;
 }
 
-export function RequireExplicitChoice(): React.JSX.Element {
+export function RequireExplicitChoice(): JSX.Element {
   return <Template requireExplicitChoice />;
 }
 
-export function ExtraLongText(): React.JSX.Element {
+export function ExtraLongText(): JSX.Element {
   return <Template extraLongText />;
 }

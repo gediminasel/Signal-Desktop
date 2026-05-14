@@ -22,10 +22,7 @@
  * ----------------------------------------------------------------------------
  */
 @custom-variant dark (&:where(.dark-theme, .dark-theme *));
-
-@custom-variant hovered (&:where(:hover:not(:disabled)));
-@custom-variant pressed (&:where(:active:not(:disabled)));
-@custom-variant focused (:where(.keyboard-mode) &:where(:focus));
+@custom-variant keyboard-mode (&:where(.keyboard-mode *));
 
 /**
  * Color
@@ -131,6 +128,11 @@
    * add them here.
    */
   --color-legacy-conversation-header-bg: light-dark(#fff, #121212);
+  --color-legacy-signal-conversation-bg: light-dark(#F6F7FF, #2F3240);
+  --color-legacy-official-chat-badge-bg: light-dark(--alpha(#4655FF / 12%), --alpha(#4952F8 / 40%));
+  --color-legacy-official-chat-badge-text: light-dark(#030FFC, #C2C5FE);
+  --color-legacy-signal-chat-message-bg: light-dark(#8889B4, #444664);
+  --color-legacy-warning-badge: light-dark(#C84118, #EB977D);
 }
 
 @layer theme {
@@ -508,4 +510,28 @@
 
 @utility legacy-z-index-* {
   z-index: --value(--legacy-z-index-*);
+}
+
+/**
+ * Focus Rings
+ * ----------------------------------------------------------------------------
+ */
+
+@property --axo-outline-focus-ring-color {
+  syntax: '*';
+  inherits: false;
+}
+
+@utility outline-focus-ring {
+  outline-style: solid;
+  outline-color: var(--axo-outline-focus-ring-color, var(--color-border-focused));
+  outline-width: 2.5px;
+}
+
+@utility outline-focus-ring-inset {
+  outline-offset: -2.5px;
+}
+
+@utility outline-focus-ring-error {
+  --axo-outline-focus-ring-color: var(--color-border-error);
 }

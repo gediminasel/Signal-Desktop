@@ -1,7 +1,6 @@
 // Copyright 2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React from 'react';
 import { shuffle } from 'lodash';
 import type { Meta, StoryFn } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
@@ -18,6 +17,7 @@ import { HOUR } from '../util/durations/index.std.ts';
 import { AxoDropdownMenu } from '../axo/AxoDropdownMenu.dom.tsx';
 import { AxoButton } from '../axo/AxoButton.dom.tsx';
 import type { ConversationType } from '../state/ducks/conversations.preload.ts';
+import { Emoji } from '../axo/emoji.std.ts';
 
 const { i18n } = window.SignalContext;
 
@@ -35,7 +35,7 @@ const threeProfiles = [
   {
     id: 'Weekday' as NotificationProfileIdString,
     name: 'Weekday',
-    emoji: '😬',
+    emoji: Emoji.GRIMACING,
     color: 0xffe3e3fe,
 
     createdAtMs: Date.now(),
@@ -64,7 +64,7 @@ const threeProfiles = [
   {
     id: 'Weekend' as NotificationProfileIdString,
     name: 'Weekend',
-    emoji: '❤️‍🔥',
+    emoji: Emoji.HEART_ON_FIRE,
     color: 0xffd7d7d9,
 
     createdAtMs: Date.now(),

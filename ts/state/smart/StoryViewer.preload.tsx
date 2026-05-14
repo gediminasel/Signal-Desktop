@@ -1,7 +1,7 @@
 // Copyright 2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, { memo, useCallback } from 'react';
+import { memo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { StoryViewer } from '../../components/StoryViewer.dom.tsx';
 import { ToastType } from '../../types/Toast.dom.tsx';
@@ -38,6 +38,7 @@ import { useStoriesActions } from '../ducks/stories.preload.ts';
 import { useIsWindowActive } from '../../hooks/useIsWindowActive.dom.ts';
 import type { DraftBodyRanges } from '../../types/BodyRange.std.ts';
 import type { StoryViewType } from '../../types/Stories.std.ts';
+import type { Emoji } from '../../axo/emoji.std.ts';
 
 export const SmartStoryViewer = memo(function SmartStoryViewer() {
   const {
@@ -99,7 +100,7 @@ export const SmartStoryViewer = memo(function SmartStoryViewer() {
   );
 
   const handleReactToStory = useCallback(
-    async (emoji: string, story: StoryViewType) => {
+    async (emoji: Emoji.Variant, story: StoryViewType) => {
       const { messageId } = story;
       reactToStory(emoji, messageId);
     },

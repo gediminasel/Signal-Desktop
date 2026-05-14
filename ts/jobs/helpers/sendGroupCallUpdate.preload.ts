@@ -67,20 +67,22 @@ export async function sendGroupCallUpdate(
   }
 
   const sendType = 'callingMessage';
-  const groupV2 = conversation.getGroupV2Info();
-  const sendOptions = await getSendOptions(conversation.attributes);
-  if (!groupV2) {
-    log.error(`${logId}: Conversation lacks groupV2 info!`);
-    return;
-  }
 
-  try {
-    await wrapWithSyncMessageSend({
-      conversation,
-      logId,
-      messageIds: [],
-      send: () =>
-        conversation.queueJob(logId, () =>
+  await conversation.queueJob('sendGroupCallUpdate', async () => {
+    const groupV2 = conversation.getGroupV2Info();
+    if (!groupV2) {
+      log.error(`${logId}: Conversation lacks groupV2 info!`);
+      return;
+    }
+
+    const sendOptions = await getSendOptions(conversation.attributes);
+
+    try {
+      await wrapWithSyncMessageSend({
+        conversation,
+        logId,
+        messageIds: [],
+        send: () =>
           sendToGroup({
             contentHint: ContentHint.Default,
             groupSendOptions: {
@@ -93,19 +95,19 @@ export async function sendGroupCallUpdate(
             sendTarget: conversation.toSenderKeyTarget(),
             sendType,
             urgent,
-          })
-        ),
-      sendType,
-      timestamp,
-      expirationStartTimestamp: null,
-    });
-  } catch (error: unknown) {
-    await handleMultipleSendErrors({
-      errors: maybeExpandErrors(error),
-      isFinalAttempt,
-      log,
-      timeRemaining,
-      toThrow: error,
-    });
-  }
+          }),
+        sendType,
+        timestamp,
+        expirationStartTimestamp: null,
+      });
+    } catch (error: unknown) {
+      await handleMultipleSendErrors({
+        errors: maybeExpandErrors(error),
+        isFinalAttempt,
+        log,
+        timeRemaining,
+        toThrow: error,
+      });
+    }
+  });
 }

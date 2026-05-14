@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { Range } from '@tanstack/react-virtual';
 import { defaultRangeExtractor, useVirtualizer } from '@tanstack/react-virtual';
-import type { PointerEvent } from 'react';
-import React, {
+import type { PointerEvent, JSX } from 'react';
+import {
   memo,
   useCallback,
   useEffect,
@@ -64,10 +64,7 @@ import type { LocalizerType } from '../../../types/I18N.std.ts';
 import { isAbortError } from '../../../util/isAbortError.std.ts';
 import { createLogger } from '../../../logging/log.std.ts';
 import * as Errors from '../../../types/errors.std.ts';
-import {
-  EMOJI_VARIANT_KEY_CONSTANTS,
-  getEmojiVariantByKey,
-} from '../data/emojis.std.ts';
+import { Emoji } from '../../../axo/emoji.std.ts';
 import type { fetchGiphyFile } from '../../../state/smart/fun/giphy.preload.ts';
 import {
   getGifCdnUrlOrigin,
@@ -164,7 +161,7 @@ export type FunPanelGifsProps = Readonly<{
 export function FunPanelGifs({
   onSelectGif,
   onClose,
-}: FunPanelGifsProps): React.JSX.Element {
+}: FunPanelGifsProps): JSX.Element {
   const fun = useFunContext();
   const {
     i18n,
@@ -561,9 +558,7 @@ export function FunPanelGifs({
                   <FunStaticEmoji
                     size={16}
                     role="presentation"
-                    emoji={getEmojiVariantByKey(
-                      EMOJI_VARIANT_KEY_CONSTANTS.SLIGHTLY_FROWNING_FACE
-                    )}
+                    emoji={Emoji.SLIGHTLY_FROWNING_FACE}
                   />
                 </FunResultsHeader>
               )}

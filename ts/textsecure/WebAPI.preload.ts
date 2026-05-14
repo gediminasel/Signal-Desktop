@@ -195,6 +195,10 @@ function getContentType(response: Response) {
   return null;
 }
 
+function getLocaleHeaders(): Record<'Accept-Language', string> {
+  return { 'Accept-Language': window.SignalContext.getI18nLocale() };
+}
+
 type FetchHeaderListType = { [name: string]: string };
 type HTTPCodeType = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD';
 
@@ -775,6 +779,7 @@ const CHAT_CALLS = {
   getBackupMediaUploadForm: 'v1/archives/media/upload/form',
   keys: 'v2/keys',
   linkDevice: 'v1/devices/link',
+  me: 'v1/accounts/me',
   messages: 'v1/messages',
   multiRecipient: 'v1/messages/multi_recipient',
   phoneNumberDiscoverability: 'v2/accounts/phone_number_discoverability',
@@ -2430,6 +2435,7 @@ export async function getProfile(
   const { profileKeyVersion, profileKeyCredentialRequest } = options;
 
   return (await _ajax({
+    headers: getLocaleHeaders(),
     host: 'chatService',
     call: 'profile',
     httpType: 'GET',
@@ -2557,6 +2563,7 @@ export async function getProfileUnauth(
   }
 
   return (await _ajax({
+    headers: getLocaleHeaders(),
     host: 'chatService',
     call: 'profile',
     httpType: 'GET',
@@ -2627,6 +2634,7 @@ export async function downloadOnboardingStories(
 
 export async function getSubscriptionConfiguration(): Promise<SubscriptionConfigurationResultType> {
   return _ajax({
+    headers: getLocaleHeaders(),
     host: 'chatService',
     call: 'subscriptionConfiguration',
     httpType: 'GET',
@@ -4814,6 +4822,15 @@ export async function cdsLookup({
     e164s,
     acisAndAccessKeys,
     returnAcisWithoutUaks,
+  });
+}
+
+export async function deleteAccount(): Promise<void> {
+  await _ajax({
+    host: 'chatService',
+    call: 'me',
+    httpType: 'DELETE',
+    responseType: 'bytes',
   });
 }
 

@@ -1,9 +1,9 @@
 // Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as React from 'react';
+import { useState, type JSX } from 'react';
 import type { LocalizerType } from '../../types/Util.std.ts';
-import { ConfirmationDialog } from '../ConfirmationDialog.dom.tsx';
+import { AxoConfirmDialog } from '../../axo/AxoConfirmDialog.dom.tsx';
 
 export type PropsType = {
   conversationId: string;
@@ -15,8 +15,8 @@ export function GroupV2PendingApprovalActions({
   cancelJoinRequest,
   conversationId,
   i18n,
-}: PropsType): React.JSX.Element {
-  const [isConfirming, setIsConfirming] = React.useState(false);
+}: PropsType): JSX.Element {
+  const [isConfirming, setIsConfirming] = useState(false);
 
   return (
     <div className="module-group-v2-pending-approval-actions">
@@ -33,23 +33,25 @@ export function GroupV2PendingApprovalActions({
           {i18n('icu:GroupV2--join--cancel-request-to-join')}
         </button>
       </div>
-      {isConfirming ? (
-        <ConfirmationDialog
-          actions={[
-            {
-              text: i18n('icu:GroupV2--join--cancel-request-to-join--yes'),
-              style: 'negative',
-              action: () => cancelJoinRequest(conversationId),
-            },
-          ]}
-          cancelText={i18n('icu:GroupV2--join--cancel-request-to-join--no')}
-          dialogName="GroupV2CancelRequestToJoin"
-          i18n={i18n}
-          onClose={() => setIsConfirming(false)}
+      <AxoConfirmDialog.Root
+        open={isConfirming}
+        onOpenChange={setIsConfirming}
+        // @ts-expect-error ConfirmationDialog migration: Needs title
+        title={null}
+        description={i18n(
+          'icu:GroupV2--join--cancel-request-to-join--confirmation'
+        )}
+      >
+        <AxoConfirmDialog.Cancel>
+          {i18n('icu:GroupV2--join--cancel-request-to-join--no')}
+        </AxoConfirmDialog.Cancel>
+        <AxoConfirmDialog.Action
+          variant="destructive"
+          onClick={() => cancelJoinRequest(conversationId)}
         >
-          {i18n('icu:GroupV2--join--cancel-request-to-join--confirmation')}
-        </ConfirmationDialog>
-      ) : undefined}
+          {i18n('icu:GroupV2--join--cancel-request-to-join--yes')}
+        </AxoConfirmDialog.Action>
+      </AxoConfirmDialog.Root>
     </div>
   );
 }

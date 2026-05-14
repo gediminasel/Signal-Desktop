@@ -1,7 +1,7 @@
 // Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as React from 'react';
+import type { JSX } from 'react';
 
 import { action } from '@storybook/addon-actions';
 
@@ -10,6 +10,7 @@ import type { PropsType } from './CallingParticipantsList.dom.tsx';
 import { CallingParticipantsList } from './CallingParticipantsList.dom.tsx';
 import { createCallParticipant } from '../test-helpers/createCallParticipant.std.ts';
 import { generateAci } from '../test-helpers/serviceIdUtils.std.ts';
+import { renderCallingParticipantMenu } from './CallingParticipantMenu.dom.stories.tsx';
 
 const { i18n } = window.SignalContext;
 
@@ -20,18 +21,19 @@ const createProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
   ourServiceId: generateAci(),
   participants: overrideProps.participants || [],
   showContactModal: action('show-contact-modal'),
+  renderCallingParticipantMenu,
 });
 
 export default {
   title: 'Components/CallingParticipantsList',
 } satisfies Meta<PropsType>;
 
-export function NoOne(): React.JSX.Element {
+export function NoOne(): JSX.Element {
   const props = createProps();
   return <CallingParticipantsList {...props} />;
 }
 
-export function SoloCall(): React.JSX.Element {
+export function SoloCall(): JSX.Element {
   const props = createProps({
     participants: [
       createCallParticipant({
@@ -42,7 +44,7 @@ export function SoloCall(): React.JSX.Element {
   return <CallingParticipantsList {...props} />;
 }
 
-export function ManyParticipants(): React.JSX.Element {
+export function ManyParticipants(): JSX.Element {
   const props = createProps({
     participants: [
       createCallParticipant({
@@ -66,13 +68,13 @@ export function ManyParticipants(): React.JSX.Element {
         title: 'Goku Black',
       }),
       createCallParticipant({
-        isHandRaised: true,
+        isOnlyHandRaised: true,
         title: 'Supreme Kai Zamasu',
       }),
       createCallParticipant({
         hasRemoteAudio: false,
         hasRemoteVideo: true,
-        isHandRaised: true,
+        isOnlyHandRaised: true,
         title: 'Chi Chi',
       }),
       createCallParticipant({
@@ -83,7 +85,7 @@ export function ManyParticipants(): React.JSX.Element {
   return <CallingParticipantsList {...props} />;
 }
 
-export function Overflow(): React.JSX.Element {
+export function Overflow(): JSX.Element {
   const props = createProps({
     participants: Array(50)
       .fill(null)

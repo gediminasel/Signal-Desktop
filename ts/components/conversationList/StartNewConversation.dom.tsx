@@ -1,11 +1,8 @@
 // Copyright 2019 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { FunctionComponent } from 'react';
-import React, { useCallback, useState } from 'react';
-
-import { ButtonVariant } from '../Button.dom.tsx';
-import { ConfirmationDialog } from '../ConfirmationDialog.dom.tsx';
+import type { FunctionComponent, JSX } from 'react';
+import { useCallback, useState, memo } from 'react';
 import { SPINNER_CLASS_NAME } from './BaseConversationListItem.dom.tsx';
 import { ListTile } from '../ListTile.dom.tsx';
 import { Avatar, AvatarSize } from '../Avatar.dom.tsx';
@@ -15,6 +12,7 @@ import type { ParsedE164Type } from '../../util/libphonenumberInstance.std.ts';
 import type { LookupConversationWithoutServiceIdActionsType } from '../../util/lookupConversationWithoutServiceId.preload.ts';
 import type { LocalizerType } from '../../types/Util.std.ts';
 import type { ShowConversationType } from '../../state/ducks/conversations.preload.ts';
+import { AxoConfirmDialog } from '../../axo/AxoConfirmDialog.dom.tsx';
 
 type PropsData = {
   phoneNumber: ParsedE164Type;
@@ -28,7 +26,7 @@ type PropsHousekeeping = {
 
 export type Props = PropsData & PropsHousekeeping;
 
-export const StartNewConversation: FunctionComponent<Props> = React.memo(
+export const StartNewConversation: FunctionComponent<Props> = memo(
   function StartNewConversation({
     i18n,
     phoneNumber,
@@ -70,20 +68,20 @@ export const StartNewConversation: FunctionComponent<Props> = React.memo(
       isFetching,
     ]);
 
-    let modal: React.JSX.Element | undefined;
+    let modal: JSX.Element | undefined;
     if (isModalVisible) {
       modal = (
-        <ConfirmationDialog
-          dialogName="StartNewConversation.invalidPhoneNumber"
-          cancelText={i18n('icu:ok')}
-          cancelButtonVariant={ButtonVariant.Secondary}
-          i18n={i18n}
-          onClose={() => setIsModalVisible(false)}
-        >
-          {i18n('icu:startConversation--phone-number-not-valid', {
+        <AxoConfirmDialog.Root
+          open
+          onOpenChange={() => setIsModalVisible(false)}
+          // @ts-expect-error ConfirmationDialog migration: Needs title
+          title={null}
+          description={i18n('icu:startConversation--phone-number-not-valid', {
             phoneNumber: phoneNumber.userInput,
           })}
-        </ConfirmationDialog>
+        >
+          <AxoConfirmDialog.Cancel>{i18n('icu:ok')}</AxoConfirmDialog.Cancel>
+        </AxoConfirmDialog.Root>
       );
     }
 

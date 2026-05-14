@@ -1,7 +1,7 @@
 // Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, { type ReactNode, useState } from 'react';
+import { type ReactNode, useState, type JSX, type FC } from 'react';
 import type { Props as AvatarProps } from '../Avatar.dom.tsx';
 import { Avatar, AvatarSize, AvatarBlur } from '../Avatar.dom.tsx';
 import { ContactName } from './ContactName.dom.tsx';
@@ -15,7 +15,7 @@ import type { GroupV2Membership } from './conversation-details/ConversationDetai
 import { StoryViewModeType } from '../../types/Stories.std.ts';
 import { SafetyTipsModal } from '../SafetyTipsModal.dom.tsx';
 import type { ContactModalStateType } from '../../types/globalModals.std.ts';
-import { tw } from '../../axo/tw.dom.tsx';
+import { type TailwindStyles, tw } from '../../axo/tw.dom.tsx';
 import { AxoSymbol } from '../../axo/AxoSymbol.dom.tsx';
 import { AxoButton } from '../../axo/AxoButton.dom.tsx';
 
@@ -80,7 +80,7 @@ export function ConversationHero({
   viewUserStories,
   toggleAboutContactModal,
   toggleProfileNameWarningModal,
-}: Props): React.JSX.Element | null {
+}: Props): JSX.Element | null {
   const [isShowingSafetyTips, setIsShowingSafetyTips] = useState(false);
 
   let avatarBlur: AvatarBlur = AvatarBlur.NoBlur;
@@ -136,6 +136,9 @@ export function ConversationHero({
       <Root>
         {avatar}
         <Title title={i18n('icu:noteToSelf')} isMe />
+        <div className={tw('my-2')}>
+          <OfficialChatBadge i18n={i18n} />
+        </div>
         <div
           className={tw('mt-2 text-center type-body-medium text-label-primary')}
         >
@@ -147,16 +150,15 @@ export function ConversationHero({
 
   if (isSignalConversation) {
     return (
-      <Root>
+      <Root
+        className={tw(
+          'border-border-secondary bg-legacy-signal-conversation-bg'
+        )}
+      >
         {avatar}
         <Title title={title} isSignalConversation />
-        <div
-          className={tw(
-            'my-2 rounded-3xl bg-color-fill-primary/12 px-2.5 py-1 type-body-medium font-medium text-color-fill-primary'
-          )}
-        >
-          <AxoSymbol.InlineGlyph symbol="officialbadge" label={null} />
-          &nbsp;{i18n('icu:ConversationHero--signal-official-account')}
+        <div className={tw('my-2')}>
+          <OfficialChatBadge i18n={i18n} />
         </div>
         <div className={tw('text-center type-body-medium text-label-primary')}>
           {i18n('icu:ConversationHero--signal-official-account--description')}
@@ -259,13 +261,15 @@ export function ConversationHero({
 
 type RootProps = {
   children: ReactNode;
+  className?: TailwindStyles;
 };
-const Root: React.FC<RootProps> = props => {
+const Root: FC<RootProps> = props => {
   return (
     <div
       data-testid="conversation-hero"
       className={tw(
-        'flex w-3xs flex-col items-center rounded-4xl border-2 border-background-secondary p-5 pt-0'
+        'flex w-3xs flex-col items-center rounded-4xl border-2 border-border-secondary p-5 pt-0',
+        props.className
       )}
     >
       {props.children}
@@ -273,9 +277,7 @@ const Root: React.FC<RootProps> = props => {
   );
 };
 
-const ConversationAvatar: React.FC<
-  DistributiveOmit<AvatarProps, 'size'>
-> = props => {
+const ConversationAvatar: FC<DistributiveOmit<AvatarProps, 'size'>> = props => {
   return (
     <Avatar
       {...props}
@@ -292,7 +294,7 @@ type TitleProps = {
   onClick?: () => void;
 };
 
-const Title: React.FC<TitleProps> = props => {
+const Title: FC<TitleProps> = props => {
   const className = tw('mt-3 text-center text-[20px] leading-6 font-medium');
   const { onClick, title, isMe, isSignalConversation } = props;
   const contactName = (
@@ -325,7 +327,7 @@ const Title: React.FC<TitleProps> = props => {
   return <div className={className}>{contactName}</div>;
 };
 
-const NameNotVerifiedWarning: React.FC<{
+const NameNotVerifiedWarning: FC<{
   conversationType: 'direct' | 'group';
   onClick: () => void;
   i18n: LocalizerType;
@@ -333,9 +335,8 @@ const NameNotVerifiedWarning: React.FC<{
   return (
     <button
       className={tw(
-        'mt-2 rounded-3xl bg-color-fill-destructive/12 px-2.5 py-1',
-        // oxlint-disable-next-line better-tailwindcss/no-restricted-classes
-        'type-body-medium font-medium text-[#C84118] dark:bg-[#EB977D]/20 dark:text-[#EB977D]'
+        'mt-2 rounded-3xl bg-legacy-warning-badge/12 px-2.5 py-1',
+        'type-body-medium font-medium text-legacy-warning-badge'
       )}
       type="button"
       onClick={ev => {
@@ -354,7 +355,7 @@ const NameNotVerifiedWarning: React.FC<{
   );
 };
 
-const SafetyTips: React.FC<{
+const SafetyTips: FC<{
   onShowSafetyTips: () => void;
   i18n: LocalizerType;
 }> = ({ i18n, onShowSafetyTips }) => {
@@ -363,6 +364,23 @@ const SafetyTips: React.FC<{
       <AxoButton.Root variant="secondary" size="md" onClick={onShowSafetyTips}>
         {i18n('icu:MessageRequestWarning__safety-tips-v2')}
       </AxoButton.Root>
+    </div>
+  );
+};
+
+const OfficialChatBadge: FC<{
+  i18n: LocalizerType;
+}> = ({ i18n }) => {
+  return (
+    <div
+      className={tw(
+        'rounded-3xl bg-legacy-official-chat-badge-bg px-2.5 py-1',
+        'type-body-medium font-medium text-legacy-official-chat-badge-text'
+      )}
+    >
+      <AxoSymbol.InlineGlyph symbol="officialbadge" label={null} />
+      &nbsp;
+      {i18n('icu:ConversationHero--signal-official-chat-title')}
     </div>
   );
 };

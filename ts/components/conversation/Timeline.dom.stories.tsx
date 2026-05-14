@@ -1,7 +1,7 @@
 // Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as React from 'react';
+import { useContext, type JSX } from 'react';
 import { v4 as uuid } from 'uuid';
 import { action } from '@storybook/addon-actions';
 import type { Meta } from '@storybook/react';
@@ -62,6 +62,7 @@ function mockMessageTimelineItem(
       isPinned: false,
       isSelected: false,
       isSelectMode: false,
+      isSignalConversation: false,
       isSMS: false,
       isSpoilerExpanded: {},
       isVoiceMessagePlayed: false,
@@ -364,6 +365,7 @@ const renderItem = ({
     isGroup={false}
     isSelectMode={false}
     isSelected={false}
+    isSignalConversation={false}
     i18n={i18n}
     interactivity={MessageInteractivity.Normal}
     interactionMode="keyboard"
@@ -404,7 +406,7 @@ const getPhoneNumber = () => '+1 (808) 555-1234';
 
 const renderHeroRow = () => {
   function Wrapper() {
-    const theme = React.useContext(StorybookThemeContext);
+    const theme = useContext(StorybookThemeContext);
     return (
       <ConversationHero
         about={getAbout()}
@@ -454,7 +456,7 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
   discardMessages: action('discardMessages'),
   getPreferredBadge: () => undefined,
   i18n,
-  theme: React.useContext(StorybookThemeContext),
+  theme: useContext(StorybookThemeContext),
 
   getTimestampForMessage: Date.now,
   haveNewest: overrideProps.haveNewest ?? false,
@@ -464,6 +466,7 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
   isGroupTerminated: false,
   isIncomingMessageRequest: overrideProps.isIncomingMessageRequest ?? false,
   isInFullScreenCall: false,
+  isSignalConversation: false,
   items:
     overrideProps.items ??
     Object.keys(items).map(id => ({
@@ -493,7 +496,7 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
   ...actions(),
 });
 
-export function OldestAndNewest(): React.JSX.Element {
+export function OldestAndNewest(): JSX.Element {
   const props = useProps({
     haveOldest: true,
     haveNewest: true,
@@ -502,7 +505,7 @@ export function OldestAndNewest(): React.JSX.Element {
   return <Timeline {...props} />;
 }
 
-export function WithActiveMessageRequest(): React.JSX.Element {
+export function WithActiveMessageRequest(): JSX.Element {
   const props = useProps({
     isIncomingMessageRequest: true,
   });
@@ -510,7 +513,7 @@ export function WithActiveMessageRequest(): React.JSX.Element {
   return <Timeline {...props} />;
 }
 
-export function WithoutNewestMessage(): React.JSX.Element {
+export function WithoutNewestMessage(): JSX.Element {
   const props = useProps({
     haveNewest: false,
   });
@@ -518,7 +521,7 @@ export function WithoutNewestMessage(): React.JSX.Element {
   return <Timeline {...props} />;
 }
 
-export function WithoutNewestMessageActiveMessageRequest(): React.JSX.Element {
+export function WithoutNewestMessageActiveMessageRequest(): JSX.Element {
   const props = useProps({
     haveOldest: false,
     isIncomingMessageRequest: true,
@@ -527,7 +530,7 @@ export function WithoutNewestMessageActiveMessageRequest(): React.JSX.Element {
   return <Timeline {...props} />;
 }
 
-export function WithoutOldestMessage(): React.JSX.Element {
+export function WithoutOldestMessage(): JSX.Element {
   const props = useProps({
     haveOldest: false,
     scrollToIndex: -1,
@@ -536,7 +539,7 @@ export function WithoutOldestMessage(): React.JSX.Element {
   return <Timeline {...props} />;
 }
 
-export function EmptyJustHero(): React.JSX.Element {
+export function EmptyJustHero(): JSX.Element {
   const props = useProps({
     items: [],
   });
@@ -544,7 +547,7 @@ export function EmptyJustHero(): React.JSX.Element {
   return <Timeline {...props} />;
 }
 
-export function LastSeen(): React.JSX.Element {
+export function LastSeen(): JSX.Element {
   const props = useProps({
     oldestUnseenIndex: 13,
     totalUnseen: 2,
@@ -553,7 +556,7 @@ export function LastSeen(): React.JSX.Element {
   return <Timeline {...props} />;
 }
 
-export function TargetIndexToTop(): React.JSX.Element {
+export function TargetIndexToTop(): JSX.Element {
   const props = useProps({
     scrollToIndex: 0,
   });
@@ -561,7 +564,7 @@ export function TargetIndexToTop(): React.JSX.Element {
   return <Timeline {...props} />;
 }
 
-export function WithInvitedContactsForANewlyCreatedGroup(): React.JSX.Element {
+export function WithInvitedContactsForANewlyCreatedGroup(): JSX.Element {
   const props = useProps({
     invitedContactsForNewlyCreatedGroup: [
       getDefaultConversation({

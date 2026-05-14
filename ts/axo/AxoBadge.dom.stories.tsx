@@ -1,7 +1,8 @@
 // Copyright 2025 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
+import type { JSX } from 'react';
+
 import type { Meta } from '@storybook/react';
-import React from 'react';
 import { ExperimentalAxoBadge } from './AxoBadge.dom.tsx';
 import { tw } from './tw.dom.tsx';
 
@@ -9,8 +10,8 @@ export default {
   title: 'Axo/AriaBadge (Experimental)',
 } satisfies Meta;
 
-export function All(): React.JSX.Element {
-  const values: ReadonlyArray<ExperimentalAxoBadge.BadgeValue> = [
+export function All(): JSX.Element {
+  const values: ReadonlyArray<ExperimentalAxoBadge.Value> = [
     -1,
     0,
     1,
@@ -31,7 +32,7 @@ export function All(): React.JSX.Element {
         })}
       </thead>
       <tbody>
-        {ExperimentalAxoBadge._getAllBadgeSizes().map(size => {
+        {ExperimentalAxoBadge._getAllSizes().map(size => {
           return (
             <tr key={size}>
               <th>{size}</th>
@@ -43,7 +44,7 @@ export function All(): React.JSX.Element {
                       value={value}
                       max={99}
                       maxDisplay="99+"
-                      aria-label={null}
+                      label={null}
                     />
                   </td>
                 );

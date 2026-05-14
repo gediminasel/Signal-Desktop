@@ -1,8 +1,9 @@
 // Copyright 2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import type { JSX } from 'react';
+
 import type { Meta } from '@storybook/react';
-import React from 'react';
 import { action } from '@storybook/addon-actions';
 import type { PropsType } from './StoryViewer.dom.tsx';
 import { SendStatus } from '../messages/MessageSendState.std.ts';
@@ -13,8 +14,7 @@ import { VIDEO_MP4 } from '../types/MIME.std.ts';
 import { fakeAttachment } from '../test-helpers/fakeAttachment.std.ts';
 import { getDefaultConversation } from '../test-helpers/getDefaultConversation.std.ts';
 import { getFakeStoryView } from '../test-helpers/getFakeStory.dom.tsx';
-import { DEFAULT_PREFERRED_REACTION_EMOJI } from '../reactions/constants.std.ts';
-import { EmojiSkinTone } from './fun/data/emojis.std.ts';
+import { Emoji } from '../axo/emoji.std.ts';
 
 const { i18n } = window.SignalContext;
 
@@ -47,11 +47,13 @@ export default {
     onTextTooLong: action('onTextTooLong'),
     onSelectEmoji: action('onSelectEmoji'),
     onMediaPlaybackStart: action('onMediaPlaybackStart'),
-    preferredReactionEmoji: DEFAULT_PREFERRED_REACTION_EMOJI,
+    preferredReactionEmoji: Emoji.getDefaultPreferredReactionEmojis(
+      Emoji.SkinTone.None
+    ),
     queueStoryDownload: action('queueStoryDownload'),
     retryMessageSend: action('retryMessageSend'),
     showToast: action('showToast'),
-    emojiSkinToneDefault: EmojiSkinTone.None,
+    emojiSkinToneDefault: Emoji.SkinTone.None,
     story: getFakeStoryView(),
     storyViewMode: StoryViewModeType.All,
     viewStory: action('viewStory'),
@@ -59,11 +61,11 @@ export default {
   },
 } satisfies Meta<PropsType>;
 
-export function SomeonesStory(args: PropsType): React.JSX.Element {
+export function SomeonesStory(args: PropsType): JSX.Element {
   return <StoryViewer {...args} />;
 }
 
-export function WideStory(args: PropsType): React.JSX.Element {
+export function WideStory(args: PropsType): JSX.Element {
   return (
     <StoryViewer
       {...args}
@@ -72,7 +74,7 @@ export function WideStory(args: PropsType): React.JSX.Element {
   );
 }
 
-export function InAGroup(args: PropsType): React.JSX.Element {
+export function InAGroup(args: PropsType): JSX.Element {
   return (
     <StoryViewer
       {...args}
@@ -85,7 +87,7 @@ export function InAGroup(args: PropsType): React.JSX.Element {
   );
 }
 
-export function MultiStory(args: PropsType): React.JSX.Element {
+export function MultiStory(args: PropsType): JSX.Element {
   return (
     <StoryViewer
       {...args}
@@ -104,7 +106,7 @@ export function MultiStory(args: PropsType): React.JSX.Element {
   );
 }
 
-export function Caption(args: PropsType): React.JSX.Element {
+export function Caption(args: PropsType): JSX.Element {
   return (
     <StoryViewer
       {...args}
@@ -120,7 +122,7 @@ export function Caption(args: PropsType): React.JSX.Element {
   );
 }
 
-export function EmojiCaption(args: PropsType): React.JSX.Element {
+export function EmojiCaption(args: PropsType): JSX.Element {
   return (
     <StoryViewer
       {...args}
@@ -136,7 +138,7 @@ export function EmojiCaption(args: PropsType): React.JSX.Element {
   );
 }
 
-export function LongCaption(args: PropsType): React.JSX.Element {
+export function LongCaption(args: PropsType): JSX.Element {
   return (
     <StoryViewer
       {...args}
@@ -153,7 +155,7 @@ export function LongCaption(args: PropsType): React.JSX.Element {
   );
 }
 
-export function YourStory(args: PropsType): React.JSX.Element {
+export function YourStory(args: PropsType): JSX.Element {
   const storyView = getFakeStoryView(
     '/fixtures/nathan-anderson-316188-unsplash.jpg'
   );
@@ -189,7 +191,7 @@ export function YourStory(args: PropsType): React.JSX.Element {
   );
 }
 
-export function YourStoryFailed(args: PropsType): React.JSX.Element {
+export function YourStoryFailed(args: PropsType): JSX.Element {
   const storyView = getFakeStoryView(
     '/fixtures/nathan-anderson-316188-unsplash.jpg'
   );
@@ -222,7 +224,7 @@ export function YourStoryFailed(args: PropsType): React.JSX.Element {
   );
 }
 
-export function ReadReceiptsOff(args: PropsType): React.JSX.Element {
+export function ReadReceiptsOff(args: PropsType): JSX.Element {
   const storyView = getFakeStoryView(
     '/fixtures/nathan-anderson-316188-unsplash.jpg'
   );

@@ -208,7 +208,9 @@ const STD_PACKAGES = new Set([
   '@internationalized/date',
   '@react-types/shared',
   '@signalapp/minimask',
+  '@signalapp/parchment-cjs',
   '@signalapp/quill-cjs',
+  '@signalapp/lame',
   '@typescript-eslint/eslint-plugin',
   '@typescript-eslint/parser',
   'axe-core',
@@ -230,8 +232,7 @@ const STD_PACKAGES = new Set([
   'danger',
   'debug',
   'direction',
-  'emoji-datasource',
-  'emoji-regex',
+  'emoji-regex-xs',
   'eslint',
   'eslint-plugin-better-tailwindcss',
   'filesize',
@@ -516,7 +517,7 @@ export const enforceFileSuffix = ESLintUtils.RuleCreator.withoutDocs({
 
     return {
       Program: node => {
-        if (filename.endsWith('.d.ts')) {
+        if (/\.d\.m?ts$/.test(filename)) {
           // Skip types
           return;
         }

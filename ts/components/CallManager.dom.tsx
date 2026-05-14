@@ -1,7 +1,13 @@
 // Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, { useCallback, useEffect } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  type JSX,
+  type ComponentProps,
+} from 'react';
 import lodash from 'lodash';
 import type { VideoFrameSource } from '@signalapp/ringrtc';
 import { CallNeedPermissionScreen } from './CallNeedPermissionScreen.dom.tsx';
@@ -35,7 +41,6 @@ import type {
   SendGroupCallReactionType,
   SetGroupCallVideoRequestType,
   SetLocalAudioType,
-  SetMutedByType,
   SetLocalVideoType,
   SetRendererCanvasType,
   StartCallType,
@@ -60,6 +65,7 @@ import type { NotificationProfileType } from '../types/NotificationProfile.std.t
 import { strictAssert } from '../util/assert.std.ts';
 import type { SetLocalPreviewContainerType } from '../services/calling.preload.ts';
 import type { ContactModalStateType } from '../types/globalModals.std.ts';
+import type { PropsType as SmartCallingParticipantMenuProps } from '../state/smart/CallingParticipantMenu.preload.tsx';
 
 const { noop } = lodash;
 
@@ -103,10 +109,13 @@ export type PropsType = {
   getPresentingSources: () => void;
   isOnline: boolean;
   ringingCall: DirectIncomingCall | GroupIncomingCall | null;
-  renderDeviceSelection: () => React.JSX.Element;
+  renderDeviceSelection: () => JSX.Element;
   renderReactionPicker: (
-    props: React.ComponentProps<typeof SmartReactionPicker>
-  ) => React.JSX.Element;
+    props: ComponentProps<typeof SmartReactionPicker>
+  ) => JSX.Element;
+  renderCallingParticipantMenu: (
+    props: SmartCallingParticipantMenuProps
+  ) => JSX.Element;
   showContactModal: (payload: ContactModalStateType) => void;
   startCall: (payload: StartCallType) => void;
   toggleParticipants: () => void;
@@ -135,7 +144,6 @@ export type PropsType = {
   setIsCallActive: (_: boolean) => void;
   setLocalAudio: SetLocalAudioType;
   setLocalVideo: SetLocalVideoType;
-  setLocalAudioRemoteMuted: SetMutedByType;
   setLocalPreviewContainer: (options: SetLocalPreviewContainerType) => void;
   setOutgoingRing: (_: boolean) => void;
   setRendererCanvas: (_: SetRendererCanvasType) => void;
@@ -192,6 +200,7 @@ function ActiveCallManager({
   getPresentingSources,
   me,
   openSystemPreferencesAction,
+  renderCallingParticipantMenu,
   renderDeviceSelection,
   renderReactionPicker,
   selectPresentingSource,
@@ -199,7 +208,6 @@ function ActiveCallManager({
   sendGroupCallReaction,
   setGroupCallVideoRequest,
   setLocalAudio,
-  setLocalAudioRemoteMuted,
   setLocalPreviewContainer,
   setLocalVideo,
   setRendererCanvas,
@@ -216,7 +224,7 @@ function ActiveCallManager({
   toggleSelfViewExpanded,
   toggleSettings,
   pauseVoiceNotePlayer,
-}: ActiveCallManagerPropsType): React.JSX.Element {
+}: ActiveCallManagerPropsType): JSX.Element {
   const {
     conversation,
     hasLocalAudio,
@@ -253,7 +261,7 @@ function ActiveCallManager({
   ]);
 
   // For caching screenshare frames which update slowly, between Pip and CallScreen.
-  const imageDataCache = React.useRef<CallingImageDataCache>(new Map());
+  const imageDataCache = useRef<CallingImageDataCache>(new Map());
 
   const previousConversationId = usePrevious(conversation.id, conversation.id);
   useEffect(() => {
@@ -412,10 +420,12 @@ function ActiveCallManager({
               isUnknownContactDiscrete={false}
               ourServiceId={me.serviceId}
               participants={peekedParticipants}
+              participantMenuDisabled
               onClose={toggleParticipants}
               onCopyCallLink={onCopyCallLink}
               onShareCallLinkViaSignal={handleShareCallLinkViaSignal}
               showContactModal={showContactModal}
+              renderCallingParticipantMenu={renderCallingParticipantMenu}
             />
           ) : (
             <CallingParticipantsList
@@ -423,8 +433,10 @@ function ActiveCallManager({
               i18n={i18n}
               onClose={toggleParticipants}
               ourServiceId={me.serviceId}
+              participantMenuDisabled
               participants={peekedParticipants}
               showContactModal={showContactModal}
+              renderCallingParticipantMenu={renderCallingParticipantMenu}
             />
           ))}
       </>
@@ -473,6 +485,7 @@ function ActiveCallManager({
         isCallLinkAdmin={isCallLinkAdmin}
         me={me}
         openSystemPreferencesAction={openSystemPreferencesAction}
+        renderCallingParticipantMenu={renderCallingParticipantMenu}
         renderReactionPicker={renderReactionPicker}
         sendGroupCallRaiseHand={sendGroupCallRaiseHand}
         sendGroupCallReaction={sendGroupCallReaction}
@@ -480,7 +493,6 @@ function ActiveCallManager({
         setLocalPreviewContainer={setLocalPreviewContainer}
         setRendererCanvas={setRendererCanvas}
         setLocalAudio={setLocalAudio}
-        setLocalAudioRemoteMuted={setLocalAudioRemoteMuted}
         setLocalVideo={setLocalVideo}
         stickyControls={showParticipantsList}
         switchToPresentationView={switchToPresentationView}
@@ -517,6 +529,7 @@ function ActiveCallManager({
             onCopyCallLink={onCopyCallLink}
             onShareCallLinkViaSignal={handleShareCallLinkViaSignal}
             showContactModal={showContactModal}
+            renderCallingParticipantMenu={renderCallingParticipantMenu}
           />
         ) : (
           <CallingParticipantsList
@@ -526,6 +539,7 @@ function ActiveCallManager({
             ourServiceId={me.serviceId}
             participants={groupCallParticipantsForParticipantsList}
             showContactModal={showContactModal}
+            renderCallingParticipantMenu={renderCallingParticipantMenu}
           />
         ))}
     </>
@@ -560,6 +574,7 @@ export function CallManager({
   openSystemPreferencesAction,
   pauseVoiceNotePlayer,
   playRingtone,
+  renderCallingParticipantMenu,
   renderDeviceSelection,
   renderReactionPicker,
   ringingCall,
@@ -569,7 +584,6 @@ export function CallManager({
   setGroupCallVideoRequest,
   setIsCallActive,
   setLocalAudio,
-  setLocalAudioRemoteMuted,
   setLocalPreviewContainer,
   setLocalVideo,
   setOutgoingRing,
@@ -586,7 +600,7 @@ export function CallManager({
   toggleScreenRecordingPermissionsDialog,
   toggleSelfViewExpanded,
   toggleSettings,
-}: PropsType): React.JSX.Element | null {
+}: PropsType): JSX.Element | null {
   const isCallActive = Boolean(activeCall);
   useEffect(() => {
     setIsCallActive(isCallActive);
@@ -678,12 +692,12 @@ export function CallManager({
           pauseVoiceNotePlayer={pauseVoiceNotePlayer}
           renderDeviceSelection={renderDeviceSelection}
           renderReactionPicker={renderReactionPicker}
+          renderCallingParticipantMenu={renderCallingParticipantMenu}
           selectPresentingSource={selectPresentingSource}
           sendGroupCallRaiseHand={sendGroupCallRaiseHand}
           sendGroupCallReaction={sendGroupCallReaction}
           setGroupCallVideoRequest={setGroupCallVideoRequest}
           setLocalAudio={setLocalAudio}
-          setLocalAudioRemoteMuted={setLocalAudioRemoteMuted}
           setLocalPreviewContainer={setLocalPreviewContainer}
           setLocalVideo={setLocalVideo}
           setOutgoingRing={setOutgoingRing}

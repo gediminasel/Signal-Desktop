@@ -1,6 +1,6 @@
 // Copyright 2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type JSX } from 'react';
 import classNames from 'classnames';
 import lodash from 'lodash';
 import { usePopper } from 'react-popper';
@@ -28,7 +28,6 @@ import { handleOutsideClick } from '../util/handleOutsideClick.dom.ts';
 import { Spinner } from './Spinner.dom.tsx';
 import { FunEmojiPicker } from './fun/FunEmojiPicker.dom.tsx';
 import type { FunEmojiSelection } from './fun/panels/FunPanelEmojis.dom.tsx';
-import { getEmojiVariantByKey } from './fun/data/emojis.std.ts';
 import { FunEmojiPickerButton } from './fun/FunButton.dom.tsx';
 import { useConfirmDiscard } from '../hooks/useConfirmDiscard.dom.tsx';
 
@@ -138,12 +137,16 @@ export function TextStoryCreator({
   onClose,
   onDone,
   onSelectEmoji,
-}: PropsType): React.JSX.Element {
+}: PropsType): JSX.Element {
   const tryClose = useRef<(() => void) | null>(null);
   const [confirmDiscardModal, confirmDiscardIf] = useConfirmDiscard({
     i18n,
     name: 'TextStoryCreator',
     tryClose,
+    // @ts-expect-error ConfirmationDialog migration: Needs title
+    title: null,
+    // @ts-expect-error ConfirmationDialog migration: Needs description
+    description: null,
   });
   const onTryClose = useCallback(() => {
     confirmDiscardIf(true, onClose);
@@ -341,8 +344,7 @@ export function TextStoryCreator({
 
   const handleSelectEmoji = useCallback(
     (emojiSelection: FunEmojiSelection) => {
-      const emojiVariant = getEmojiVariantByKey(emojiSelection.variantKey);
-      const emojiValue = emojiVariant.value;
+      const { emoji } = emojiSelection;
 
       onSelectEmoji(emojiSelection);
 
@@ -353,7 +355,7 @@ export function TextStoryCreator({
         const before = originalText.substr(0, insertAt);
         const after = originalText.substr(insertAt, originalText.length);
 
-        return `${before}${emojiValue}${after}`;
+        return `${before}${emoji}${after}`;
       });
     },
     [onSelectEmoji]

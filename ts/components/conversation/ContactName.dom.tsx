@@ -1,19 +1,13 @@
 // Copyright 2018 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import classNames from 'classnames';
 
-import type { ReactNode } from 'react';
+import type { ReactNode, JSX, MouseEvent } from 'react';
 
 import { getClassNamesFor } from '../../util/getClassNamesFor.std.ts';
 import { isSignalConversation as getIsSignalConversation } from '../../util/isSignalConversation.dom.ts';
-import {
-  getEmojiVariantByKey,
-  getEmojiVariantKeyByValue,
-  isEmojiVariantValue,
-} from '../fun/data/emojis.std.ts';
-import { useFunEmojiLocalizer } from '../fun/useFunEmojiLocalizer.dom.tsx';
 import { FunStaticEmoji } from '../fun/FunEmoji.dom.tsx';
 import { missingEmojiPlaceholder } from '../../types/GroupMemberLabels.std.ts';
 
@@ -22,12 +16,12 @@ import type { ConversationType } from '../../state/ducks/conversations.preload.t
 import type { ContactNameColorType } from '../../types/Colors.std.ts';
 import type { FunStaticEmojiSize } from '../fun/FunEmoji.dom.tsx';
 import { UserText } from '../UserText.dom.tsx';
-import { AxoSymbol } from '../../axo/AxoSymbol.dom.tsx';
-import { tw } from '../../axo/tw.dom.tsx';
+import { OfficialChatInlineBadge } from './OfficialChatInlineBadge.dom.tsx';
+import { Emoji } from '../../axo/emoji.std.ts';
 
 export type ContactNameData = {
   contactNameColor?: ContactNameColorType;
-  contactLabel?: { labelString: string; labelEmoji: string | undefined };
+  contactLabel?: { labelString: string; labelEmoji: Emoji.Variant | undefined };
   firstName?: string;
   isSignalConversation?: boolean;
   isMe?: boolean;
@@ -72,7 +66,7 @@ export function ContactName({
   preferFirstName,
   title,
   onClick,
-}: PropsType): React.JSX.Element {
+}: PropsType): JSX.Element {
   const getClassName = getClassNamesFor('module-contact-name', module);
 
   let text: string;
@@ -89,7 +83,7 @@ export function ContactName({
         contactNameColor ? getClassName(`--${contactNameColor}`) : null
       )}
       dir="auto"
-      onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+      onClick={(event: MouseEvent<HTMLButtonElement>) => {
         if (onClick) {
           onClick();
           event.stopPropagation();
@@ -102,9 +96,7 @@ export function ContactName({
       {(isSignalConversation || isMe) && (
         <>
           &nbsp;
-          <span className={tw('text-color-fill-primary')}>
-            <AxoSymbol.InlineGlyph symbol="officialbadge-fill" label={null} />
-          </span>
+          <OfficialChatInlineBadge />
         </>
       )}
 
@@ -137,7 +129,6 @@ export function GroupMemberLabel({
   context: Context;
   module?: string;
 }): ReactNode {
-  const emojiLocalizer = useFunEmojiLocalizer();
   const getClassName = getClassNamesFor('module-contact-name', module);
 
   if (!contactLabel) {
@@ -147,10 +138,7 @@ export function GroupMemberLabel({
   const { labelEmoji, labelString } = contactLabel;
 
   let emojiElement;
-  if (labelEmoji && isEmojiVariantValue(labelEmoji)) {
-    const emojiKey = getEmojiVariantKeyByValue(labelEmoji);
-    const emojiData = getEmojiVariantByKey(emojiKey);
-
+  if (labelEmoji && Emoji.isEmoji(labelEmoji)) {
     emojiElement = (
       <span
         className={classNames(
@@ -160,9 +148,9 @@ export function GroupMemberLabel({
       >
         <FunStaticEmoji
           role="img"
-          aria-label={emojiLocalizer.getLocaleShortName(emojiData.key)}
+          aria-label={Emoji.getDisplayLabel(labelEmoji)}
           size={emojiSize}
-          emoji={emojiData}
+          emoji={Emoji.ignorePreferredSkinTone(labelEmoji)}
         />
       </span>
     );

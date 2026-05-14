@@ -1,14 +1,8 @@
 // Copyright 2025 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { MutableRefObject, ReactNode } from 'react';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import type { MutableRefObject, ReactNode, JSX } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import classNames from 'classnames';
 import type { ReadonlyDeep } from 'type-fest';
@@ -91,7 +85,7 @@ export type PropsDataType = {
   lastError: DonationErrorType | undefined;
   validCurrencies: ReadonlyArray<string>;
   workflow: DonationWorkflow | undefined;
-  renderDonationHero: () => React.JSX.Element;
+  renderDonationHero: () => JSX.Element;
 };
 
 type PropsHousekeepingType = {
@@ -133,7 +127,7 @@ export function PreferencesDonateFlow({
   showPrivacyModal,
   submitDonation,
   onBack,
-}: PropsType): React.JSX.Element {
+}: PropsType): JSX.Element {
   const tryClose = useRef<(() => void) | null>(null);
 
   // When returning to the donate flow with a pending PayPal payment, load the pending
@@ -342,9 +336,12 @@ export function PreferencesDonateFlow({
 
   const [confirmDiscardModal, confirmDiscardIf] = useConfirmDiscard({
     i18n,
-    bodyText: discardModalBodyText,
-    cancelText: discardModalCancelText,
-    discardText: discardModalDiscardText,
+    // @ts-expect-error ConfirmationDialog migration: Needs title
+    title: null,
+    // @ts-expect-error ConfirmationDialog migration: Needs description
+    description: discardModalBodyText,
+    cancelLabel: discardModalCancelText,
+    discardLabel: discardModalDiscardText,
     name: 'PreferencesDonateFlow',
     tryClose,
   });
@@ -375,7 +372,7 @@ export function PreferencesDonateFlow({
   ]);
   tryClose.current = onTryClose;
 
-  let innerContent: React.JSX.Element;
+  let innerContent: JSX.Element;
   let handleBack: () => void;
 
   if (step === 'amount') {
@@ -405,7 +402,7 @@ export function PreferencesDonateFlow({
         <button
           className={tw(
             'flex',
-            'bg-color-fill-primary pressed:bg-color-fill-primary-pressed',
+            'bg-color-fill-primary enabled:active:bg-color-fill-primary-pressed',
             'rounded-md',
             'justify-center type-body-medium text-label-primary-on-color',
             'mt-6 mb-3 h-[36px] w-[280px] py-2'
@@ -568,7 +565,7 @@ function AmountPicker({
   validCurrencies,
   onChangeCurrency,
   onSubmit,
-}: AmountPickerProps): React.JSX.Element {
+}: AmountPickerProps): JSX.Element {
   const [currency, setCurrency] = useState(initialCurrency);
 
   const [presetAmount, setPresetAmount] = useState<
@@ -750,7 +747,7 @@ function AmountPicker({
     customInputClassName = 'DonationAmountPicker__CustomInput';
   }
 
-  let customInputError: React.JSX.Element | undefined;
+  let customInputError: JSX.Element | undefined;
   if (isCustomAmountErrorVisible) {
     if (error === 'amount-below-minimum') {
       customInputError = (
@@ -782,7 +779,7 @@ function AmountPicker({
     </AxoButton.Root>
   );
 
-  let continueButtonWithTooltip: React.JSX.Element | undefined;
+  let continueButtonWithTooltip: JSX.Element | undefined;
   if (!isOnline) {
     continueButtonWithTooltip = (
       <DonationsOfflineTooltip i18n={i18n}>
@@ -887,7 +884,7 @@ function CardForm({
   onChange,
   onSubmit,
   showPrivacyModal,
-}: CardFormProps): React.JSX.Element {
+}: CardFormProps): JSX.Element {
   const [cardExpiration, setCardExpiration] = useState(
     initialValues?.cardExpiration ?? ''
   );
@@ -912,7 +909,7 @@ function CardForm({
   }, [cardExpiration, cardNumber, cardCvc, onChange]);
 
   const privacyLearnMoreLink = useCallback(
-    (parts: ReactNode): React.JSX.Element => {
+    (parts: ReactNode): JSX.Element => {
       return (
         <button
           type="button"
@@ -1139,7 +1136,7 @@ function CardFormHero({
   amount,
   currency,
   i18n,
-}: CardFormHeroProps): React.JSX.Element {
+}: CardFormHeroProps): JSX.Element {
   const formattedCurrencyAmount = useMemo<string>(() => {
     return toHumanCurrencyString({ amount, currency });
   }, [amount, currency]);
@@ -1169,8 +1166,8 @@ type HelpFooterProps = {
 function HelpFooter({
   i18n,
   showOneTimeOnlyNotice,
-}: HelpFooterProps): React.JSX.Element {
-  const contactSupportLink = (parts: Array<string | React.JSX.Element>) => (
+}: HelpFooterProps): JSX.Element {
+  const contactSupportLink = (parts: Array<string | JSX.Element>) => (
     <a
       className="DonationFormHelpFooter__ContactSupportLink"
       href={SUPPORT_URL}

@@ -1,22 +1,19 @@
 // Copyright 2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React from 'react';
+import type { JSX } from 'react';
+
 import { animated, to as interpolate, useSprings } from '@react-spring/web';
 import lodash from 'lodash';
 import { useReducedMotion } from '../hooks/useReducedMotion.dom.ts';
 import { FunStaticEmoji } from './fun/FunEmoji.dom.tsx';
 import { strictAssert } from '../util/assert.std.ts';
-import {
-  getEmojiVariantByKey,
-  getEmojiVariantKeyByValue,
-  isEmojiVariantValue,
-} from './fun/data/emojis.std.ts';
+import { Emoji } from '../axo/emoji.std.ts';
 
 const { random } = lodash;
 
 export type PropsType = {
-  emoji: string;
+  emoji: Emoji.Variant;
   onAnimationEnd: () => unknown;
   rotate?: number;
   scale?: number;
@@ -46,10 +43,8 @@ function transform(y: number, scale: number, rotate: number): string {
 export function AnimatedEmojiGalore({
   emoji,
   onAnimationEnd,
-}: PropsType): React.JSX.Element {
-  strictAssert(isEmojiVariantValue(emoji), 'Must be valid english short name');
-  const emojiVariantKey = getEmojiVariantKeyByValue(emoji);
-  const emojiVariant = getEmojiVariantByKey(emojiVariantKey);
+}: PropsType): JSX.Element {
+  strictAssert(Emoji.isEmoji(emoji), 'Must be valid emoji variant value');
 
   const reducedMotion = useReducedMotion();
   const [springs] = useSprings(NUM_EMOJIS, i => ({
@@ -79,7 +74,7 @@ export function AnimatedEmojiGalore({
             ),
           }}
         >
-          <FunStaticEmoji size={48} emoji={emojiVariant} role="presentation" />
+          <FunStaticEmoji size={48} emoji={emoji} role="presentation" />
         </animated.div>
       ))}
     </>

@@ -53,7 +53,7 @@ let
     '';
   });
 
-  version = "8.11.0-lel";
+  version = "8.12.0-lel";
 
   src = ../.;
 
@@ -152,13 +152,13 @@ stdenv.mkDerivation (finalAttrs: {
       ;
     inherit pnpm;
     fetcherVersion = 3;
-    hash = "sha256-YlZgsjVqdnSWlTOmhNNwOoeNoTT/+iXarG9ks2oaJLs=";
+    hash = "sha256-+Z6w/0/eSnb8vBgoNOwwhcyXW7tkgkE9YMr+sjysrAs=";
   };
 
   env = {
     ELECTRON_SKIP_BINARY_DOWNLOAD = "1";
     SIGNAL_ENV = "production";
-    SOURCE_DATE_EPOCH = 1777504156;
+    SOURCE_DATE_EPOCH = 1778711324;
   }
   // lib.optionalAttrs stdenv.hostPlatform.isDarwin {
     # Disable code signing during local macOS builds.

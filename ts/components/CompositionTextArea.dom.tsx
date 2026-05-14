@@ -1,7 +1,7 @@
 // Copyright 2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, { useRef, useCallback, useState } from 'react';
+import { useRef, useCallback, useState, type UIEvent, type JSX } from 'react';
 import type { LocalizerType } from '../types/I18N.std.ts';
 import type { InputApi } from './CompositionInput.dom.tsx';
 import { CompositionInput } from './CompositionInput.dom.tsx';
@@ -14,8 +14,8 @@ import type { PreferredBadgeSelectorType } from '../state/selectors/badges.prelo
 import * as grapheme from '../util/grapheme.std.ts';
 import { FunEmojiPicker } from './fun/FunEmojiPicker.dom.tsx';
 import type { FunEmojiSelection } from './fun/panels/FunPanelEmojis.dom.tsx';
-import type { EmojiSkinTone } from './fun/data/emojis.std.ts';
 import { FunEmojiPickerButton } from './fun/FunButton.dom.tsx';
+import type { Emoji } from '../axo/emoji.std.ts';
 
 export type CompositionTextAreaProps = {
   bodyRanges: HydratedBodyRangesType | null;
@@ -25,15 +25,15 @@ export type CompositionTextAreaProps = {
   maxLength?: number;
   placeholder?: string;
   whenToShowRemainingCount?: number;
-  onScroll?: (ev: React.UIEvent<HTMLElement>) => void;
+  onScroll?: (ev: UIEvent<HTMLElement>) => void;
   onSelectEmoji: (emojiSelection: FunEmojiSelection) => void;
   onChange: (
     messageText: string,
     draftBodyRanges: HydratedBodyRangesType,
     caretLocation?: number
   ) => void;
-  emojiSkinToneDefault: EmojiSkinTone;
-  onEmojiSkinToneDefaultChange: (emojiSkinToneDefault: EmojiSkinTone) => void;
+  emojiSkinToneDefault: Emoji.SkinTone;
+  onEmojiSkinToneDefaultChange: (emojiSkinToneDefault: Emoji.SkinTone) => void;
   onSubmit: (
     message: string,
     draftBodyRanges: DraftBodyRanges,
@@ -77,7 +77,7 @@ export function CompositionTextArea({
   theme,
   whenToShowRemainingCount = Infinity,
   convertDraftBodyRangesIntoHydrated,
-}: CompositionTextAreaProps): React.JSX.Element {
+}: CompositionTextAreaProps): JSX.Element {
   const inputApiRef = useRef<InputApi | null>(null);
   const [characterCount, setCharacterCount] = useState(
     grapheme.count(draftText)

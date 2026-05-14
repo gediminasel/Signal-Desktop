@@ -1,7 +1,7 @@
 // Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as React from 'react';
+import { useState, useMemo, createRef, useCallback, type JSX } from 'react';
 import lodash from 'lodash';
 
 import { action } from '@storybook/addon-actions';
@@ -44,6 +44,7 @@ import { PaymentEventKind } from '../../types/Payment.std.ts';
 import type { RenderAudioAttachmentProps } from '../../state/smart/renderAudioAttachment.preload.tsx';
 import type { PollVoteWithUserType } from '../../state/selectors/message.preload.ts';
 import { generateAci } from '../../test-helpers/serviceIdUtils.std.ts';
+import { Emoji } from '../../axo/emoji.std.ts';
 
 const { isBoolean, noop } = lodash;
 
@@ -98,7 +99,7 @@ const messageIdToAudioUrl = {
 
 function getJoyReaction() {
   return {
-    emoji: '😂',
+    emoji: Emoji.JOY,
     from: getDefaultConversation({
       id: '+14155552674',
       phoneNumber: '+14155552674',
@@ -118,14 +119,14 @@ const renderReactionPicker: Props['renderReactionPicker'] = () => <div />;
 function MessageAudioContainer({
   played,
   ...props
-}: RenderAudioAttachmentProps): React.JSX.Element {
-  const [isActive, setIsActive] = React.useState<boolean>(false);
-  const [currentTime, setCurrentTime] = React.useState<number>(0);
-  const [playbackRate, setPlaybackRate] = React.useState<number>(1);
-  const [isPlaying, setIsPlaying] = React.useState<boolean>(false);
-  const [_played, setPlayed] = React.useState<boolean>(played);
+}: RenderAudioAttachmentProps): JSX.Element {
+  const [isActive, setIsActive] = useState<boolean>(false);
+  const [currentTime, setCurrentTime] = useState<number>(0);
+  const [playbackRate, setPlaybackRate] = useState<number>(1);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [_played, setPlayed] = useState<boolean>(played);
 
-  const audioPlayer = React.useMemo(() => {
+  const audioPlayer = useMemo(() => {
     const a = new Audio();
 
     let onLoadedData: () => void = noop;
@@ -250,7 +251,7 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   canRetryDeleteForEveryone: overrideProps.canRetryDeleteForEveryone || false,
   checkForAccount: action('checkForAccount'),
   clearTargetedMessage: action('clearSelectedMessage'),
-  containerElementRef: React.createRef<HTMLElement | null>(),
+  containerElementRef: createRef<HTMLElement | null>(),
   containerWidthBreakpoint: WidthBreakpoint.Wide,
   conversationColor: overrideProps.conversationColor ?? ConversationColors[0],
   conversationTitle: overrideProps.conversationTitle ?? 'Conversation Title',
@@ -293,6 +294,7 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   isSelectMode: isBoolean(overrideProps.isSelectMode)
     ? overrideProps.isSelectMode
     : false,
+  isSignalConversation: false,
   isSMS: isBoolean(overrideProps.isSMS) ? overrideProps.isSMS : false,
   isSpoilerExpanded: overrideProps.isSpoilerExpanded || {},
   isTapToView: overrideProps.isTapToView,
@@ -431,7 +433,7 @@ PlainRtlMessage.args = {
   textDirection: TextDirection.RightToLeft,
 };
 
-export function EmojiMessages(): React.JSX.Element {
+export function EmojiMessages(): JSX.Element {
   return (
     <>
       <TimelineMessage {...createProps({ text: '😀' })} />
@@ -602,13 +604,13 @@ Older.args = {
 };
 
 // Render only one message, because reactions break up clusters of messages
-export function ReactionsWiderMessage(): React.JSX.Element {
+export function ReactionsWiderMessage(): JSX.Element {
   const props = createProps({
     text: 'Hello there from a pal!',
     timestamp: Date.now() - 180 * 24 * 60 * 60 * 1000,
     reactions: [
       {
-        emoji: '👍',
+        emoji: Emoji.getDefaultVariant(Emoji.THUMBS_UP),
         from: getDefaultConversation({
           isMe: true,
           id: '+14155552672',
@@ -619,7 +621,7 @@ export function ReactionsWiderMessage(): React.JSX.Element {
         timestamp: Date.now() - 10,
       },
       {
-        emoji: '👍',
+        emoji: Emoji.getDefaultVariant(Emoji.THUMBS_UP),
         from: getDefaultConversation({
           id: '+14155552672',
           phoneNumber: '+14155552672',
@@ -629,7 +631,7 @@ export function ReactionsWiderMessage(): React.JSX.Element {
         timestamp: Date.now() - 10,
       },
       {
-        emoji: '👍',
+        emoji: Emoji.getDefaultVariant(Emoji.THUMBS_UP),
         from: getDefaultConversation({
           id: '+14155552673',
           phoneNumber: '+14155552673',
@@ -639,7 +641,7 @@ export function ReactionsWiderMessage(): React.JSX.Element {
         timestamp: Date.now() - 10,
       },
       {
-        emoji: '😂',
+        emoji: Emoji.JOY,
         from: getDefaultConversation({
           id: '+14155552674',
           phoneNumber: '+14155552674',
@@ -649,7 +651,7 @@ export function ReactionsWiderMessage(): React.JSX.Element {
         timestamp: Date.now() - 10,
       },
       {
-        emoji: '😡',
+        emoji: Emoji.RAGE,
         from: getDefaultConversation({
           id: '+14155552677',
           phoneNumber: '+14155552677',
@@ -659,7 +661,7 @@ export function ReactionsWiderMessage(): React.JSX.Element {
         timestamp: Date.now() - 10,
       },
       {
-        emoji: '👎',
+        emoji: Emoji.getVariant(Emoji.THUMBS_DOWN, Emoji.SkinTone.None),
         from: getDefaultConversation({
           id: '+14155552678',
           phoneNumber: '+14155552678',
@@ -669,7 +671,7 @@ export function ReactionsWiderMessage(): React.JSX.Element {
         timestamp: Date.now() - 10,
       },
       {
-        emoji: '❤️',
+        emoji: Emoji.HEART,
         from: getDefaultConversation({
           id: '+14155552679',
           phoneNumber: '+14155552679',
@@ -686,14 +688,14 @@ export function ReactionsWiderMessage(): React.JSX.Element {
 const joyReactions = Array.from({ length: 52 }, () => getJoyReaction());
 
 // Render only one message, because reactions break up clusters of messages
-export function ReactionsShortMessage(): React.JSX.Element {
+export function ReactionsShortMessage(): JSX.Element {
   const props = createProps({
     text: 'h',
     timestamp: Date.now(),
     reactions: [
       ...joyReactions,
       {
-        emoji: '👍',
+        emoji: Emoji.getDefaultVariant(Emoji.THUMBS_UP),
         from: getDefaultConversation({
           isMe: true,
           id: '+14155552672',
@@ -704,7 +706,7 @@ export function ReactionsShortMessage(): React.JSX.Element {
         timestamp: Date.now(),
       },
       {
-        emoji: '👍',
+        emoji: Emoji.getDefaultVariant(Emoji.THUMBS_UP),
         from: getDefaultConversation({
           id: '+14155552672',
           phoneNumber: '+14155552672',
@@ -714,7 +716,7 @@ export function ReactionsShortMessage(): React.JSX.Element {
         timestamp: Date.now(),
       },
       {
-        emoji: '👍',
+        emoji: Emoji.getDefaultVariant(Emoji.THUMBS_UP),
         from: getDefaultConversation({
           id: '+14155552673',
           phoneNumber: '+14155552673',
@@ -724,7 +726,7 @@ export function ReactionsShortMessage(): React.JSX.Element {
         timestamp: Date.now(),
       },
       {
-        emoji: '😡',
+        emoji: Emoji.RAGE,
         from: getDefaultConversation({
           id: '+14155552677',
           phoneNumber: '+14155552677',
@@ -734,7 +736,7 @@ export function ReactionsShortMessage(): React.JSX.Element {
         timestamp: Date.now(),
       },
       {
-        emoji: '👎',
+        emoji: Emoji.getVariant(Emoji.THUMBS_DOWN, Emoji.SkinTone.None),
         from: getDefaultConversation({
           id: '+14155552678',
           phoneNumber: '+14155552678',
@@ -744,7 +746,7 @@ export function ReactionsShortMessage(): React.JSX.Element {
         timestamp: Date.now(),
       },
       {
-        emoji: '❤️',
+        emoji: Emoji.HEART,
         from: getDefaultConversation({
           id: '+14155552679',
           phoneNumber: '+14155552679',
@@ -783,7 +785,7 @@ LabelInGroup.args = {
   text: 'Hello it is me, the saxophone.',
   contactNameColor: '260',
   contactLabel: {
-    labelEmoji: '🍗',
+    labelEmoji: Emoji.POULTRY_LEG,
     labelString: 'Chicken Taster',
   },
 };
@@ -799,7 +801,7 @@ LabelInGroupWithLongName.args = {
   },
   contactNameColor: '260',
   contactLabel: {
-    labelEmoji: '🍗',
+    labelEmoji: Emoji.POULTRY_LEG,
     labelString: 'Chicken Taster',
   },
 };
@@ -815,7 +817,7 @@ LabelInGroupWithLongNameAndLongMessage.args = {
   },
   contactNameColor: '260',
   contactLabel: {
-    labelEmoji: '🍗',
+    labelEmoji: Emoji.POULTRY_LEG,
     labelString: 'Chicken Taster',
   },
 };
@@ -868,7 +870,7 @@ StickerWithLabelInGroup.args = {
   status: 'sent',
   contactNameColor: '260',
   contactLabel: {
-    labelEmoji: '🍗',
+    labelEmoji: Emoji.POULTRY_LEG,
     labelString: 'Chicken Taster',
   },
 };
@@ -893,7 +895,7 @@ StickerWithLongNameAndLabelInGroup.args = {
   },
   contactNameColor: '280',
   contactLabel: {
-    labelEmoji: '🍗',
+    labelEmoji: Emoji.POULTRY_LEG,
     labelString: 'Chicken Taster',
   },
 };
@@ -924,7 +926,7 @@ Quote.args = {
   contactNameColor: '100',
 };
 
-export function Deleted(): React.JSX.Element {
+export function Deleted(): JSX.Element {
   const propsSent = createProps({
     conversationType: 'direct',
     deletedForEveryone: true,
@@ -946,7 +948,7 @@ export function Deleted(): React.JSX.Element {
   );
 }
 
-export function DeletedByAdmin(): React.JSX.Element {
+export function DeletedByAdmin(): JSX.Element {
   const props = createProps({
     conversationType: 'group',
     deletedForEveryone: true,
@@ -975,7 +977,7 @@ DeletedWithExpireTimer.args = {
   status: 'sent',
 };
 
-export function DeletedPending(): React.JSX.Element {
+export function DeletedPending(): JSX.Element {
   const props = createProps({
     timestamp: Date.now() - 60 * 1000,
     conversationType: 'group',
@@ -988,7 +990,7 @@ export function DeletedPending(): React.JSX.Element {
   return <>{renderThree(props)}</>;
 }
 
-export function AdminDeletedPending(): React.JSX.Element {
+export function AdminDeletedPending(): JSX.Element {
   const props = createProps({
     timestamp: Date.now() - 60 * 1000,
     conversationType: 'group',
@@ -1026,7 +1028,7 @@ export function AdminDeletedPending(): React.JSX.Element {
   );
 }
 
-export function DeletedWithError(): React.JSX.Element {
+export function DeletedWithError(): JSX.Element {
   const propsPartialError = createProps({
     timestamp: Date.now() - 60 * 1000,
     conversationType: 'group',
@@ -1052,7 +1054,7 @@ export function DeletedWithError(): React.JSX.Element {
   );
 }
 
-export function DeletedWithErrorCanRetry(): React.JSX.Element {
+export function DeletedWithErrorCanRetry(): JSX.Element {
   const propsPartialError = createProps({
     timestamp: Date.now() - 60 * 1000,
     conversationType: 'group',
@@ -1080,7 +1082,7 @@ export function DeletedWithErrorCanRetry(): React.JSX.Element {
   );
 }
 
-export function AdminDeletedWithError(): React.JSX.Element {
+export function AdminDeletedWithError(): JSX.Element {
   const adminProps = {
     deletedForEveryoneByAdmin: {
       conversationId: 'admin-conversation-id',
@@ -1136,7 +1138,7 @@ export function AdminDeletedWithError(): React.JSX.Element {
   );
 }
 
-export function AdminDeletedWithErrorCanRetry(): React.JSX.Element {
+export function AdminDeletedWithErrorCanRetry(): JSX.Element {
   const adminProps = {
     deletedForEveryoneByAdmin: {
       conversationId: 'admin-conversation-id',
@@ -1205,7 +1207,7 @@ CanDeleteForEveryone.args = {
 };
 
 // Too-large attachments don't get to the component
-export function AttachmentTooBig(): React.JSX.Element {
+export function AttachmentTooBig(): JSX.Element {
   const propsSent = createProps({
     conversationType: 'direct',
     attachmentDroppedDueToSize: true,
@@ -1215,7 +1217,7 @@ export function AttachmentTooBig(): React.JSX.Element {
 }
 
 // Too-large attachments don't get to the component
-export function AttachmentTooBigWithText(): React.JSX.Element {
+export function AttachmentTooBigWithText(): JSX.Element {
   const propsSent = createProps({
     conversationType: 'direct',
     attachmentDroppedDueToSize: true,
@@ -1226,7 +1228,7 @@ export function AttachmentTooBigWithText(): React.JSX.Element {
 }
 
 // Too-large attachments don't get to the component
-export function AttachmentTooBigWithImage(): React.JSX.Element {
+export function AttachmentTooBigWithImage(): JSX.Element {
   const propsSent = createProps({
     conversationType: 'direct',
     attachmentDroppedDueToSize: true,
@@ -1245,7 +1247,7 @@ export function AttachmentTooBigWithImage(): React.JSX.Element {
 }
 
 // Too-large attachments don't get to the component
-export function AttachmentTooBigWithImageAndText(): React.JSX.Element {
+export function AttachmentTooBigWithImageAndText(): JSX.Element {
   const propsSent = createProps({
     conversationType: 'direct',
     attachmentDroppedDueToSize: true,
@@ -1700,7 +1702,7 @@ LinkPreviewWithCallLinkInCurrentCall.args = {
   text: 'Use this link to join a Signal call: https://signal.link/call/#key=hzcn-pcff-ctsc-bdbf-stcr-tzpc-bhqx-kghh',
 };
 
-export function Image(): React.JSX.Element {
+export function Image(): JSX.Element {
   const darkImageProps = createProps({
     attachments: [
       fakeAttachment({
@@ -1734,7 +1736,7 @@ export function Image(): React.JSX.Element {
   );
 }
 
-export function BrokenImage(): React.JSX.Element {
+export function BrokenImage(): JSX.Element {
   const darkImageProps = createProps({
     attachments: [
       fakeAttachment({
@@ -1768,7 +1770,7 @@ export function BrokenImage(): React.JSX.Element {
   );
 }
 
-export function BrokenImageWithExpirationTimer(): React.JSX.Element {
+export function BrokenImageWithExpirationTimer(): JSX.Element {
   const darkImageProps = createProps({
     attachments: [
       fakeAttachment({
@@ -1806,7 +1808,7 @@ export function BrokenImageWithExpirationTimer(): React.JSX.Element {
   );
 }
 
-export function BrokenImages(): React.JSX.Element {
+export function BrokenImages(): JSX.Element {
   const firstBroken = createProps({
     attachments: [
       fakeAttachment({
@@ -1912,7 +1914,7 @@ export function BrokenImages(): React.JSX.Element {
   );
 }
 
-export function Video(): React.JSX.Element {
+export function Video(): JSX.Element {
   const darkImageProps = createProps({
     attachments: [
       fakeAttachment({
@@ -1960,7 +1962,7 @@ export function Video(): React.JSX.Element {
   );
 }
 
-export function BrokenVideo(): React.JSX.Element {
+export function BrokenVideo(): JSX.Element {
   const darkImageProps = createProps({
     attachments: [
       fakeAttachment({
@@ -2008,7 +2010,7 @@ export function BrokenVideo(): React.JSX.Element {
   );
 }
 
-export function BrokenVideoWithExpirationTimer(): React.JSX.Element {
+export function BrokenVideoWithExpirationTimer(): JSX.Element {
   const darkImageProps = createProps({
     attachments: [
       fakeAttachment({
@@ -2771,22 +2773,22 @@ PollMultipleChoiceWithVotes.args = {
 const POLL_ANIMATION_OPTIONS = ['Pizza', 'Sushi', 'Tacos', 'Salad'];
 const BAD_NETWORK_DELAY_MS = 5000;
 
-export function PollAnimationPlayground(): React.JSX.Element {
-  const [otherVoteCounts, setOtherVoteCounts] = React.useState<
-    Map<number, number>
-  >(() => new Map(POLL_ANIMATION_OPTIONS.map((_, i) => [i, 0])));
+export function PollAnimationPlayground(): JSX.Element {
+  const [otherVoteCounts, setOtherVoteCounts] = useState<Map<number, number>>(
+    () => new Map(POLL_ANIMATION_OPTIONS.map((_, i) => [i, 0]))
+  );
 
-  const [myVotes, setMyVotes] = React.useState<Set<number>>(() => new Set());
+  const [myVotes, setMyVotes] = useState<Set<number>>(() => new Set());
 
   // Pending state for my vote (only used with bad network)
-  const [pendingVoteDiff, setPendingVoteDiff] = React.useState<
+  const [pendingVoteDiff, setPendingVoteDiff] = useState<
     Map<number, 'PENDING_VOTE' | 'PENDING_UNVOTE'>
   >(() => new Map());
 
-  const [badNetwork, setBadNetwork] = React.useState(false);
-  const [allowMultiple, setAllowMultiple] = React.useState(false);
+  const [badNetwork, setBadNetwork] = useState(false);
+  const [allowMultiple, setAllowMultiple] = useState(false);
 
-  const handleSendPollVote = React.useCallback(
+  const handleSendPollVote = useCallback(
     (params: { messageId: string; optionIndexes: ReadonlyArray<number> }) => {
       const newVotes = new Set(params.optionIndexes);
 
@@ -3198,7 +3200,7 @@ TapToViewError.args = {
   status: 'sent',
 };
 
-export function Colors(): React.JSX.Element {
+export function Colors(): JSX.Element {
   return (
     <>
       {ConversationColors.map(color => (
@@ -3229,7 +3231,7 @@ Mentions.args = {
   text: '\uFFFC This Is It. The Moment We Should Have Trained For.',
 };
 
-export function AllTheContextMenus(): React.JSX.Element {
+export function AllTheContextMenus(): JSX.Element {
   const props = createProps({
     attachments: [
       fakeAttachment({
@@ -3275,7 +3277,7 @@ NotApprovedWithLinkPreview.args = {
   isMessageRequestAccepted: false,
 };
 
-export function CustomColor(): React.JSX.Element {
+export function CustomColor(): JSX.Element {
   return (
     <>
       {renderThree({
@@ -3299,7 +3301,7 @@ export function CustomColor(): React.JSX.Element {
   );
 }
 
-export const CollapsingTextOnlyDMs = (): React.JSX.Element => {
+export const CollapsingTextOnlyDMs = (): JSX.Element => {
   const them = getDefaultConversation();
   const me = getDefaultConversation({ isMe: true });
 
@@ -3339,7 +3341,7 @@ export const CollapsingTextOnlyDMs = (): React.JSX.Element => {
   ]);
 };
 
-export const CollapsingTextOnlyGroupMessages = (): React.JSX.Element => {
+export const CollapsingTextOnlyGroupMessages = (): JSX.Element => {
   const author = getDefaultConversation();
 
   return renderMany([
@@ -3366,7 +3368,7 @@ export const CollapsingTextOnlyGroupMessages = (): React.JSX.Element => {
   ]);
 };
 
-export const StoryReply = (): React.JSX.Element => {
+export const StoryReply = (): JSX.Element => {
   const conversation = getDefaultConversation();
 
   return renderThree({
@@ -3384,7 +3386,7 @@ export const StoryReply = (): React.JSX.Element => {
   });
 };
 
-export const StoryReplyYours = (): React.JSX.Element => {
+export const StoryReplyYours = (): JSX.Element => {
   const conversation = getDefaultConversation();
 
   return renderThree({
@@ -3402,7 +3404,7 @@ export const StoryReplyYours = (): React.JSX.Element => {
   });
 };
 
-export const StoryReplyEmoji = (): React.JSX.Element => {
+export const StoryReplyEmoji = (): JSX.Element => {
   const conversation = getDefaultConversation();
 
   return renderBothDirections({
@@ -3410,7 +3412,7 @@ export const StoryReplyEmoji = (): React.JSX.Element => {
     storyReplyContext: {
       authorTitle: conversation.firstName || conversation.title,
       conversationColor: ConversationColors[0],
-      emoji: '💄',
+      emoji: Emoji.LIPSTICK,
       isFromMe: false,
       rawAttachment: fakeAttachment({
         url: '/fixtures/snow.jpg',
@@ -3712,7 +3714,7 @@ SMS.args = {
 };
 
 function MultiSelectMessage() {
-  const [selected, setSelected] = React.useState(false);
+  const [selected, setSelected] = useState(false);
 
   return (
     <TimelineMessage
@@ -3728,7 +3730,7 @@ function MultiSelectMessage() {
   );
 }
 
-export function MultiSelect(): React.JSX.Element {
+export function MultiSelect(): JSX.Element {
   return (
     <>
       <MultiSelectMessage />
@@ -3742,7 +3744,7 @@ MultiSelect.args = {
   name: 'Multi Select',
 };
 
-export function PermanentlyUndownloadableAttachments(): React.JSX.Element {
+export function PermanentlyUndownloadableAttachments(): JSX.Element {
   const imageProps = createProps({
     attachments: [
       fakeAttachment({
@@ -4029,4 +4031,19 @@ export const PinnedMessages = Template.bind({});
 PinnedMessages.args = {
   text: 'I am pinned',
   isPinned: true,
+};
+
+export const SignalReleaseNoteMessage = Template.bind({});
+SignalReleaseNoteMessage.args = {
+  isSignalConversation: true,
+  text: "Introducing something really special\n\nOne more thing.\nThere's more.",
+  attachments: [
+    fakeAttachment({
+      url: '/fixtures/tina-rolf-269345-unsplash.jpg',
+      fileName: 'tina-rolf-269345-unsplash.jpg',
+      contentType: IMAGE_JPEG,
+      width: 500,
+      height: 400,
+    }),
+  ],
 };

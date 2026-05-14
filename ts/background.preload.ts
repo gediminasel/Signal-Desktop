@@ -70,7 +70,6 @@ import { updateIdentityKey } from './services/profiles.preload.ts';
 import { initializeUpdateListener } from './services/updateListener.preload.ts';
 import { RoutineProfileRefresher } from './routineProfileRefresh.preload.ts';
 import { isOlderThan } from './util/timestamp.std.ts';
-import { isValidReactionEmoji } from './reactions/isValidReactionEmoji.std.ts';
 import { safeParsePartial } from './util/schemas.std.ts';
 import { PollVoteSchema, PollTerminateSchema } from './types/Polls.dom.ts';
 import type { ConversationModel } from './models/conversations.preload.ts';
@@ -295,6 +294,7 @@ import { initMessageCleanup } from './services/messageStateCleanup.dom.ts';
 import { MessageCache } from './services/MessageCache.preload.ts';
 import { saveAndNotify } from './messages/saveAndNotify.preload.ts';
 import { getBackupKeyHash } from './services/backups/crypto.preload.ts';
+import { Emoji } from './axo/emoji.std.ts';
 
 const { isNumber, throttle } = lodash;
 
@@ -504,12 +504,11 @@ async function startApp(): Promise<void> {
         try {
           await new Promise<void>((resolve, reject) => {
             showConfirmationDialog({
-              dialogName: 'deleteOldIndexedDBData',
-              noMouseClose: true,
-              onTopOfEverything: true,
               cancelText: i18n('icu:quit'),
-              confirmStyle: 'negative',
+              confirmStyle: 'destructive',
               title: i18n('icu:deleteOldIndexedDBData'),
+              // @ts-expect-error ConfirmationDialog migration: Needs description
+              description: null,
               okText: i18n('icu:deleteOldData'),
               reject: () => reject(),
               resolve: () => resolve(),
@@ -1748,6 +1747,7 @@ async function startApp(): Promise<void> {
       }
 
       const postRegistrationSyncsComplete =
+        window.ConversationController.areWePrimaryDevice() ||
         itemStorage.get('postRegistrationSyncsStatus') !== 'incomplete';
 
       // 3. Send any critical sync requests after registration
@@ -1757,10 +1757,8 @@ async function startApp(): Promise<void> {
         setIsInitialContactSync(true);
         contactSyncComplete = waitForEvent('contactSync:complete');
 
-        if (!window.ConversationController.areWePrimaryDevice()) {
-          drop(sendSyncRequests());
-          hasSentSyncRequests = true;
-        }
+        drop(sendSyncRequests());
+        hasSentSyncRequests = true;
       }
 
       // 4. Download (or resume download) of link & sync backup or local backup
@@ -2548,7 +2546,13 @@ async function startApp(): Promise<void> {
 
       const { reaction, timestamp } = data.message;
 
-      if (!isValidReactionEmoji(reaction.emoji)) {
+      if (reaction.emoji == null) {
+        log.warn('Received a reaction without an emoji. Dropping it');
+        confirm();
+        return;
+      }
+
+      if (!Emoji.isEmoji(reaction.emoji)) {
         log.warn('Received an invalid reaction emoji. Dropping it');
         confirm();
         return;
@@ -3104,7 +3108,13 @@ async function startApp(): Promise<void> {
         'Reaction without targetAuthorAci'
       );
 
-      if (!isValidReactionEmoji(reaction.emoji)) {
+      if (reaction.emoji == null) {
+        log.warn('Received a reaction without an emoji. Dropping it');
+        confirm();
+        return;
+      }
+
+      if (!Emoji.isEmoji(reaction.emoji)) {
         log.warn('Received an invalid reaction emoji. Dropping it');
         confirm();
         return;
@@ -3447,14 +3457,18 @@ async function startApp(): Promise<void> {
     try {
       log.info('unlinkAndDisconnect: removing configuration');
 
-      // We use username for integrity check
-      const ourConversation =
-        window.ConversationController.getOurConversation();
-      if (ourConversation) {
-        await ourConversation.updateUsername(undefined, {
-          shouldSave: true,
-          fromStorageService: false,
-        });
+      const weArePrimary = window.ConversationController.areWePrimaryDevice();
+      if (!weArePrimary) {
+        log.info('unlinkAndDisconnect: removing username');
+        // We use username for integrity check
+        const ourConversation =
+          window.ConversationController.getOurConversation();
+        if (ourConversation) {
+          await ourConversation.updateUsername(undefined, {
+            shouldSave: true,
+            fromStorageService: false,
+          });
+        }
       }
 
       // Then make sure outstanding conversation saves are flushed
@@ -3464,7 +3478,7 @@ async function startApp(): Promise<void> {
       await DataReader.getItemById('manifestVersion');
 
       // Finally, conversations in the database, and delete all config tables
-      await signalProtocolStore.removeAllConfiguration();
+      await signalProtocolStore.removeAllConfiguration(weArePrimary);
 
       // Re-hydrate items from memory; removeAllConfiguration above changed database
       await itemStorage.fetch();

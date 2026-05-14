@@ -1,7 +1,7 @@
 // Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as React from 'react';
+import { createRef, useState, useEffect, useRef, type JSX } from 'react';
 import lodash from 'lodash';
 import { action } from '@storybook/addon-actions';
 
@@ -24,7 +24,6 @@ import type { ConversationType } from '../state/ducks/conversations.preload.ts';
 import { AvatarColors } from '../types/Colors.std.ts';
 import type { PropsType } from './CallScreen.dom.tsx';
 import { CallScreen as UnwrappedCallScreen } from './CallScreen.dom.tsx';
-import { DEFAULT_PREFERRED_REACTION_EMOJI } from '../reactions/constants.std.ts';
 import { missingCaseError } from '../util/missingCaseError.std.ts';
 import {
   getAvatarPath,
@@ -37,6 +36,8 @@ import type { CallingImageDataCache } from './CallManager.dom.tsx';
 import { MINUTE } from '../util/durations/index.std.ts';
 import { strictAssert } from '../util/assert.std.ts';
 import { generateAci } from '../test-helpers/serviceIdUtils.std.ts';
+import { renderCallingParticipantMenu } from './CallingParticipantMenu.dom.stories.tsx';
+import { Emoji } from '../axo/emoji.std.ts';
 
 const { sample, shuffle, times } = lodash;
 
@@ -147,7 +148,7 @@ const getRaisedHands = (overrideProps: GroupCallOverrideProps) => {
 
   return new Set<number>(
     overrideProps.remoteParticipants
-      .filter(participant => participant.isHandRaised)
+      .filter(participant => participant.raisedHandOrder !== undefined)
       .map(participant => participant.demuxId)
   );
 };
@@ -235,7 +236,7 @@ const createProps = (
   getPresentingSources: action('get-presenting-sources'),
   hangUpActiveCall: action('hang-up'),
   i18n,
-  imageDataCache: React.createRef<CallingImageDataCache | null>(),
+  imageDataCache: createRef<CallingImageDataCache | null>(),
   isCallLinkAdmin: true,
   me: getDefaultConversation({
     color: AvatarColors[1],
@@ -248,11 +249,11 @@ const createProps = (
   openSystemPreferencesAction: action('open-system-preferences-action'),
   renderReactionPicker: () => <div />,
   cancelPresenting: action('cancel-presenting'),
+  renderCallingParticipantMenu,
   sendGroupCallRaiseHand: action('send-group-call-raise-hand'),
   sendGroupCallReaction: action('send-group-call-reaction'),
   setGroupCallVideoRequest: action('set-group-call-video-request'),
   setLocalAudio: action('set-local-audio'),
-  setLocalAudioRemoteMuted: action('set-local-audio-remote-muted'),
   setLocalPreviewContainer: action('set-local-preview-container'),
   setLocalVideo: action('set-local-video'),
   setRendererCanvas: action('set-renderer-canvas'),
@@ -271,7 +272,7 @@ const createProps = (
   toggleSettings: action('toggle-settings'),
 });
 
-function CallScreen(props: ReturnType<typeof createProps>): React.JSX.Element {
+function CallScreen(props: ReturnType<typeof createProps>): JSX.Element {
   return (
     <CallingToastProvider i18n={i18n}>
       <UnwrappedCallScreen {...props} />
@@ -286,11 +287,11 @@ export default {
   excludeStories: ['allRemoteParticipants'],
 } satisfies Meta<PropsType>;
 
-export function Default(): React.JSX.Element {
+export function Default(): JSX.Element {
   return <CallScreen {...createProps()} />;
 }
 
-export function PreRing(): React.JSX.Element {
+export function PreRing(): JSX.Element {
   return (
     <CallScreen
       {...createProps({
@@ -301,7 +302,7 @@ export function PreRing(): React.JSX.Element {
   );
 }
 
-export function PreRingWithAvatar(): React.JSX.Element {
+export function PreRingWithAvatar(): JSX.Element {
   return (
     <CallScreen
       {...createProps({
@@ -315,7 +316,7 @@ export function PreRingWithAvatar(): React.JSX.Element {
   );
 }
 
-export function DirectRinging(): React.JSX.Element {
+export function DirectRinging(): JSX.Element {
   return (
     <CallScreen
       {...createProps({
@@ -326,7 +327,7 @@ export function DirectRinging(): React.JSX.Element {
   );
 }
 
-export function DirectRingingWithAvatar(): React.JSX.Element {
+export function DirectRingingWithAvatar(): JSX.Element {
   return (
     <CallScreen
       {...createProps({
@@ -340,7 +341,7 @@ export function DirectRingingWithAvatar(): React.JSX.Element {
   );
 }
 
-export function Reconnecting(): React.JSX.Element {
+export function Reconnecting(): JSX.Element {
   return (
     <CallScreen
       {...createProps({
@@ -351,7 +352,7 @@ export function Reconnecting(): React.JSX.Element {
   );
 }
 
-export function ReconnectingWithAvatar(): React.JSX.Element {
+export function ReconnectingWithAvatar(): JSX.Element {
   return (
     <CallScreen
       {...createProps({
@@ -365,7 +366,7 @@ export function ReconnectingWithAvatar(): React.JSX.Element {
   );
 }
 
-export function Ended(): React.JSX.Element {
+export function Ended(): JSX.Element {
   return (
     <CallScreen
       {...createProps({
@@ -376,7 +377,7 @@ export function Ended(): React.JSX.Element {
   );
 }
 
-export function HasLocalAudio(): React.JSX.Element {
+export function HasLocalAudio(): JSX.Element {
   return (
     <CallScreen
       {...createProps({
@@ -387,7 +388,7 @@ export function HasLocalAudio(): React.JSX.Element {
   );
 }
 
-export function HasLocalVideo(): React.JSX.Element {
+export function HasLocalVideo(): JSX.Element {
   return (
     <CallScreen
       {...createProps({
@@ -398,7 +399,7 @@ export function HasLocalVideo(): React.JSX.Element {
   );
 }
 
-export function HasRemoteVideo(): React.JSX.Element {
+export function HasRemoteVideo(): JSX.Element {
   return (
     <CallScreen
       {...createProps({
@@ -409,7 +410,7 @@ export function HasRemoteVideo(): React.JSX.Element {
   );
 }
 
-export function BothSpeaking(): React.JSX.Element {
+export function BothSpeaking(): JSX.Element {
   return (
     <CallScreen
       {...createProps({
@@ -423,7 +424,7 @@ export function BothSpeaking(): React.JSX.Element {
   );
 }
 
-export function SelfViewExpanded(): React.JSX.Element {
+export function SelfViewExpanded(): JSX.Element {
   return (
     <CallScreen
       {...createProps({
@@ -434,7 +435,7 @@ export function SelfViewExpanded(): React.JSX.Element {
   );
 }
 
-export function SelfViewExpandedBothSpeaking(): React.JSX.Element {
+export function SelfViewExpandedBothSpeaking(): JSX.Element {
   return (
     <CallScreen
       {...createProps({
@@ -449,7 +450,7 @@ export function SelfViewExpandedBothSpeaking(): React.JSX.Element {
   );
 }
 
-export function GroupCall1(): React.JSX.Element {
+export function GroupCall1(): JSX.Element {
   return (
     <CallScreen
       {...createProps({
@@ -460,9 +461,10 @@ export function GroupCall1(): React.JSX.Element {
             demuxId: 0,
             hasRemoteAudio: true,
             hasRemoteVideo: true,
-            isHandRaised: false,
+            isOnlyHandRaised: false,
             mediaKeysReceived: true,
             presenting: false,
+            raisedHandOrder: undefined,
             sharingScreen: false,
             videoAspectRatio: 1.3,
             ...getDefaultConversation({
@@ -477,7 +479,7 @@ export function GroupCall1(): React.JSX.Element {
   );
 }
 
-export function GroupCall0(): React.JSX.Element {
+export function GroupCall0(): JSX.Element {
   const props = createProps({
     callMode: CallMode.Group,
     remoteParticipants: [],
@@ -487,7 +489,7 @@ export function GroupCall0(): React.JSX.Element {
   return <CallScreen {...props} />;
 }
 
-export function GroupCallYourHandRaised(): React.JSX.Element {
+export function GroupCallYourHandRaised(): JSX.Element {
   return (
     <CallScreen
       {...createProps({
@@ -498,9 +500,10 @@ export function GroupCallYourHandRaised(): React.JSX.Element {
             demuxId: 0,
             hasRemoteAudio: true,
             hasRemoteVideo: true,
-            isHandRaised: false,
+            isOnlyHandRaised: false,
             mediaKeysReceived: true,
             presenting: false,
+            raisedHandOrder: undefined,
             sharingScreen: false,
             videoAspectRatio: 1.3,
             ...getDefaultConversation({
@@ -521,6 +524,7 @@ const PARTICIPANT_EMOJIS = ['❤️', '🤔', '✨', '😂', '🦄'] as const;
 // We generate these upfront so that the list is stable when you move the slider.
 export const allRemoteParticipants = times(MAX_PARTICIPANTS).map(index => {
   const mediaKeysReceived = (index + 1) % 20 !== 0;
+  const isHandRaised = (index - 3) % 10 === 0;
 
   return {
     aci: generateAci(),
@@ -528,9 +532,10 @@ export const allRemoteParticipants = times(MAX_PARTICIPANTS).map(index => {
     demuxId: index,
     hasRemoteAudio: mediaKeysReceived ? index % 3 !== 0 : false,
     hasRemoteVideo: mediaKeysReceived ? index % 4 !== 0 : false,
-    isHandRaised: (index - 3) % 10 === 0,
+    isOnlyHandRaised: false,
     mediaKeysReceived,
     presenting: false,
+    raisedHandOrder: isHandRaised ? (index - 3) / 10 : undefined,
     sharingScreen: false,
     videoAspectRatio: Math.random() < 0.7 ? 1.3 : Math.random() * 0.4 + 0.6,
     ...getDefaultConversationWithServiceId({
@@ -546,7 +551,7 @@ export const allRemoteParticipants = times(MAX_PARTICIPANTS).map(index => {
   } satisfies GroupCallRemoteParticipantType;
 });
 
-export function GroupCallManyPaginated(): React.JSX.Element {
+export function GroupCallManyPaginated(): JSX.Element {
   const props = createProps({
     callMode: CallMode.Group,
     remoteParticipants: allRemoteParticipants,
@@ -555,8 +560,8 @@ export function GroupCallManyPaginated(): React.JSX.Element {
 
   return <CallScreen {...props} />;
 }
-export function GroupCallManyPaginatedEveryoneTalking(): React.JSX.Element {
-  const [props] = React.useState(
+export function GroupCallManyPaginatedEveryoneTalking(): JSX.Element {
+  const [props] = useState(
     createProps({
       callMode: CallMode.Group,
       remoteParticipants: allRemoteParticipants,
@@ -571,7 +576,7 @@ export function GroupCallManyPaginatedEveryoneTalking(): React.JSX.Element {
   return <CallScreen {...props} activeCall={activeCall} />;
 }
 
-export function GroupCallManyOverflow(): React.JSX.Element {
+export function GroupCallManyOverflow(): JSX.Element {
   return (
     <CallScreen
       {...createProps({
@@ -583,8 +588,8 @@ export function GroupCallManyOverflow(): React.JSX.Element {
   );
 }
 
-export function GroupCallManyOverflowEveryoneTalking(): React.JSX.Element {
-  const [props] = React.useState(
+export function GroupCallManyOverflowEveryoneTalking(): JSX.Element {
+  const [props] = useState(
     createProps({
       callMode: CallMode.Group,
       remoteParticipants: allRemoteParticipants,
@@ -599,7 +604,7 @@ export function GroupCallManyOverflowEveryoneTalking(): React.JSX.Element {
   return <CallScreen {...props} activeCall={activeCall} />;
 }
 
-export function GroupCallSpeakerView(): React.JSX.Element {
+export function GroupCallSpeakerView(): JSX.Element {
   return (
     <CallScreen
       {...createProps({
@@ -611,7 +616,7 @@ export function GroupCallSpeakerView(): React.JSX.Element {
   );
 }
 
-export function GroupCallReconnecting(): React.JSX.Element {
+export function GroupCallReconnecting(): JSX.Element {
   return (
     <CallScreen
       {...createProps({
@@ -623,9 +628,10 @@ export function GroupCallReconnecting(): React.JSX.Element {
             demuxId: 0,
             hasRemoteAudio: true,
             hasRemoteVideo: true,
-            isHandRaised: false,
+            isOnlyHandRaised: false,
             mediaKeysReceived: true,
             presenting: false,
+            raisedHandOrder: undefined,
             sharingScreen: false,
             videoAspectRatio: 1.3,
             ...getDefaultConversation({
@@ -640,7 +646,7 @@ export function GroupCallReconnecting(): React.JSX.Element {
   );
 }
 
-export function GroupCallOutgoingRinging(): React.JSX.Element {
+export function GroupCallOutgoingRinging(): JSX.Element {
   return (
     <CallScreen
       {...createProps({
@@ -651,7 +657,7 @@ export function GroupCallOutgoingRinging(): React.JSX.Element {
   );
 }
 
-export function GroupCallSomeoneIsSharingScreen(): React.JSX.Element {
+export function GroupCallSomeoneIsSharingScreen(): JSX.Element {
   return (
     <CallScreen
       {...createProps({
@@ -668,7 +674,7 @@ export function GroupCallSomeoneIsSharingScreen(): React.JSX.Element {
   );
 }
 
-export function GroupCallSomeoneIsSharingScreenAndYoureReconnecting(): React.JSX.Element {
+export function GroupCallSomeoneIsSharingScreenAndYoureReconnecting(): JSX.Element {
   return (
     <CallScreen
       {...createProps({
@@ -686,8 +692,8 @@ export function GroupCallSomeoneIsSharingScreenAndYoureReconnecting(): React.JSX
   );
 }
 
-export function GroupCallSomeoneStoppedSharingScreen(): React.JSX.Element {
-  const [remoteParticipants, setRemoteParticipants] = React.useState(
+export function GroupCallSomeoneStoppedSharingScreen(): JSX.Element {
+  const [remoteParticipants, setRemoteParticipants] = useState(
     allRemoteParticipants.slice(0, 5).map((participant, index) => ({
       ...participant,
       presenting: index === 1,
@@ -695,7 +701,7 @@ export function GroupCallSomeoneStoppedSharingScreen(): React.JSX.Element {
     }))
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     setTimeout(
       () => setRemoteParticipants(allRemoteParticipants.slice(0, 5)),
       1000
@@ -714,8 +720,8 @@ export function GroupCallSomeoneStoppedSharingScreen(): React.JSX.Element {
 
 function ToastEmitter(): null {
   const { showToast } = useCallingToasts();
-  const toastCount = React.useRef(0);
-  React.useEffect(() => {
+  const toastCount = useRef(0);
+  useEffect(() => {
     const interval = setInterval(() => {
       const autoClose = toastCount.current % 2 === 0;
       showToast({
@@ -733,7 +739,7 @@ function ToastEmitter(): null {
   return null;
 }
 
-export function CallScreenToastAPalooza(): React.JSX.Element {
+export function CallScreenToastAPalooza(): JSX.Element {
   return (
     <CallingToastProvider i18n={i18n}>
       <UnwrappedCallScreen {...createProps()} />
@@ -746,8 +752,8 @@ function useMakeEveryoneTalk(
   activeCall: ActiveGroupCallType,
   frequency = 2000
 ) {
-  const [call, setCall] = React.useState(activeCall);
-  React.useEffect(() => {
+  const [call, setCall] = useState(activeCall);
+  useEffect(() => {
     const interval = setInterval(() => {
       const idxToStartSpeaking = Math.floor(
         Math.random() * call.remoteParticipants.length
@@ -785,9 +791,9 @@ function useMakeEveryoneTalk(
   return call;
 }
 
-export function GroupCallReactions(): React.JSX.Element {
+export function GroupCallReactions(): JSX.Element {
   const remoteParticipants = allRemoteParticipants.slice(0, 5);
-  const [props] = React.useState(
+  const [props] = useState(
     createProps({
       callMode: CallMode.Group,
       remoteParticipants,
@@ -802,9 +808,9 @@ export function GroupCallReactions(): React.JSX.Element {
   return <CallScreen {...props} activeCall={activeCall} />;
 }
 
-export function GroupCallReactionsSpam(): React.JSX.Element {
+export function GroupCallReactionsSpam(): JSX.Element {
   const remoteParticipants = allRemoteParticipants.slice(0, 3);
-  const [props] = React.useState(
+  const [props] = useState(
     createProps({
       callMode: CallMode.Group,
       remoteParticipants,
@@ -820,9 +826,9 @@ export function GroupCallReactionsSpam(): React.JSX.Element {
   return <CallScreen {...props} activeCall={activeCall} />;
 }
 
-export function GroupCallReactionsSkinTones(): React.JSX.Element {
+export function GroupCallReactionsSkinTones(): JSX.Element {
   const remoteParticipants = allRemoteParticipants.slice(0, 3);
-  const [props] = React.useState(
+  const [props] = useState(
     createProps({
       callMode: CallMode.Group,
       remoteParticipants,
@@ -833,25 +839,36 @@ export function GroupCallReactionsSkinTones(): React.JSX.Element {
   const activeCall = useReactionsEmitter({
     activeCall: props.activeCall as ActiveGroupCallType,
     frequency: 500,
-    emojis: ['👍', '👍🏻', '👍🏼', '👍🏽', '👍🏾', '👍🏿', '❤️', '😂', '😮', '😢'],
+    emojis: [
+      Emoji.getVariant(Emoji.THUMBS_UP, Emoji.SkinTone.None),
+      Emoji.getVariant(Emoji.THUMBS_UP, Emoji.SkinTone.Type1),
+      Emoji.getVariant(Emoji.THUMBS_UP, Emoji.SkinTone.Type2),
+      Emoji.getVariant(Emoji.THUMBS_UP, Emoji.SkinTone.Type3),
+      Emoji.getVariant(Emoji.THUMBS_UP, Emoji.SkinTone.Type4),
+      Emoji.getVariant(Emoji.THUMBS_UP, Emoji.SkinTone.Type5),
+      Emoji.HEART,
+      Emoji.JOY,
+      Emoji.OPEN_MOUTH,
+      Emoji.CRY,
+    ],
   });
 
   return <CallScreen {...props} activeCall={activeCall} />;
 }
 
-export function GroupCallReactionsManyInOrder(): React.JSX.Element {
+export function GroupCallReactionsManyInOrder(): JSX.Element {
   const timestamp = Date.now();
   const remoteParticipants = allRemoteParticipants.slice(0, 5);
   const reactions = remoteParticipants.map((participant, i) => {
     const { demuxId } = participant;
-    const value =
-      DEFAULT_PREFERRED_REACTION_EMOJI[
-        i % DEFAULT_PREFERRED_REACTION_EMOJI.length
-      ];
+    const defaults = Emoji.getDefaultPreferredReactionEmojis(
+      Emoji.SkinTone.None
+    );
+    const value = defaults[i % defaults.length];
     strictAssert(value, 'Missing value');
     return { timestamp, demuxId, value };
   });
-  const [props] = React.useState(
+  const [props] = useState(
     createProps({
       callMode: CallMode.Group,
       remoteParticipants,
@@ -867,15 +884,15 @@ function useReactionsEmitter({
   activeCall,
   frequency = 2000,
   removeAfter = 5000,
-  emojis = DEFAULT_PREFERRED_REACTION_EMOJI,
+  emojis = Emoji.getDefaultPreferredReactionEmojis(Emoji.SkinTone.None),
 }: {
   activeCall: ActiveGroupCallType;
   frequency?: number;
   removeAfter?: number;
-  emojis?: Array<string>;
+  emojis?: ReadonlyArray<Emoji.Variant>;
 }) {
-  const [call, setCall] = React.useState(activeCall);
-  React.useEffect(() => {
+  const [call, setCall] = useState(activeCall);
+  useEffect(() => {
     const interval = setInterval(() => {
       setCall(state => {
         const timeNow = Date.now();
@@ -911,9 +928,9 @@ function useReactionsEmitter({
   return call;
 }
 
-export function GroupCallHandRaising(): React.JSX.Element {
+export function GroupCallHandRaising(): JSX.Element {
   const remoteParticipants = allRemoteParticipants.slice(0, 10);
-  const [props] = React.useState(
+  const [props] = useState(
     createProps({
       callMode: CallMode.Group,
       remoteParticipants,
@@ -926,10 +943,10 @@ export function GroupCallHandRaising(): React.JSX.Element {
   return <CallScreen {...props} activeCall={activeCall} />;
 }
 
-export function GroupCallSuggestLowerHand(): React.JSX.Element {
+export function GroupCallSuggestLowerHand(): JSX.Element {
   const remoteParticipants = allRemoteParticipants.slice(0, 10);
 
-  const [props, setProps] = React.useState(
+  const [props, setProps] = useState(
     createProps({
       callMode: CallMode.Group,
       remoteParticipants,
@@ -939,7 +956,7 @@ export function GroupCallSuggestLowerHand(): React.JSX.Element {
     })
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     setTimeout(
       () =>
         setProps(
@@ -965,8 +982,8 @@ function useHandRaiser(
   min = 0,
   max = 5
 ) {
-  const [call, setCall] = React.useState(activeCall);
-  React.useEffect(() => {
+  const [call, setCall] = useState(activeCall);
+  useEffect(() => {
     const interval = setInterval(() => {
       setCall(state => {
         const participantsCount = call.remoteParticipants.length;
@@ -978,10 +995,17 @@ function useHandRaiser(
 
         const participantIndicesSet = new Set(participantIndices);
         const remoteParticipants = [...call.remoteParticipants].map(
-          (participant, index) => {
+          (participant, index): GroupCallRemoteParticipantType => {
+            const raisedHandOrderRaw = participantIndices.indexOf(index);
+            const raisedHandOrder =
+              raisedHandOrderRaw === -1 ? undefined : raisedHandOrderRaw;
+            const isOnlyHandRaised =
+              participantIndicesSet.size === 1 &&
+              participantIndicesSet.has(index);
             return {
               ...participant,
-              isHandRaised: participantIndicesSet.has(index),
+              raisedHandOrder,
+              isOnlyHandRaised,
             };
           }
         );
@@ -1006,7 +1030,7 @@ function useHandRaiser(
   return call;
 }
 
-export function GroupCallSomeoneMissingMediaKeys(): React.JSX.Element {
+export function GroupCallSomeoneMissingMediaKeys(): JSX.Element {
   return (
     <CallScreen
       {...createProps({
@@ -1025,7 +1049,7 @@ export function GroupCallSomeoneMissingMediaKeys(): React.JSX.Element {
   );
 }
 
-export function GroupCallSomeoneBlocked(): React.JSX.Element {
+export function GroupCallSomeoneBlocked(): JSX.Element {
   return (
     <CallScreen
       {...createProps({
@@ -1041,7 +1065,7 @@ export function GroupCallSomeoneBlocked(): React.JSX.Element {
   );
 }
 
-export function CallLinkUnknownContactMissingMediaKeys(): React.JSX.Element {
+export function CallLinkUnknownContactMissingMediaKeys(): JSX.Element {
   return (
     <CallScreen
       {...createProps({
@@ -1064,12 +1088,12 @@ export function CallLinkUnknownContactMissingMediaKeys(): React.JSX.Element {
   );
 }
 
-export function RemoteMuteYouRemoteMutedByOther(): React.JSX.Element {
+export function RemoteMuteYouRemoteMutedByOther(): JSX.Element {
   // Should show you're muted by another
-  const [props, setProps] = React.useState(() =>
+  const [props, setProps] = useState(() =>
     createProps({ callMode: CallMode.Group })
   );
-  React.useEffect(() => {
+  useEffect(() => {
     setProps(
       createProps({
         callMode: CallMode.Group,
@@ -1082,13 +1106,13 @@ export function RemoteMuteYouRemoteMutedByOther(): React.JSX.Element {
   return <CallScreen {...props} />;
 }
 
-export function RemoteMuteYouRemoteMutedBySelf(): React.JSX.Element {
+export function RemoteMuteYouRemoteMutedBySelf(): JSX.Element {
   // Should show you're muted by yourself
-  const [props, setProps] = React.useState(() =>
+  const [props, setProps] = useState(() =>
     createProps({ callMode: CallMode.Group })
   );
   const myAci = conversation.serviceId as AciString;
-  React.useEffect(() => {
+  useEffect(() => {
     setProps(
       createProps({
         callMode: CallMode.Group,
@@ -1098,9 +1122,10 @@ export function RemoteMuteYouRemoteMutedBySelf(): React.JSX.Element {
             demuxId: 0,
             hasRemoteAudio: true,
             hasRemoteVideo: true,
-            isHandRaised: false,
+            isOnlyHandRaised: false,
             mediaKeysReceived: true,
             presenting: false,
+            raisedHandOrder: undefined,
             sharingScreen: false,
             videoAspectRatio: 1.3,
             ...getDefaultConversation({
@@ -1120,12 +1145,12 @@ export function RemoteMuteYouRemoteMutedBySelf(): React.JSX.Element {
   return <CallScreen {...props} />;
 }
 
-export function RemoteMuteObserveMuteYouSent(): React.JSX.Element {
+export function RemoteMuteObserveMuteYouSent(): JSX.Element {
   // Should show you muted someone else
-  const [props, setProps] = React.useState(() =>
+  const [props, setProps] = useState(() =>
     createProps({ callMode: CallMode.Group })
   );
-  React.useEffect(() => {
+  useEffect(() => {
     setProps(
       createProps({
         callMode: CallMode.Group,
@@ -1137,12 +1162,12 @@ export function RemoteMuteObserveMuteYouSent(): React.JSX.Element {
   return <CallScreen {...props} />;
 }
 
-export function RemoteMuteObserveMuteOtherSent(): React.JSX.Element {
+export function RemoteMuteObserveMuteOtherSent(): JSX.Element {
   // Should show someone else muted a third person
-  const [props, setProps] = React.useState(() =>
+  const [props, setProps] = useState(() =>
     createProps({ callMode: CallMode.Group })
   );
-  React.useEffect(() => {
+  useEffect(() => {
     setProps(
       createProps({
         callMode: CallMode.Group,
@@ -1154,13 +1179,13 @@ export function RemoteMuteObserveMuteOtherSent(): React.JSX.Element {
   return <CallScreen {...props} />;
 }
 
-export function RemoteMuteObserveIgnoreSelfMute(): React.JSX.Element {
+export function RemoteMuteObserveIgnoreSelfMute(): JSX.Element {
   // Should show nothing because the ACIs match
-  const [props, setProps] = React.useState(() =>
+  const [props, setProps] = useState(() =>
     createProps({ callMode: CallMode.Group })
   );
   const myAci = conversation.serviceId as AciString;
-  React.useEffect(() => {
+  useEffect(() => {
     setProps(
       createProps({
         callMode: CallMode.Group,
@@ -1170,9 +1195,10 @@ export function RemoteMuteObserveIgnoreSelfMute(): React.JSX.Element {
             demuxId: 0,
             hasRemoteAudio: true,
             hasRemoteVideo: true,
-            isHandRaised: false,
+            isOnlyHandRaised: false,
             mediaKeysReceived: true,
             presenting: false,
+            raisedHandOrder: undefined,
             sharingScreen: false,
             videoAspectRatio: 1.3,
             ...getDefaultConversation({
@@ -1192,7 +1218,7 @@ export function RemoteMuteObserveIgnoreSelfMute(): React.JSX.Element {
   return <CallScreen {...props} />;
 }
 
-export function ShowNeedsScreenRecordingPermissionsWarning(): React.JSX.Element {
+export function ShowNeedsScreenRecordingPermissionsWarning(): JSX.Element {
   return (
     <CallScreen
       {...createProps({

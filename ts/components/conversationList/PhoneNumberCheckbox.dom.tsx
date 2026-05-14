@@ -1,11 +1,8 @@
 // Copyright 2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { FunctionComponent } from 'react';
-import React, { useState } from 'react';
-
-import { ButtonVariant } from '../Button.dom.tsx';
-import { ConfirmationDialog } from '../ConfirmationDialog.dom.tsx';
+import type { FunctionComponent, JSX } from 'react';
+import { useState, memo, useCallback } from 'react';
 import { SPINNER_CLASS_NAME } from './BaseConversationListItem.dom.tsx';
 import type { ParsedE164Type } from '../../util/libphonenumberInstance.std.ts';
 import type { LocalizerType, ThemeType } from '../../types/Util.std.ts';
@@ -15,6 +12,7 @@ import { ListTile } from '../ListTile.dom.tsx';
 import { Avatar, AvatarSize } from '../Avatar.dom.tsx';
 import { Spinner } from '../Spinner.dom.tsx';
 import { UserText } from '../UserText.dom.tsx';
+import { AxoConfirmDialog } from '../../axo/AxoConfirmDialog.dom.tsx';
 
 export type PropsDataType = {
   phoneNumber: ParsedE164Type;
@@ -30,7 +28,7 @@ type PropsHousekeepingType = {
 
 type PropsType = PropsDataType & PropsHousekeepingType;
 
-export const PhoneNumberCheckbox: FunctionComponent<PropsType> = React.memo(
+export const PhoneNumberCheckbox: FunctionComponent<PropsType> = memo(
   function PhoneNumberCheckbox({
     phoneNumber,
     isChecked,
@@ -43,7 +41,7 @@ export const PhoneNumberCheckbox: FunctionComponent<PropsType> = React.memo(
   }) {
     const [isModalVisible, setIsModalVisible] = useState(false);
 
-    const onClickItem = React.useCallback(async () => {
+    const onClickItem = useCallback(async () => {
       if (!phoneNumber.isValid) {
         setIsModalVisible(true);
         return;
@@ -74,20 +72,20 @@ export const PhoneNumberCheckbox: FunctionComponent<PropsType> = React.memo(
       phoneNumber,
     ]);
 
-    let modal: React.JSX.Element | undefined;
+    let modal: JSX.Element | undefined;
     if (isModalVisible) {
       modal = (
-        <ConfirmationDialog
-          dialogName="PhoneNumberCheckbox.invalidPhoneNumber"
-          cancelText={i18n('icu:ok')}
-          cancelButtonVariant={ButtonVariant.Secondary}
-          i18n={i18n}
-          onClose={() => setIsModalVisible(false)}
-        >
-          {i18n('icu:startConversation--phone-number-not-valid', {
+        <AxoConfirmDialog.Root
+          open
+          onOpenChange={() => setIsModalVisible(false)}
+          // @ts-expect-error ConfirmationDialog migration: Needs title
+          title={null}
+          description={i18n('icu:startConversation--phone-number-not-valid', {
             phoneNumber: phoneNumber.userInput,
           })}
-        </ConfirmationDialog>
+        >
+          <AxoConfirmDialog.Cancel>{i18n('icu:ok')}</AxoConfirmDialog.Cancel>
+        </AxoConfirmDialog.Root>
       );
     }
 

@@ -1,8 +1,8 @@
 // Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { ReactNode } from 'react';
-import React, { useState } from 'react';
+import type { ReactNode, JSX } from 'react';
+import { useState } from 'react';
 
 import { Avatar, AvatarBlur, AvatarSize } from '../../Avatar.dom.tsx';
 import { AvatarLightbox } from '../../AvatarLightbox.dom.tsx';
@@ -19,6 +19,7 @@ import { InContactsIcon } from '../../InContactsIcon.dom.tsx';
 import type { ContactModalStateType } from '../../../types/globalModals.std.ts';
 import { tw } from '../../../axo/tw.dom.tsx';
 import { AxoSymbol } from '../../../axo/AxoSymbol.dom.tsx';
+import { OfficialChatInlineBadge } from '../OfficialChatInlineBadge.dom.tsx';
 
 export type Props = {
   areWeASubscriber: boolean;
@@ -30,6 +31,7 @@ export type Props = {
   isMe: boolean;
   isSignalConversation: boolean;
   membersCount: number | null;
+  onNavigateToDonate: () => void;
   pendingAvatarDownload: boolean;
   startAvatarDownload: () => void;
   startEditing: (isGroupTitle: boolean) => void;
@@ -52,12 +54,13 @@ export function ConversationDetailsHeader({
   isMe,
   isSignalConversation,
   membersCount,
+  onNavigateToDonate,
   pendingAvatarDownload,
   startAvatarDownload,
   startEditing,
   toggleAboutContactModal,
   theme,
-}: Props): React.JSX.Element {
+}: Props): JSX.Element {
   const [activeModal, setActiveModal] = useState<
     undefined | ConversationDetailsHeaderActiveModal
   >();
@@ -154,6 +157,10 @@ export function ConversationDetailsHeader({
           onClose={() => {
             setActiveModal(undefined);
           }}
+          onDonate={() => {
+            setActiveModal(undefined);
+            onNavigateToDonate();
+          }}
           title={conversation.title}
         />
       );
@@ -211,20 +218,22 @@ export function ConversationDetailsHeader({
     );
   }
 
-  let title: React.JSX.Element;
+  let title: JSX.Element;
 
   if (isMe) {
     title = (
       <div className="ConversationDetailsHeader__title">
         {i18n('icu:noteToSelf')}
-        <span className="ContactModal__official-badge__large" />
+        &nbsp;
+        <OfficialChatInlineBadge />
       </div>
     );
   } else if (isSignalConversation) {
     title = (
       <div className="ConversationDetailsHeader__title">
         <UserText text={conversation.title} />
-        <span className="ContactModal__official-badge__large" />
+        &nbsp;
+        <OfficialChatInlineBadge />
       </div>
     );
   } else if (isGroup) {

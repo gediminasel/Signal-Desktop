@@ -1,10 +1,9 @@
 // Copyright 2023 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React from 'react';
-import type { ReactElement } from 'react';
+import { useMemo } from 'react';
+import type { ReactElement, JSX } from 'react';
 import classNames from 'classnames';
-import emojiRegex from 'emoji-regex';
 import lodash from 'lodash';
 
 import { linkify, SUPPORTED_PROTOCOLS } from './Linkify.dom.tsx';
@@ -26,10 +25,10 @@ import { Emojify } from './Emojify.dom.tsx';
 import { AddNewLines } from './AddNewLines.dom.tsx';
 import type { LocalizerType } from '../../types/Util.std.ts';
 import type { FunJumboEmojiSize } from '../fun/FunEmoji.dom.tsx';
+import { Emoji } from '../../axo/emoji.std.ts';
 
 const { sortBy } = lodash;
 
-const EMOJI_REGEXP = emojiRegex();
 export enum RenderLocation {
   ConversationList = 'ConversationList',
   Quote = 'Quote',
@@ -69,8 +68,8 @@ export function MessageTextRenderer({
   renderLocation,
   textLength,
   originalMessageText,
-}: Props): React.JSX.Element {
-  const finalNodes = React.useMemo(() => {
+}: Props): JSX.Element {
+  const finalNodes = useMemo(() => {
     const links = disableLinks
       ? []
       : extractLinks(messageText, originalMessageText);
@@ -474,7 +473,7 @@ function extractLinks(
   // to support emojis immediately before links
   // we replace emojis with a space for each byte
   const matches = linkify.match(
-    originalMessageText.replace(EMOJI_REGEXP, s => ' '.repeat(s.length))
+    Emoji.replaceEmojiWithSpaces(originalMessageText)
   );
 
   let result: Array<{ start: number; length: number; url: string }> = [];

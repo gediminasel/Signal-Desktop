@@ -1,8 +1,8 @@
 // Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { FunctionComponent } from 'react';
-import React, { useMemo, useState } from 'react';
+import type { FunctionComponent, JSX } from 'react';
+import { useMemo, useState, memo } from 'react';
 
 import { HEADER_CONTACT_NAME_CLASS_NAME } from './BaseConversationListItem.dom.tsx';
 import type { ConversationType } from '../../state/ducks/conversations.preload.ts';
@@ -14,10 +14,10 @@ import { ListTile } from '../ListTile.dom.tsx';
 import { Avatar, AvatarSize } from '../Avatar.dom.tsx';
 import { ContextMenu } from '../ContextMenu.dom.tsx';
 import { I18n } from '../I18n.dom.tsx';
-import { ConfirmationDialog } from '../ConfirmationDialog.dom.tsx';
 import { isSignalConversation } from '../../util/isSignalConversation.dom.ts';
 import { isInSystemContacts } from '../../util/isInSystemContacts.std.ts';
 import { InContactsIcon } from '../InContactsIcon.dom.tsx';
+import { AxoConfirmDialog } from '../../axo/AxoConfirmDialog.dom.tsx';
 
 export type ContactListItemConversationType = Pick<
   ConversationType,
@@ -58,7 +58,7 @@ type PropsHousekeepingType = {
 
 type PropsType = PropsDataType & PropsHousekeepingType;
 
-export const ContactListItem: FunctionComponent<PropsType> = React.memo(
+export const ContactListItem: FunctionComponent<PropsType> = memo(
   function ContactListItem({
     about,
     avatarUrl,
@@ -154,7 +154,7 @@ export const ContactListItem: FunctionComponent<PropsType> = React.memo(
     const messageText =
       about && !isMe ? <About className="" text={about} /> : undefined;
 
-    let trailing: React.JSX.Element | undefined;
+    let trailing: JSX.Element | undefined;
     if (hasContextMenu) {
       trailing = (
         <ContextMenu
@@ -168,15 +168,14 @@ export const ContactListItem: FunctionComponent<PropsType> = React.memo(
       );
     }
 
-    let blockConfirmation: React.JSX.Element | undefined;
-    let removeConfirmation: React.JSX.Element | undefined;
+    let blockConfirmation: JSX.Element | undefined;
+    let removeConfirmation: JSX.Element | undefined;
 
     if (isConfirmingBlocking) {
       blockConfirmation = (
-        <ConfirmationDialog
-          dialogName="ContactListItem.blocking"
-          i18n={i18n}
-          onClose={() => setConfirmingBlocking(false)}
+        <AxoConfirmDialog.Root
+          open
+          onOpenChange={() => setConfirmingBlocking(false)}
           title={
             <I18n
               i18n={i18n}
@@ -186,16 +185,16 @@ export const ContactListItem: FunctionComponent<PropsType> = React.memo(
               }}
             />
           }
-          actions={[
-            {
-              text: i18n('icu:MessageRequests--block'),
-              action: () => onBlock?.(id),
-              style: 'negative',
-            },
-          ]}
+          description={i18n('icu:MessageRequests--block-direct-confirm-body')}
         >
-          {i18n('icu:MessageRequests--block-direct-confirm-body')}
-        </ConfirmationDialog>
+          <AxoConfirmDialog.Cancel />
+          <AxoConfirmDialog.Action
+            variant="destructive"
+            onClick={() => onBlock?.(id)}
+          >
+            {i18n('icu:MessageRequests--block')}
+          </AxoConfirmDialog.Action>
+        </AxoConfirmDialog.Root>
       );
     }
 
@@ -204,11 +203,9 @@ export const ContactListItem: FunctionComponent<PropsType> = React.memo(
         isInSystemContacts({ type, name, systemGivenName, systemFamilyName })
       ) {
         removeConfirmation = (
-          <ConfirmationDialog
-            key="ContactListItem.systemContact"
-            dialogName="ContactListItem.systemContact"
-            i18n={i18n}
-            onClose={() => setConfirmingRemoving(false)}
+          <AxoConfirmDialog.Root
+            open
+            onOpenChange={() => setConfirmingRemoving(false)}
             title={
               <I18n
                 i18n={i18n}
@@ -218,18 +215,18 @@ export const ContactListItem: FunctionComponent<PropsType> = React.memo(
                 }}
               />
             }
-            cancelText={i18n('icu:Confirmation--confirm')}
+            description={i18n('icu:ContactListItem__remove-system--body')}
           >
-            {i18n('icu:ContactListItem__remove-system--body')}
-          </ConfirmationDialog>
+            <AxoConfirmDialog.Cancel>
+              {i18n('icu:Confirmation--confirm')}
+            </AxoConfirmDialog.Cancel>
+          </AxoConfirmDialog.Root>
         );
       } else {
         removeConfirmation = (
-          <ConfirmationDialog
-            key="ContactListItem.removing"
-            dialogName="ContactListItem.removing"
-            i18n={i18n}
-            onClose={() => setConfirmingRemoving(false)}
+          <AxoConfirmDialog.Root
+            open
+            onOpenChange={() => setConfirmingRemoving(false)}
             title={
               <I18n
                 i18n={i18n}
@@ -239,16 +236,16 @@ export const ContactListItem: FunctionComponent<PropsType> = React.memo(
                 }}
               />
             }
-            actions={[
-              {
-                text: i18n('icu:ContactListItem__remove--confirm'),
-                action: () => onRemove?.(id),
-                style: 'negative',
-              },
-            ]}
+            description={i18n('icu:ContactListItem__remove--body')}
           >
-            {i18n('icu:ContactListItem__remove--body')}
-          </ConfirmationDialog>
+            <AxoConfirmDialog.Cancel />
+            <AxoConfirmDialog.Action
+              variant="destructive"
+              onClick={() => onRemove?.(id)}
+            >
+              {i18n('icu:ContactListItem__remove--confirm')}
+            </AxoConfirmDialog.Action>
+          </AxoConfirmDialog.Root>
         );
       }
     }

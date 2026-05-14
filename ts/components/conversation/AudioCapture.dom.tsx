@@ -1,7 +1,7 @@
 // Copyright 2016 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, { useCallback } from 'react';
+import { useCallback, type JSX } from 'react';
 
 import type { ShowToastAction } from '../../state/ducks/toast.preload.ts';
 import type { AttachmentDraftType } from '../../types/Attachment.std.ts';
@@ -17,6 +17,7 @@ export type PropsType = {
   draftAttachments: ReadonlyArray<AttachmentDraftType>;
   i18n: LocalizerType;
   startRecording: (id: string) => unknown;
+  warmupRecording: () => void;
   showToast: ShowToastAction;
 };
 
@@ -25,8 +26,9 @@ export function AudioCapture({
   draftAttachments,
   i18n,
   startRecording,
+  warmupRecording,
   showToast,
-}: PropsType): React.JSX.Element {
+}: PropsType): JSX.Element {
   const recordConversation = useCallback(
     () => startRecording(conversationId),
     [conversationId, startRecording]
@@ -42,12 +44,18 @@ export function AudioCapture({
     }
   }, [conversationId, draftAttachments, showToast, startRecording]);
 
+  const handleWarmup = useCallback(() => {
+    warmupRecording();
+  }, [warmupRecording]);
+
   return (
     <div className="AudioCapture">
       <button
         aria-label={i18n('icu:voiceRecording--start')}
         className="AudioCapture__microphone"
         onClick={handleClick}
+        onMouseEnter={handleWarmup}
+        onFocus={handleWarmup}
         title={i18n('icu:voiceRecording--start')}
         type="button"
       />

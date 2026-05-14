@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { Meta, StoryFn } from '@storybook/react';
-import React, { useState } from 'react';
-import type { MutableRefObject } from 'react';
+import { useState } from 'react';
+import type { MutableRefObject, JSX } from 'react';
 import { action } from '@storybook/addon-actions';
 import lodash from 'lodash';
 
@@ -12,7 +12,6 @@ import { DEFAULT_CONVERSATION_COLOR } from '../types/Colors.std.ts';
 import { PhoneNumberSharingMode } from '../types/PhoneNumberSharingMode.std.ts';
 import { PhoneNumberDiscoverability } from '../util/phoneNumberDiscoverability.std.ts';
 import { sleep } from '../util/sleep.std.ts';
-import { EmojiSkinTone } from './fun/data/emojis.std.ts';
 import {
   DAY,
   DurationInSeconds,
@@ -61,6 +60,7 @@ import type { ExternalProps as SmartNotificationProfilesProps } from '../state/s
 import type { NotificationProfileIdString } from '../types/NotificationProfile.std.ts';
 import type { ExportResultType } from '../services/backups/types.std.ts';
 import { BackupLevel } from '../services/backups/types.std.ts';
+import { Emoji } from '../axo/emoji.std.ts';
 
 const { shuffle } = lodash;
 
@@ -177,7 +177,7 @@ const donationAmountsConfig = {
 
 function renderUpdateDialog(
   props: Readonly<{ containerWidthBreakpoint: WidthBreakpoint }>
-): React.JSX.Element {
+): JSX.Element {
   return (
     <DialogUpdate
       i18n={i18n}
@@ -198,7 +198,7 @@ function renderProfileEditor({
   contentsRef,
 }: {
   contentsRef: MutableRefObject<HTMLDivElement | null>;
-}): React.JSX.Element {
+}): JSX.Element {
   return (
     <ProfileEditor
       aboutEmoji={undefined}
@@ -258,7 +258,7 @@ function renderDonationsPane(props: {
   ) => Promise<Blob>;
   showToast: (toast: AnyToast) => void;
   workflow?: DonationWorkflow;
-}): React.JSX.Element {
+}): JSX.Element {
   return (
     <PreferencesDonations
       applyDonationBadge={action('applyDonationBadge')}
@@ -294,13 +294,13 @@ function renderDonationsPane(props: {
   );
 }
 
-function renderToastManager(): React.JSX.Element {
+function renderToastManager(): JSX.Element {
   return <div />;
 }
 
 function renderPreferencesChatFoldersPage(
   props: SmartPreferencesChatFoldersPageProps
-): React.JSX.Element {
+): JSX.Element {
   return (
     <PreferencesChatFoldersPage
       i18n={i18n}
@@ -318,7 +318,7 @@ function renderPreferencesChatFoldersPage(
 
 function renderPreferencesEditChatFolderPage(
   props: SmartPreferencesEditChatFolderPageProps
-): React.JSX.Element {
+): JSX.Element {
   return (
     <PreferencesEditChatFolderPage
       i18n={i18n}
@@ -343,7 +343,7 @@ function renderPreferencesEditChatFolderPage(
 
 function renderNotificationProfilesCreateFlow(
   props: SmartNotificationProfilesProps
-): React.JSX.Element {
+): JSX.Element {
   return (
     <NotificationProfilesCreateFlow
       contentsRef={props.contentsRef}
@@ -360,7 +360,7 @@ function renderNotificationProfilesCreateFlow(
 
 function renderNotificationProfilesHome(
   props: SmartNotificationProfilesProps
-): React.JSX.Element {
+): JSX.Element {
   return (
     <NotificationProfilesHome
       activeProfileId={undefined}
@@ -424,12 +424,13 @@ export default {
     backupSubscriptionStatus: { status: 'not-found' },
     backupTier: null,
     badge: undefined,
-    blockedCount: 0,
+    blockedContacts: [],
+    blockedGroups: [],
     currentChatFoldersCount: 0,
     customColors: {},
     defaultConversationColor: DEFAULT_CONVERSATION_COLOR,
     deviceName: 'Work Windows ME',
-    emojiSkinToneDefault: EmojiSkinTone.None,
+    emojiSkinToneDefault: Emoji.SkinTone.None,
     phoneNumber: '+1 555 123-4567',
     hasAnyCurrentCustomChatFolders: false,
     hasAudioNotifications: true,
@@ -505,6 +506,7 @@ export default {
     themeSetting: 'system',
     theme: ThemeType.light,
     universalExpireTimer: DurationInSeconds.HOUR,
+    weArePrimaryDevice: false,
     whoCanFindMe: PhoneNumberDiscoverability.Discoverable,
     whoCanSeeMe: PhoneNumberSharingMode.Everybody,
     zoomFactor: 1,
@@ -554,6 +556,7 @@ export default {
     getMessageSampleForSchemaVersion: async () => [
       { id: 'messageId' } as MessageAttributesType,
     ],
+    getPreferredBadge: () => undefined,
     makeSyncRequest: action('makeSyncRequest'),
     onAudioNotificationsChange: action('onAudioNotificationsChange'),
     onAutoConvertEmojiChange: action('onAutoConvertEmojiChange'),
@@ -754,7 +757,7 @@ const threeProfiles = [
   {
     id: 'Weekday' as NotificationProfileIdString,
     name: 'Weekday',
-    emoji: '😬',
+    emoji: Emoji.GRIMACING,
     color: 0xffe3e3fe,
 
     createdAtMs: Date.now(),
@@ -783,7 +786,7 @@ const threeProfiles = [
   {
     id: 'Weekend' as NotificationProfileIdString,
     name: 'Weekend',
-    emoji: '❤️‍🔥',
+    emoji: Emoji.HEART_ON_FIRE,
     color: 0xffd7d7d9,
 
     createdAtMs: Date.now(),
@@ -1030,16 +1033,56 @@ Internal.args = {
   isInternalUser: true,
 };
 
-export const Blocked1 = Template.bind({});
-Blocked1.args = {
-  blockedCount: 1,
+export const PrivacyBlocked1Contact = Template.bind({});
+PrivacyBlocked1Contact.args = {
+  blockedContacts: [getDefaultConversation()],
   settingsLocation: { page: SettingsPage.Privacy },
 };
 
-export const BlockedMany = Template.bind({});
-BlockedMany.args = {
-  blockedCount: 55,
+export const PrivacyBlocked1Group = Template.bind({});
+PrivacyBlocked1Group.args = {
+  blockedGroups: [getDefaultConversation()],
   settingsLocation: { page: SettingsPage.Privacy },
+};
+
+export const PrivacyBlocked1Both = Template.bind({});
+PrivacyBlocked1Both.args = {
+  blockedContacts: [getDefaultConversation()],
+  blockedGroups: [getDefaultConversation()],
+  settingsLocation: { page: SettingsPage.Privacy },
+};
+
+export const PrivacyBlockedManyContacts = Template.bind({});
+PrivacyBlockedManyContacts.args = {
+  blockedContacts: new Array(55)
+    .fill(undefined)
+    .map(() => getDefaultConversation()),
+  settingsLocation: { page: SettingsPage.Privacy },
+};
+
+export const PrivacyBlockedManyGroups = Template.bind({});
+PrivacyBlockedManyGroups.args = {
+  blockedGroups: new Array(55)
+    .fill(undefined)
+    .map(() => getDefaultConversation()),
+  settingsLocation: { page: SettingsPage.Privacy },
+};
+
+export const PrivacyBlockedManyBoth = Template.bind({});
+PrivacyBlockedManyBoth.args = {
+  blockedContacts: new Array(20)
+    .fill(undefined)
+    .map(() => getDefaultConversation()),
+  blockedGroups: new Array(20)
+    .fill(undefined)
+    .map(() => getDefaultConversation()),
+  settingsLocation: { page: SettingsPage.Privacy },
+};
+
+export const PrivacyWhenPrimary = Template.bind({});
+PrivacyWhenPrimary.args = {
+  settingsLocation: { page: SettingsPage.Privacy },
+  weArePrimaryDevice: true,
 };
 
 export const CustomUniversalExpireTimer = Template.bind({});

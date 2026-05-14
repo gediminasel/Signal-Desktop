@@ -1,13 +1,15 @@
 // Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as React from 'react';
+import type { JSX } from 'react';
+
 import { action } from '@storybook/addon-actions';
 import type { Meta } from '@storybook/react';
 import type { Props } from './ReactionViewer.dom.tsx';
 import { ReactionViewer } from './ReactionViewer.dom.tsx';
 import { getDefaultConversation } from '../../test-helpers/getDefaultConversation.std.ts';
 import { ThemeType } from '../../types/Util.std.ts';
+import { Emoji } from '../../axo/emoji.std.ts';
 
 const { i18n } = window.SignalContext;
 
@@ -25,11 +27,11 @@ const createProps = (overrideProps: Partial<Props> = {}): Props => ({
   theme: ThemeType.light,
 });
 
-export function AllReactions(): React.JSX.Element {
+export function AllReactions(): JSX.Element {
   const props = createProps({
     reactions: [
       {
-        emoji: '❤️',
+        emoji: Emoji.HEART,
         timestamp: 1,
         from: getDefaultConversation({
           id: '+14155552671',
@@ -39,7 +41,7 @@ export function AllReactions(): React.JSX.Element {
         }),
       },
       {
-        emoji: '❤️',
+        emoji: Emoji.HEART,
         timestamp: 2,
         from: getDefaultConversation({
           id: '+14155552672',
@@ -48,7 +50,7 @@ export function AllReactions(): React.JSX.Element {
         }),
       },
       {
-        emoji: '❤️',
+        emoji: Emoji.HEART,
         timestamp: 3,
         from: getDefaultConversation({
           id: '+14155552673',
@@ -57,7 +59,7 @@ export function AllReactions(): React.JSX.Element {
         }),
       },
       {
-        emoji: '❤️',
+        emoji: Emoji.HEART,
         timestamp: 4,
         from: getDefaultConversation({
           id: '+14155552674',
@@ -66,7 +68,7 @@ export function AllReactions(): React.JSX.Element {
         }),
       },
       {
-        emoji: '👍',
+        emoji: Emoji.getDefaultVariant(Emoji.THUMBS_UP),
         timestamp: 9,
         from: getDefaultConversation({
           id: '+14155552678',
@@ -76,7 +78,7 @@ export function AllReactions(): React.JSX.Element {
         }),
       },
       {
-        emoji: '👎',
+        emoji: Emoji.getDefaultVariant(Emoji.THUMBS_DOWN),
         timestamp: 10,
         from: getDefaultConversation({
           id: '+14155552673',
@@ -85,7 +87,7 @@ export function AllReactions(): React.JSX.Element {
         }),
       },
       {
-        emoji: '😂',
+        emoji: Emoji.JOY,
         timestamp: 11,
         from: getDefaultConversation({
           id: '+14155552674',
@@ -94,7 +96,7 @@ export function AllReactions(): React.JSX.Element {
         }),
       },
       {
-        emoji: '😮',
+        emoji: Emoji.OPEN_MOUTH,
         timestamp: 12,
         from: getDefaultConversation({
           id: '+14155552675',
@@ -103,7 +105,7 @@ export function AllReactions(): React.JSX.Element {
         }),
       },
       {
-        emoji: '😢',
+        emoji: Emoji.CRY,
         timestamp: 13,
         from: getDefaultConversation({
           id: '+14155552676',
@@ -112,7 +114,7 @@ export function AllReactions(): React.JSX.Element {
         }),
       },
       {
-        emoji: '😡',
+        emoji: Emoji.RAGE,
         timestamp: 14,
         from: getDefaultConversation({
           id: '+14155552676',
@@ -125,12 +127,12 @@ export function AllReactions(): React.JSX.Element {
   return <ReactionViewer {...props} />;
 }
 
-export function PickedReaction(): React.JSX.Element {
+export function PickedReaction(): JSX.Element {
   const props = createProps({
-    pickedReaction: '❤️',
+    pickedReaction: Emoji.HEART,
     reactions: [
       {
-        emoji: '❤️',
+        emoji: Emoji.HEART,
         from: getDefaultConversation({
           id: '+14155552671',
           name: 'Amelia Briggs',
@@ -140,7 +142,7 @@ export function PickedReaction(): React.JSX.Element {
         timestamp: Date.now(),
       },
       {
-        emoji: '👍',
+        emoji: Emoji.getDefaultVariant(Emoji.THUMBS_UP),
         from: getDefaultConversation({
           id: '+14155552671',
           phoneNumber: '+14155552671',
@@ -154,12 +156,12 @@ export function PickedReaction(): React.JSX.Element {
   return <ReactionViewer {...props} />;
 }
 
-export function PickedMissingReaction(): React.JSX.Element {
+export function PickedMissingReaction(): JSX.Element {
   const props = createProps({
-    pickedReaction: '😡',
+    pickedReaction: Emoji.RAGE,
     reactions: [
       {
-        emoji: '❤️',
+        emoji: Emoji.HEART,
         from: getDefaultConversation({
           id: '+14155552671',
           name: 'Amelia Briggs',
@@ -169,7 +171,7 @@ export function PickedMissingReaction(): React.JSX.Element {
         timestamp: Date.now(),
       },
       {
-        emoji: '👍',
+        emoji: Emoji.getDefaultVariant(Emoji.THUMBS_UP),
         from: getDefaultConversation({
           id: '+14155552671',
           phoneNumber: '+14155552671',
@@ -183,18 +185,16 @@ export function PickedMissingReaction(): React.JSX.Element {
   return <ReactionViewer {...props} />;
 }
 
-const skinTones = [
-  '\u{1F3FB}',
-  '\u{1F3FC}',
-  '\u{1F3FD}',
-  '\u{1F3FE}',
-  '\u{1F3FF}',
-];
-const thumbsUpHands = skinTones.map(skinTone => `👍${skinTone}`);
-const okHands = skinTones.map(skinTone => `👌${skinTone}`).reverse();
+const thumbsUpHands = Emoji.SKIN_TONE_ORDER.map(skinTone => {
+  return Emoji.getVariant(Emoji.THUMBS_UP, skinTone);
+});
+
+const okHands = Emoji.SKIN_TONE_ORDER.map(skinTone => {
+  return Emoji.getVariant(Emoji.OK_HAND, skinTone);
+}).toReversed();
 
 const createReaction = (
-  emoji: string,
+  emoji: Emoji.Variant,
   name: string,
   timestamp = Date.now()
 ) => ({
@@ -207,9 +207,9 @@ const createReaction = (
   timestamp,
 });
 
-export function ReactionSkinTones(): React.JSX.Element {
+export function ReactionSkinTones(): JSX.Element {
   const props = createProps({
-    pickedReaction: '😡',
+    pickedReaction: Emoji.RAGE,
     reactions: [
       ...thumbsUpHands.map((emoji, n) =>
         createReaction(emoji, `Thumbs Up ${n + 1}`, Date.now() + n * 1000)

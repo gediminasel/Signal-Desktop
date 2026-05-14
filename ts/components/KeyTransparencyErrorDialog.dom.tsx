@@ -1,6 +1,6 @@
 // Copyright 2026 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useCallback, useId, useState } from 'react';
+import { useCallback, useId, useState, type JSX } from 'react';
 import type { LocalizerType } from '../types/I18N.std.ts';
 import { AxoButton } from '../axo/AxoButton.dom.tsx';
 import { AxoDialog } from '../axo/AxoDialog.dom.tsx';
@@ -19,7 +19,7 @@ export type KeyTransparencyErrorDialogProps = Readonly<{
 
 export function KeyTransparencyErrorDialog(
   props: KeyTransparencyErrorDialogProps
-): React.JSX.Element {
+): JSX.Element {
   const { i18n, open, onOpenChange, onViewDebugLog, onSubmit, isSubmitting } =
     props;
 
@@ -71,15 +71,7 @@ export function KeyTransparencyErrorDialog(
             <AxoDialog.Action
               variant="primary"
               onClick={handleSubmit}
-              experimentalSpinner={
-                isSubmitting
-                  ? {
-                      'aria-label': i18n(
-                        'icu:KeyTransparencyErrorDialog__Submitting'
-                      ),
-                    }
-                  : null
-              }
+              pending={isSubmitting}
             >
               {i18n('icu:KeyTransparencyErrorDialog__Submit')}
             </AxoDialog.Action>

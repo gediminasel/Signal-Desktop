@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import lodash from 'lodash';
-import React, { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useState, type JSX } from 'react';
 import { useSelector } from 'react-redux';
 import type {
   DirectIncomingCall,
@@ -56,13 +56,23 @@ import { useGlobalModalActions } from '../ducks/globalModals.preload.ts';
 import { isLonelyGroup } from '../ducks/callingHelpers.std.ts';
 import { getActiveProfile } from '../selectors/notificationProfiles.dom.ts';
 import { isOnline as isWebAPIOnline } from '../../textsecure/WebAPI.preload.ts';
+import {
+  SmartCallingParticipantMenu,
+  type PropsType as SmartCallingParticipantMenuProps,
+} from './CallingParticipantMenu.preload.tsx';
 
 const { memoize } = lodash;
 
 const log = createLogger('CallManager');
 
-function renderDeviceSelection(): React.JSX.Element {
+function renderDeviceSelection(): JSX.Element {
   return <SmartCallingDeviceSelection />;
+}
+
+function renderCallingParticipantMenu(
+  props: SmartCallingParticipantMenuProps
+): JSX.Element {
+  return <SmartCallingParticipantMenu {...props} />;
 }
 
 const getGroupCallVideoFrameSource =
@@ -178,8 +188,8 @@ const mapStateToActiveCallProp = (
       const peekedParticipants: Array<ConversationType> = [];
       const pendingParticipants: Array<ConversationType> = [];
       const conversationsByDemuxId: ConversationsByDemuxIdType = new Map();
-      const { localDemuxId } = call;
-      const raisedHands = new Set<number>(call.raisedHands ?? []);
+      const { localDemuxId, raisedHands: rawRaisedHands = [] } = call;
+      const raisedHandOrderByDemuxId = new Map<number, number>();
 
       const { memberships = [] } = conversation;
 
@@ -215,20 +225,6 @@ const mapStateToActiveCallProp = (
           continue;
         }
 
-        remoteParticipants.push({
-          ...remoteConversation,
-          aci: remoteParticipant.aci,
-          addedTime: remoteParticipant.addedTime,
-          demuxId: remoteParticipant.demuxId,
-          hasRemoteAudio: remoteParticipant.hasRemoteAudio,
-          hasRemoteVideo: remoteParticipant.hasRemoteVideo,
-          isHandRaised: raisedHands.has(remoteParticipant.demuxId),
-          mediaKeysReceived: remoteParticipant.mediaKeysReceived,
-          presenting: remoteParticipant.presenting,
-          sharingScreen: remoteParticipant.sharingScreen,
-          speakerTime: remoteParticipant.speakerTime,
-          videoAspectRatio: remoteParticipant.videoAspectRatio,
-        });
         conversationsByDemuxId.set(
           remoteParticipant.demuxId,
           remoteConversation
@@ -240,11 +236,48 @@ const mapStateToActiveCallProp = (
       }
 
       // Filter raisedHands to ensure valid demuxIds.
-      raisedHands.forEach(demuxId => {
-        if (!conversationsByDemuxId.has(demuxId)) {
-          raisedHands.delete(demuxId);
+      let nextIndex = 0;
+      rawRaisedHands.forEach(demuxId => {
+        if (conversationsByDemuxId.has(demuxId)) {
+          raisedHandOrderByDemuxId.set(demuxId, nextIndex);
+          nextIndex += 1;
         }
       });
+      const raisedHands = new Set(raisedHandOrderByDemuxId.keys());
+      const isOnlyOneHandRaisedInCall = raisedHandOrderByDemuxId.size === 1;
+
+      for (const remoteParticipant of call.remoteParticipants) {
+        const { demuxId } = remoteParticipant;
+        const remoteConversation = conversationsByDemuxId.get(
+          remoteParticipant.demuxId
+        );
+        if (!remoteConversation) {
+          log.error(
+            'Remote participant has no corresponding conversation in map'
+          );
+          continue;
+        }
+
+        const raisedHandOrder = raisedHandOrderByDemuxId.get(demuxId);
+        const isOnlyHandRaised =
+          raisedHandOrder !== undefined && isOnlyOneHandRaisedInCall;
+
+        remoteParticipants.push({
+          ...remoteConversation,
+          aci: remoteParticipant.aci,
+          addedTime: remoteParticipant.addedTime,
+          demuxId,
+          hasRemoteAudio: remoteParticipant.hasRemoteAudio,
+          hasRemoteVideo: remoteParticipant.hasRemoteVideo,
+          isOnlyHandRaised,
+          mediaKeysReceived: remoteParticipant.mediaKeysReceived,
+          presenting: remoteParticipant.presenting,
+          raisedHandOrder,
+          sharingScreen: remoteParticipant.sharingScreen,
+          speakerTime: remoteParticipant.speakerTime,
+          videoAspectRatio: remoteParticipant.videoAspectRatio,
+        });
+      }
 
       for (const peekedParticipantAci of peekInfo.acis) {
         const peekedConversation =
@@ -427,7 +460,6 @@ export const SmartCallManager = memo(function SmartCallManager() {
     setGroupCallVideoRequest,
     setIsCallActive,
     setLocalAudio,
-    setLocalAudioRemoteMuted,
     setLocalVideo,
     setOutgoingRing,
     setRendererCanvas,
@@ -479,6 +511,7 @@ export const SmartCallManager = memo(function SmartCallManager() {
       playRingtone={playRingtone}
       renderDeviceSelection={renderDeviceSelection}
       renderReactionPicker={renderReactionPicker}
+      renderCallingParticipantMenu={renderCallingParticipantMenu}
       ringingCall={ringingCall}
       sendGroupCallRaiseHand={sendGroupCallRaiseHand}
       sendGroupCallReaction={sendGroupCallReaction}
@@ -486,7 +519,6 @@ export const SmartCallManager = memo(function SmartCallManager() {
       setGroupCallVideoRequest={setGroupCallVideoRequest}
       setIsCallActive={setIsCallActive}
       setLocalAudio={setLocalAudio}
-      setLocalAudioRemoteMuted={setLocalAudioRemoteMuted}
       setLocalPreviewContainer={setLocalPreviewContainer}
       setLocalVideo={setLocalVideo}
       setOutgoingRing={setOutgoingRing}

@@ -3,7 +3,7 @@
 
 import type { Meta, StoryFn } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
-import React, { useState } from 'react';
+import { useState, type JSX } from 'react';
 import casual from 'casual';
 import { v4 as generateUuid } from 'uuid';
 
@@ -19,7 +19,7 @@ import {
 } from '../state/ducks/usernameEnums.std.ts';
 import { getRandomColor } from '../test-helpers/getRandomColor.std.ts';
 import { SignalService as Proto } from '../protobuf/index.std.ts';
-import { EmojiSkinTone } from './fun/data/emojis.std.ts';
+import { Emoji } from '../axo/emoji.std.ts';
 
 const { i18n } = window.SignalContext;
 
@@ -47,7 +47,7 @@ export default {
     },
   },
   args: {
-    aboutEmoji: '',
+    aboutEmoji: undefined,
     aboutText: casual.sentence,
     profileAvatarUrl: undefined,
     conversationId: generateUuid(),
@@ -63,7 +63,7 @@ export default {
     usernameEditState: UsernameEditState.Editing,
     usernameLinkState: UsernameLinkState.Ready,
 
-    emojiSkinToneDefault: EmojiSkinTone.None,
+    emojiSkinToneDefault: Emoji.SkinTone.None,
     userAvatarData: [],
     username: undefined,
 
@@ -83,9 +83,7 @@ export default {
   },
 } satisfies Meta<PropsType>;
 
-function renderUsernameEditor(props: {
-  onClose: () => void;
-}): React.JSX.Element {
+function renderUsernameEditor(props: { onClose: () => void }): JSX.Element {
   return (
     <UsernameEditor
       i18n={i18n}
@@ -120,7 +118,7 @@ const Template: StoryFn<PropsType> = args => {
 
 export const FullSet = Template.bind({});
 FullSet.args = {
-  aboutEmoji: '🙏',
+  aboutEmoji: Emoji.getDefaultVariant(Emoji.FOLDED_HANDS),
   aboutText: 'Live. Laugh. Love',
   familyName: casual.last_name,
   firstName: casual.first_name,
@@ -133,7 +131,7 @@ WithFullName.args = {
 };
 export const WithCustomAbout = Template.bind({});
 WithCustomAbout.args = {
-  aboutEmoji: '🙏',
+  aboutEmoji: Emoji.getDefaultVariant(Emoji.FOLDED_HANDS),
   aboutText: 'Live. Laugh. Love',
 };
 

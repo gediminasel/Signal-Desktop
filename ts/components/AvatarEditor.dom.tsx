@@ -1,7 +1,7 @@
 // Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type JSX } from 'react';
 import lodash from 'lodash';
 
 import type { AvatarColorType } from '../types/Colors.std.ts';
@@ -62,7 +62,7 @@ export function AvatarEditor({
   userAvatarData,
   replaceAvatar,
   saveAvatarToDisk,
-}: PropsType): React.JSX.Element {
+}: PropsType): JSX.Element {
   const [provisionalSelectedAvatar, setProvisionalSelectedAvatar] = useState<
     AvatarDataType | undefined
   >();
@@ -91,6 +91,10 @@ export function AvatarEditor({
   const [confirmDiscardModal, confirmDiscardIf] = useConfirmDiscard({
     i18n,
     name: 'AvatarEditor',
+    // @ts-expect-error ConfirmationDialog migration: Needs title
+    title: null,
+    // @ts-expect-error ConfirmationDialog migration: Needs description
+    description: null,
     tryClose,
   });
 
@@ -174,7 +178,7 @@ export function AvatarEditor({
     []
   );
 
-  let content: React.JSX.Element | undefined;
+  let content: JSX.Element | undefined;
 
   if (editMode === EditMode.Main) {
     content = (

@@ -1,17 +1,25 @@
 // Copyright 2024 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React from 'react';
+import {
+  useState,
+  useCallback,
+  useRef,
+  useLayoutEffect,
+  useEffect,
+  type JSX,
+} from 'react';
 import { animated, useSpring } from '@react-spring/web';
 import lodash from 'lodash';
 import { v4 as uuid } from 'uuid';
 import { Emojify } from './conversation/Emojify.dom.tsx';
 import { useReducedMotion } from '../hooks/useReducedMotion.dom.ts';
+import type { Emoji } from '../axo/emoji.std.ts';
 
 const { random } = lodash;
 
 export type PropsType = {
-  values: Array<string>;
+  values: Array<Emoji>;
   onAnimationEnd?: () => unknown;
 };
 
@@ -30,13 +38,11 @@ type AnimationConfig = {
 
 // values is an array of emojis, which is useful when bursting multi skin tone set of
 // emojis to get the correct representation
-export function CallReactionBurstEmoji({
-  values,
-}: PropsType): React.JSX.Element {
-  const [toY, setToY] = React.useState<number>(0);
+export function CallReactionBurstEmoji({ values }: PropsType): JSX.Element {
+  const [toY, setToY] = useState<number>(0);
   const fromY = -50;
 
-  const generateEmojiProps = React.useCallback(
+  const generateEmojiProps = useCallback(
     (index: number) => {
       return {
         key: uuid(),
@@ -64,8 +70,8 @@ export function CallReactionBurstEmoji({
 
   // Calculate target Y position before first render. Emojis need to animate Y upwards
   // by the value of the container's top, plus the emoji's maximum height.
-  const containerRef = React.useRef<HTMLDivElement | null>(null);
-  React.useLayoutEffect(() => {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  useLayoutEffect(() => {
     if (containerRef.current) {
       const { top } = containerRef.current.getBoundingClientRect();
       const calculatedToY = -top;
@@ -74,11 +80,11 @@ export function CallReactionBurstEmoji({
     }
   }, [generateEmojiProps]);
 
-  const [emojis, setEmojis] = React.useState<Array<AnimatedEmojiProps>>([
+  const [emojis, setEmojis] = useState<Array<AnimatedEmojiProps>>([
     generateEmojiProps(0),
   ]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setInterval(() => {
       setEmojis(curEmojis => {
         const emojiCount = curEmojis.length;
@@ -104,7 +110,7 @@ export function CallReactionBurstEmoji({
 }
 
 type AnimatedEmojiProps = {
-  value: string;
+  value: Emoji;
   fromRotate: number;
   fromX: number;
   fromY: number;
@@ -127,7 +133,7 @@ function AnimatedEmoji({
   toY,
   springConfig,
   onAnimationEnd,
-}: AnimatedEmojiProps): React.JSX.Element {
+}: AnimatedEmojiProps): JSX.Element {
   const height = EMOJI_HEIGHT * toScale;
 
   const reducedMotion = useReducedMotion();

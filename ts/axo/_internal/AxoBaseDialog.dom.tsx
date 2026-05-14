@@ -5,21 +5,24 @@ import { useCallback } from 'react';
 import type { ReactNode } from 'react';
 import { tw } from '../tw.dom.tsx';
 
+/** @internal */
 export namespace AxoBaseDialog {
   /**
-   * AxoBaseDialog: Root
-   * -------------------
+   * <AxoBaseDialog.Root>
+   * --------------------------------------------------------------------------
    */
 
   export type RootProps = Readonly<{
+    /** Controlled open state. Must be used with `onOpenChange`. */
     open?: boolean;
+    /** Called when the open state changes. */
     onOpenChange?: (open: boolean) => void;
     children: ReactNode;
   }>;
 
   /**
-   * AxoBaseDialog: Trigger
-   * ----------------------
+   * <AxoBaseDialog.Trigger>
+   * --------------------------------------------------------------------------
    */
 
   export type TriggerProps = Readonly<{
@@ -27,8 +30,8 @@ export namespace AxoBaseDialog {
   }>;
 
   /**
-   * AxoBaseDialog: Overlay
-   * ----------------------
+   * <AxoBaseDialog.Overlay>
+   * --------------------------------------------------------------------------
    */
 
   export const overlayStyles = tw(
@@ -42,23 +45,37 @@ export namespace AxoBaseDialog {
   );
 
   /**
-   * AxoBaseDialog: Content
-   * ----------------------
+   * <AxoBaseDialog.Content>
+   * --------------------------------------------------------------------------
    */
 
   export const contentStyles = tw(
     'relative',
-    'max-h-full min-h-fit max-w-full min-w-fit',
+    'max-h-full min-h-fit',
     'curved-3xl bg-elevated-background-primary shadow-elevation-3 select-none',
     'text-label-primary',
-    'outline-border-focused not-forced-colors:outline-0 not-forced-colors:focused:outline-[2.5px]',
+    'not-forced-colors:outline-none not-forced-colors:keyboard-mode:focus:outline-focus-ring',
     'data-[state=closed]:animate-exit data-[state=open]:animate-enter',
     'animate-scale-98 animate-translate-y-1',
     'forced-colors:border forced-colors:border-[ButtonBorder] forced-colors:bg-[Canvas] forced-colors:text-[CanvasText]'
   );
 
+  /**
+   * useContentEscapeBehavior()
+   * --------------------------------------------------------------------------
+   */
+
+  /**
+   * How dangerous the cancel action is considered.
+   * - `cancel-is-noop`: Canceling is safe — pressing Escape or clicking outside closes the dialog.
+   * - `cancel-is-destructive`: Canceling would lose user state — pressing Escape or clicking outside is disabled.
+   */
   export type ContentEscape = 'cancel-is-noop' | 'cancel-is-destructive';
 
+  /**
+   * Returns an escape-key handler for `onEscapeKeyDown`.
+   * Prevents default when `escape` is `cancel-is-destructive`.
+   */
   export function useContentEscapeBehavior(
     escape: ContentEscape
   ): (event: Event) => void {

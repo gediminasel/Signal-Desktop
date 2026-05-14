@@ -1,7 +1,14 @@
 // Copyright 2025 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, { useState, useRef, useCallback, useMemo } from 'react';
+import {
+  useState,
+  useRef,
+  useCallback,
+  useMemo,
+  type JSX,
+  type KeyboardEvent,
+} from 'react';
 import { flushSync } from 'react-dom';
 import { v4 as generateUuid } from 'uuid';
 import { tw } from '../axo/tw.dom.tsx';
@@ -14,7 +21,6 @@ import { Toast } from './Toast.dom.tsx';
 import { FunEmojiPicker } from './fun/FunEmojiPicker.dom.tsx';
 import { FunEmojiPickerButton } from './fun/FunButton.dom.tsx';
 import type { FunEmojiSelection } from './fun/panels/FunPanelEmojis.dom.tsx';
-import { getEmojiVariantByKey } from './fun/data/emojis.std.ts';
 import { strictAssert } from '../util/assert.std.ts';
 import {
   type PollCreateType,
@@ -41,7 +47,7 @@ export function PollCreateModal({
   i18n,
   onClose,
   onSendPoll,
-}: PollCreateModalProps): React.JSX.Element {
+}: PollCreateModalProps): JSX.Element {
   const [question, setQuestion] = useState('');
   const [options, setOptions] = useState<Array<PollOption>>([
     { id: generateUuid(), value: '' },
@@ -154,7 +160,7 @@ export function PollCreateModal({
   );
 
   const handleEnterKey = useCallback(
-    (event: React.KeyboardEvent, currentIndex: number) => {
+    (event: KeyboardEvent, currentIndex: number) => {
       event.preventDefault();
 
       const nextOption = options[currentIndex + 1];
@@ -171,8 +177,7 @@ export function PollCreateModal({
       strictAssert(inputEl, 'Missing input ref for option');
 
       const { selectionStart, selectionEnd } = inputEl;
-      const variant = getEmojiVariantByKey(emojiSelection.variantKey);
-      const emoji = variant.value;
+      const emoji = emojiSelection.emoji;
 
       const updatedOptions = options.map(opt => {
         if (opt.id !== optionId) {

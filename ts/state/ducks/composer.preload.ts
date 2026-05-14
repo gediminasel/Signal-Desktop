@@ -110,6 +110,7 @@ import {
   getSelectedConversationId,
 } from '../selectors/nav.std.ts';
 import { isPoll } from '../../messages/helpers.std.ts';
+import type { Emoji } from '../../axo/emoji.std.ts';
 
 const { debounce, isEqual } = lodash;
 
@@ -1450,7 +1451,7 @@ export function replaceAttachments(
 
 function reactToMessage(
   messageId: string,
-  reaction: { emoji: string; remove: boolean }
+  reaction: { emoji: Emoji.Variant; remove: boolean }
 ): ThunkAction<
   void,
   RootStateType,

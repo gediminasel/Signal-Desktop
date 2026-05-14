@@ -3,6 +3,7 @@
 
 # Generated files
 build/**/*.js
+build/**/*.json
 app/**/*.js
 config/local-*.json
 config/local.json
@@ -25,9 +26,12 @@ pnpm-lock.yaml
 # Third-party files
 node_modules/**
 packages/*/node_modules/**
+packages/lame/wrapper.mjs
+packages/lame/lame-*/
 danger/node_modules/**
 sticker-creator/node_modules/**
 components/**
+scripts/emoji-datasource/emoji-datasource.json
 
 # Assets
 /images/

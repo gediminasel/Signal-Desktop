@@ -1,7 +1,7 @@
 // Copyright 2025 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
-import type { ForwardedRef, ReactNode } from 'react';
-import React, {
+import type { ForwardedRef, ReactNode, JSX } from 'react';
+import {
   forwardRef,
   Fragment,
   memo,
@@ -35,7 +35,7 @@ export type PinnedMessagesPanelProps = Readonly<{
   pinnedMessages: ReadonlyArray<PinnedMessage>;
   canPinMessages: boolean;
   onPinnedMessageRemoveAll: () => void;
-  renderTimelineItem: (props: SmartTimelineItemProps) => React.JSX.Element;
+  renderTimelineItem: (props: SmartTimelineItemProps) => JSX.Element;
 }>;
 
 export const PinnedMessagesPanel = memo(function PinnedMessagesPanel(
@@ -128,11 +128,7 @@ export const PinnedMessagesPanel = memo(function PinnedMessagesPanel(
             </AxoAlertDialog.Description>
           </AxoAlertDialog.Body>
           <AxoAlertDialog.Footer>
-            <AxoAlertDialog.Cancel>
-              {i18n(
-                'icu:PinnedMessagesPanel__UnpinAllMessages__ConfirmDialog__Cancel'
-              )}
-            </AxoAlertDialog.Cancel>
+            <AxoAlertDialog.Cancel />
             <AxoAlertDialog.Action
               variant="primary"
               onClick={props.onPinnedMessageRemoveAll}

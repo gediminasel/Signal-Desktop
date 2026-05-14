@@ -2,21 +2,20 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { ReactElement } from 'react';
-import React from 'react';
 import { Provider } from 'react-redux';
 
 import type { Store } from 'redux';
 
 import { SmartApp } from '../smart/App.preload.tsx';
 import { SmartVoiceNotesPlaybackProvider } from '../smart/VoiceNotesPlaybackProvider.preload.tsx';
-import { AxoProvider } from '../../axo/AxoProvider.dom.tsx';
+import { AppProvider } from '../../windows/AppProvider.dom.tsx';
 
 export const createApp = (store: Store): ReactElement => (
-  <AxoProvider dir={window.SignalContext.i18n.getLocaleDirection()}>
+  <AppProvider>
     <Provider store={store}>
       <SmartVoiceNotesPlaybackProvider>
         <SmartApp />
       </SmartVoiceNotesPlaybackProvider>
     </Provider>
-  </AxoProvider>
+  </AppProvider>
 );

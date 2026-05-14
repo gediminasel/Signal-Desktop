@@ -1,7 +1,7 @@
 // Copyright 2025 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, type JSX } from 'react';
 import classNames from 'classnames';
 
 import type {
@@ -38,6 +38,8 @@ export const SIGNAL_BACKUPS_LEARN_MORE_URL =
 
 const LOCAL_BACKUPS_PAGES = new Set([
   SettingsPage.LocalBackups,
+  SettingsPage.LocalBackupsSetupKey,
+  SettingsPage.LocalBackupsSetupFolder,
   SettingsPage.LocalBackupsKeyReference,
 ]);
 
@@ -109,7 +111,7 @@ export function PreferencesBackups({
   setSettingsLocation: (settingsLocation: SettingsLocation) => void;
   showToast: ShowToastAction;
   startLocalBackupExport: () => void;
-}): React.JSX.Element | null {
+}): JSX.Element | null {
   const [isAuthPending, setIsAuthPending] = useState<boolean>(false);
 
   useEffect(() => {
@@ -179,7 +181,7 @@ export function PreferencesBackups({
     );
   }
 
-  const learnMoreLink = (parts: Array<string | React.JSX.Element>) => (
+  const learnMoreLink = (parts: Array<string | JSX.Element>) => (
     <a href={SIGNAL_BACKUPS_LEARN_MORE_URL} rel="noreferrer" target="_blank">
       {parts}
     </a>
@@ -291,13 +293,17 @@ export function PreferencesBackups({
               disabled={isAuthPending}
               onClick={async () => {
                 if (isLocalBackupsSetup) {
-                  setSettingsLocation({ page: SettingsPage.LocalBackups });
+                  setSettingsLocation({
+                    page: SettingsPage.LocalBackups,
+                  });
                 } else {
                   try {
                     setIsAuthPending(true);
                     const result = await promptOSAuth('enable-backups');
                     if (result === 'success' || result === 'unsupported') {
-                      setSettingsLocation({ page: SettingsPage.LocalBackups });
+                      setSettingsLocation({
+                        page: SettingsPage.LocalBackupsSetupFolder,
+                      });
                     }
                   } finally {
                     setIsAuthPending(false);
@@ -336,7 +342,7 @@ function renderPaidBackupsSummary({
   locale: string;
   subscriptionStatus: BackupsSubscriptionType;
   i18n: LocalizerType;
-}): React.JSX.Element | null {
+}): JSX.Element | null {
   return (
     <div className="Preferences--backups-summary__status-container">
       <div>
@@ -357,7 +363,7 @@ function renderFreeBackupsSummary({
 }: {
   backupFreeMediaDays: number;
   i18n: LocalizerType;
-}): React.JSX.Element | null {
+}): JSX.Element | null {
   return (
     <div className="Preferences--backups-summary__status-container">
       <div>

@@ -1,7 +1,7 @@
 // Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, type JSX } from 'react';
 import { action } from '@storybook/addon-actions';
 import type { Meta, StoryFn } from '@storybook/react';
 import { DialogType } from '../../types/Dialogs.std.ts';
@@ -27,6 +27,20 @@ const DEFAULT_UPDATES = {
   downloadSize: 67 * 1024 * 1024,
   downloadedSize: 15 * 1024 * 1024,
   version: 'v7.7.7',
+};
+
+const DEFAULT_PROPS: Omit<PropsType, 'provisioningUrl'> = {
+  i18n,
+  isStaging: false,
+  updates: DEFAULT_UPDATES,
+  OS: 'macOS',
+  startUpdate: action('startUpdate'),
+  forceUpdate: action('forceUpdate'),
+  currentVersion: 'v6.0.0',
+  retryGetQrCode: action('retryGetQrCode'),
+  isConfirmingDataDeletion: false,
+  restartInstall: action('restartInstall'),
+  continueInstallWithDataDeletion: action('continueInstallWithDataDeletion'),
 };
 
 export default {
@@ -56,77 +70,59 @@ function Simulation({
 
   return (
     <InstallScreenQrCodeNotScannedStep
-      i18n={i18n}
-      isStaging={false}
+      {...DEFAULT_PROPS}
       provisioningUrl={provisioningUrl}
-      updates={DEFAULT_UPDATES}
-      OS="macOS"
-      startUpdate={action('startUpdate')}
-      forceUpdate={action('forceUpdate')}
-      currentVersion="v6.0.0"
-      retryGetQrCode={action('retryGetQrCode')}
     />
   );
 }
 
-export function QrCodeLoading(): React.JSX.Element {
+export function QrCodeLoading(): JSX.Element {
   return (
     <InstallScreenQrCodeNotScannedStep
-      i18n={i18n}
-      isStaging={false}
+      {...DEFAULT_PROPS}
       provisioningUrl={{
         loadingState: LoadingState.Loading,
       }}
-      updates={DEFAULT_UPDATES}
-      OS="macOS"
-      startUpdate={action('startUpdate')}
-      forceUpdate={action('forceUpdate')}
-      currentVersion="v6.0.0"
-      retryGetQrCode={action('retryGetQrCode')}
     />
   );
 }
 
-export function QrCodeFailedToLoad(): React.JSX.Element {
+export function QrCodeFailedToLoad(): JSX.Element {
   return (
     <InstallScreenQrCodeNotScannedStep
-      i18n={i18n}
-      isStaging={false}
+      {...DEFAULT_PROPS}
       provisioningUrl={{
         loadingState: LoadingState.LoadFailed,
         error: InstallScreenQRCodeError.Unknown,
       }}
-      updates={DEFAULT_UPDATES}
-      OS="macOS"
-      startUpdate={action('startUpdate')}
-      forceUpdate={action('forceUpdate')}
-      currentVersion="v6.0.0"
-      retryGetQrCode={action('retryGetQrCode')}
     />
   );
 }
 
-export function QrCodeLoaded(): React.JSX.Element {
+export function QrCodeLoaded(): JSX.Element {
   return (
     <InstallScreenQrCodeNotScannedStep
-      i18n={i18n}
-      isStaging={false}
+      {...DEFAULT_PROPS}
       provisioningUrl={LOADED_URL}
-      updates={DEFAULT_UPDATES}
-      OS="macOS"
-      startUpdate={action('startUpdate')}
-      forceUpdate={action('forceUpdate')}
-      currentVersion="v6.0.0"
-      retryGetQrCode={action('retryGetQrCode')}
     />
   );
 }
 
-export function SimulatedLoading(): React.JSX.Element {
+export function ConfirmDataDeletion(): JSX.Element {
+  return (
+    <InstallScreenQrCodeNotScannedStep
+      {...DEFAULT_PROPS}
+      provisioningUrl={LOADED_URL}
+      isConfirmingDataDeletion
+    />
+  );
+}
+
+export function SimulatedLoading(): JSX.Element {
   return <Simulation finalResult={LOADED_URL} />;
 }
 
-export function SimulatedMaxRotationsError(): React.JSX.Element {
+export function SimulatedMaxRotationsError(): JSX.Element {
   return (
     <Simulation
       finalResult={{
@@ -137,7 +133,7 @@ export function SimulatedMaxRotationsError(): React.JSX.Element {
   );
 }
 
-export function SimulatedUnknownError(): React.JSX.Element {
+export function SimulatedUnknownError(): JSX.Element {
   return (
     <Simulation
       finalResult={{
@@ -148,7 +144,7 @@ export function SimulatedUnknownError(): React.JSX.Element {
   );
 }
 
-export function SimulatedNetworkIssue(): React.JSX.Element {
+export function SimulatedNetworkIssue(): JSX.Element {
   return (
     <Simulation
       finalResult={{
@@ -159,7 +155,7 @@ export function SimulatedNetworkIssue(): React.JSX.Element {
   );
 }
 
-export function SimulatedTimeout(): React.JSX.Element {
+export function SimulatedTimeout(): JSX.Element {
   return (
     <Simulation
       finalResult={{
@@ -177,22 +173,17 @@ export const WithUpdateKnobs: StoryFn<PropsType & { dialogType: DialogType }> =
   }: {
     dialogType: DialogType;
     currentVersion: string;
-  }): React.JSX.Element {
+  }): JSX.Element {
     return (
       <InstallScreenQrCodeNotScannedStep
-        i18n={i18n}
-        isStaging={false}
+        {...DEFAULT_PROPS}
         provisioningUrl={LOADED_URL}
         hasExpired
         updates={{
           ...DEFAULT_UPDATES,
           dialogType,
         }}
-        OS="macOS"
-        startUpdate={action('startUpdate')}
-        forceUpdate={action('forceUpdate')}
         currentVersion={currentVersion}
-        retryGetQrCode={action('retryGetQrCode')}
       />
     );
   };

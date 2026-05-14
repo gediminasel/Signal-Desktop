@@ -1,13 +1,14 @@
 // Copyright 2019 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, {
+import {
   memo,
   useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
+  type JSX,
 } from 'react';
 import classNames from 'classnames';
 import type { ReadonlyDeep } from 'type-fest';
@@ -74,15 +75,12 @@ import type { ShowToastAction } from '../state/ducks/toast.preload.ts';
 import type { DraftEditMessageType } from '../model-types.d.ts';
 import type { ForwardMessagesPayload } from '../state/ducks/globalModals.preload.ts';
 import { ForwardMessagesModalType } from './ForwardMessagesModal.dom.tsx';
-import { SignalConversationMuteToggle } from './conversation/SignalConversationMuteToggle.dom.tsx';
 import { FunPicker } from './fun/FunPicker.dom.tsx';
 import type { FunEmojiSelection } from './fun/panels/FunPanelEmojis.dom.tsx';
 import type { FunStickerSelection } from './fun/panels/FunPanelStickers.dom.tsx';
 import type { FunGifSelection } from './fun/panels/FunPanelGifs.dom.tsx';
 import type { SmartDraftGifMessageSendModalProps } from '../state/smart/DraftGifMessageSendModal.preload.tsx';
 import { strictAssert } from '../util/assert.std.ts';
-import { ConfirmationDialog } from './ConfirmationDialog.dom.tsx';
-import type { EmojiSkinTone } from './fun/data/emojis.std.ts';
 import { FunPickerButton } from './fun/FunButton.dom.tsx';
 import { AxoDropdownMenu } from '../axo/AxoDropdownMenu.dom.tsx';
 import { AxoIconButton } from '../axo/AxoIconButton.dom.tsx';
@@ -92,6 +90,8 @@ import { PollCreateModal } from './PollCreateModal.dom.tsx';
 import { useDocumentKeyDown } from '../hooks/useDocumentKeyDown.dom.ts';
 import { hasDraft } from '../util/hasDraft.std.ts';
 import type { ContactNameColorType } from '../types/Colors.std.ts';
+import type { Emoji } from '../axo/emoji.std.ts';
+import { AxoConfirmDialog } from '../axo/AxoConfirmDialog.dom.tsx';
 
 export type OwnProps = Readonly<{
   acceptedMessageRequest: boolean | null;
@@ -123,7 +123,7 @@ export type OwnProps = Readonly<{
   focusCounter: number;
   groupAdmins: Array<{
     member: ConversationType;
-    labelEmoji: string | undefined;
+    labelEmoji: Emoji.Variant | undefined;
     labelString: string | undefined;
   }>;
   groupVersion: 1 | 2 | null;
@@ -135,13 +135,12 @@ export type OwnProps = Readonly<{
   isGroupV1AndDisabled: boolean | null;
   isMissingMandatoryProfileSharing: boolean | null;
   isPollSend1to1Enabled: boolean;
-  isSignalConversation: boolean | null;
+  isSignalConversation: boolean;
   isActive: boolean;
   lastEditableMessageId: string | null;
   recordingState: RecordingState;
   memberColors: Map<string, ContactNameColorType>;
   shouldHidePopovers: boolean | null;
-  isMuted: boolean;
   isSmsOnlyOrUnregistered: boolean | null;
   left: boolean | null;
   linkPreviewLoading: boolean;
@@ -155,7 +154,6 @@ export type OwnProps = Readonly<{
     files: ReadonlyArray<File>;
     flags: number | null;
   }) => unknown;
-  setMuteExpiration(conversationId: string, muteExpiresAt: number): unknown;
   setMediaQualitySetting(conversationId: string, isHQ: boolean): unknown;
   sendStickerMessage(
     id: string,
@@ -212,13 +210,14 @@ export type OwnProps = Readonly<{
   }): unknown;
   shouldSendHighQualityAttachments: boolean;
   showConversation: ShowConversationType;
+  warmupRecording: () => void;
   startRecording: (id: string) => unknown;
   terminated: boolean | null;
   theme: ThemeType;
-  renderSmartCompositionRecording: () => React.JSX.Element;
+  renderSmartCompositionRecording: () => JSX.Element;
   renderSmartCompositionRecordingDraft: (
     props: SmartCompositionRecordingDraftProps
-  ) => React.JSX.Element | null;
+  ) => JSX.Element | null;
   selectedMessageIds: ReadonlyArray<string> | undefined;
   areSelectedMessagesForwardable: boolean | undefined;
   toggleSelectMode: (on: boolean) => void;
@@ -231,7 +230,7 @@ export type OwnProps = Readonly<{
   ) => void;
 
   onSelectEmoji: (emojiSelection: FunEmojiSelection) => void;
-  emojiSkinToneDefault: EmojiSkinTone | null;
+  emojiSkinToneDefault: Emoji.SkinTone | null;
 }>;
 
 export type Props = Pick<
@@ -265,7 +264,6 @@ export const CompositionArea = memo(function CompositionArea({
   isDisabled,
   isPollSend1to1Enabled,
   isSignalConversation,
-  isMuted,
   isActive,
   lastEditableMessageId,
   pushPanelForConversation,
@@ -281,7 +279,6 @@ export const CompositionArea = memo(function CompositionArea({
   shouldHidePopovers,
   showToast,
   theme,
-  setMuteExpiration,
 
   // AttachmentList
   draftAttachments,
@@ -289,6 +286,7 @@ export const CompositionArea = memo(function CompositionArea({
   // AudioCapture
   recordingState,
   startRecording,
+  warmupRecording,
   // StagedLinkPreview
   linkPreviewLoading,
   linkPreviewResult,
@@ -362,7 +360,7 @@ export const CompositionArea = memo(function CompositionArea({
   toggleForwardMessagesModal,
   // DraftGifMessageSendModal
   toggleDraftGifMessageSendModal,
-}: Props): React.JSX.Element | null {
+}: Props): JSX.Element | null {
   const [dirty, setDirty] = useState(false);
   const [large, setLarge] = useState(false);
   const [attachmentToEdit, setAttachmentToEdit] = useState<
@@ -756,27 +754,20 @@ export const CompositionArea = memo(function CompositionArea({
 
   const leftHandSideButtonsFragment = (
     <>
-      {confirmGifSelection && (
-        <ConfirmationDialog
-          i18n={i18n}
-          dialogName="CompositionArea.ConfirmGifSelection"
-          hasXButton={false}
-          onClose={handleCancelGifSelection}
-          onCancel={handleCancelGifSelection}
-          title={i18n('icu:CompositionArea__ConfirmGifSelection__Title')}
-          actions={[
-            {
-              action: handleConfirmGifSelection,
-              style: 'affirmative',
-              text: i18n(
-                'icu:CompositionArea__ConfirmGifSelection__ReplaceButton'
-              ),
-            },
-          ]}
+      <AxoConfirmDialog.Root
+        open={confirmGifSelection != null}
+        onOpenChange={handleCancelGifSelection}
+        title={i18n('icu:CompositionArea__ConfirmGifSelection__Title')}
+        description={i18n('icu:CompositionArea__ConfirmGifSelection__Body')}
+      >
+        <AxoConfirmDialog.Cancel />
+        <AxoConfirmDialog.Action
+          variant="primary"
+          onClick={handleConfirmGifSelection}
         >
-          {i18n('icu:CompositionArea__ConfirmGifSelection__Body')}
-        </ConfirmationDialog>
-      )}
+          {i18n('icu:CompositionArea__ConfirmGifSelection__ReplaceButton')}
+        </AxoConfirmDialog.Action>
+      </AxoConfirmDialog.Root>
       <div
         aria-hidden={isViewOnceActive || undefined}
         className={classNames(
@@ -807,6 +798,7 @@ export const CompositionArea = memo(function CompositionArea({
         draftAttachments={draftAttachments}
         i18n={i18n}
         showToast={showToast}
+        warmupRecording={warmupRecording}
         startRecording={startRecording}
       />
     </div>
@@ -934,17 +926,6 @@ export const CompositionArea = memo(function CompositionArea({
 
   useEscapeHandling(handleEscape);
 
-  if (isSignalConversation) {
-    return (
-      <SignalConversationMuteToggle
-        conversationId={conversationId}
-        isMuted={isMuted}
-        i18n={i18n}
-        setMuteExpiration={setMuteExpiration}
-      />
-    );
-  }
-
   if (selectedMessageIds != null) {
     return (
       <SelectModeActions
@@ -979,6 +960,10 @@ export const CompositionArea = memo(function CompositionArea({
         showToast={showToast}
       />
     );
+  }
+
+  if (isSignalConversation) {
+    return null;
   }
 
   if (terminated) {

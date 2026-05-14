@@ -6,7 +6,7 @@
   "description": "Private messaging from your desktop",
   "desktopName": "signal.desktop",
   "repository": "https://github.com/signalapp/Signal-Desktop.git",
-  "version": "8.11.0-lel",
+  "version": "8.12.0-lel",
   "license": "AGPL-3.0-only",
   "author": {
     "name": "Signal Messenger, LLC",
@@ -19,7 +19,7 @@
     "postuninstall": "pnpm run build:acknowledgments",
     "start": "electron .",
     "generate": "run-s generate:phase-0 generate:phase-1",
-    "generate:phase-0": "run-s build:protobuf build:rolldown:prod",
+    "generate:phase-0": "run-s build:protobuf build:emoji-data build:rolldown:prod",
     "generate:phase-1": "run-p --aggregate-output --print-label build:icu-types build:compact-locales build:styles:prod get-expire-time build:policy-files",
     "build-release": "pnpm run build",
     "notarize": "echo 'No longer necessary'",
@@ -45,7 +45,7 @@
     "test": "run-s test-node test-electron test-lint-intl test-oxlint",
     "test-electron": "node scripts/test-electron.mjs",
     "test-release": "node scripts/test-release.mjs",
-    "test-node": "cross-env NODE_ENV=test NODE_OPTIONS='--import=tsx' LANG=en-us electron-mocha --timeout 10000 --file ts/test-node/setup.preload.ts --recursive ts/test-node/**/*.{ts,tsx} scripts/**/*_test.mjs",
+    "test-node": "cross-env NODE_ENV=test NODE_OPTIONS='--import=tsx' LANG=en-us electron-mocha --timeout 10000  --extension ts,tsx,js,mjs --file ts/test-node/setup.preload.ts --recursive ts/test-node scripts/**/*_test.mjs",
     "test-mock": "node scripts/mocha-separator.mjs --require ts/test-mock/setup-ci.node.ts -- ts/test-mock/**/*_test.node.ts",
     "test-mock-docker": "mocha --require ts/test-mock/setup-ci.node.ts ts/test-mock/**/*_test.docker.node.ts",
     "test-oxlint": "mocha --require .oxlint/test-setup.mjs .oxlint/rules/**/*.test.mjs",
@@ -77,7 +77,7 @@
     "dev:styles:tailwind": "pnpm run build:styles:tailwind --watch",
     "dev:icu-types": "chokidar ./_locales/en/messages.json --initial --command \"pnpm run build:icu-types\"",
     "dev:protobuf": "chokidar ./protos/**/*.proto --command \"pnpm run build:protobuf\"",
-    "build:storybook": "pnpm run build:protobuf && cross-env SIGNAL_ENV=storybook storybook build",
+    "build:storybook": "pnpm run build:protobuf && pnpm run build:emoji-data && cross-env SIGNAL_ENV=storybook storybook build",
     "test:storybook": "pnpm run build:storybook && run-p --race test:storybook:*",
     "test:storybook:serve": "http-server storybook-static --port 6006 --silent",
     "test:storybook:test": "wait-on http://127.0.0.1:6006/ --timeout 5000 && test-storybook --testTimeout 60000",
@@ -86,6 +86,7 @@
     "build-linux": "run-s build:policy-files generate build:rolldown:prod && pnpm run build:release --publish=never",
     "build:acknowledgments": "node scripts/generate-acknowledgments.mjs",
     "build:dns-fallback": "node scripts/generate-dns-fallback.mjs",
+    "build:emoji-data": "node scripts/generate-emoji-data.mjs",
     "build:icu-types": "node scripts/generate-icu-types.mjs",
     "build:compact-locales": "node scripts/generate-compact-locales.mjs",
     "build:tray-icons": "node scripts/generate-tray-icons.mjs",
@@ -116,12 +117,11 @@
   "dependencies": {
     "@indutny/mac-screen-share": "1.0.13",
     "@indutny/simple-windows-notifications": "2.0.16",
-    "@signalapp/libsignal-client": "0.92.2",
+    "@signalapp/libsignal-client": "0.93.2",
     "@signalapp/mute-state-change": "workspace:1.0.0",
-    "@signalapp/ringrtc": "2.68.0",
+    "@signalapp/ringrtc": "2.68.1",
     "@signalapp/sqlcipher": "3.2.1",
     "@signalapp/windows-ucv": "1.0.1",
-    "emoji-datasource": "16.0.0",
     "google-libphonenumber": "3.2.44",
     "file-uri-to-path": "1.0.0"
   },
@@ -153,8 +153,10 @@
     "@react-aria/interactions": "3.27.1",
     "@react-aria/utils": "3.33.1",
     "@react-spring/web": "10.0.3",
+    "@signalapp/lame": "workspace:1.0.0",
     "@signalapp/minimask": "1.0.1",
     "@signalapp/mock-server": "22.0.0",
+    "@signalapp/parchment-cjs": "3.0.1",
     "@signalapp/quill-cjs": "2.1.2",
     "@storybook/addon-a11y": "8.4.4",
     "@storybook/addon-actions": "8.4.4",
@@ -234,10 +236,10 @@
     "debug": "4.4.3",
     "direction": "2.0.1",
     "dom-accessibility-api": "0.7.1",
-    "electron": "41.2.2",
+    "electron": "41.5.0",
     "electron-builder": "26.0.14",
     "electron-mocha": "13.1.0",
-    "emoji-regex": "10.6.0",
+    "emoji-regex-xs": "2.0.1",
     "enhanced-resolve": "5.20.1",
     "enquirer": "2.4.1",
     "eslint": "10.1.0",
@@ -383,7 +385,7 @@
     ]
   },
   "engines": {
-    "node": "24.14.0"
+    "node": "24.15.0"
   },
   "build": {
     "appId": "org.whispersystems.signal-desktop",
@@ -630,6 +632,7 @@
       "build/dns-fallback.json",
       "build/optional-resources.json",
       "build/jumbomoji.json",
+      "build/emoji-data.json",
       "node_modules/**",
       "!node_modules/.cache",
       "!**/node_modules/**/{CHANGELOG.md,README.md,README,readme.md,readme,test,__tests__,tests,powered-test,example,examples,*.d.ts,*.d.ts.map,*.js.map,*.gypi,.snyk-*.flag,benchmark}",
@@ -637,10 +640,6 @@
       "!**/node_modules/.bin",
       "!**/node_modules/**/build/**",
       "!**/node_modules/**/prebuilds/**",
-      "!node_modules/emoji-datasource/emoji_pretty.json",
-      "!node_modules/emoji-datasource/img/**/*.png",
-      "node_modules/emoji-datasource/categories.json",
-      "node_modules/emoji-datasource/emoji.json",
       "node_modules/@signalapp/sqlcipher/prebuilds/${platform}-${arch}/*.node",
       "node_modules/@signalapp/libsignal-client/prebuilds/${platform}-${arch}/*.node",
       "!node_modules/@signalapp/ringrtc/scripts/*",
@@ -655,6 +654,6 @@
     ]
   },
   "volta": {
-    "node": "24.14.0"
+    "node": "24.15.0"
   }
 }

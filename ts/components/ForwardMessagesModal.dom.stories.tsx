@@ -1,7 +1,7 @@
 // Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as React from 'react';
+import { useContext, type JSX } from 'react';
 import { action } from '@storybook/addon-actions';
 import type { Meta } from '@storybook/react';
 import type { AttachmentForUIType } from '../types/Attachment.std.ts';
@@ -15,7 +15,7 @@ import { getDefaultConversation } from '../test-helpers/getDefaultConversation.s
 import { StorybookThemeContext } from '../../.storybook/StorybookThemeContext.std.ts';
 import { CompositionTextArea } from './CompositionTextArea.dom.tsx';
 import type { MessageForwardDraft } from '../types/ForwardDraft.std.ts';
-import { EmojiSkinTone } from './fun/data/emojis.std.ts';
+import { Emoji } from '../axo/emoji.std.ts';
 
 const createAttachment = (
   props: Partial<AttachmentForUIType> = {}
@@ -69,13 +69,13 @@ const useProps = (overrideProps: Partial<PropsType> = {}): PropsType => ({
       onTextTooLong={action('onTextTooLong')}
       ourConversationId="me"
       platform="darwin"
-      emojiSkinToneDefault={EmojiSkinTone.None}
+      emojiSkinToneDefault={Emoji.SkinTone.None}
       convertDraftBodyRangesIntoHydrated={() => []}
     />
   ),
   showToast: action('showToast'),
   type: ForwardMessagesModalType.Forward,
-  theme: React.useContext(StorybookThemeContext),
+  theme: useContext(StorybookThemeContext),
   regionCode: 'US',
 });
 
@@ -92,11 +92,11 @@ function getMessageForwardDraft(
   };
 }
 
-export function Modal(): React.JSX.Element {
+export function Modal(): JSX.Element {
   return <ForwardMessagesModal {...useProps()} />;
 }
 
-export function WithText(): React.JSX.Element {
+export function WithText(): JSX.Element {
   return (
     <ForwardMessagesModal
       {...useProps({
@@ -106,7 +106,7 @@ export function WithText(): React.JSX.Element {
   );
 }
 
-export function ASticker(): React.JSX.Element {
+export function ASticker(): JSX.Element {
   return (
     <ForwardMessagesModal
       {...useProps({
@@ -116,7 +116,7 @@ export function ASticker(): React.JSX.Element {
   );
 }
 
-export function WithAContact(): React.JSX.Element {
+export function WithAContact(): JSX.Element {
   return (
     <ForwardMessagesModal
       {...useProps({
@@ -126,7 +126,7 @@ export function WithAContact(): React.JSX.Element {
   );
 }
 
-export function LinkPreview(): React.JSX.Element {
+export function LinkPreview(): JSX.Element {
   return (
     <ForwardMessagesModal
       {...useProps({
@@ -155,7 +155,7 @@ export function LinkPreview(): React.JSX.Element {
   );
 }
 
-export function MediaAttachments(): React.JSX.Element {
+export function MediaAttachments(): JSX.Element {
   return (
     <ForwardMessagesModal
       {...useProps({
@@ -185,7 +185,7 @@ export function MediaAttachments(): React.JSX.Element {
   );
 }
 
-export function AnnouncementOnlyGroupsNonAdmin(): React.JSX.Element {
+export function AnnouncementOnlyGroupsNonAdmin(): JSX.Element {
   return (
     <ForwardMessagesModal
       {...useProps()}

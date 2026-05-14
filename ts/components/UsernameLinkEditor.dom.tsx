@@ -1,7 +1,14 @@
 // Copyright 2023 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, { useCallback, useState, useEffect, useRef } from 'react';
+import {
+  useCallback,
+  useState,
+  useEffect,
+  useRef,
+  type JSX,
+  type MouseEvent,
+} from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import classnames from 'classnames';
 import { changeDpiBlob } from 'changedpi';
@@ -19,10 +26,10 @@ import { drop } from '../util/drop.std.ts';
 import { splitText } from '../util/splitText.std.ts';
 import { loadImage } from '../util/loadImage.std.ts';
 import { Button, ButtonVariant } from './Button.dom.tsx';
-import { ConfirmationDialog } from './ConfirmationDialog.dom.tsx';
 import { Spinner } from './Spinner.dom.tsx';
 import { BrandedQRCode } from './BrandedQRCode.dom.tsx';
 import { useConfirmDiscard } from '../hooks/useConfirmDiscard.dom.tsx';
+import { AxoConfirmDialog } from '../axo/AxoConfirmDialog.dom.tsx';
 
 const { noop } = lodash;
 
@@ -97,7 +104,7 @@ function ExportedImage({
   link,
   colorId,
   usernameLines,
-}: ExportedImagePropsType): React.JSX.Element {
+}: ExportedImagePropsType): JSX.Element {
   const { fg, bg, tint } = COLOR_MAP.get(colorId) ?? DEFAULT_PRESET;
 
   const isWhiteBackground = colorId === ColorEnum.WHITE;
@@ -318,11 +325,11 @@ function UsernameLinkColorRadio({
   bgColor,
   isSelected,
   onSelect,
-}: UsernameLinkColorRadioPropsType): React.JSX.Element {
+}: UsernameLinkColorRadioPropsType): JSX.Element {
   const className = `${CLASS}__colors__radio`;
 
   const onClick = useCallback(
-    (e: React.MouseEvent) => {
+    (e: MouseEvent) => {
       e.preventDefault();
       onSelect(colorId);
     },
@@ -375,7 +382,7 @@ function UsernameLinkColors({
   onChange,
   onSave,
   onCancel,
-}: UsernameLinkColorsPropsType): React.JSX.Element {
+}: UsernameLinkColorsPropsType): JSX.Element {
   const className = `${CLASS}__colors`;
 
   const normalizedValue = value === ColorEnum.UNKNOWN ? ColorEnum.BLUE : value;
@@ -430,7 +437,7 @@ export function UsernameLinkEditor({
   showToast,
 
   onBack,
-}: PropsType): React.JSX.Element {
+}: PropsType): JSX.Element {
   const [pngData, setPngData] = useState<Uint8Array<ArrayBuffer> | undefined>();
   const [showColors, setShowColors] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
@@ -487,7 +494,7 @@ export function UsernameLinkEditor({
   }, [i18n, link, username, colorId, bgColor, fgColor]);
 
   const onSave = useCallback(
-    (e: React.MouseEvent) => {
+    (e: MouseEvent) => {
       e.preventDefault();
       if (!pngData) {
         return;
@@ -503,14 +510,14 @@ export function UsernameLinkEditor({
     [saveAttachment, pngData]
   );
 
-  const onStartColorChange = useCallback((e: React.MouseEvent) => {
+  const onStartColorChange = useCallback((e: MouseEvent) => {
     e.preventDefault();
 
     setShowColors(true);
   }, []);
 
   const onCopyLink = useCallback(
-    (e: React.MouseEvent) => {
+    (e: MouseEvent) => {
       e.preventDefault();
       if (link) {
         drop(window.navigator.clipboard.writeText(link));
@@ -521,7 +528,7 @@ export function UsernameLinkEditor({
   );
 
   const onCopyUsername = useCallback(
-    (e: React.MouseEvent) => {
+    (e: MouseEvent) => {
       e.preventDefault();
       drop(window.navigator.clipboard.writeText(username));
       showToast({ toastType: ToastType.CopiedUsername });
@@ -544,10 +551,6 @@ export function UsernameLinkEditor({
 
   const onClickReset = useCallback(() => {
     setConfirmReset(true);
-  }, []);
-
-  const onCancelReset = useCallback(() => {
-    setConfirmReset(false);
   }, []);
 
   const onConfirmReset = useCallback(() => {
@@ -601,6 +604,10 @@ export function UsernameLinkEditor({
     i18n,
     name: 'UsernameLinkEditor',
     tryClose,
+    // @ts-expect-error ConfirmationDialog migration: Needs title
+    title: null,
+    // @ts-expect-error ConfirmationDialog migration: Needs description
+    description: null,
   });
 
   const onTryClose = useCallback(() => {
@@ -679,7 +686,7 @@ export function UsernameLinkEditor({
     </>
   );
 
-  let linkImage: React.JSX.Element | undefined;
+  let linkImage: JSX.Element | undefined;
   if (isReady && link) {
     linkImage = (
       <svg
@@ -731,53 +738,44 @@ export function UsernameLinkEditor({
           </div>
         </div>
 
-        {confirmReset && (
-          <ConfirmationDialog
-            i18n={i18n}
-            dialogName="UsernameLinkModal__confirm-reset"
-            onClose={onCancelReset}
-            actions={[
-              {
-                action: onConfirmReset,
-                style: 'negative',
-                text: i18n('icu:UsernameLinkModalBody__reset'),
-              },
-            ]}
+        <AxoConfirmDialog.Root
+          open={confirmReset}
+          onOpenChange={setConfirmReset}
+          // @ts-expect-error ConfirmationDialog migration: Needs title
+          title={null}
+          description={i18n('icu:UsernameLinkModalBody__reset__confirm')}
+        >
+          <AxoConfirmDialog.Cancel />
+          <AxoConfirmDialog.Action
+            variant="destructive"
+            onClick={onConfirmReset}
           >
-            {i18n('icu:UsernameLinkModalBody__reset__confirm')}
-          </ConfirmationDialog>
-        )}
+            {i18n('icu:UsernameLinkModalBody__reset')}
+          </AxoConfirmDialog.Action>
+        </AxoConfirmDialog.Root>
 
-        {showError && (
-          <ConfirmationDialog
-            i18n={i18n}
-            dialogName="UsernameLinkModal__error"
-            onClose={onCloseError}
-            cancelButtonVariant={ButtonVariant.Secondary}
-            cancelText={i18n('icu:cancel')}
-            actions={[
-              {
-                action: onConfirmReset,
-                style: 'affirmative',
-                text: i18n('icu:UsernameLinkModalBody__error__fix-now'),
-              },
-            ]}
-          >
-            {i18n('icu:UsernameLinkModalBody__error__text')}
-          </ConfirmationDialog>
-        )}
+        <AxoConfirmDialog.Root
+          open={showError}
+          onOpenChange={onCloseError}
+          // @ts-expect-error ConfirmationDialog migration: Needs title
+          title={null}
+          description={i18n('icu:UsernameLinkModalBody__error__text')}
+        >
+          <AxoConfirmDialog.Cancel />
+          <AxoConfirmDialog.Action variant="primary" onClick={onConfirmReset}>
+            {i18n('icu:UsernameLinkModalBody__error__fix-now')}
+          </AxoConfirmDialog.Action>
+        </AxoConfirmDialog.Root>
 
-        {recoveryModalVisibility === RecoveryModalVisibility.Open && (
-          <ConfirmationDialog
-            i18n={i18n}
-            dialogName="UsernameLinkModal__error"
-            onClose={onRecoveryModalClose}
-            cancelButtonVariant={ButtonVariant.Secondary}
-            cancelText={i18n('icu:ok')}
-          >
-            {i18n('icu:UsernameLinkModalBody__recovered__text')}
-          </ConfirmationDialog>
-        )}
+        <AxoConfirmDialog.Root
+          open={recoveryModalVisibility === RecoveryModalVisibility.Open}
+          onOpenChange={onRecoveryModalClose}
+          // @ts-expect-error ConfirmationDialog migration: Needs title
+          title={null}
+          description={i18n('icu:UsernameLinkModalBody__recovered__text')}
+        >
+          <AxoConfirmDialog.Cancel>{i18n('icu:ok')}</AxoConfirmDialog.Cancel>
+        </AxoConfirmDialog.Root>
 
         {showColors ? (
           <UsernameLinkColors

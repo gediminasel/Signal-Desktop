@@ -1,8 +1,8 @@
 // Copyright 2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { ReactNode } from 'react';
-import React, { useState, useCallback } from 'react';
+import type { ReactNode, JSX } from 'react';
+import { useState, useCallback } from 'react';
 
 import type { LocalizerType } from '../types/Util.std.ts';
 import type { ShowToastAction } from '../state/ducks/toast.preload.ts';
@@ -12,7 +12,7 @@ import {
   isVideoGoodForStories,
   ReasonVideoNotGood,
 } from '../util/isVideoGoodForStories.std.ts';
-import { ConfirmationDialog } from './ConfirmationDialog.dom.tsx';
+import { AxoConfirmDialog } from '../axo/AxoConfirmDialog.dom.tsx';
 
 export type PropsType = {
   children?: ReactNode;
@@ -32,7 +32,7 @@ export function StoriesAddStoryButton({
   onAddStory,
   showToast,
   onContextMenuShowingChanged,
-}: PropsType): React.JSX.Element {
+}: PropsType): JSX.Element {
   const [error, setError] = useState<string | undefined>();
 
   const onAddMedia = useCallback(() => {
@@ -111,27 +111,21 @@ export function StoriesAddStoryButton({
       >
         {children}
       </ContextMenu>
-      {error && (
-        <ConfirmationDialog
-          dialogName="StoriesAddStoryButton.error"
-          noDefaultCancelButton
-          actions={[
-            {
-              action: () => {
-                setError(undefined);
-              },
-              style: 'affirmative',
-              text: i18n('icu:Confirmation--confirm'),
-            },
-          ]}
-          i18n={i18n}
-          onClose={() => {
-            setError(undefined);
-          }}
+      <AxoConfirmDialog.Root
+        open={error != null}
+        onOpenChange={() => setError(undefined)}
+        // @ts-expect-error ConfirmationDialog migration: Needs title
+        title={null}
+        // @ts-expect-error ConfirmationDialog migration: Needs description
+        description={error}
+      >
+        <AxoConfirmDialog.Action
+          variant="primary"
+          onClick={() => setError(undefined)}
         >
-          {error}
-        </ConfirmationDialog>
-      )}
+          {i18n('icu:Confirmation--confirm')}
+        </AxoConfirmDialog.Action>
+      </AxoConfirmDialog.Root>
     </>
   );
 }

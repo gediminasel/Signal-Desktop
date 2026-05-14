@@ -1,14 +1,8 @@
 // Copyright 2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { ReactNode } from 'react';
-import React, {
-  useCallback,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import type { ReactNode, JSX, RefObject, MouseEvent } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import classNames from 'classnames';
 import lodash from 'lodash';
 import type { DraftBodyRanges } from '../types/BodyRange.std.ts';
@@ -36,8 +30,6 @@ import { ThemeType } from '../types/Util.std.ts';
 import { WidthBreakpoint } from './_util.std.ts';
 import { getAvatarColor } from '../types/Colors.std.ts';
 import { shouldNeverBeCalled } from '../util/shouldNeverBeCalled.std.ts';
-import { ConfirmationDialog } from './ConfirmationDialog.dom.tsx';
-import type { EmojiSkinTone } from './fun/data/emojis.std.ts';
 import { FunEmojiPicker } from './fun/FunEmojiPicker.dom.tsx';
 import { FunEmojiPickerButton } from './fun/FunButton.dom.tsx';
 import type { FunEmojiSelection } from './fun/panels/FunPanelEmojis.dom.tsx';
@@ -46,6 +38,9 @@ import { AxoContextMenu } from '../axo/AxoContextMenu.dom.tsx';
 import type { AxoMenuBuilder } from '../axo/AxoMenuBuilder.dom.tsx';
 import { drop } from '../util/drop.std.ts';
 import type { ContactModalStateType } from '../types/globalModals.std.ts';
+import type { Emoji } from '../axo/emoji.std.ts';
+import { AxoConfirmDialog } from '../axo/AxoConfirmDialog.dom.tsx';
+import { strictAssert } from '../util/assert.std.ts';
 
 const { noop, orderBy } = lodash;
 
@@ -117,7 +112,7 @@ export type PropsType = {
   isInternalUser?: boolean;
   onChangeViewTarget: (target: StoryViewTargetType) => unknown;
   onClose: () => unknown;
-  onReact: (emoji: string) => unknown;
+  onReact: (emoji: Emoji.Variant) => unknown;
   onReply: (
     message: string,
     bodyRanges: DraftBodyRanges,
@@ -126,10 +121,10 @@ export type PropsType = {
   onTextTooLong: () => unknown;
   onSelectEmoji: (emojiSelection: FunEmojiSelection) => unknown;
   ourConversationId: string | undefined;
-  preferredReactionEmoji: ReadonlyArray<string>;
+  preferredReactionEmoji: ReadonlyArray<Emoji.Variant>;
   replies: ReadonlyArray<ReplyType>;
   showContactModal: (payload: ContactModalStateType) => void;
-  emojiSkinToneDefault: EmojiSkinTone | null;
+  emojiSkinToneDefault: Emoji.SkinTone | null;
   sortedGroupMembers?: ReadonlyArray<ConversationType>;
   views: ReadonlyArray<StorySendStateType>;
   viewTarget: StoryViewTargetType;
@@ -162,7 +157,7 @@ export function StoryViewsNRepliesModal({
   sortedGroupMembers,
   viewTarget,
   views,
-}: PropsType): React.JSX.Element | null {
+}: PropsType): JSX.Element | null {
   const [deleteReplyId, setDeleteReplyId] = useState<string | undefined>(
     undefined
   );
@@ -213,7 +208,7 @@ export function StoryViewsNRepliesModal({
     }
   }, []);
 
-  let composerElement: React.JSX.Element | undefined;
+  let composerElement: JSX.Element | undefined;
 
   useLayoutEffect(() => {
     if (
@@ -231,6 +226,10 @@ export function StoryViewsNRepliesModal({
     i18n,
     name: 'StoryViewsNRepliesModal',
     tryClose,
+    // @ts-expect-error ConfirmationDialog migration: Needs title
+    title: null,
+    // @ts-expect-error ConfirmationDialog migration: Needs description
+    description: null,
   });
   const onTryClose = useCallback(() => {
     confirmDiscardIf(emojiPickerOpen || messageBodyText.length > 0, onClose);
@@ -319,7 +318,7 @@ export function StoryViewsNRepliesModal({
     );
   }
 
-  let repliesElement: React.JSX.Element | undefined;
+  let repliesElement: JSX.Element | undefined;
 
   function shouldCollapse(reply: ReplyType, otherReply?: ReplyType) {
     // deleted reactions get rendered the same as deleted replies
@@ -383,7 +382,7 @@ export function StoryViewsNRepliesModal({
     );
   }
 
-  let viewsElement: React.JSX.Element | undefined;
+  let viewsElement: JSX.Element | undefined;
   if (hasViewsCapability && !hasViewReceiptSetting) {
     viewsElement = (
       <div className="StoryViewsNRepliesModal__read-receipts-off">
@@ -493,49 +492,50 @@ export function StoryViewsNRepliesModal({
           )}
         </div>
       </Modal>
-      {deleteReplyId && (
-        <ConfirmationDialog
-          i18n={i18n}
-          theme={Theme.Dark}
-          dialogName="confirmDialog"
-          actions={[
-            {
-              text: i18n('icu:delete'),
-              action: () => deleteGroupStoryReply(deleteReplyId),
-              style: 'negative',
-            },
-          ]}
-          title={i18n('icu:deleteWarning')}
-          onClose={() => setDeleteReplyId(undefined)}
-          onCancel={() => setDeleteReplyId(undefined)}
-        />
-      )}
-      {deleteForEveryoneReplyId && (
-        <ConfirmationDialog
-          i18n={i18n}
-          theme={Theme.Dark}
-          dialogName="confirmDialog"
-          actions={[
-            {
-              text: i18n('icu:delete'),
-              action: () =>
-                deleteGroupStoryReplyForEveryone(deleteForEveryoneReplyId),
-              style: 'negative',
-            },
-          ]}
-          title={i18n('icu:deleteWarning')}
-          onClose={() => setDeleteForEveryoneReplyId(undefined)}
-          onCancel={() => setDeleteForEveryoneReplyId(undefined)}
+      <AxoConfirmDialog.Root
+        open={deleteReplyId != null}
+        onOpenChange={() => setDeleteReplyId(undefined)}
+        title={i18n('icu:deleteWarning')}
+        // @ts-expect-error ConfirmationDialog migration: Needs description
+        description={null}
+      >
+        <AxoConfirmDialog.Cancel />
+        <AxoConfirmDialog.Action
+          variant="destructive"
+          onClick={() => {
+            strictAssert(deleteReplyId != null, 'Missing deleteReplyId');
+            deleteGroupStoryReply(deleteReplyId);
+          }}
         >
-          {i18n('icu:deleteForEveryoneWarning')}
-        </ConfirmationDialog>
-      )}
+          {i18n('icu:delete')}
+        </AxoConfirmDialog.Action>
+      </AxoConfirmDialog.Root>
+      <AxoConfirmDialog.Root
+        open={deleteForEveryoneReplyId != null}
+        onOpenChange={() => setDeleteForEveryoneReplyId(undefined)}
+        title={i18n('icu:deleteWarning')}
+        description={i18n('icu:deleteForEveryoneWarning')}
+      >
+        <AxoConfirmDialog.Cancel />
+        <AxoConfirmDialog.Action
+          variant="destructive"
+          onClick={() => {
+            strictAssert(
+              deleteForEveryoneReplyId != null,
+              'Missing deleteForEveryoneReplyId'
+            );
+            deleteGroupStoryReplyForEveryone(deleteForEveryoneReplyId);
+          }}
+        >
+          {i18n('icu:delete')}
+        </AxoConfirmDialog.Action>
+      </AxoConfirmDialog.Root>
     </>
   );
 }
 
 type ReplyOrReactionMessageProps = {
-  containerElementRef: React.RefObject<HTMLElement | null>;
+  containerElementRef: RefObject<HTMLElement | null>;
   deleteGroupStoryReply: (replyId: string) => void;
   deleteGroupStoryReplyForEveryone: (replyId: string) => void;
   displayLimit: number | undefined;
@@ -545,7 +545,7 @@ type ReplyOrReactionMessageProps = {
   id: string;
   isInternalUser?: boolean;
   isSpoilerExpanded: Record<number, boolean>;
-  onContextMenu?: (ev: React.MouseEvent) => void;
+  onContextMenu?: (ev: MouseEvent) => void;
   reply: ReplyType;
   shouldCollapseAbove: boolean;
   shouldCollapseBelow: boolean;
@@ -686,6 +686,7 @@ function ReplyOrReactionMessage({
         interactivity={MessageInteractivity.Normal}
         interactionMode="mouse"
         isSpoilerExpanded={isSpoilerExpanded}
+        isSignalConversation={false}
         isVoiceMessagePlayed={false}
         messageExpanded={messageExpanded}
         readStatus={reply.readStatus}

@@ -1,8 +1,13 @@
 // Copyright 2018 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { ReactNode } from 'react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import type {
+  ReactNode,
+  JSX,
+  MouseEvent as ReactMouseEvent,
+  KeyboardEvent as ReactKeyboardEvent,
+} from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { createPortal } from 'react-dom';
 import lodash from 'lodash';
@@ -110,12 +115,12 @@ export function Lightbox({
   onSelectAttachment,
   hasNextMessage,
   hasPrevMessage,
-}: PropsType): React.JSX.Element | null {
+}: PropsType): JSX.Element | null {
   const hasThumbnails = media.length > 1;
   const messageId = media.at(0)?.message.id;
   const prevMessageId = usePrevious(messageId, messageId);
   const needsAnimation = messageId !== prevMessageId;
-  const [root, setRoot] = React.useState<HTMLElement | undefined>();
+  const [root, setRoot] = useState<HTMLElement | undefined>();
 
   const [videoElement, setVideoElement] = useState<HTMLVideoElement | null>(
     null
@@ -176,7 +181,7 @@ export function Lightbox({
     setShouldShowDownloadToast(false);
   }, [isDownloading, setShouldShowDownloadToast]);
   const onUserInteractionOnVideo = useCallback(
-    (event: React.MouseEvent<HTMLVideoElement>) => {
+    (event: ReactMouseEvent<HTMLVideoElement>) => {
       if (downloadToastTimeout.current) {
         clearTimeout(downloadToastTimeout.current);
         downloadToastTimeout.current = undefined;
@@ -198,7 +203,7 @@ export function Lightbox({
   );
 
   const onPrevious = useCallback(
-    (event: KeyboardEvent | React.MouseEvent<HTMLButtonElement>) => {
+    (event: KeyboardEvent | ReactMouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
       event.stopPropagation();
 
@@ -212,7 +217,7 @@ export function Lightbox({
   );
 
   const onNext = useCallback(
-    (event: KeyboardEvent | React.MouseEvent<HTMLButtonElement>) => {
+    (event: KeyboardEvent | ReactMouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
       event.stopPropagation();
 
@@ -233,7 +238,7 @@ export function Lightbox({
   }, [setVideoTime, videoElement]);
 
   const handleSave = useCallback(
-    (event: KeyboardEvent | React.MouseEvent<HTMLButtonElement>) => {
+    (event: KeyboardEvent | ReactMouseEvent<HTMLButtonElement>) => {
       if (isViewOnce) {
         return;
       }
@@ -250,7 +255,7 @@ export function Lightbox({
     [isViewOnce, media, saveAttachment, selectedIndex]
   );
 
-  const handleForward = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleForward = (event: ReactMouseEvent<HTMLButtonElement>) => {
     if (isViewOnce) {
       return;
     }
@@ -311,7 +316,7 @@ export function Lightbox({
     [closeLightbox, onNext, onPrevious, handleSave]
   );
 
-  const onClose = (event: React.MouseEvent<HTMLElement>) => {
+  const onClose = (event: ReactMouseEvent<HTMLElement>) => {
     event.stopPropagation();
     event.preventDefault();
 
@@ -529,7 +534,7 @@ export function Lightbox({
   );
 
   const zoomButtonHandler = useCallback(
-    (ev: React.MouseEvent<HTMLButtonElement>) => {
+    (ev: ReactMouseEvent<HTMLButtonElement>) => {
       ev.preventDefault();
       ev.stopPropagation();
 
@@ -605,7 +610,7 @@ export function Lightbox({
 
   const caption = attachment?.caption;
 
-  let content: React.JSX.Element;
+  let content: JSX.Element;
   if (!contentType) {
     content = <>{children}</>;
   } else {
@@ -629,7 +634,7 @@ export function Lightbox({
                 alt={i18n('icu:lightboxImageAlt')}
                 className="Lightbox__object"
                 data-testid={attachment.cdnKey}
-                onContextMenu={(ev: React.MouseEvent<HTMLImageElement>) => {
+                onContextMenu={(ev: ReactMouseEvent<HTMLImageElement>) => {
                   // These are the only image types supported by Electron's NativeImage
                   if (
                     ev &&
@@ -713,13 +718,13 @@ export function Lightbox({
           className={classNames('Lightbox Lightbox__container', {
             'Lightbox__container--zoom': isZoomed,
           })}
-          onClick={(event: React.MouseEvent<HTMLDivElement>) => {
+          onClick={(event: ReactMouseEvent<HTMLDivElement>) => {
             event.stopPropagation();
             event.preventDefault();
 
             closeLightbox();
           }}
-          onKeyUp={(event: React.KeyboardEvent<HTMLDivElement>) => {
+          onKeyUp={(event: ReactKeyboardEvent<HTMLDivElement>) => {
             if (
               (containerRef && event.target !== containerRef.current) ||
               event.keyCode !== 27
@@ -863,7 +868,7 @@ export function Lightbox({
                           key={item.attachment.thumbnail?.url}
                           type="button"
                           onClick={(
-                            event: React.MouseEvent<HTMLButtonElement>
+                            event: ReactMouseEvent<HTMLButtonElement>
                           ) => {
                             event.stopPropagation();
                             event.preventDefault();
@@ -900,7 +905,7 @@ function LightboxHeader({
   getConversation: (id: string) => ConversationType;
   i18n: LocalizerType;
   item: ReadonlyDeep<MediaItemType>;
-}): React.JSX.Element {
+}): JSX.Element {
   const { message } = item;
   const conversation = getConversation(message.conversationId);
 

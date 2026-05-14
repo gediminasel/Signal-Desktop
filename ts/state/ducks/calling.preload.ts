@@ -1,6 +1,8 @@
 // Copyright 2020 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import type { RefObject } from 'react';
+
 import type { ThunkAction, ThunkDispatch } from 'redux-thunk';
 import { ipcRenderer } from 'electron';
 import lodash from 'lodash';
@@ -116,6 +118,7 @@ import { addCallHistory, reloadCallHistory } from './callHistory.preload.ts';
 import { saveDraftRecordingIfNeeded } from './composer.preload.ts';
 import type { StartCallData } from '../../components/ConfirmLeaveCallModal.dom.tsx';
 import {
+  getActiveCallState,
   getCallLinksByRoomId,
   getPresentingSource,
 } from '../selectors/calling.std.ts';
@@ -130,6 +133,7 @@ import { itemStorage } from '../../textsecure/Storage.preload.ts';
 import type { SizeCallbackType } from '../../calling/VideoSupport.preload.ts';
 import { noopAction, type NoopActionType } from './noop.std.ts';
 import type { SignalService } from '../../protobuf/index.std.ts';
+import { Emoji } from '../../axo/emoji.std.ts';
 
 const { omit } = lodash;
 
@@ -353,12 +357,12 @@ export type SendGroupCallRaiseHandType = ReadonlyDeep<{
 export type SendGroupCallReactionType = ReadonlyDeep<{
   callMode: CallMode;
   conversationId: string;
-  value: string;
+  value: Emoji.Variant;
 }>;
 type SendGroupCallReactionLocalCopyType = ReadonlyDeep<{
   callMode: CallMode;
   conversationId: string;
-  value: string;
+  value: Emoji.Variant;
   timestamp: number;
 }>;
 
@@ -491,7 +495,7 @@ type StartCallLinkLobbyPayloadType = {
 
 // oxlint-disable-next-line signal-desktop/enforce-type-alias-readonlydeep
 export type SetRendererCanvasType = {
-  element: React.RefObject<HTMLCanvasElement | null> | undefined;
+  element: RefObject<HTMLCanvasElement | null> | undefined;
   sizeCallback: SizeCallbackType | undefined;
 };
 
@@ -846,7 +850,10 @@ export type GroupCallStateChangeActionType = {
 type GroupCallReactionsReceivedActionPayloadType = ReadonlyDeep<{
   callMode: CallMode;
   conversationId: string;
-  reactions: Array<CallReaction>;
+  reactions: Array<{
+    demuxId: number;
+    value: Emoji.Variant;
+  }>;
   timestamp: number;
 }>;
 
@@ -1582,9 +1589,16 @@ function receiveGroupCallReactions(
     const { callMode, conversationId } = payload;
     const timestamp = Date.now();
 
+    const reactions = payload.reactions.map(reaction => {
+      return {
+        demuxId: reaction.demuxId,
+        value: Emoji.unsafeCastMaybeInvalidStringToVariant(reaction.value),
+      };
+    });
+
     dispatch({
       type: GROUP_CALL_REACTIONS_RECEIVED,
-      payload: { ...payload, callMode, timestamp },
+      payload: { conversationId, callMode, timestamp, reactions },
     });
     await sleep(CALLING_REACTIONS_LIFETIME);
 
@@ -2025,28 +2039,6 @@ function setLocalAudio(
   };
 }
 
-function setLocalAudioRemoteMuted(
-  payload: Parameters<SetMutedByType>[0]
-): ThunkAction<void, RootStateType, unknown, SetLocalAudioActionType> {
-  return (dispatch, getState) => {
-    const activeCall = getActiveCall(getState().calling);
-    if (!activeCall) {
-      log.warn('Trying to set local audio when no call is active');
-      return;
-    }
-
-    calling.setOutgoingAudioRemoteMuted(
-      activeCall.conversationId,
-      payload?.mutedBy
-    );
-
-    dispatch({
-      type: SET_LOCAL_AUDIO_FULFILLED,
-      payload: { enabled: false },
-    });
-  };
-}
-
 function setLocalVideo(
   payload: Parameters<SetLocalVideoType>[0]
 ): ThunkAction<void, RootStateType, unknown, SetLocalVideoFulfilledActionType> {
@@ -2089,11 +2081,25 @@ function setMutedBy(
   payload: Parameters<SetMutedByType>[0]
 ): ThunkAction<void, RootStateType, unknown, SetMutedByActionType> {
   return (dispatch, getState) => {
-    const activeCall = getActiveCall(getState().calling);
+    const state = getState();
+    const activeCall = getActiveCall(state.calling);
     if (!activeCall) {
       log.warn('Trying to set muted by when no call is active');
       return;
     }
+
+    const activeCallState = getActiveCallState(state);
+    if (!activeCallState || !activeCallState.hasLocalAudio) {
+      log.info(
+        'Trying to set muted by when no active call state or already muted'
+      );
+      return;
+    }
+
+    calling.setOutgoingAudioRemoteMuted(
+      activeCall.conversationId,
+      payload.mutedBy
+    );
 
     dispatch({
       type: SET_MUTED_BY,
@@ -3110,7 +3116,6 @@ export const actions = {
   setIsCallActive,
   setLocalAudio,
   setLocalVideo,
-  setLocalAudioRemoteMuted,
   setMutedBy,
   setOutgoingRing,
   setRendererCanvas,
@@ -4364,13 +4369,11 @@ export function reducer(
       return state;
     }
 
-    const newMutedBy = activeCallState.hasLocalAudio ? mutedBy : undefined;
-
     return {
       ...state,
       activeCallState: {
         ...activeCallState,
-        mutedBy: newMutedBy,
+        mutedBy,
       },
     };
   }

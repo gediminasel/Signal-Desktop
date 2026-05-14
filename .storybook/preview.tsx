@@ -3,8 +3,6 @@
 
 import '../ts/window.d.ts';
 
-import React, { StrictMode } from 'react';
-
 import '@signalapp/quill-cjs/dist/quill.core.css';
 import '../stylesheets/manifest.scss';
 import '../stylesheets/tailwind-config.css';
@@ -20,7 +18,7 @@ import { StorybookThemeContext } from './StorybookThemeContext.std.ts';
 import { SystemThemeType, ThemeType } from '../ts/types/Util.std.ts';
 import { setupI18n } from '../ts/util/setupI18n.dom.tsx';
 import { HourCyclePreference } from '../ts/types/I18N.std.ts';
-import { AxoProvider } from '../ts/axo/AxoProvider.dom.tsx';
+import { AppProvider } from '../ts/windows/AppProvider.dom.tsx';
 import type { StateType } from '../ts/state/reducer.preload.ts';
 import {
   ScrollerLockContext,
@@ -30,13 +28,13 @@ import { Environment, setEnvironment } from '../ts/environment.std.ts';
 import { parseUnknown } from '../ts/util/schemas.std.ts';
 import { LocaleEmojiListSchema } from '../ts/types/emoji.std.ts';
 import { FunProvider } from '../ts/components/fun/FunProvider.dom.tsx';
-import { EmojiSkinTone } from '../ts/components/fun/data/emojis.std.ts';
 import { MOCK_GIFS_PAGINATED_ONE_PAGE } from '../ts/test-helpers/funPickerMocks.dom.tsx';
 import { NavTab } from '../ts/types/Nav.std.ts';
 
 import type { FunEmojiSelection } from '../ts/components/fun/panels/FunPanelEmojis.dom.tsx';
 import type { FunGifSelection } from '../ts/components/fun/panels/FunPanelGifs.dom.tsx';
 import type { FunStickerSelection } from '../ts/components/fun/panels/FunPanelStickers.dom.tsx';
+import { Emoji } from '../ts/axo/emoji.std.ts';
 
 setEnvironment(Environment.Development, true);
 
@@ -185,14 +183,6 @@ window.Signal = {
   },
 };
 
-function withStrictMode(Story, context) {
-  return (
-    <StrictMode>
-      <Story {...context} />
-    </StrictMode>
-  );
-}
-
 const withGlobalTypesProvider = (Story, context) => {
   const theme =
     context.globals.theme === 'light' ? ThemeType.light : ThemeType.dark;
@@ -258,7 +248,7 @@ function withFunProvider(Story, context) {
       recentEmojis={[]}
       recentStickers={[]}
       recentGifs={[]}
-      emojiSkinToneDefault={EmojiSkinTone.None}
+      emojiSkinToneDefault={Emoji.SkinTone.None}
       onEmojiSkinToneDefaultChange={noop}
       installedStickerPacks={[]}
       showStickerPickerHint={false}
@@ -285,19 +275,16 @@ function withFunProvider(Story, context) {
   );
 }
 
-function withAxoProvider(Story, context) {
-  const globalValue = context.globals.direction ?? 'ltr';
-  const dir = globalValue === 'auto' ? 'ltr' : globalValue;
+function withAppProvider(Story, context) {
   return (
-    <AxoProvider dir={dir}>
+    <AppProvider>
       <Story {...context} />
-    </AxoProvider>
+    </AppProvider>
   );
 }
 
 export const decorators = [
-  withStrictMode,
-  withAxoProvider,
+  withAppProvider,
   withGlobalTypesProvider,
   withMockStoreProvider,
   withScrollLockProvider,

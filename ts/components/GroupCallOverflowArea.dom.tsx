@@ -1,14 +1,15 @@
 // Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { ReactElement } from 'react';
-import React, { useRef, useState, useEffect } from 'react';
+import type { ReactElement, RefObject, JSX } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import classNames from 'classnames';
 import type { VideoFrameSource } from '@signalapp/ringrtc';
 import type { LocalizerType } from '../types/Util.std.ts';
 import type { GroupCallRemoteParticipantType } from '../types/Calling.std.ts';
 import { GroupCallRemoteParticipant } from './GroupCallRemoteParticipant.dom.tsx';
 import type { CallingImageDataCache } from './CallManager.dom.tsx';
+import type { PropsType as SmartCallingParticipantMenuProps } from '../state/smart/CallingParticipantMenu.preload.tsx';
 
 const OVERFLOW_SCROLLED_TO_EDGE_THRESHOLD = 20;
 const OVERFLOW_SCROLL_BUTTON_RATIO = 0.75;
@@ -17,10 +18,11 @@ const OVERFLOW_SCROLL_BUTTON_RATIO = 0.75;
 export const OVERFLOW_PARTICIPANT_WIDTH = 107;
 
 export type PropsType = {
+  callConversationId?: string;
   getFrameBuffer: () => Uint8Array<ArrayBuffer>;
   getGroupCallVideoFrameSource: (demuxId: number) => VideoFrameSource;
   i18n: LocalizerType;
-  imageDataCache: React.RefObject<CallingImageDataCache | null>;
+  imageDataCache: RefObject<CallingImageDataCache | null>;
   isCallReconnecting: boolean;
   joinedAt: number | null;
   onClickRaisedHand?: () => void;
@@ -31,9 +33,13 @@ export type PropsType = {
   overflowedParticipants: ReadonlyArray<GroupCallRemoteParticipantType>;
   remoteAudioLevels: Map<number, number>;
   remoteParticipantsCount: number;
+  renderCallingParticipantMenu: (
+    props: SmartCallingParticipantMenuProps
+  ) => JSX.Element;
 };
 
 export function GroupCallOverflowArea({
+  callConversationId,
   getFrameBuffer,
   getGroupCallVideoFrameSource,
   imageDataCache,
@@ -45,7 +51,8 @@ export function GroupCallOverflowArea({
   overflowedParticipants,
   remoteAudioLevels,
   remoteParticipantsCount,
-}: PropsType): React.JSX.Element | null {
+  renderCallingParticipantMenu,
+}: PropsType): JSX.Element | null {
   const overflowRef = useRef<HTMLDivElement | null>(null);
   const [overflowScrollTop, setOverflowScrollTop] = useState(0);
 
@@ -123,6 +130,7 @@ export function GroupCallOverflowArea({
       >
         {overflowedParticipants.map(remoteParticipant => (
           <GroupCallRemoteParticipant
+            callConversationId={callConversationId}
             key={remoteParticipant.demuxId}
             getFrameBuffer={getFrameBuffer}
             getGroupCallVideoFrameSource={getGroupCallVideoFrameSource}
@@ -137,6 +145,7 @@ export function GroupCallOverflowArea({
             )}
             remoteParticipant={remoteParticipant}
             remoteParticipantsCount={remoteParticipantsCount}
+            renderCallingParticipantMenu={renderCallingParticipantMenu}
             isActiveSpeakerInSpeakerView={false}
             isCallReconnecting={isCallReconnecting}
             isInOverflow

@@ -1,16 +1,14 @@
 // Copyright 2024 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React from 'react';
-
-import { ConfirmationDialog } from './ConfirmationDialog.dom.tsx';
-
+import type { JSX } from 'react';
 import type { LocalizerType } from '../types/Util.std.ts';
 import type {
   StartCallingLobbyType,
   StartCallLinkLobbyByRoomIdType,
   StartCallLinkLobbyType,
 } from '../state/ducks/calling.preload.ts';
+import { AxoConfirmDialog } from '../axo/AxoConfirmDialog.dom.tsx';
 
 export type StartCallData =
   | ({
@@ -33,27 +31,21 @@ export function ConfirmLeaveCallModal({
   data,
   leaveCurrentCallAndStartCallingLobby,
   toggleConfirmLeaveCallModal,
-}: Props): React.JSX.Element | null {
+}: Props): JSX.Element | null {
   return (
-    <ConfirmationDialog
-      dialogName="GroupCallRemoteParticipant.blockInfo"
-      cancelText={i18n('icu:cancel')}
-      i18n={i18n}
-      onClose={() => {
-        toggleConfirmLeaveCallModal(null);
-      }}
+    <AxoConfirmDialog.Root
+      open
+      onOpenChange={() => toggleConfirmLeaveCallModal(null)}
       title={i18n('icu:CallsList__LeaveCallDialogTitle')}
-      actions={[
-        {
-          text: i18n('icu:CallsList__LeaveCallDialogButton--leave'),
-          style: 'affirmative',
-          action: () => {
-            leaveCurrentCallAndStartCallingLobby(data);
-          },
-        },
-      ]}
+      description={i18n('icu:CallsList__LeaveCallDialogBody')}
     >
-      {i18n('icu:CallsList__LeaveCallDialogBody')}
-    </ConfirmationDialog>
+      <AxoConfirmDialog.Cancel />
+      <AxoConfirmDialog.Action
+        variant="primary"
+        onClick={() => leaveCurrentCallAndStartCallingLobby(data)}
+      >
+        {i18n('icu:CallsList__LeaveCallDialogButton--leave')}
+      </AxoConfirmDialog.Action>
+    </AxoConfirmDialog.Root>
   );
 }

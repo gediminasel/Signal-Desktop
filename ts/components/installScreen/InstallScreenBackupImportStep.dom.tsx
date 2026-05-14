@@ -1,7 +1,7 @@
 // Copyright 2024 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback, type JSX } from 'react';
 
 import type { LocalizerType } from '../../types/Util.std.ts';
 import type { UpdatesStateType } from '../../state/ducks/updates.preload.ts';
@@ -13,13 +13,13 @@ import {
 import { formatFileSize } from '../../util/formatFileSize.std.ts';
 import { TitlebarDragArea } from '../TitlebarDragArea.dom.tsx';
 import { ProgressBar } from '../ProgressBar.dom.tsx';
-import { ConfirmationDialog } from '../ConfirmationDialog.dom.tsx';
 import { InstallScreenSignalLogo } from './InstallScreenSignalLogo.dom.tsx';
 import { roundFractionForProgressBar } from '../../util/numbers.std.ts';
 import { missingCaseError } from '../../util/missingCaseError.std.ts';
 import { SYNCING_MESSAGES_SECURITY_URL } from '../../types/support.std.ts';
 import { I18n } from '../I18n.dom.tsx';
 import { InstallScreenUpdateDialog } from './InstallScreenUpdateDialog.dom.tsx';
+import { AxoConfirmDialog } from '../../axo/AxoConfirmDialog.dom.tsx';
 
 // We can't always use destructuring assignment because of the complexity of this props
 //   type.
@@ -52,9 +52,7 @@ export type PropsType = Readonly<
   )
 >;
 
-export function InstallScreenBackupImportStep(
-  props: PropsType
-): React.JSX.Element {
+export function InstallScreenBackupImportStep(props: PropsType): JSX.Element {
   const {
     i18n,
     backupStep,
@@ -74,10 +72,6 @@ export function InstallScreenBackupImportStep(
     setIsConfirmingCancel(true);
   }, []);
 
-  const abortCancel = useCallback(() => {
-    setIsConfirmingCancel(false);
-  }, []);
-
   const onCancelWrap = useCallback(() => {
     onCancel();
     setIsConfirmingCancel(false);
@@ -88,13 +82,13 @@ export function InstallScreenBackupImportStep(
     setIsConfirmingCancel(false);
   }, [onRetry]);
 
-  const learnMoreLink = (parts: Array<string | React.JSX.Element>) => (
+  const learnMoreLink = (parts: Array<string | JSX.Element>) => (
     <a href={SYNCING_MESSAGES_SECURITY_URL} rel="noreferrer" target="_blank">
       {parts}
     </a>
   );
 
-  let errorElem: React.JSX.Element | undefined;
+  let errorElem: JSX.Element | undefined;
   if (error == null || error === InstallScreenBackupError.Canceled) {
     // no-op
   } else if (error === InstallScreenBackupError.UnsupportedVersion) {
@@ -113,53 +107,41 @@ export function InstallScreenBackupImportStep(
   } else if (error === InstallScreenBackupError.Retriable) {
     if (!isConfirmingCancel) {
       errorElem = (
-        <ConfirmationDialog
-          dialogName="InstallScreenBackupImportStep.error"
+        <AxoConfirmDialog.Root
+          open
+          onOpenChange={confirmCancel}
           title={i18n('icu:BackupImportScreen__error__title')}
-          cancelText={i18n(
-            'icu:BackupImportScreen__cancel-confirmation__confirm'
-          )}
-          actions={[
-            {
-              action: onRetryWrap,
-              style: 'affirmative',
-              text: i18n('icu:BackupImportScreen__error__confirm'),
-            },
-          ]}
-          i18n={i18n}
-          onClose={confirmCancel}
+          description={i18n('icu:BackupImportScreen__error__body')}
         >
-          {i18n('icu:BackupImportScreen__error__body')}
-        </ConfirmationDialog>
+          <AxoConfirmDialog.Cancel>
+            {i18n('icu:BackupImportScreen__cancel-confirmation__confirm')}
+          </AxoConfirmDialog.Cancel>
+          <AxoConfirmDialog.Action variant="primary" onClick={onRetryWrap}>
+            {i18n('icu:BackupImportScreen__error__confirm')}
+          </AxoConfirmDialog.Action>
+          .
+        </AxoConfirmDialog.Root>
       );
     }
   } else if (error === InstallScreenBackupError.Fatal) {
     errorElem = (
-      <ConfirmationDialog
-        dialogName="InstallScreenBackupImportStep.error"
+      <AxoConfirmDialog.Root
+        open
+        onOpenChange={() => null}
         title={i18n('icu:BackupImportScreen__error__title')}
-        actions={[
-          {
-            action: onCancel,
-            style: 'affirmative',
-            text: i18n('icu:BackupImportScreen__error__confirm'),
-          },
-        ]}
-        i18n={i18n}
-        onClose={() => null}
-        noMouseClose
-        noDefaultCancelButton
-        noEscapeClose
+        description={i18n('icu:BackupImportScreen__error-fatal__body')}
       >
-        {i18n('icu:BackupImportScreen__error-fatal__body')}
-      </ConfirmationDialog>
+        <AxoConfirmDialog.Action variant="primary" onClick={onCancel}>
+          {i18n('icu:BackupImportScreen__error__confirm')}
+        </AxoConfirmDialog.Action>
+      </AxoConfirmDialog.Root>
     );
   } else {
     throw missingCaseError(error);
   }
 
   const isCanceled = error === InstallScreenBackupError.Canceled;
-  let cancelButton: React.JSX.Element | undefined;
+  let cancelButton: JSX.Element | undefined;
   if (
     !isCanceled &&
     (backupStep === InstallScreenBackupStep.Download ||
@@ -206,28 +188,19 @@ export function InstallScreenBackupImportStep(
         {cancelButton}
       </div>
 
-      {isConfirmingCancel && (
-        <ConfirmationDialog
-          dialogName="InstallScreenBackupImportStep.confirmCancel"
-          title={i18n('icu:BackupImportScreen__cancel-confirmation__title')}
-          cancelText={i18n(
-            'icu:BackupImportScreen__cancel-confirmation__cancel'
-          )}
-          actions={[
-            {
-              action: onCancelWrap,
-              style: 'negative',
-              text: i18n(
-                'icu:BackupImportScreen__cancel-confirmation__confirm'
-              ),
-            },
-          ]}
-          i18n={i18n}
-          onClose={abortCancel}
-        >
-          {i18n('icu:BackupImportScreen__cancel-confirmation__body')}
-        </ConfirmationDialog>
-      )}
+      <AxoConfirmDialog.Root
+        open={isConfirmingCancel}
+        onOpenChange={setIsConfirmingCancel}
+        title={i18n('icu:BackupImportScreen__cancel-confirmation__title')}
+        description={i18n('icu:BackupImportScreen__cancel-confirmation__body')}
+      >
+        <AxoConfirmDialog.Cancel>
+          {i18n('icu:BackupImportScreen__cancel-confirmation__cancel')}
+        </AxoConfirmDialog.Cancel>
+        <AxoConfirmDialog.Action variant="destructive" onClick={onCancelWrap}>
+          {i18n('icu:BackupImportScreen__cancel-confirmation__confirm')}
+        </AxoConfirmDialog.Action>
+      </AxoConfirmDialog.Root>
 
       {errorElem}
     </div>
@@ -252,9 +225,7 @@ type ProgressBarPropsType = Readonly<
   )
 >;
 
-function ProgressBarAndDescription(
-  props: ProgressBarPropsType
-): React.JSX.Element {
+function ProgressBarAndDescription(props: ProgressBarPropsType): JSX.Element {
   const { backupStep, i18n, isCanceled } = props;
 
   if (isCanceled) {

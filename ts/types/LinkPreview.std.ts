@@ -10,8 +10,6 @@ import nodeUrl from 'url';
 import LinkifyIt from 'linkify-it';
 
 import { maybeParseUrl } from '../util/url.std.ts';
-import { replaceEmojiWithSpaces } from '../util/emoji.std.ts';
-import { count } from '../util/grapheme.std.ts';
 
 import type { AttachmentWithHydratedData } from './Attachment.std.ts';
 import {
@@ -21,6 +19,7 @@ import {
 } from '../util/signalRoutes.std.ts';
 import type { Backups } from '../protobuf/index.std.ts';
 import type { LinkPreviewType } from './message/LinkPreviews.std.ts';
+import { Emoji } from '../axo/emoji.std.ts';
 
 const { isNumber, compact, isEmpty, range } = lodash;
 
@@ -166,9 +165,9 @@ export function findLinks(text: string, caretLocation?: number): Array<string> {
   const haveCaretLocation =
     isNumber(caretLocation) &&
     (!goLinkAddress || !text.includes(goLinkAddress));
-  const textLength = count(text || '');
+  const textLength = text.length;
 
-  const matches = linkify.match(text ? replaceEmojiWithSpaces(text) : '') || [];
+  const matches = linkify.match(Emoji.replaceEmojiWithSpaces(text)) || [];
   return compact(
     matches.map(match => {
       if (!haveCaretLocation) {

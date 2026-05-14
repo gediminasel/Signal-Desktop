@@ -1,17 +1,12 @@
 // Copyright 2025 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 import classNames from 'classnames';
-import type { CSSProperties } from 'react';
-import React, { useMemo, useState, useCallback } from 'react';
+import type { CSSProperties, JSX } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import MANIFEST from '../../../build/jumbomoji.json';
-import {
-  getEmojiDebugLabel,
-  isSafeEmojifyEmoji,
-  type EmojiVariantData,
-  type EmojiVariantValue,
-} from './data/emojis.std.ts';
 import type { FunImageAriaProps } from './types.dom.tsx';
 import { createLogger } from '../../logging/log.std.ts';
+import { Emoji } from '../../axo/emoji.std.ts';
 
 const log = createLogger('FunEmoji');
 
@@ -28,14 +23,14 @@ const KNOWN_JUMBOMOJI = new Set<string>(Object.values(MANIFEST).flat());
 const MIN_JUMBOMOJI_SIZE = 33;
 
 function getEmojiJumboUrl(
-  emoji: EmojiVariantData,
+  emoji: Emoji.Variant,
   size: number | undefined
 ): string | null {
   if (size != null && size < MIN_JUMBOMOJI_SIZE) {
     return null;
   }
-  if (KNOWN_JUMBOMOJI.has(emoji.value)) {
-    return `emoji://jumbo?emoji=${encodeURIComponent(emoji.value)}`;
+  if (KNOWN_JUMBOMOJI.has(emoji)) {
+    return `emoji://jumbo?emoji=${encodeURIComponent(emoji)}`;
   }
   return null;
 }
@@ -84,10 +79,10 @@ const funStaticEmojiSizeClasses = {
 export type FunStaticEmojiProps = FunImageAriaProps &
   Readonly<{
     size: FunStaticEmojiSize;
-    emoji: EmojiVariantData;
+    emoji: Emoji.Variant;
   }>;
 
-export function FunStaticEmoji(props: FunStaticEmojiProps): React.JSX.Element {
+export function FunStaticEmoji(props: FunStaticEmojiProps): JSX.Element {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const onLoad = useCallback(() => {
@@ -95,7 +90,7 @@ export function FunStaticEmoji(props: FunStaticEmojiProps): React.JSX.Element {
   }, []);
 
   const jumboImage = getEmojiJumboUrl(props.emoji, props.size);
-  let img: React.JSX.Element | undefined;
+  let img: JSX.Element | undefined;
   if (jumboImage != null) {
     img = (
       <img
@@ -103,8 +98,7 @@ export function FunStaticEmoji(props: FunStaticEmojiProps): React.JSX.Element {
         height={props.size}
         role={props.role}
         aria-label={props['aria-label']}
-        data-emoji-key={props.emoji.key}
-        data-emoji-value={props.emoji.value}
+        data-emoji={props.emoji}
         className={classNames(
           FUN_STATIC_EMOJI_CLASS,
           funStaticEmojiSizeClasses[props.size]
@@ -122,8 +116,7 @@ export function FunStaticEmoji(props: FunStaticEmojiProps): React.JSX.Element {
         <div
           role={props.role}
           aria-label={props['aria-label']}
-          data-emoji-key={props.emoji.key}
-          data-emoji-value={props.emoji.value}
+          data-emoji={props.emoji}
           className={classNames(
             FUN_STATIC_EMOJI_CLASS,
             FUN_STATIC_EMOJI_TEXT_CLASS,
@@ -135,7 +128,7 @@ export function FunStaticEmoji(props: FunStaticEmojiProps): React.JSX.Element {
             } as CSSProperties
           }
         >
-          {props.emoji.value}
+          {props.emoji}
         </div>
       )}
     </>
@@ -161,21 +154,18 @@ export function createStaticEmojiBlot(
   if (props['aria-label'] != null) {
     node.setAttribute('aria-label', props['aria-label']);
   }
-  // Needed to lookup emoji value in `matchEmojiBlot`
-  node.dataset.emojiKey = props.emoji.key;
-  node.dataset.emojiValue = props.emoji.value;
 
-  node.innerText = props.emoji.value;
+  node.innerText = props.emoji;
 }
 
 export type FunInlineEmojiProps = FunImageAriaProps &
   Readonly<{
     size?: number | null;
-    emoji: EmojiVariantData;
+    emoji: Emoji.Variant;
     style?: CSSProperties;
   }>;
 
-export function FunInlineEmoji(props: FunInlineEmojiProps): React.JSX.Element {
+export function FunInlineEmoji(props: FunInlineEmojiProps): JSX.Element {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const onLoad = useCallback(() => {
@@ -188,7 +178,7 @@ export function FunInlineEmoji(props: FunInlineEmojiProps): React.JSX.Element {
     return getEmojiJumboUrl(props.emoji, undefined);
   }, [props.emoji]);
 
-  let img: React.JSX.Element | undefined;
+  let img: JSX.Element | undefined;
   if (jumboImage) {
     img = (
       <img
@@ -210,8 +200,7 @@ export function FunInlineEmoji(props: FunInlineEmojiProps): React.JSX.Element {
       className={FUN_INLINE_EMOJI_CLASS}
       aria-label={props['aria-label']}
       // Needed to lookup emoji value in `matchEmojiBlot`
-      data-emoji-key={props.emoji.key}
-      data-emoji-value={props.emoji.value}
+      data-emoji={props.emoji}
       style={
         {
           '--fun-inline-emoji-size':
@@ -220,9 +209,9 @@ export function FunInlineEmoji(props: FunInlineEmojiProps): React.JSX.Element {
         } as CSSProperties
       }
     >
-      <div className={FUN_INLINE_EMOJI_SMALL_CLASS}>{props.emoji.value}</div>
+      <div className={FUN_INLINE_EMOJI_SMALL_CLASS}>{props.emoji}</div>
       <div className={FUN_INLINE_EMOJI_JUMBO_CLASS}>
-        {!isLoaded && props.emoji.value}
+        {!isLoaded && props.emoji}
         {img}
       </div>
     </div>
@@ -238,23 +227,23 @@ function isFunEmojiElement(element: HTMLElement): boolean {
 
 export function getFunEmojiElementValue(
   element: HTMLElement
-): EmojiVariantValue | null {
+): Emoji.Variant | null {
   if (!isFunEmojiElement(element)) {
     return null;
   }
 
-  const value = element.dataset.emojiValue;
+  const value = element.dataset.emoji;
   if (value == null) {
-    log.error('Missing a data-emoji-value attribute on emoji element');
+    log.error('Missing a data-emoji attribute on emoji element');
     return null;
   }
 
-  if (!isSafeEmojifyEmoji(value)) {
+  if (!Emoji.isEmoji(value)) {
     log.error(
-      `Expected a valid emoji variant value, got ${getEmojiDebugLabel(value)}`
+      `Expected a valid emoji variant value, got ${Emoji.getDebugLabel(value)}`
     );
     return null;
   }
 
-  return value;
+  return Emoji.ignorePreferredSkinTone(value);
 }

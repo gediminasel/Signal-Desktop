@@ -1,7 +1,7 @@
 // Copyright 2021 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React from 'react';
+import type { JSX } from 'react';
 
 import { action } from '@storybook/addon-actions';
 import type { Meta } from '@storybook/react';
@@ -18,8 +18,11 @@ const createProps = ({
   discardText?: string;
 } = {}): ConfirmDialogProps => ({
   i18n,
-  bodyText,
-  discardText,
+  // @ts-expect-error ConfirmationDialog migration: Needs title
+  title: null,
+  // @ts-expect-error ConfirmationDialog migration: Needs description
+  description: bodyText,
+  discardLabel: discardText,
   onClose: action('onClose'),
   onDiscard: action('onDiscard'),
 });
@@ -28,11 +31,11 @@ export default {
   title: 'Components/ConfirmDiscardDialog',
 } satisfies Meta<ConfirmDialogProps>;
 
-export function Default(): React.JSX.Element {
+export function Default(): JSX.Element {
   return <ConfirmDiscardDialog {...createProps()} />;
 }
 
-export function DonateFlow(): React.JSX.Element {
+export function DonateFlow(): JSX.Element {
   return (
     <ConfirmDiscardDialog
       {...createProps({

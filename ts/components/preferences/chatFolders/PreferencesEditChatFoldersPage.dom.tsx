@@ -1,14 +1,13 @@
 // Copyright 2025 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
-import type { MutableRefObject } from 'react';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import type { MutableRefObject, JSX } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import classNames from 'classnames';
 import type { ConversationType } from '../../../state/ducks/conversations.preload.ts';
 import type { PreferredBadgeSelectorType } from '../../../state/selectors/badges.preload.ts';
 import type { LocalizerType } from '../../../types/I18N.std.ts';
 import type { ThemeType } from '../../../types/Util.std.ts';
 import { Input } from '../../Input.dom.tsx';
-import { ConfirmationDialog } from '../../ConfirmationDialog.dom.tsx';
 import type { ChatFolderSelection } from '../PreferencesSelectChatsDialog.dom.tsx';
 import { SettingsControl, SettingsRow } from '../../PreferencesUtil.dom.tsx';
 import { PreferencesSelectChatsDialog } from '../PreferencesSelectChatsDialog.dom.tsx';
@@ -37,7 +36,6 @@ import { AxoSwitch } from '../../../axo/AxoSwitch.dom.tsx';
 import { FunEmojiPickerButton } from '../../fun/FunButton.dom.tsx';
 import { FunEmojiPicker } from '../../fun/FunEmojiPicker.dom.tsx';
 import type { FunEmojiSelection } from '../../fun/panels/FunPanelEmojis.dom.tsx';
-import { getEmojiVariantByKey } from '../../fun/data/emojis.std.ts';
 import {
   ItemAvatar,
   ItemBody,
@@ -48,6 +46,7 @@ import {
 } from './PreferencesChatFolderItems.dom.tsx';
 import { AxoButton } from '../../../axo/AxoButton.dom.tsx';
 import { AxoAlertDialog } from '../../../axo/AxoAlertDialog.dom.tsx';
+import { AxoConfirmDialog } from '../../../axo/AxoConfirmDialog.dom.tsx';
 
 export type PreferencesEditChatFolderPageProps = Readonly<{
   i18n: LocalizerType;
@@ -73,7 +72,7 @@ export type PreferencesEditChatFolderPageProps = Readonly<{
 
 export function PreferencesEditChatFolderPage(
   props: PreferencesEditChatFolderPageProps
-): React.JSX.Element {
+): JSX.Element {
   const {
     i18n,
     previousLocation,
@@ -127,9 +126,7 @@ export function PreferencesEditChatFolderPage(
       strictAssert(inputRef.current, 'Missing input ref');
       const input = inputRef.current;
       const { selectionStart, selectionEnd } = input;
-
-      const variant = getEmojiVariantByKey(emojiSelection.variantKey);
-      const emoji = variant.value;
+      const emoji = emojiSelection.emoji;
 
       let newName: string;
       if (selectionStart == null || selectionEnd == null) {
@@ -477,9 +474,6 @@ export function PreferencesEditChatFolderPage(
                     description={i18n(
                       'icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__Description'
                     )}
-                    cancelText={i18n(
-                      'icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__CancelButton'
-                    )}
                     deleteText={i18n(
                       'icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__DeleteButton'
                     )}
@@ -577,32 +571,27 @@ function SaveChangesFolderDialog(props: {
   onClose: () => void;
 }) {
   const { i18n } = props;
-
   return (
-    <ConfirmationDialog
-      i18n={i18n}
-      dialogName="Preferences__EditChatFolderPage__SaveChangesFolderDialog"
+    <AxoConfirmDialog.Root
+      open
+      onOpenChange={props.onClose}
       title={i18n(
         'icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__Title'
       )}
-      cancelText={i18n(
-        'icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__DiscardButton'
-      )}
-      actions={[
-        {
-          text: i18n(
-            'icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__SaveButton'
-          ),
-          style: 'affirmative',
-          action: props.onSave,
-        },
-      ]}
-      onCancel={props.onDiscard}
-      onClose={props.onClose}
-    >
-      {i18n(
+      description={i18n(
         'icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__Description'
       )}
-    </ConfirmationDialog>
+    >
+      <AxoConfirmDialog.Action variant="secondary" onClick={props.onDiscard}>
+        {i18n(
+          'icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__DiscardButton'
+        )}
+      </AxoConfirmDialog.Action>
+      <AxoConfirmDialog.Action variant="primary" onClick={props.onSave}>
+        {i18n(
+          'icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__SaveButton'
+        )}
+      </AxoConfirmDialog.Action>
+    </AxoConfirmDialog.Root>
   );
 }

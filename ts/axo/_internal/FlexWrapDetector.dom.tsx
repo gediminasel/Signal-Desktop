@@ -1,12 +1,18 @@
 // Copyright 2026 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { memo, type ReactNode } from 'react';
+import { memo, type ReactNode } from 'react';
 import { tw } from '../tw.dom.tsx';
 
 export type FlexWrapDetectorProps = Readonly<{
   children: ReactNode;
 }>;
 
+/**
+ * Detects when flex items wrap and exposes `container-scrollable` /
+ * `container-not-scrollable` container-query states to descendants.
+ * Used internally by `AxoAlertDialog.Footer` to toggle between stacked
+ * (full-width) and inline (equal-basis) button layouts.
+ */
 export const FlexWrapDetector = memo(function FlexWrapDetector(
   props: FlexWrapDetectorProps
 ) {

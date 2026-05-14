@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { AudioDevice } from '@signalapp/ringrtc';
-import React, {
+import {
   useCallback,
   useEffect,
   useMemo,
@@ -13,13 +13,12 @@ import React, {
 import lodash from 'lodash';
 import classNames from 'classnames';
 import * as LocaleMatcher from '@formatjs/intl-localematcher';
-import type { MutableRefObject, ReactNode } from 'react';
+import type { MutableRefObject, ReactNode, JSX } from 'react';
 import type { RowType } from '@signalapp/sqlcipher';
 import type { BackupLevel } from '@signalapp/libsignal-client/zkgroup.js';
 import { ChatColorPicker } from './ChatColorPicker.dom.tsx';
 import { Checkbox } from './Checkbox.dom.tsx';
 import { WidthBreakpoint } from './_util.std.ts';
-import { ConfirmationDialog } from './ConfirmationDialog.dom.tsx';
 import { DisappearingTimeDialog } from './DisappearingTimeDialog.dom.tsx';
 import { PhoneNumberDiscoverability } from '../util/phoneNumberDiscoverability.std.ts';
 import { PhoneNumberSharingMode } from '../types/PhoneNumberSharingMode.std.ts';
@@ -39,7 +38,6 @@ import { removeDiacritics } from '../util/removeDiacritics.std.ts';
 import { assertDev } from '../util/assert.std.ts';
 import { I18n } from './I18n.dom.tsx';
 import { FunSkinTonesList } from './fun/FunSkinTones.dom.tsx';
-import { EMOJI_PARENT_KEY_CONSTANTS } from './fun/data/emojis.std.ts';
 import {
   SettingsControl as Control,
   FlowingSettingsControl as FlowingControl,
@@ -48,14 +46,12 @@ import {
 } from './PreferencesUtil.dom.tsx';
 import { PreferencesBackups } from './PreferencesBackups.dom.tsx';
 import { PreferencesInternal } from './PreferencesInternal.dom.tsx';
-import { FunEmojiLocalizationProvider } from './fun/FunEmojiLocalizationProvider.dom.tsx';
 import { Avatar, AvatarSize } from './Avatar.dom.tsx';
 import { NavSidebar } from './NavSidebar.dom.tsx';
 import type { SettingsLocation } from '../types/Nav.std.ts';
 import { SettingsPage, ProfileEditorPage } from '../types/Nav.std.ts';
 import { tw } from '../axo/tw.dom.tsx';
 import { FullWidthButton } from './PreferencesNotificationProfiles.dom.tsx';
-import type { EmojiSkinTone } from './fun/data/emojis.std.ts';
 import type { MediaDeviceSettings } from '../types/Calling.std.ts';
 import type { ValidationResultType as BackupValidationResultType } from '../services/backups/index.preload.ts';
 import type {
@@ -104,6 +100,9 @@ import type { LocalBackupExportMetadata } from '../types/LocalExport.std.ts';
 import { isDonationsPage } from './PreferencesDonations.dom.tsx';
 import type { VisibleRemoteMegaphoneType } from '../types/Megaphone.std.ts';
 import { TitlebarDragArea } from './TitlebarDragArea.dom.tsx';
+import type { PreferredBadgeSelectorType } from '../state/selectors/badges.preload.ts';
+import { Emoji } from '../axo/emoji.std.ts';
+import { AxoConfirmDialog } from '../axo/AxoConfirmDialog.dom.tsx';
 
 const { isNumber, noop, partition } = lodash;
 
@@ -128,11 +127,12 @@ export type PropsDataType = {
   pauseBackupMediaDownload: VoidFunction;
   cancelBackupMediaDownload: VoidFunction;
   resumeBackupMediaDownload: VoidFunction;
-  blockedCount: number;
+  blockedContacts: ReadonlyArray<ConversationType>;
+  blockedGroups: ReadonlyArray<ConversationType>;
   customColors: Record<string, CustomColorType>;
   defaultConversationColor: DefaultConversationColorType;
   deviceName?: string;
-  emojiSkinToneDefault: EmojiSkinTone;
+  emojiSkinToneDefault: Emoji.SkinTone;
   hasAnyCurrentCustomChatFolders: boolean;
   hasAudioNotifications?: boolean;
   hasAutoConvertEmoji: boolean;
@@ -194,6 +194,7 @@ export type PropsDataType = {
   shouldShowUpdateDialog: boolean;
   theme: ThemeType;
   notificationProfileCount: number;
+  weArePrimaryDevice: boolean;
 
   // Limited support features
   isAutoDownloadUpdatesSupported: boolean;
@@ -231,29 +232,29 @@ type PropsFunctionType = {
     contentsRef: MutableRefObject<HTMLDivElement | null>;
     settingsLocation: SettingsLocation;
     setSettingsLocation: (settingsLocation: SettingsLocation) => void;
-  }) => React.JSX.Element;
+  }) => JSX.Element;
   renderNotificationProfilesHome: (
     props: SmartNotificationProfilesProps
-  ) => React.JSX.Element;
+  ) => JSX.Element;
   renderNotificationProfilesCreateFlow: (
     props: SmartNotificationProfilesProps
-  ) => React.JSX.Element;
+  ) => JSX.Element;
 
   renderProfileEditor: (options: {
     contentsRef: MutableRefObject<HTMLDivElement | null>;
-  }) => React.JSX.Element;
+  }) => JSX.Element;
   renderToastManager: (
     _: Readonly<{ containerWidthBreakpoint: WidthBreakpoint }>
-  ) => React.JSX.Element;
+  ) => JSX.Element;
   renderUpdateDialog: (
     _: Readonly<{ containerWidthBreakpoint: WidthBreakpoint }>
-  ) => React.JSX.Element;
+  ) => JSX.Element;
   renderPreferencesChatFoldersPage: (
     props: SmartPreferencesChatFoldersPageProps
-  ) => React.JSX.Element;
+  ) => JSX.Element;
   renderPreferencesEditChatFolderPage: (
     props: SmartPreferencesEditChatFolderPageProps
-  ) => React.JSX.Element;
+  ) => JSX.Element;
 
   // Other props
   addCustomColor: (color: CustomColorType) => unknown;
@@ -268,6 +269,7 @@ type PropsFunctionType = {
   getMessageSampleForSchemaVersion: (
     version: number
   ) => Promise<Array<MessageAttributesType>>;
+  getPreferredBadge: PreferredBadgeSelectorType;
   resumeBackupMediaDownload: () => void;
   pauseBackupMediaDownload: () => void;
   getConversationsWithCustomColor: (colorId: string) => Array<ConversationType>;
@@ -322,7 +324,7 @@ type PropsFunctionType = {
   onCallRingtoneNotificationChange: CheckboxChangeHandlerType;
   onContentProtectionChange: CheckboxChangeHandlerType;
   onCountMutedConversationsChange: CheckboxChangeHandlerType;
-  onEmojiSkinToneDefaultChange: (emojiSkinTone: EmojiSkinTone) => void;
+  onEmojiSkinToneDefaultChange: (emojiSkinTone: Emoji.SkinTone) => void;
   onHasKeyTransparencyDisabledChanged: SelectChangeHandlerType<boolean>;
   onHasStoriesDisabledChanged: SelectChangeHandlerType<boolean>;
   onHideMenuBarChange: CheckboxChangeHandlerType;
@@ -426,7 +428,8 @@ export function Preferences({
   backupSubscriptionStatus,
   backupLocalBackupsEnabled,
   badge,
-  blockedCount,
+  blockedContacts,
+  blockedGroups,
   currentChatFoldersCount,
   cloudBackupStatus,
   customColors,
@@ -439,6 +442,7 @@ export function Preferences({
   getConversationsWithCustomColor,
   getMessageCountBySchemaVersion,
   getMessageSampleForSchemaVersion,
+  getPreferredBadge,
   hasAnyCurrentCustomChatFolders,
   hasAudioNotifications,
   hasAutoConvertEmoji,
@@ -602,7 +606,8 @@ export function Preferences({
   sfuUrl,
   forceKeyTransparencyCheck,
   keyTransparencySelfHealth,
-}: PropsType): React.JSX.Element {
+  weArePrimaryDevice,
+}: PropsType): JSX.Element {
   const storiesId = useId();
   const themeSelectId = useId();
   const zoomSelectId = useId();
@@ -647,7 +652,7 @@ export function Preferences({
     setSettingsLocation({ page: SettingsPage.General });
   }
 
-  let maybeUpdateDialog: React.JSX.Element | undefined;
+  let maybeUpdateDialog: JSX.Element | undefined;
   if (shouldShowUpdateDialog) {
     maybeUpdateDialog = renderUpdateDialog({
       containerWidthBreakpoint: WidthBreakpoint.Wide,
@@ -804,7 +809,7 @@ export function Preferences({
     });
   }, [localeSearchOptions, languageSearchInput]);
 
-  let content: React.JSX.Element | undefined;
+  let content: JSX.Element | undefined;
 
   if (settingsLocation.page === SettingsPage.Profile) {
     content = renderProfileEditor({
@@ -1073,25 +1078,24 @@ export function Preferences({
           </Modal>
         )}
         {languageDialog === LanguageDialog.Confirmation && (
-          <ConfirmationDialog
-            dialogName="Preferences__Language"
-            i18n={i18n}
+          <AxoConfirmDialog.Root
+            open
+            onOpenChange={closeLanguageDialog}
             title={i18n('icu:Preferences__LanguageModal__Restart__Title')}
-            onCancel={closeLanguageDialog}
-            onClose={closeLanguageDialog}
-            cancelText={i18n('icu:cancel')}
-            actions={[
-              {
-                text: i18n('icu:Preferences__LanguageModal__Restart__Button'),
-                style: 'affirmative',
-                action: () => {
-                  onLocaleChange(selectedLanguageLocale);
-                },
-              },
-            ]}
+            description={i18n(
+              'icu:Preferences__LanguageModal__Restart__Description'
+            )}
           >
-            {i18n('icu:Preferences__LanguageModal__Restart__Description')}
-          </ConfirmationDialog>
+            <AxoConfirmDialog.Cancel>
+              {i18n('icu:cancel')}
+            </AxoConfirmDialog.Cancel>
+            <AxoConfirmDialog.Action
+              variant="primary"
+              onClick={() => onLocaleChange(selectedLanguageLocale)}
+            >
+              {i18n('icu:Preferences__LanguageModal__Restart__Button')}
+            </AxoConfirmDialog.Action>
+          </AxoConfirmDialog.Root>
         )}
         <Control
           icon
@@ -1247,7 +1251,7 @@ export function Preferences({
               right={
                 <FunSkinTonesList
                   i18n={i18n}
-                  emoji={EMOJI_PARENT_KEY_CONSTANTS.RAISED_HAND}
+                  emoji={Emoji.HAND}
                   skinTone={emojiSkinToneDefault}
                   onSelectSkinTone={onEmojiSkinToneDefaultChange}
                 />
@@ -1354,10 +1358,7 @@ export function Preferences({
                   <AxoButton.Root
                     variant="secondary"
                     size="lg"
-                    disabled={nowSyncing}
-                    experimentalSpinner={
-                      nowSyncing ? { 'aria-label': i18n('icu:syncing') } : null
-                    }
+                    pending={nowSyncing}
                     onClick={async () => {
                       setShowSyncFailed(false);
                       setNowSyncing(true);
@@ -1678,6 +1679,25 @@ export function Preferences({
   } else if (settingsLocation.page === SettingsPage.Privacy) {
     const isCustomDisappearingMessageValue =
       !DEFAULT_DURATIONS_SET.has(universalExpireTimer);
+    let blockedDescription;
+
+    if (
+      (!blockedContacts.length && !blockedGroups.length) ||
+      (blockedContacts.length && blockedGroups.length)
+    ) {
+      blockedDescription = i18n('icu:Preferences--blocked-count-both-new', {
+        num: blockedContacts.length + blockedGroups.length,
+      });
+    } else if (blockedContacts.length) {
+      blockedDescription = i18n('icu:Preferences--blocked-count-contacts-new', {
+        num: blockedContacts.length,
+      });
+    } else {
+      blockedDescription = i18n('icu:Preferences--blocked-count-groups-new', {
+        num: blockedGroups.length,
+      });
+    }
+
     const pageContents = (
       <>
         <SettingsRow>
@@ -1714,9 +1734,19 @@ export function Preferences({
         <SettingsRow>
           <Control
             left={i18n('icu:Preferences--blocked')}
-            right={i18n('icu:Preferences--blocked-count', {
-              num: blockedCount,
-            })}
+            description={blockedDescription}
+            right={
+              <AxoButton.Root
+                variant="secondary"
+                size="lg"
+                disabled={!blockedContacts.length && !blockedGroups.length}
+                onClick={() =>
+                  setSettingsLocation({ page: SettingsPage.Blocked })
+                }
+              >
+                {i18n('icu:view')}
+              </AxoButton.Root>
+            }
           />
         </SettingsRow>
         <SettingsRow title={i18n('icu:Preferences--messaging')}>
@@ -1818,25 +1848,22 @@ export function Preferences({
           </SettingsRow>
         )}
         {confirmContentProtection ? (
-          <ConfirmationDialog
-            dialogName="Preference.confirmContentProtection"
-            actions={[
-              {
-                action: () => onContentProtectionChange(false),
-                style: 'negative',
-                text: i18n(
-                  'icu:Preferences__content-protection__modal--disable'
-                ),
-              },
-            ]}
-            i18n={i18n}
-            onClose={() => {
-              setConfirmContentProtection(false);
-            }}
+          <AxoConfirmDialog.Root
+            open={confirmContentProtection}
+            onOpenChange={setConfirmContentProtection}
             title={i18n('icu:Preferences__content-protection__modal--title')}
+            description={i18n(
+              'icu:Preferences__content-protection__modal--body'
+            )}
           >
-            {i18n('icu:Preferences__content-protection__modal--body')}
-          </ConfirmationDialog>
+            <AxoConfirmDialog.Cancel />
+            <AxoConfirmDialog.Action
+              variant="destructive"
+              onClick={() => onContentProtectionChange(false)}
+            >
+              {i18n('icu:Preferences__content-protection__modal--disable')}
+            </AxoConfirmDialog.Action>
+          </AxoConfirmDialog.Root>
         ) : null}
         <SettingsRow title={i18n('icu:Stories__title')}>
           <FlowingControl>
@@ -1925,74 +1952,116 @@ export function Preferences({
           )}
         </SettingsRow>
         <SettingsRow>
-          <FlowingControl>
-            <div
-              className={classNames(
-                'Preferences__pnp',
-                'Preferences__two-thirds-flow'
-              )}
-            >
-              <div>{i18n('icu:clearDataHeader')}</div>
-              <div className="Preferences__description">
-                {i18n('icu:clearDataExplanation')}
-              </div>
-            </div>
-
-            <div
-              className={classNames(
-                'Preferences__pnp',
-                'Preferences__flow-button',
-                'Preferences__one-third-flow',
-                'Preferences__one-third-flow--align-right'
-              )}
-            >
-              <AxoButton.Root
-                variant="subtle-destructive"
-                size="lg"
-                onClick={() => setConfirmDelete(true)}
+          {!weArePrimaryDevice && (
+            <FlowingControl>
+              <div
+                className={classNames(
+                  'Preferences__pnp',
+                  'Preferences__two-thirds-flow'
+                )}
               >
-                {i18n('icu:clearDataButton')}
-              </AxoButton.Root>
-            </div>
-          </FlowingControl>
-        </SettingsRow>
-        {confirmDelete ? (
-          <ConfirmationDialog
-            dialogName="Preference.deleteAllData"
-            actions={[
-              {
-                action: doDeleteAllData,
-                style: 'negative',
-                text: i18n('icu:clearDataButton'),
-              },
-            ]}
-            i18n={i18n}
-            onClose={() => {
-              setConfirmDelete(false);
-            }}
+                <div>{i18n('icu:clearDataHeader')}</div>
+                <div className="Preferences__description">
+                  {i18n('icu:clearDataExplanation')}
+                </div>
+              </div>
+
+              <div
+                className={classNames(
+                  'Preferences__pnp',
+                  'Preferences__flow-button',
+                  'Preferences__one-third-flow',
+                  'Preferences__one-third-flow--align-right'
+                )}
+              >
+                <AxoButton.Root
+                  variant="subtle-destructive"
+                  size="lg"
+                  onClick={() => setConfirmDelete(true)}
+                >
+                  {i18n('icu:clearDataButton')}
+                </AxoButton.Root>
+              </div>
+            </FlowingControl>
+          )}
+
+          <AxoConfirmDialog.Root
+            open={confirmDelete && !weArePrimaryDevice}
+            onOpenChange={setConfirmDelete}
             title={i18n('icu:deleteAllDataHeader')}
+            description={i18n('icu:deleteAllDataBody')}
           >
-            {i18n('icu:deleteAllDataBody')}
-          </ConfirmationDialog>
-        ) : null}
-        {confirmStoriesOff ? (
-          <ConfirmationDialog
-            dialogName="Preference.turnStoriesOff"
-            actions={[
-              {
-                action: () => onHasStoriesDisabledChanged(true),
-                style: 'negative',
-                text: i18n('icu:Preferences__turn-stories-off--action'),
-              },
-            ]}
-            i18n={i18n}
-            onClose={() => {
-              setConfirmStoriesOff(false);
-            }}
+            <AxoConfirmDialog.Cancel />
+            <AxoConfirmDialog.Action
+              variant="destructive"
+              onClick={doDeleteAllData}
+            >
+              {i18n('icu:clearDataButton')}
+            </AxoConfirmDialog.Action>
+          </AxoConfirmDialog.Root>
+
+          {weArePrimaryDevice && (
+            <FlowingControl>
+              <div
+                className={classNames(
+                  'Preferences__pnp',
+                  'Preferences__two-thirds-flow'
+                )}
+              >
+                <div>{i18n('icu:deleteAccountHeader')}</div>
+                <div className="Preferences__description">
+                  {i18n('icu:deleteAccountExplanation')}
+                </div>
+              </div>
+
+              <div
+                className={classNames(
+                  'Preferences__pnp',
+                  'Preferences__flow-button',
+                  'Preferences__one-third-flow',
+                  'Preferences__one-third-flow--align-right'
+                )}
+              >
+                <AxoButton.Root
+                  variant="subtle-destructive"
+                  size="lg"
+                  onClick={() => setConfirmDelete(true)}
+                >
+                  {i18n('icu:deleteAccountButton')}
+                </AxoButton.Root>
+              </div>
+            </FlowingControl>
+          )}
+          <AxoConfirmDialog.Root
+            open={confirmDelete && weArePrimaryDevice}
+            onOpenChange={setConfirmDelete}
+            title={i18n('icu:deleteAccountDialogHeader')}
+            description={i18n('icu:deleteAccountDialogBody')}
           >
-            {i18n('icu:Preferences__turn-stories-off--body')}
-          </ConfirmationDialog>
-        ) : null}
+            <AxoConfirmDialog.Cancel />
+            <AxoConfirmDialog.Action
+              variant="destructive"
+              onClick={doDeleteAllData}
+            >
+              {i18n('icu:deleteAccountButton')}
+            </AxoConfirmDialog.Action>
+          </AxoConfirmDialog.Root>
+        </SettingsRow>
+        <AxoConfirmDialog.Root
+          open={confirmStoriesOff}
+          onOpenChange={setConfirmStoriesOff}
+          // @ts-expect-error ConfirmationDialog migration: Needs title
+          title={null}
+          description={i18n('icu:Preferences__turn-stories-off--body')}
+        >
+          <AxoConfirmDialog.Cancel />
+          <AxoConfirmDialog.Action
+            variant="destructive"
+            onClick={() => onHasStoriesDisabledChanged(true)}
+          >
+            {i18n('icu:Preferences__turn-stories-off--action')}
+          </AxoConfirmDialog.Action>
+        </AxoConfirmDialog.Root>
       </>
     );
     content = (
@@ -2163,6 +2232,76 @@ export function Preferences({
       existingChatFolderId: settingsLocation.chatFolderId,
       initChatFolderParams: settingsLocation.initChatFolderParams,
     });
+  } else if (settingsLocation.page === SettingsPage.Blocked) {
+    const backButton = (
+      <button
+        aria-label={i18n('icu:goBack')}
+        className="Preferences__back-icon"
+        onClick={() => setSettingsLocation({ page: SettingsPage.Privacy })}
+        type="button"
+      />
+    );
+    const pageContents = (
+      <>
+        <SettingsRow>
+          <div className="Preferences__padding">
+            <div className="Preferences__description">
+              {i18n('icu:Preferences--blocked-users--description')}
+            </div>
+          </div>
+        </SettingsRow>
+        {blockedContacts.length > 0 ? (
+          <SettingsRow title={i18n('icu:Preferences--blocked-users')}>
+            {blockedContacts.map(item => {
+              return (
+                <div className={tw('flex w-full items-center px-[14px]')}>
+                  <div className={tw('p-2')}>
+                    <Avatar
+                      conversationType={item.type}
+                      badge={getPreferredBadge(item.badges)}
+                      i18n={i18n}
+                      size={AvatarSize.THIRTY_SIX}
+                      theme={theme}
+                      {...item}
+                    />
+                  </div>
+                  <div>{item.title}</div>
+                </div>
+              );
+            })}
+          </SettingsRow>
+        ) : undefined}
+        {blockedGroups.length > 0 ? (
+          <SettingsRow title={i18n('icu:Preferences--blocked-groups')}>
+            {blockedGroups.map(item => {
+              return (
+                <div className={tw('flex w-full items-center px-[14px]')}>
+                  <div className={tw('p-2')}>
+                    <Avatar
+                      conversationType={item.type}
+                      badge={getPreferredBadge(item.badges)}
+                      i18n={i18n}
+                      size={AvatarSize.THIRTY_SIX}
+                      theme={theme}
+                      {...item}
+                    />
+                  </div>
+                  <div>{item.title}</div>
+                </div>
+              );
+            })}
+          </SettingsRow>
+        ) : undefined}
+      </>
+    );
+    content = (
+      <PreferencesContent
+        backButton={backButton}
+        contents={pageContents}
+        contentsRef={settingsPaneRef}
+        title={i18n('icu:Preferences--blocked')}
+      />
+    );
   } else if (settingsLocation.page === SettingsPage.PNP) {
     let sharingDescription: string;
 
@@ -2257,43 +2396,37 @@ export function Preferences({
             </div>
           </div>
         </SettingsRow>
-        {confirmPnpNotDiscoverable && (
-          <ConfirmationDialog
-            i18n={i18n}
-            title={i18n(
-              'icu:Preferences__pnp__discoverability__nobody__confirmModal__title'
-            )}
-            dialogName="Preference.turnPnpDiscoveryOff"
-            onClose={() => {
-              setConfirmPnpNoDiscoverable(false);
-            }}
-            actions={[
-              {
-                action: () =>
-                  onWhoCanFindMeChange(
-                    PhoneNumberDiscoverability.NotDiscoverable
-                  ),
-                style: 'affirmative',
-                text: i18n('icu:ok'),
-              },
-            ]}
+        <AxoConfirmDialog.Root
+          open={confirmPnpNotDiscoverable}
+          onOpenChange={() => setConfirmPnpNoDiscoverable(false)}
+          title={i18n(
+            'icu:Preferences__pnp__discoverability__nobody__confirmModal__title'
+          )}
+          description={i18n(
+            'icu:Preferences__pnp__discoverability__nobody__confirmModal__description',
+            {
+              // This is a rare instance where we want to interpolate the exact
+              // text of the string into quotes in the translation as an
+              // explanation.
+              settingTitle: i18n(
+                'icu:Preferences__pnp__discoverability--title'
+              ),
+              nobodyLabel: i18n(
+                'icu:Preferences__pnp__discoverability__nobody'
+              ),
+            }
+          )}
+        >
+          <AxoConfirmDialog.Cancel />
+          <AxoConfirmDialog.Action
+            variant="primary"
+            onClick={() =>
+              onWhoCanFindMeChange(PhoneNumberDiscoverability.NotDiscoverable)
+            }
           >
-            {i18n(
-              'icu:Preferences__pnp__discoverability__nobody__confirmModal__description',
-              {
-                // This is a rare instance where we want to interpolate the exact
-                // text of the string into quotes in the translation as an
-                // explanation.
-                settingTitle: i18n(
-                  'icu:Preferences__pnp__discoverability--title'
-                ),
-                nobodyLabel: i18n(
-                  'icu:Preferences__pnp__discoverability__nobody'
-                ),
-              }
-            )}
-          </ConfirmationDialog>
-        )}
+            {i18n('icu:ok')}
+          </AxoConfirmDialog.Action>
+        </AxoConfirmDialog.Root>
       </>
     );
     content = (
@@ -2321,7 +2454,7 @@ export function Preferences({
     } else if (settingsLocation.page !== SettingsPage.Backups) {
       backPage = SettingsPage.Backups;
     }
-    let backButton: React.JSX.Element | undefined;
+    let backButton: JSX.Element | undefined;
     if (backPage) {
       backButton = (
         <button
@@ -2426,7 +2559,7 @@ export function Preferences({
     );
   }
   return (
-    <FunEmojiLocalizationProvider i18n={i18n}>
+    <>
       <div className="Preferences">
         <NavSidebar
           title={i18n('icu:Preferences--header')}
@@ -2594,7 +2727,8 @@ export function Preferences({
                   'Preferences__button--privacy': true,
                   'Preferences__button--selected':
                     settingsLocation.page === SettingsPage.Privacy ||
-                    settingsLocation.page === SettingsPage.PNP,
+                    settingsLocation.page === SettingsPage.PNP ||
+                    settingsLocation.page === SettingsPage.Blocked,
                 })}
                 onClick={() =>
                   setSettingsLocation({ page: SettingsPage.Privacy })
@@ -2668,7 +2802,7 @@ export function Preferences({
         {content}
       </div>
       <TitlebarDragArea />
-    </FunEmojiLocalizationProvider>
+    </>
   );
 }
 
@@ -2688,12 +2822,12 @@ export function PreferencesContent({
   title,
   actions,
 }: {
-  backButton?: React.JSX.Element | undefined;
-  contents: React.JSX.Element | undefined;
+  backButton?: JSX.Element | undefined;
+  contents: JSX.Element | undefined;
   contentsRef: MutableRefObject<HTMLDivElement | null>;
   title: string | undefined;
   actions?: ReactNode;
-}): React.JSX.Element {
+}): JSX.Element {
   return (
     <div className="Preferences__content">
       <div className="Preferences__title">

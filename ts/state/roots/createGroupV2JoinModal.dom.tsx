@@ -3,29 +3,27 @@
 
 // TODO DESKTOP-4761
 
-import React from 'react';
+import type { ReactElement } from 'react';
 import { Provider } from 'react-redux';
-
 import type { Store } from 'redux';
-
 import { ModalHost } from '../../components/ModalHost.dom.tsx';
 import type { SmartGroupV2JoinDialogProps } from '../smart/GroupV2JoinDialog.dom.tsx';
 import { SmartGroupV2JoinDialog } from '../smart/GroupV2JoinDialog.dom.tsx';
-import { FunEmojiLocalizationProvider } from '../../components/fun/FunEmojiLocalizationProvider.dom.tsx';
+import { AppProvider } from '../../windows/AppProvider.dom.tsx';
 
 export const createGroupV2JoinModal = (
   store: Store,
   props: SmartGroupV2JoinDialogProps
-): React.ReactElement => {
+): ReactElement => {
   const { onClose } = props;
 
   return (
-    <Provider store={store}>
-      <FunEmojiLocalizationProvider i18n={window.SignalContext.i18n}>
+    <AppProvider>
+      <Provider store={store}>
         <ModalHost modalName="createGroupV2JoinModal" onClose={onClose}>
           <SmartGroupV2JoinDialog {...props} />
         </ModalHost>
-      </FunEmojiLocalizationProvider>
-    </Provider>
+      </Provider>
+    </AppProvider>
   );
 };

@@ -1,7 +1,7 @@
 // Copyright 2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, { useState } from 'react';
+import { useState, type JSX } from 'react';
 import classNames from 'classnames';
 import type {
   ConversationStoryType,
@@ -12,7 +12,6 @@ import type { LocalizerType, ThemeType } from '../types/Util.std.ts';
 import type { PreferredBadgeSelectorType } from '../state/selectors/badges.preload.ts';
 import type { ViewUserStoriesActionCreatorType } from '../state/ducks/stories.preload.ts';
 import { Avatar, AvatarSize } from './Avatar.dom.tsx';
-import { ConfirmationDialog } from './ConfirmationDialog.dom.tsx';
 import { ContextMenu } from './ContextMenu.dom.tsx';
 import { SIGNAL_ACI } from '../types/SignalConversation.std.ts';
 import { StoryViewTargetType, HasStories } from '../types/Stories.std.ts';
@@ -20,6 +19,8 @@ import { StoryViewTargetType, HasStories } from '../types/Stories.std.ts';
 import { MessageTimestamp } from './conversation/MessageTimestamp.dom.tsx';
 import { StoryImage } from './StoryImage.dom.tsx';
 import { getAvatarColor } from '../types/Colors.std.ts';
+import { OfficialChatInlineBadge } from './conversation/OfficialChatInlineBadge.dom.tsx';
+import { AxoConfirmDialog } from '../axo/AxoConfirmDialog.dom.tsx';
 
 export type PropsType = Pick<ConversationStoryType, 'group' | 'isHidden'> & {
   conversationId: string;
@@ -56,7 +57,7 @@ function StoryListItemAvatar({
   getPreferredBadge: PreferredBadgeSelectorType;
   i18n: LocalizerType;
   theme: ThemeType;
-}): React.JSX.Element {
+}): JSX.Element {
   return (
     <Avatar
       avatarPlaceholderGradient={avatarPlaceholderGradient}
@@ -89,7 +90,7 @@ export function StoryListItem({
   story,
   theme,
   viewUserStories,
-}: PropsType): React.JSX.Element {
+}: PropsType): JSX.Element {
   const [hasConfirmHideStory, setHasConfirmHideStory] = useState(false);
 
   const { attachment, isUnread, sender, timestamp } = story;
@@ -103,7 +104,7 @@ export function StoryListItem({
     avatarStoryRing = isUnread ? HasStories.Unread : HasStories.Read;
   }
 
-  let repliesElement: React.JSX.Element | undefined;
+  let repliesElement: JSX.Element | undefined;
   if (group === undefined && hasRepliesFromSelf) {
     repliesElement = <div className="StoryListItem__info--replies--self" />;
   } else if (group && (hasReplies || hasRepliesFromSelf)) {
@@ -173,7 +174,10 @@ export function StoryListItem({
           <div className="StoryListItem__info--title">
             {group ? group.title : title}
             {isSignalOfficial && (
-              <span className="ContactModal__official-badge" />
+              <>
+                &nbsp;
+                <OfficialChatInlineBadge />
+              </>
             )}
           </div>
           {!isSignalOfficial && (
@@ -201,26 +205,23 @@ export function StoryListItem({
           />
         </div>
       </ContextMenu>
-      {hasConfirmHideStory && (
-        <ConfirmationDialog
-          dialogName="StoryListItem.hideStory"
-          actions={[
-            {
-              action: () => onHideStory(conversationId),
-              style: 'affirmative',
-              text: i18n('icu:StoryListItem__hide-modal--confirm'),
-            },
-          ]}
-          i18n={i18n}
-          onClose={() => {
-            setHasConfirmHideStory(false);
-          }}
+      <AxoConfirmDialog.Root
+        open={hasConfirmHideStory}
+        onOpenChange={setHasConfirmHideStory}
+        // @ts-expect-error ConfirmationDialog migration: Needs title
+        title={null}
+        description={i18n('icu:StoryListItem__hide-modal--body', {
+          name: firstName ?? '',
+        })}
+      >
+        <AxoConfirmDialog.Cancel />
+        <AxoConfirmDialog.Action
+          variant="primary"
+          onClick={() => onHideStory(conversationId)}
         >
-          {i18n('icu:StoryListItem__hide-modal--body', {
-            name: String(firstName),
-          })}
-        </ConfirmationDialog>
-      )}
+          {i18n('icu:StoryListItem__hide-modal--confirm')}
+        </AxoConfirmDialog.Action>
+      </AxoConfirmDialog.Root>
     </>
   );
 }

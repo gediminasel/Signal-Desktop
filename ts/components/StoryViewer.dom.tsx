@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { FocusScope } from 'react-aria';
-import type { UIEvent } from 'react';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import type { UIEvent, JSX, KeyboardEvent as ReactKeyboardEvent } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import type { DraftBodyRanges } from '../types/BodyRange.std.ts';
 import type { LocalizerType } from '../types/Util.std.ts';
@@ -20,7 +20,6 @@ import type { ViewStoryActionCreatorType } from '../state/ducks/stories.preload.
 import { createLogger } from '../logging/log.std.ts';
 import { AnimatedEmojiGalore } from './AnimatedEmojiGalore.dom.tsx';
 import { Avatar, AvatarSize } from './Avatar.dom.tsx';
-import { ConfirmationDialog } from './ConfirmationDialog.dom.tsx';
 import { ContextMenu } from './ContextMenu.dom.tsx';
 import { I18n } from './I18n.dom.tsx';
 import { MessageTimestamp } from './conversation/MessageTimestamp.dom.tsx';
@@ -51,13 +50,14 @@ import { MessageBody } from './conversation/MessageBody.dom.tsx';
 import { RenderLocation } from './conversation/MessageTextRenderer.dom.tsx';
 import { arrow } from '../util/keyboard.dom.ts';
 import { StoryProgressSegment } from './StoryProgressSegment.dom.tsx';
-import type { EmojiSkinTone } from './fun/data/emojis.std.ts';
 import type { FunEmojiSelection } from './fun/panels/FunPanelEmojis.dom.tsx';
 import type { ContactModalStateType } from '../types/globalModals.std.ts';
+import type { Emoji } from '../axo/emoji.std.ts';
+import { AxoConfirmDialog } from '../axo/AxoConfirmDialog.dom.tsx';
 
 const log = createLogger('StoryViewer');
 
-function renderStrong(parts: Array<React.JSX.Element | string>) {
+function renderStrong(parts: Array<JSX.Element | string>) {
   return <strong>{parts}</strong>;
 }
 
@@ -95,7 +95,7 @@ export type PropsType = {
   onGoToConversation: (conversationId: string) => unknown;
   onHideStory: (conversationId: string) => unknown;
   onTextTooLong: () => unknown;
-  onReactToStory: (emoji: string, story: StoryViewType) => unknown;
+  onReactToStory: (emoji: Emoji.Variant, story: StoryViewType) => unknown;
   onReplyToStory: (
     message: string,
     bodyRanges: DraftBodyRanges,
@@ -106,7 +106,7 @@ export type PropsType = {
   onMediaPlaybackStart: () => void;
   ourConversationId: string | undefined;
   platform: string;
-  preferredReactionEmoji: ReadonlyArray<string>;
+  preferredReactionEmoji: ReadonlyArray<Emoji.Variant>;
   queueStoryDownload: (storyId: string) => unknown;
   replyState?: ReplyStateType;
   retryMessageSend: (messageId: string) => unknown;
@@ -114,7 +114,7 @@ export type PropsType = {
   setHasAllStoriesUnmuted: (isUnmuted: boolean) => unknown;
   showContactModal: (payload: ContactModalStateType) => void;
   showToast: ShowToastAction;
-  emojiSkinToneDefault: EmojiSkinTone | null;
+  emojiSkinToneDefault: Emoji.SkinTone | null;
   story: StoryViewType;
   storyViewMode: StoryViewModeType;
   viewStory: ViewStoryActionCreatorType;
@@ -173,12 +173,14 @@ export function StoryViewer({
   storyViewMode,
   viewStory,
   viewTarget,
-}: PropsType): React.JSX.Element {
+}: PropsType): JSX.Element {
   const [isShowingContextMenu, setIsShowingContextMenu] =
     useState<boolean>(false);
   const [storyDuration, setStoryDuration] = useState<number | undefined>();
   const [hasConfirmHideStory, setHasConfirmHideStory] = useState(false);
-  const [reactionEmoji, setReactionEmoji] = useState<string | undefined>();
+  const [reactionEmoji, setReactionEmoji] = useState<
+    Emoji.Variant | undefined
+  >();
   const [confirmDeleteStory, setConfirmDeleteStory] = useState<
     StoryViewType | undefined
   >();
@@ -701,7 +703,7 @@ export function StoryViewer({
                     onClick={() => {
                       setHasExpandedCaption(true);
                     }}
-                    onKeyDown={(ev: React.KeyboardEvent) => {
+                    onKeyDown={(ev: ReactKeyboardEvent) => {
                       if (ev.key === 'Space' || ev.key === 'Enter') {
                         setHasExpandedCaption(true);
                       }
@@ -966,47 +968,53 @@ export function StoryViewer({
             deleteGroupStoryReplyForEveryone={deleteGroupStoryReplyForEveryone}
           />
         )}
-        {hasConfirmHideStory && (
-          <ConfirmationDialog
-            dialogName="StoryViewer.confirmHideStory"
-            actions={[
-              {
-                action: () => {
-                  onHideStory(conversationId);
-                  onClose();
-                },
-                style: 'affirmative',
-                text: i18n('icu:StoryListItem__hide-modal--confirm'),
-              },
-            ]}
-            i18n={i18n}
-            onClose={() => {
-              setHasConfirmHideStory(false);
+
+        <AxoConfirmDialog.Root
+          open={hasConfirmHideStory}
+          onOpenChange={setHasConfirmHideStory}
+          // @ts-expect-error ConfirmationDialog migration: Needs title
+          title={null}
+          description={i18n('icu:StoryListItem__hide-modal--body', {
+            name: firstName ?? '',
+          })}
+        >
+          <AxoConfirmDialog.Cancel />
+          <AxoConfirmDialog.Action
+            variant="primary"
+            onClick={() => {
+              onHideStory(conversationId);
+              onClose();
             }}
           >
-            {i18n('icu:StoryListItem__hide-modal--body', {
-              name: String(firstName),
-            })}
-          </ConfirmationDialog>
-        )}
-        {confirmDeleteStory && (
-          <ConfirmationDialog
-            dialogName="StoryViewer.deleteStory"
-            actions={[
-              {
-                text: i18n('icu:delete'),
-                action: () => deleteStoryForEveryone(confirmDeleteStory),
-                style: 'negative',
-              },
-            ]}
-            i18n={i18n}
-            onClose={() => setConfirmDeleteStory(undefined)}
-          >
-            {group?.terminated
+            {i18n('icu:StoryListItem__hide-modal--confirm')}
+          </AxoConfirmDialog.Action>
+        </AxoConfirmDialog.Root>
+
+        <AxoConfirmDialog.Root
+          open={confirmDeleteStory != null}
+          onOpenChange={() => setConfirmDeleteStory(undefined)}
+          // @ts-expect-error ConfirmationDialog migration: Needs title
+          title={null}
+          description={
+            group?.terminated
               ? i18n('icu:MyStories__delete-group-story-for-me')
-              : i18n('icu:MyStories__delete')}
-          </ConfirmationDialog>
-        )}
+              : i18n('icu:MyStories__delete')
+          }
+        >
+          <AxoConfirmDialog.Cancel />
+          <AxoConfirmDialog.Action
+            variant="destructive"
+            onClick={() => {
+              strictAssert(
+                confirmDeleteStory != null,
+                'Missing confirmDeleteStory'
+              );
+              deleteStoryForEveryone(confirmDeleteStory);
+            }}
+          >
+            {i18n('icu:delete')}
+          </AxoConfirmDialog.Action>
+        </AxoConfirmDialog.Root>
       </div>
     </FocusScope>
   );

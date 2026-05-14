@@ -1,7 +1,7 @@
 // Copyright 2025 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
-import type { ReactNode } from 'react';
-import React, { useId } from 'react';
+import type { ReactNode, JSX } from 'react';
+import { useId } from 'react';
 import type { Meta } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { AriaClickable } from './AriaClickable.dom.tsx';
@@ -19,8 +19,7 @@ function Card(props: { children: ReactNode }) {
         'group flex items-center gap-4 rounded-md border border-border-secondary p-4',
         'data-hovered:bg-background-secondary',
         'data-pressed:bg-fill-secondary-pressed',
-        'outline-0 outline-border-focused',
-        'data-focused:outline-[2.5px]'
+        'outline-none data-focused:outline-focus-ring'
       )}
     >
       {props.children}
@@ -53,10 +52,7 @@ function CardSeeMoreLink(props: { onClick: () => void; children: ReactNode }) {
       >
         {props.children}
       </span>
-      <AriaClickable.HiddenTrigger
-        aria-labelledby={id}
-        onClick={props.onClick}
-      />
+      <AriaClickable.HiddenTrigger labelledby={id} onClick={props.onClick} />
     </>
   );
 }
@@ -85,7 +81,7 @@ function CardButton(props: {
   );
 }
 
-export function Basic(): React.JSX.Element | null {
+export function Basic(): JSX.Element | null {
   return (
     <Card>
       <CardContent>

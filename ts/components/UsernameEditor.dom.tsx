@@ -1,12 +1,14 @@
 // Copyright 2022 Signal Messenger, LLC
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import React, {
+import {
   useEffect,
   useState,
   useCallback,
   useMemo,
   useRef,
+  type JSX,
+  type MouseEvent,
 } from 'react';
 import classNames from 'classnames';
 import lodash from 'lodash';
@@ -27,13 +29,13 @@ import {
 import type { ReserveUsernameOptionsType } from '../state/ducks/username.preload.ts';
 import type { ShowToastAction } from '../state/ducks/toast.preload.ts';
 import { AutoSizeInput } from './AutoSizeInput.dom.tsx';
-import { ConfirmationDialog } from './ConfirmationDialog.dom.tsx';
 import { Input } from './Input.dom.tsx';
 import { Spinner } from './Spinner.dom.tsx';
 import { Modal } from './Modal.dom.tsx';
 import { Button, ButtonVariant } from './Button.dom.tsx';
 import { useConfirmDiscard } from '../hooks/useConfirmDiscard.dom.tsx';
 import { AxoButton } from '../axo/AxoButton.dom.tsx';
+import { AxoConfirmDialog } from '../axo/AxoConfirmDialog.dom.tsx';
 
 const { noop } = lodash;
 
@@ -91,7 +93,7 @@ export function UsernameEditor({
   state,
   recoveredUsername,
   onClose,
-}: PropsType): React.JSX.Element {
+}: PropsType): JSX.Element {
   const currentNickname = useMemo(() => {
     if (!currentUsername) {
       return undefined;
@@ -286,7 +288,7 @@ export function UsernameEditor({
     onClose();
   }, [onClose]);
 
-  const onLearnMore = useCallback((e: React.MouseEvent) => {
+  const onLearnMore = useCallback((e: MouseEvent) => {
     e.preventDefault();
 
     setIsLearnMoreVisible(true);
@@ -297,6 +299,10 @@ export function UsernameEditor({
     i18n,
     name: 'UsernameEditor',
     tryClose,
+    // @ts-expect-error ConfirmationDialog migration: Needs title
+    title: null,
+    // @ts-expect-error ConfirmationDialog migration: Needs description
+    description: null,
   });
 
   const onTryClose = useCallback(() => {
@@ -395,9 +401,7 @@ export function UsernameEditor({
           size="lg"
           disabled={!canSave}
           onClick={onSave}
-          experimentalSpinner={
-            isConfirming ? { 'aria-label': i18n('icu:loading') } : null
-          }
+          pending={isConfirming}
         >
           {i18n('icu:save')}
         </AxoButton.Root>
@@ -425,72 +429,64 @@ export function UsernameEditor({
           </div>
         </Modal>
       )}
-      {error === UsernameReservationError.General && (
-        <ConfirmationDialog
-          dialogName="UsernameEditor.generalError"
-          cancelText={i18n('icu:ok')}
-          cancelButtonVariant={ButtonVariant.Secondary}
-          i18n={i18n}
-          onClose={() => setUsernameReservationError(undefined)}
+
+      <AxoConfirmDialog.Root
+        open={error === UsernameReservationError.General}
+        onOpenChange={() => setUsernameReservationError(undefined)}
+        // @ts-expect-error ConfirmationDialog migration: Needs title
+        title={null}
+        description={i18n('icu:ProfileEditor--username--general-error')}
+      >
+        <AxoConfirmDialog.Cancel>{i18n('icu:ok')}</AxoConfirmDialog.Cancel>
+      </AxoConfirmDialog.Root>
+
+      <AxoConfirmDialog.Root
+        open={error === UsernameReservationError.ConflictOrGone}
+        onOpenChange={() => {
+          if (nickname) {
+            reserveUsername({ nickname, customDiscriminator });
+          }
+        }}
+        // @ts-expect-error ConfirmationDialog migration: Needs title
+        title={null}
+        description={i18n('icu:ProfileEditor--username--reservation-gone', {
+          username: reservation?.username ?? nickname ?? '',
+        })}
+      >
+        <AxoConfirmDialog.Cancel>{i18n('icu:ok')}</AxoConfirmDialog.Cancel>
+      </AxoConfirmDialog.Root>
+
+      <AxoConfirmDialog.Root
+        open={isConfirmingSave}
+        onOpenChange={onCancelSave}
+        // @ts-expect-error ConfirmationDialog migration: Needs title
+        title={null}
+        description={i18n('icu:EditUsernameModalBody__change-confirmation')}
+      >
+        <AxoConfirmDialog.Cancel />
+        <AxoConfirmDialog.Action
+          variant="destructive"
+          onClick={onConfirmUsername}
         >
-          {i18n('icu:ProfileEditor--username--general-error')}
-        </ConfirmationDialog>
-      )}
-      {error === UsernameReservationError.ConflictOrGone && (
-        <ConfirmationDialog
-          dialogName="UsernameEditor.conflictOrGone"
-          cancelText={i18n('icu:ok')}
-          cancelButtonVariant={ButtonVariant.Secondary}
-          i18n={i18n}
-          onClose={() => {
-            if (nickname) {
-              reserveUsername({ nickname, customDiscriminator });
-            }
-          }}
+          {i18n('icu:EditUsernameModalBody__change-confirmation__continue')}
+        </AxoConfirmDialog.Action>
+      </AxoConfirmDialog.Root>
+
+      <AxoConfirmDialog.Root
+        open={isConfirmingReset}
+        onOpenChange={onCancelSave}
+        // @ts-expect-error ConfirmationDialog migration: Needs title
+        title={null}
+        description={i18n('icu:EditUsernameModalBody__recover-confirmation')}
+      >
+        <AxoConfirmDialog.Cancel />
+        <AxoConfirmDialog.Action
+          variant="destructive"
+          onClick={onConfirmUsername}
         >
-          {i18n('icu:ProfileEditor--username--reservation-gone', {
-            username: reservation?.username ?? nickname ?? '',
-          })}
-        </ConfirmationDialog>
-      )}
-      {isConfirmingSave && (
-        <ConfirmationDialog
-          dialogName="UsernameEditor.confirmChange"
-          cancelText={i18n('icu:cancel')}
-          actions={[
-            {
-              action: onConfirmUsername,
-              style: 'negative',
-              text: i18n(
-                'icu:EditUsernameModalBody__change-confirmation__continue'
-              ),
-            },
-          ]}
-          i18n={i18n}
-          onClose={onCancelSave}
-        >
-          {i18n('icu:EditUsernameModalBody__change-confirmation')}
-        </ConfirmationDialog>
-      )}
-      {isConfirmingReset && (
-        <ConfirmationDialog
-          dialogName="UsernameEditor.confirmReset"
-          cancelText={i18n('icu:cancel')}
-          actions={[
-            {
-              action: onConfirmUsername,
-              style: 'negative',
-              text: i18n(
-                'icu:EditUsernameModalBody__change-confirmation__continue'
-              ),
-            },
-          ]}
-          i18n={i18n}
-          onClose={onCancelSave}
-        >
-          {i18n('icu:EditUsernameModalBody__recover-confirmation')}
-        </ConfirmationDialog>
-      )}
+          {i18n('icu:EditUsernameModalBody__change-confirmation__continue')}
+        </AxoConfirmDialog.Action>
+      </AxoConfirmDialog.Root>
     </>
   );
 }

@@ -3,13 +3,14 @@
 
 import classNames from 'classnames';
 import type { CSSProperties, ReactElement } from 'react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { animated, useSpring } from '@react-spring/web';
 
 import type { LocalizerType } from '../../types/Util.std.ts';
 import { drop } from '../../util/drop.std.ts';
-import { TimelineDateHeader } from './TimelineDateHeader.dom.tsx';
+import { TimelineDate } from './TimelineDateHeader.dom.tsx';
 import { Spinner } from '../Spinner.dom.tsx';
+import { tw } from '../../axo/tw.dom.tsx';
 
 export type PropsType = Readonly<{
   i18n: LocalizerType;
@@ -80,7 +81,13 @@ export function TimelineFloatingHeader({
       role="heading"
       style={style}
     >
-      <TimelineDateHeader floating i18n={i18n} timestamp={timestamp} />
+      <div
+        className={tw(
+          'rounded-full bg-fill-floating px-2.5 py-1.5 type-body-medium text-label-secondary shadow-elevation-1'
+        )}
+      >
+        <TimelineDate i18n={i18n} timestamp={timestamp} />
+      </div>
       {showSpinner && (
         <animated.div
           className="TimelineFloatingHeader__spinner-container"
