@@ -260,6 +260,7 @@ const useProps = (overrideProps: OverridePropsType = {}): PropsType => {
       <DialogRelink
         i18n={i18n}
         relinkDevice={action('relinkDevice')}
+        renderClearingDataView={action('renderClearingDataView')}
         reregister={action('reregister')}
         weArePrimaryDevice={false}
         {...props}
@@ -292,8 +293,8 @@ const useProps = (overrideProps: OverridePropsType = {}): PropsType => {
       <CrashReportDialog
         i18n={i18n}
         isPending={false}
-        writeCrashReportsToLog={action('writeCrashReportsToLog')}
-        eraseCrashReports={action('eraseCrashReports')}
+        onSend={action('writeCrashReportsToLog')}
+        onErase={action('eraseCrashReports')}
       />
     ),
     renderExpiredBuildDialog: props => <DialogExpiredBuild {...props} />,

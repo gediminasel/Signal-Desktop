@@ -139,6 +139,7 @@ import {
   StoryRecipientUpdateEvent,
   SuccessfulDecryptEvent,
   TypingEvent,
+  UsernameChangeSyncEvent,
   ViewEvent,
   ViewOnceOpenSyncEvent,
   ViewSyncEvent,
@@ -694,6 +695,11 @@ export default class MessageReceiver
   public override addEventListener(
     name: 'deviceNameChangeSync',
     handler: (ev: DeviceNameChangeSyncEvent) => void
+  ): void;
+
+  public override addEventListener(
+    name: 'usernameChangeSync',
+    handler: (ev: UsernameChangeSyncEvent) => void
   ): void;
 
   public override addEventListener(name: string, handler: EventHandler): void {
@@ -2095,6 +2101,7 @@ export default class MessageReceiver
       const length = Buffer.byteLength(message.body);
       this.#removeFromCache(envelope);
       log.warn(`${logId}: Dropping too-long message. Length: ${length}`);
+      return;
     }
 
     strictAssert(timestamp, 'Missing sent timestamp');
@@ -2109,7 +2116,7 @@ export default class MessageReceiver
         device: envelope.sourceDevice,
         unidentifiedStatus,
         message,
-        isRecipientUpdate: isRecipientUpdate,
+        isRecipientUpdate,
         receivedAtCounter: envelope.receivedAtCounter,
         receivedAtDate: envelope.receivedAtDate,
         expirationStartTimestamp: toNumber(expirationStartTimestamp) ?? 0,
@@ -2381,6 +2388,13 @@ export default class MessageReceiver
       'MessageReceiver.handleEditMesage: received message from PNI'
     );
 
+    if (message.body && isBodyTooLong(message.body)) {
+      const length = Buffer.byteLength(message.body);
+      this.#removeFromCache(envelope);
+      log.warn(`${logId}: Dropping too-long message. Length: ${length}`);
+      return;
+    }
+
     const ev = new MessageEvent(
       {
         envelopeId: envelope.id,
@@ -2496,6 +2510,7 @@ export default class MessageReceiver
       const length = Buffer.byteLength(message.body);
       this.#removeFromCache(envelope);
       log.warn(`${logId}: Dropping too-long message. Length: ${length}`);
+      return;
     }
 
     const ev = new MessageEvent(
@@ -3114,6 +3129,9 @@ export default class MessageReceiver
         syncMessage.content.attachmentBackfillResponse
       );
     }
+    if (syncMessage.content?.usernameChange) {
+      return this.#handleUsernameChangeSync(envelope);
+    }
 
     this.#removeFromCache(envelope);
     const envelopeId = getEnvelopeId(envelope);
@@ -3160,6 +3178,13 @@ export default class MessageReceiver
 
     const message = this.#processDecrypted(envelope, editMessage.dataMessage);
 
+    if (message.body && isBodyTooLong(message.body)) {
+      const length = Buffer.byteLength(message.body);
+      this.#removeFromCache(envelope);
+      log.warn(`${logId}: Dropping too-long message. Length: ${length}`);
+      return;
+    }
+
     const ev = new SentEvent(
       {
         envelopeId: envelope.id,
@@ -3173,7 +3198,7 @@ export default class MessageReceiver
           ...message,
           editedMessageTimestamp: toNumber(editMessage.targetSentTimestamp),
         },
-        isRecipientUpdate: isRecipientUpdate,
+        isRecipientUpdate,
         receivedAtCounter: envelope.receivedAtCounter,
         receivedAtDate: envelope.receivedAtDate,
         expirationStartTimestamp: toNumber(expirationStartTimestamp) ?? 0,
@@ -3865,6 +3890,18 @@ export default class MessageReceiver
       this.#removeFromCache.bind(this, envelope)
     );
     await this.#dispatchAndWait(logId, deviceNameChangeEvent);
+  }
+
+  async #handleUsernameChangeSync(envelope: ProcessedEnvelope): Promise<void> {
+    const logId = `handleUsernameChangeSync: ${getEnvelopeId(envelope)}`;
+    log.info(logId);
+
+    logUnexpectedUrgentValue(envelope, 'usernameChangeSync');
+
+    const usernameChangeEvent = new UsernameChangeSyncEvent(
+      this.#removeFromCache.bind(this, envelope)
+    );
+    await this.#dispatchAndWait(logId, usernameChangeEvent);
   }
 
   async #handleContacts(

@@ -231,6 +231,8 @@ export namespace AxoTooltip {
   const TOOLTIP_ARROW_HEIGHT = 6;
 
   export type RootConfigProps = Readonly<{
+    /** Prevent the tooltip from showing */
+    disabled?: boolean;
     /** Override the duration given to the `Provider` to customise the open delay for a specific tooltip. */
     delay?: Delay;
     /** The preferred side of the trigger to render against when open. Will be reversed when collisions occur. */
@@ -320,10 +322,14 @@ export namespace AxoTooltip {
     }, [experimentalTimestamp]);
 
     const hasAccessory = useMemo(() => {
-      return keyboardShortcut != null && formattedTimestamp != null;
+      return keyboardShortcut != null || formattedTimestamp != null;
     }, [keyboardShortcut, formattedTimestamp]);
 
     useEffect(() => {
+      if (props.disabled) {
+        return;
+      }
+
       if (isTestOrMockEnvironment()) {
         assert(
           triggerRef.current instanceof HTMLElement,
@@ -352,6 +358,10 @@ export namespace AxoTooltip {
       }
     });
 
+    if (props.disabled) {
+      return <>{props.children}</>;
+    }
+
     return (
       <Tooltip.Root
         delayDuration={delayDuration}
@@ -377,7 +387,9 @@ export namespace AxoTooltip {
                 'bg-elevated-background-quaternary text-label-primary-on-color',
                 'shadow-elevation-3 shadow-no-outline',
                 'min-w-12',
-                hasAccessory ? 'max-w-[228px]' : 'max-w-[192px]'
+                hasAccessory ? 'max-w-[228px]' : 'max-w-[192px]',
+                'forced-color-adjust-none',
+                'forced-colors:bg-[Highlight] forced-colors:text-[HighlightText]'
               )}
             >
               {hasArrow && (
@@ -387,7 +399,11 @@ export namespace AxoTooltip {
                   height={TOOLTIP_ARROW_HEIGHT}
                 >
                   <svg
-                    className={tw('fill-elevated-background-quaternary')}
+                    role="none"
+                    className={tw(
+                      'fill-elevated-background-quaternary',
+                      'forced-colors:fill-[Highlight]'
+                    )}
                     xmlns="http://www.w3.org/2000/svg"
                     width={TOOLTIP_ARROW_WIDTH}
                     height={TOOLTIP_ARROW_HEIGHT}
@@ -397,31 +413,33 @@ export namespace AxoTooltip {
                   </svg>
                 </Tooltip.Arrow>
               )}
-              <div
+              <span
                 aria-hidden={props.tooltipRepeatsTriggerAccessibleName}
                 className={tw(
                   'line-clamp-4 max-h-full text-balance text-ellipsis hyphens-auto'
                 )}
               >
                 {props.label}
-              </div>
+              </span>
               {keyboardShortcut != null && (
-                <div
+                <span
                   className={tw(
-                    'type-body-small text-label-secondary-on-color'
+                    'type-body-small text-label-secondary-on-color',
+                    'forced-colors:text-inherit forced-colors:italic'
                   )}
                 >
                   {keyboardShortcut}
-                </div>
+                </span>
               )}
               {formattedTimestamp != null && (
-                <div
+                <span
                   className={tw(
-                    'type-caption whitespace-nowrap text-label-secondary-on-color'
+                    'type-caption whitespace-nowrap text-label-secondary-on-color',
+                    'forced-colors:text-inherit forced-colors:italic'
                   )}
                 >
                   {formattedTimestamp}
-                </div>
+                </span>
               )}
             </Tooltip.Content>
           </AxoTheme.Inherit>

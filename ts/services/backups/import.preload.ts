@@ -783,7 +783,6 @@ export class BackupImportStream extends Writable {
     androidSpecificSettings,
     bioText,
     bioEmoji,
-    keyTransparencyData,
   }: Backups.AccountData): Promise<void> {
     strictAssert(this.#ourConversation === undefined, 'Duplicate AccountData');
     const me = {
@@ -829,15 +828,6 @@ export class BackupImportStream extends Writable {
     }
     if (bioEmoji != null) {
       me.aboutEmoji = Emoji.unsafeCastMaybeInvalidStringToVariant(bioEmoji);
-    }
-    if (Bytes.isNotEmpty(keyTransparencyData)) {
-      const ourAci = this.#ourConversation?.serviceId;
-      strictAssert(
-        isAciString(ourAci),
-        'Must have our aci for Key Transparency data'
-      );
-
-      await DataWriter.setKTAccountData(ourAci, keyTransparencyData);
     }
     if (avatarUrlPath != null) {
       await itemStorage.put('avatarUrl', avatarUrlPath);
@@ -1907,16 +1897,12 @@ export class BackupImportStream extends Writable {
       const errors = new Array<CustomError>();
 
       let sendStatuses: Array<Backups.SendStatus | Backups.SendStatus.Params> =
-        outgoing.sendStatus;
-      if (!sendStatuses?.length) {
-        // TODO: DESKTOP-8089
-        // If this outgoing message was not sent to anyone, we add ourselves to
-        // sendStateByConversationId and mark read. This is to match existing desktop
-        // behavior.
+        outgoing.sendStatus ?? [];
+      if (!sendStatuses.length) {
         sendStatuses = [
           {
             recipientId: item.authorId,
-            deliveryStatus: { read: { sealedSender: null } },
+            deliveryStatus: { sent: { sealedSender: null } },
             timestamp: item.dateSent,
           },
         ];
@@ -3601,10 +3587,10 @@ export class BackupImportStream extends Writable {
         });
       }
       if (update.groupV2MigrationUpdate) {
-        migrationMessage = migrationMessage || getDefaultMigrationMessage();
+        migrationMessage ??= getDefaultMigrationMessage();
       }
       if (update.groupV2MigrationSelfInvitedUpdate) {
-        migrationMessage = migrationMessage || getDefaultMigrationMessage();
+        migrationMessage ??= getDefaultMigrationMessage();
         const { groupMigration } = migrationMessage;
         if (!groupMigration) {
           throw new Error(
@@ -3614,7 +3600,7 @@ export class BackupImportStream extends Writable {
         groupMigration.areWeInvited = true;
       }
       if (update.groupV2MigrationInvitedMembersUpdate) {
-        migrationMessage = migrationMessage || getDefaultMigrationMessage();
+        migrationMessage ??= getDefaultMigrationMessage();
         const { groupMigration } = migrationMessage;
         if (!groupMigration) {
           throw new Error(
@@ -3631,7 +3617,7 @@ export class BackupImportStream extends Writable {
         groupMigration.invitedMemberCount = invitedMembersCount;
       }
       if (update.groupV2MigrationDroppedMembersUpdate) {
-        migrationMessage = migrationMessage || getDefaultMigrationMessage();
+        migrationMessage ??= getDefaultMigrationMessage();
         const { groupMigration } = migrationMessage;
         if (!groupMigration) {
           throw new Error(
@@ -3963,7 +3949,7 @@ export class BackupImportStream extends Writable {
       allowAllCalls,
       allowAllMentions,
       allowedMembers: new Set(allowedMemberConversationIds ?? []),
-      scheduleEnabled: scheduleEnabled,
+      scheduleEnabled,
       scheduleStartTime: dropNull(scheduleStartTime),
       scheduleEndTime: dropNull(scheduleEndTime),
       scheduleDaysEnabled: parseScheduleDaysEnabled(scheduleDaysEnabled),

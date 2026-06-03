@@ -6,8 +6,10 @@ import { explodePromise } from './explodePromise.std.ts';
 export async function loadImage(src: string): Promise<HTMLImageElement> {
   const { promise, resolve, reject } = explodePromise<void>();
 
-  // oxlint-disable-next-line no-undef FIXME
+  // FIXME
+  // oxlint-disable-next-line no-undef
   const img = new Image();
+  img.crossOrigin = 'anonymous';
   img.addEventListener('load', () => resolve(), { once: true });
   img.addEventListener(
     'error',

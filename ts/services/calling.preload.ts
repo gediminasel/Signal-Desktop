@@ -257,7 +257,7 @@ type CallingReduxInterface = Pick<
   | 'setMutedBy'
   | 'onObservedRemoteMute'
 > & {
-  areAnyCallsActiveOrRinging(): boolean;
+  areAnyCallsActiveOrRinging: () => boolean;
 };
 
 export type SetPresentingOptionsType = Readonly<{
@@ -3702,7 +3702,7 @@ class CallingClass {
     // oxlint-disable-next-line no-param-reassign
     call.handleStateChanged = async () => {
       if (call.state === CallState.Accepted) {
-        acceptedTime = acceptedTime ?? Date.now();
+        acceptedTime ??= Date.now();
 
         // Start rendering received video frames.
         this.videoRenderer.enable(call);

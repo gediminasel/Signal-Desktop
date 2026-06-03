@@ -141,7 +141,7 @@ export const SmartConversationHeader = memo(function SmartConversationHeader({
     onMarkUnread,
     onMoveToInbox,
     setDisappearingMessages,
-    setMuteExpiration,
+    setMuteDuration,
     setPinned,
     toggleSelectMode,
     jumpToDate,
@@ -236,9 +236,9 @@ export const SmartConversationHeader = memo(function SmartConversationHeader({
 
   const onConversationMuteExpirationChange = useCallback(
     (seconds: number) => {
-      setMuteExpiration(conversation.id, seconds);
+      setMuteDuration(conversation.id, seconds);
     },
-    [setMuteExpiration, conversation.id]
+    [setMuteDuration, conversation.id]
   );
 
   const onConversationPin = useCallback(() => {

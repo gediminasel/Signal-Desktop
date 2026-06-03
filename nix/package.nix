@@ -5,10 +5,12 @@
   pnpm_10,
   fetchPnpmDeps,
   pnpmConfigHook,
-  electron_41,
+  electron_42,
   python3,
   makeWrapper,
   callPackage,
+  fetchpatch,
+  fetchurl,
   jq,
   makeDesktopItem,
   copyDesktopItems,
@@ -24,7 +26,7 @@
 let
   nodejs = nodejs_24;
   pnpm = pnpm_10;
-  electron = electron_41;
+  electron = electron_42;
 
   libsignal-node = callPackage ./libsignal-node.nix { inherit nodejs; };
   signal-sqlcipher = callPackage ./signal-sqlcipher.nix { inherit pnpm nodejs; };
@@ -32,30 +34,12 @@ let
   webrtc = callPackage ./webrtc.nix { };
   ringrtc = callPackage ./ringrtc.nix { inherit webrtc; };
 
-  # Noto Color Emoji PNG files for emoji replacement; see below.
-  noto-fonts-color-emoji-png = noto-fonts-color-emoji.overrideAttrs (prevAttrs: {
-    pname = "noto-fonts-color-emoji-png";
+  version = "8.16.0-lel";
 
-    # The build produces 136×128 PNGs by default for arcane font
-    # reasons, but we want square PNGs.
-    buildFlags = prevAttrs.buildFlags or [ ] ++ [ "BODY_DIMENSIONS=128x128" ];
-
-    makeTargets = [ "compressed" ];
-
-    installPhase = ''
-      runHook preInstall
-
-      mkdir -p $out/share
-      mv build/compressed_pngs $out/share/noto-fonts-color-emoji-png
-      python3 add_aliases.py --srcdir=$out/share/noto-fonts-color-emoji-png
-
-      runHook postInstall
-    '';
-  });
-
-  version = "8.12.0-lel";
-
-  src = ../.;
+  src = lib.fileset.toSource {
+    root = ../.;
+    fileset = lib.fileset.difference ../. ../fonts/emoji.woff2;
+  };
 
   sticker-creator = stdenv.mkDerivation (finalAttrs: {
     pname = "signal-desktop-sticker-creator";
@@ -109,11 +93,22 @@ stdenv.mkDerivation (finalAttrs: {
   ++ lib.optionals stdenv.hostPlatform.isLinux [
     copyDesktopItems
   ];
-  buildInputs = [noto-fonts-color-emoji-png];
 
   patches = [
+    # Signal ships the Apple emoji set without a licence and upstream
+    # does not seem terribly interested in fixing this; see:
+
+    #
+    # * <https://github.com/signalapp/Signal-Android/issues/5862>
+    # * <https://whispersystems.discoursehosting.net/t/signal-is-likely-violating-apple-license-terms-by-using-apple-emoji-in-the-sticker-creator-and-android-and-desktop-apps/52883>
+    #
+    # We work around this by replacing it with the Noto Color Emoji
+    # set, which is available under a FOSS licence and more likely to
+    # be used on a NixOS machine anyway. The Apple emoji are removed
+    # in to ensure that the build doesn’t cache the
+    # unlicensed emoji files.
     (replaceVars ./replace-emoji-with-noto-emoji.patch {
-      noto-emoji-pngs = "${noto-fonts-color-emoji-png}/share/noto-fonts-color-emoji-png";
+      inherit noto-fonts-color-emoji;
     })
   ];
 
@@ -152,13 +147,13 @@ stdenv.mkDerivation (finalAttrs: {
       ;
     inherit pnpm;
     fetcherVersion = 3;
-    hash = "sha256-+Z6w/0/eSnb8vBgoNOwwhcyXW7tkgkE9YMr+sjysrAs=";
+    hash = "sha256-ZG7A3YHSZ+/fjznCCs9jUA6g/EUrZ2SMUuuPvbj5ZXg=";
   };
 
   env = {
     ELECTRON_SKIP_BINARY_DOWNLOAD = "1";
     SIGNAL_ENV = "production";
-    SOURCE_DATE_EPOCH = 1778711324;
+    SOURCE_DATE_EPOCH = 1780528721;
   }
   // lib.optionalAttrs stdenv.hostPlatform.isDarwin {
     # Disable code signing during local macOS builds.

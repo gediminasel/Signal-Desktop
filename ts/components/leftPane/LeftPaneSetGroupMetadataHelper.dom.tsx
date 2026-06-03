@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import type { ReactNode } from 'react';
-
 import { LeftPaneHelper } from './LeftPaneHelper.dom.tsx';
 import type { Row } from '../ConversationList.dom.tsx';
 import { RowType } from '../ConversationList.dom.tsx';
@@ -10,12 +9,10 @@ import type { ContactListItemConversationType } from '../conversationList/Contac
 import { DisappearingTimerSelect } from '../DisappearingTimerSelect.dom.tsx';
 import type { LocalizerType } from '../../types/Util.std.ts';
 import type { DurationInSeconds } from '../../util/durations/index.std.ts';
-import { Alert } from '../Alert.dom.tsx';
 import { AvatarEditor } from '../AvatarEditor.dom.tsx';
 import { AvatarPreview } from '../AvatarPreview.dom.tsx';
 import { Spinner } from '../Spinner.dom.tsx';
 import { Button } from '../Button.dom.tsx';
-import { Modal } from '../Modal.dom.tsx';
 import { GroupTitleInput } from '../GroupTitleInput.dom.tsx';
 import type {
   AvatarDataType,
@@ -24,6 +21,8 @@ import type {
   SaveAvatarToDiskActionType,
 } from '../../types/Avatar.std.ts';
 import { AvatarColors } from '../../types/Colors.std.ts';
+import { AxoConfirmDialog } from '../../axo/AxoConfirmDialog.dom.tsx';
+import { AxoDialog } from '../../axo/AxoDialog.dom.tsx';
 
 export type LeftPaneSetGroupMetadataPropsType = {
   groupAvatar: undefined | Uint8Array<ArrayBuffer>;
@@ -36,6 +35,7 @@ export type LeftPaneSetGroupMetadataPropsType = {
   userAvatarData: ReadonlyArray<AvatarDataType>;
 };
 
+// oxlint-disable-next-line react/prefer-function-component
 export class LeftPaneSetGroupMetadataHelper extends LeftPaneHelper<LeftPaneSetGroupMetadataPropsType> {
   readonly #groupAvatar: undefined | Uint8Array<ArrayBuffer>;
   readonly #groupName: string;
@@ -143,31 +143,35 @@ export class LeftPaneSetGroupMetadataHelper extends LeftPaneHelper<LeftPaneSetGr
         }}
       >
         {this.#isEditingAvatar && (
-          <Modal
-            modalName="LeftPaneSetGroupMetadataHelper.AvatarEditor"
-            hasXButton
-            i18n={i18n}
-            onClose={toggleComposeEditingAvatar}
-            title={i18n(
-              'icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title'
-            )}
-          >
-            <AvatarEditor
-              avatarColor={avatarColor}
-              avatarValue={this.#groupAvatar}
-              deleteAvatarFromDisk={composeDeleteAvatarFromDisk}
-              i18n={i18n}
-              isGroup
-              onCancel={toggleComposeEditingAvatar}
-              onSave={newAvatar => {
-                setComposeGroupAvatar(newAvatar);
-                toggleComposeEditingAvatar();
-              }}
-              userAvatarData={this.#userAvatarData}
-              replaceAvatar={composeReplaceAvatar}
-              saveAvatarToDisk={composeSaveAvatarToDisk}
-            />
-          </Modal>
+          <AxoDialog.Root open onOpenChange={toggleComposeEditingAvatar}>
+            <AxoDialog.Content size="md" escape="cancel-is-noop">
+              <AxoDialog.Header>
+                <AxoDialog.Title>
+                  {i18n(
+                    'icu:LeftPaneSetGroupMetadataHelper__avatar-modal-title'
+                  )}
+                </AxoDialog.Title>
+                <AxoDialog.Close />
+              </AxoDialog.Header>
+              <AxoDialog.Body maxHeight={600}>
+                <AvatarEditor
+                  avatarColor={avatarColor}
+                  avatarValue={this.#groupAvatar}
+                  deleteAvatarFromDisk={composeDeleteAvatarFromDisk}
+                  i18n={i18n}
+                  isGroup
+                  onCancel={toggleComposeEditingAvatar}
+                  onSave={newAvatar => {
+                    setComposeGroupAvatar(newAvatar);
+                    toggleComposeEditingAvatar();
+                  }}
+                  userAvatarData={this.#userAvatarData}
+                  replaceAvatar={composeReplaceAvatar}
+                  saveAvatarToDisk={composeSaveAvatarToDisk}
+                />
+              </AxoDialog.Body>
+            </AxoDialog.Content>
+          </AxoDialog.Root>
         )}
         <AvatarPreview
           avatarColor={avatarColor}
@@ -204,13 +208,15 @@ export class LeftPaneSetGroupMetadataHelper extends LeftPaneHelper<LeftPaneSetGr
           />
         </section>
 
-        {this.#hasError && (
-          <Alert
-            body={i18n('icu:setGroupMetadata__error-message')}
-            i18n={i18n}
-            onClose={clearGroupCreationError}
-          />
-        )}
+        <AxoConfirmDialog.Root
+          open={this.#hasError}
+          onOpenChange={clearGroupCreationError}
+          // @ts-expect-error ConfirmationDialog migration: Needs title
+          title={null}
+          description={i18n('icu:setGroupMetadata__error-message')}
+        >
+          <AxoConfirmDialog.Cancel>{i18n('icu:ok')}</AxoConfirmDialog.Cancel>
+        </AxoConfirmDialog.Root>
       </form>
     );
   }

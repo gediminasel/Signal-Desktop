@@ -120,9 +120,13 @@ import { signalProtocolStore } from '../SignalProtocolStore.preload.ts';
 import { shouldSaveNotificationAvatarToDisk } from '../services/notifications.preload.ts';
 import { storageServiceUploadJob } from '../services/storage.preload.ts';
 import { challengeHandler } from '../services/challengeHandler.preload.ts';
+import { sendUsernameChangeSyncMessage } from '../services/username.preload.ts';
 import { getSendOptions } from '../util/getSendOptions.preload.ts';
 import type { IsConversationAcceptedOptionsType } from '../util/isConversationAccepted.preload.ts';
-import { isConversationAccepted } from '../util/isConversationAccepted.preload.ts';
+import {
+  isConversationAccepted,
+  isTrustedContact,
+} from '../util/isConversationAccepted.preload.ts';
 import {
   getNumber,
   getProfileName,
@@ -271,6 +275,8 @@ import * as Message from '../types/Message2.preload.ts';
 import { itemStorage } from '../textsecure/Storage.preload.ts';
 import { isUsernameValid } from '../util/Username.dom.ts';
 import type { Emoji } from '../axo/emoji.std.ts';
+import { canConversationOnlyBeMutedAlways } from '../conversations/canConversationOnlyBeMutedAlways.dom.ts';
+import { keyTransparency } from '../services/keyTransparency.preload.ts';
 
 const { compact, isNumber, throttle, debounce } = lodash;
 
@@ -988,6 +994,11 @@ export class ConversationModel {
   }
 
   block({ viaStorageServiceSync = false } = {}): void {
+    if (isMe(this.attributes)) {
+      log.error(`${this.idForLogging()}: Refusing to block Note to Self`);
+      return;
+    }
+
     let blocked = false;
     const wasBlocked = this.isBlocked();
 
@@ -3851,7 +3862,7 @@ export class ConversationModel {
       throw new Error(`${logId}: shutting down, can't accept more work`);
     }
 
-    this.jobQueue = this.jobQueue || new PQueue({ concurrency: 1 });
+    this.jobQueue ??= new PQueue({ concurrency: 1 });
 
     const abortController = new AbortController();
     const { signal: abortSignal } = abortController;
@@ -4064,9 +4075,20 @@ export class ConversationModel {
       return;
     }
 
-    if (!this.get('profileSharing')) {
+    if (
+      isDirectConversation(this.attributes) &&
+      !isTrustedContact(this.attributes)
+    ) {
       log.error(
-        'sendProfileKeyUpdate: profileSharing not enabled for conversation',
+        'sendProfileKeyUpdate: not a trusted contact',
+        this.idForLogging()
+      );
+      return;
+    }
+
+    if (isGroup(this.attributes) && !this.get('profileSharing')) {
+      log.error(
+        'sendProfileKeyUpdate: not a trusted group',
         this.idForLogging()
       );
       return;
@@ -4473,6 +4495,17 @@ export class ConversationModel {
     log.info(`updateUsername(${this.idForLogging()}): updating username`);
 
     this.#doSet({ username });
+
+    if (isMe(this.attributes)) {
+      drop(keyTransparency.onKnownIdentifierChange('username'));
+      if (itemStorage.get('usernameCorrupted')) {
+        log.info('updateUsername: clearing username corruption');
+        await itemStorage.remove('usernameCorrupted');
+      }
+      if (!fromStorageService) {
+        await sendUsernameChangeSyncMessage();
+      }
+    }
     await window.ConversationController.usernameUpdated(this);
 
     if (!fromStorageService) {
@@ -4951,7 +4984,7 @@ export class ConversationModel {
 
     const ourConversation =
       window.ConversationController.getOurConversationOrThrow();
-    source = source || ourConversation.id;
+    source ??= ourConversation.id;
     const sourceServiceId =
       window.ConversationController.get(source)?.get('serviceId');
 
@@ -5309,10 +5342,12 @@ export class ConversationModel {
       { noTrigger: viaStorageServiceSync }
     );
 
-    // If our profile key was cleared above, we don't tell our linked devices about it.
-    //   We want linked devices to tell us what it should be, instead of telling them to
-    //   erase their local value.
-    if (!viaStorageServiceSync) {
+    // We _don't_ update storage service when we find out about a new profileKey unless
+    // we're a primary device
+    if (
+      !viaStorageServiceSync &&
+      window.ConversationController.areWePrimaryDevice()
+    ) {
       this.captureChange('profileKey');
     }
 
@@ -5639,10 +5674,6 @@ export class ConversationModel {
   // [X] dontNotifyForMentionsIfMuted
   // [x] firstUnregisteredAt
   captureChange(logMessage: string): void {
-    if (isSignalConversation(this.attributes)) {
-      return;
-    }
-
     log.info('storageService[captureChange]', logMessage, this.idForLogging());
     this.set({ needsStorageServiceSync: true });
 
@@ -5679,9 +5710,19 @@ export class ConversationModel {
   }
 
   setMuteExpiration(
-    muteExpiresAt = 0,
+    expiresAt = 0,
     { viaStorageServiceSync = false } = {}
   ): void {
+    let muteExpiresAt = expiresAt;
+
+    if (
+      muteExpiresAt > 0 &&
+      canConversationOnlyBeMutedAlways(this.attributes)
+    ) {
+      log.error('Invalid mute expiration for only-always-mute conversation');
+      muteExpiresAt = Number.MAX_SAFE_INTEGER;
+    }
+
     const prevExpiration = this.get('muteExpiresAt');
 
     if (prevExpiration === muteExpiresAt) {
@@ -5850,7 +5891,7 @@ export class ConversationModel {
 
     const typingToken = `${sender.id}.${senderDevice}`;
 
-    this.contactTypingTimers = this.contactTypingTimers || {};
+    this.contactTypingTimers ??= {};
     const record = this.contactTypingTimers[typingToken];
 
     if (record) {
@@ -5894,7 +5935,7 @@ export class ConversationModel {
   }
 
   clearContactTypingTimer(typingToken: string): void {
-    this.contactTypingTimers = this.contactTypingTimers || {};
+    this.contactTypingTimers ??= {};
     const record = this.contactTypingTimers[typingToken];
 
     if (record) {

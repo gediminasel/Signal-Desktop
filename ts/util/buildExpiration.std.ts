@@ -8,7 +8,6 @@ import { isInPast } from './timestamp.std.ts';
 import { DAY } from './durations/index.std.ts';
 
 const NINETY_ONE_DAYS = 91 * DAY;
-const THIRTY_ONE_DAYS = 31 * DAY;
 const SIXTY_DAYS = 60 * DAY;
 
 export type GetBuildExpirationTimestampOptionsType = Readonly<{
@@ -55,7 +54,6 @@ export type HasBuildExpiredOptionsType = Readonly<{
 
 export function hasBuildExpired({
   buildExpirationTimestamp,
-  autoDownloadUpdate,
   now,
   logger,
 }: HasBuildExpiredOptionsType): boolean {
@@ -70,9 +68,7 @@ export function hasBuildExpired({
     return true;
   }
 
-  const safeExpirationMs = autoDownloadUpdate
-    ? NINETY_ONE_DAYS
-    : THIRTY_ONE_DAYS;
+  const safeExpirationMs = NINETY_ONE_DAYS;
 
   const buildExpirationDuration = buildExpirationTimestamp - now;
   const tooFarIntoFuture = buildExpirationDuration > safeExpirationMs;

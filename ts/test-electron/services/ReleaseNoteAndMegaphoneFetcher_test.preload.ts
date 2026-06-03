@@ -162,6 +162,11 @@ describe('ReleaseNoteAndMegaphoneFetcher', () => {
       set: sandbox.stub(),
       throttledUpdateUnread: sandbox.stub(),
       id: 'fake-signal-conversation-id',
+      setArchived: sandbox.stub(),
+      attributes: {
+        archived: false,
+      },
+      updateLastMessage: sandbox.stub(),
     };
 
     // Stub global methods
@@ -243,11 +248,9 @@ describe('ReleaseNoteAndMegaphoneFetcher', () => {
     sandbox.stub(saveNewMessageBatcher, 'add').resolves();
 
     // Mock SignalCI
-    window.SignalCI =
-      window.SignalCI ||
-      ({
-        handleEvent: sandbox.stub(),
-      } as unknown as CIType);
+    window.SignalCI ??= {
+      handleEvent: sandbox.stub(),
+    } as unknown as CIType;
 
     // Helper to run fetcher and wait for completion
     const runFetcherAndWaitForCompletion = async () => {

@@ -75,7 +75,7 @@ import { createLogger } from '../logging/log.std.ts';
 import type { LinkPreviewForUIType } from '../types/message/LinkPreviews.std.ts';
 import { StagedLinkPreview } from './conversation/StagedLinkPreview.dom.tsx';
 import type { DraftEditMessageType } from '../model-types.d.ts';
-import { usePrevious } from '../hooks/usePrevious.std.ts';
+import { usePreviousDeprecated } from '../hooks/usePrevious.std.ts';
 import {
   matchBold,
   matchItalic,
@@ -147,23 +147,23 @@ export type Props = Readonly<{
   theme: ThemeType;
   placeholder?: string;
   sortedGroupMembers: ReadonlyArray<ConversationType> | null;
-  onDirtyChange?(dirty: boolean): unknown;
-  onEditorStateChange(options: {
+  onDirtyChange?: (dirty: boolean) => unknown;
+  onEditorStateChange: (options: {
     bodyRanges: DraftBodyRanges;
     caretLocation?: number;
     conversationId: string | undefined;
     messageText: string;
     sendCounter: number;
-  }): unknown;
-  onTextTooLong(): unknown;
+  }) => unknown;
+  onTextTooLong: () => unknown;
   onSelectEmoji: (emojiSelection: FunEmojiSelection) => void;
   onBlur?: () => unknown;
   onFocus?: () => unknown;
-  onSubmit(
+  onSubmit: (
     message: string,
     bodyRanges: DraftBodyRanges,
     timestamp: number
-  ): unknown;
+  ) => unknown;
   onScroll?: (ev: UIEvent<HTMLElement>) => void;
   ourConversationId: string | undefined;
   platform: string;
@@ -171,7 +171,7 @@ export type Props = Readonly<{
   shouldHidePopovers: boolean | null;
   linkPreviewLoading?: boolean;
   linkPreviewResult: LinkPreviewForUIType | null;
-  onCloseLinkPreview?(conversationId: string): unknown;
+  onCloseLinkPreview?: (conversationId: string) => unknown;
   showViewOnceButton: boolean;
   isViewOnceActive: boolean;
   onToggleViewOnce: () => void;
@@ -417,11 +417,11 @@ export function CompositionInput(props: Props): ReactElement {
     return false;
   };
 
-  const previousFormattingEnabled = usePrevious(
+  const previousFormattingEnabled = usePreviousDeprecated(
     isFormattingEnabled,
     isFormattingEnabled
   );
-  const previousIsMouseDown = usePrevious(isMouseDown, isMouseDown);
+  const previousIsMouseDown = usePreviousDeprecated(isMouseDown, isMouseDown);
 
   useEffect(() => {
     const formattingChanged =
@@ -640,7 +640,8 @@ export function CompositionInput(props: Props): ReactElement {
         node.attributes.removeNamedItem('style');
       }
 
-      // oxlint-disable-next-line no-undef FIXME
+      // FIXME
+      // oxlint-disable-next-line no-undef
       if (Buffer.byteLength(text) > MAX_BODY_ATTACHMENT_BYTE_LENGTH) {
         quill.history.undo();
         propsRef.current.onTextTooLong();
@@ -676,9 +677,9 @@ export function CompositionInput(props: Props): ReactElement {
         isDirty = text.length > 0;
       } else if (text.trimEnd() !== draftEditMessage.body.trimEnd()) {
         isDirty = true;
-      } else if (bodyRanges.length !== draftEditMessage.bodyRanges?.length) {
-        isDirty = true;
-      } else if (!areBodyRangesEqual(bodyRanges, draftEditMessage.bodyRanges)) {
+      } else if (
+        !areBodyRangesEqual(bodyRanges, draftEditMessage.bodyRanges ?? [])
+      ) {
         isDirty = true;
       } else if (dropNull(quotedMessageId) !== draftEditMessage.quote?.id) {
         isDirty = true;
@@ -779,7 +780,7 @@ export function CompositionInput(props: Props): ReactElement {
   const memberIdList = useMemo(() => {
     return JSON.stringify(sortedGroupMembers?.map(mem => mem.id));
   }, [sortedGroupMembers]);
-  const previousMemberIdList = usePrevious(undefined, memberIdList);
+  const previousMemberIdList = usePreviousDeprecated(undefined, memberIdList);
 
   useEffect(() => {
     memberRepositoryRef.current.updateMembers(sortedGroupMembers || []);

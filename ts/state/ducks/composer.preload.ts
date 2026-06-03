@@ -613,7 +613,9 @@ function sendEditedMessage(
   void,
   RootStateType,
   unknown,
-  UpdateComposerDisabledActionType | ShowToastActionType
+  | UpdateComposerDisabledActionType
+  | ShowToastActionType
+  | IncrementSendActionType
 > {
   return async dispatch => {
     const conversation = window.ConversationController.get(conversationId);
@@ -639,6 +641,7 @@ function sendEditedMessage(
           quoteSentAt,
           targetMessageId,
         });
+        dispatch(incrementSendCounter(conversationId));
       } catch (error) {
         log.error('sendEditedMessage', Errors.toLogFormat(error));
         if (error.toastType) {

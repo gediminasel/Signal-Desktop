@@ -104,7 +104,7 @@ import { SmartCaptchaDialog } from './CaptchaDialog.preload.tsx';
 import { SmartCrashReportDialog } from './CrashReportDialog.preload.tsx';
 import { SmartMessageSearchResult } from './MessageSearchResult.preload.tsx';
 import { SmartNetworkStatus } from './NetworkStatus.preload.tsx';
-import { SmartRelinkDialog } from './RelinkDialog.dom.tsx';
+import { SmartRelinkDialog } from './RelinkDialog.preload.tsx';
 import {
   renderToastManagerWithoutMegaphone,
   SmartToastManager,
@@ -155,7 +155,7 @@ function renderUpdateDialog(
 ): JSX.Element {
   return <SmartUpdateDialog {...props} />;
 }
-function renderCaptchaDialog({ onSkip }: { onSkip(): void }): JSX.Element {
+function renderCaptchaDialog({ onSkip }: { onSkip: () => void }): JSX.Element {
   return <SmartCaptchaDialog onSkip={onSkip} />;
 }
 function renderCrashReportDialog(): JSX.Element {

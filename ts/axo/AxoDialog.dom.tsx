@@ -409,6 +409,10 @@ export namespace AxoDialog {
 
   export type BodyProps = Readonly<{
     /**
+     * Width of the native scrollbar track.
+     */
+    scrollbarWidth?: 'thin' | 'none';
+    /**
      * Horizontal padding applied to the body content.
      * Defaults to `normal`.
      */
@@ -429,7 +433,11 @@ export namespace AxoDialog {
    * Automatically shows scroll hints and a thin scrollbar.
    */
   export const Body: FC<BodyProps> = memo(props => {
-    const { padding = 'normal', maxHeight = 440 } = props;
+    const {
+      scrollbarWidth = 'thin',
+      padding = 'normal',
+      maxHeight = 440,
+    } = props;
 
     const style = useMemo((): CSSProperties | undefined => {
       if (padding === 'only-scrollbar-gutter') {
@@ -444,7 +452,7 @@ export namespace AxoDialog {
     return (
       <AxoScrollArea.Root
         maxHeight={maxHeight}
-        scrollbarWidth="thin"
+        scrollbarWidth={scrollbarWidth}
         scrollbarVisibility="as-needed"
       >
         <AxoScrollArea.Hint edge="top" />
@@ -476,7 +484,11 @@ export namespace AxoDialog {
    * An optional accessible description to be announced when the dialog is opened.
    */
   export const Description: FC<DescriptionProps> = memo(props => {
-    return <Dialog.Description>{props.children}</Dialog.Description>;
+    return (
+      <Dialog.Description asChild>
+        <div>{props.children}</div>
+      </Dialog.Description>
+    );
   });
 
   Description.displayName = 'AxoDialog.Description';
@@ -490,7 +502,7 @@ export namespace AxoDialog {
     /**
      * Should be `FooterContent` and/or `Actions` elements.
      */
-    children: ReactNode;
+    children?: ReactNode;
   }>;
 
   /**

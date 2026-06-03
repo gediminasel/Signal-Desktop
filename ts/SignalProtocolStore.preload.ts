@@ -74,6 +74,7 @@ import { formatGroups, groupWhile } from './util/groupWhile.std.ts';
 import { parseUnknown } from './util/schemas.std.ts';
 import { wrappingAdd24 } from './util/wrappingAdd.std.ts';
 import { itemStorage } from './textsecure/Storage.preload.ts';
+import { getRequirePqRatio } from './util/getRequirePqRatio.dom.ts';
 
 const { omit } = lodash;
 
@@ -234,7 +235,7 @@ type SenderKeyCacheEntry = CacheEntryType<SenderKeyType, SenderKeyRecord>;
 
 type ZoneQueueEntryType = Readonly<{
   zone: Zone;
-  callback(): void;
+  callback: () => void;
 }>;
 
 export class SignalProtocolStore extends EventEmitter {
@@ -1554,7 +1555,7 @@ export class SignalProtocolStore extends EventEmitter {
           entries.map(async entry => {
             if (entry.hydrated) {
               const record = entry.item;
-              if (record.hasCurrentState()) {
+              if (record.hasCurrentState(getRequirePqRatio())) {
                 return { record, entry };
               }
 
@@ -1562,7 +1563,7 @@ export class SignalProtocolStore extends EventEmitter {
             }
 
             const record = hydrateSession(entry.fromDB);
-            if (record.hasCurrentState()) {
+            if (record.hasCurrentState(getRequirePqRatio())) {
               return { record, entry };
             }
 
@@ -1709,7 +1710,7 @@ export class SignalProtocolStore extends EventEmitter {
       async () => {
         const item = entry.hydrated ? entry.item : hydrateSession(entry.fromDB);
 
-        if (!item.hasCurrentState()) {
+        if (!item.hasCurrentState(getRequirePqRatio())) {
           return;
         }
 

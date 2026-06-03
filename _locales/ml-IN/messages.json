@@ -1,4 +1,19 @@
 {
+  "icu:AxoAlertDialog.Cancel": {
+    "messageformat": "റദ്ദാക്കുക"
+  },
+  "icu:AxoButton.Pending": {
+    "messageformat": "ശേഷിക്കുന്നു"
+  },
+  "icu:AxoDialog.Back": {
+    "messageformat": "തിരികെ പോകുക"
+  },
+  "icu:AxoDialog.Close": {
+    "messageformat": "അടയ്ക്കുക"
+  },
+  "icu:AxoTextField.Clear": {
+    "messageformat": "മായ്‌ക്കുക"
+  },
   "icu:AddUserToAnotherGroupModal__title": {
     "messageformat": "ഒരു ഗ്രൂപ്പിലേക്ക് ചേർക്കുക"
   },
@@ -356,9 +371,6 @@
   "icu:NavTabs__ItemLabel--Settings": {
     "messageformat": "ക്രമീകരണങ്ങൾ"
   },
-  "icu:NavTabs__ItemLabel--Profile": {
-    "messageformat": "പ്രൊഫൈൽ"
-  },
   "icu:NavSidebar__BackButtonLabel": {
     "messageformat": "തിരികെ പോകുക"
   },
@@ -439,15 +451,6 @@
   },
   "icu:pinnedConversationsFull": {
     "messageformat": "നിങ്ങൾക്ക് 4 ചാറ്റുകൾ വരെ മാത്രമേ പിൻ ചെയ്യാൻ കഴിയൂ"
-  },
-  "icu:loadingMessages--other": {
-    "messageformat": "{daysAgo, plural, one {ഒരു ദിവസം മുമ്പത്തെ സന്ദേശങ്ങൾ ലോഡ് ചെയ്യുന്നു...} other {{daysAgo,number} ദിവസം മുമ്പത്തെ സന്ദേശങ്ങൾ ലോഡ് ചെയ്യുന്നു...}}"
-  },
-  "icu:loadingMessages--yesterday": {
-    "messageformat": "ഇന്നലത്തെ സന്ദേശങ്ങൾ ലോഡ് ചെയ്യുന്നു..."
-  },
-  "icu:loadingMessages--today": {
-    "messageformat": "ഇന്നത്തെ സന്ദേശങ്ങൾ ലോഡ് ചെയ്യുന്നു..."
   },
   "icu:view": {
     "messageformat": "കാണുക"
@@ -602,14 +605,14 @@
   "icu:SafetyNumberViewer__KeyTransparency__popup--ok__title": {
     "messageformat": "ഈ ചാറ്റിനായി എൻക്രിപ്ഷൻ സ്വയമേവ പരിശോധിച്ചുറപ്പിച്ചു "
   },
-  "icu:SafetyNumberViewer__KeyTransparency__popup--ok__body": {
-    "messageformat": "ഫോൺ നമ്പർ വഴി നിങ്ങൾ കണക്റ്റുചെയ്‌തിരിക്കുന്ന കോൺടാക്‌റ്റുകൾക്ക്, കീ ട്രാൻസ്പരൻസി എന്ന പ്രക്രിയ ഉപയോഗിച്ച് കണക്ഷൻ സുരക്ഷിതമാണോ എന്ന് Signal-ന് ഓട്ടോമാറ്റിക്കായി സ്ഥിരീകരിക്കാൻ കഴിയും. അധിക സുരക്ഷയ്ക്കായി, മുമ്പത്തെ സ്ക്രീനിലെ നമ്പറുകൾ താരതമ്യം ചെയ്തുകൊണ്ടോ അവരുടെ ഉപകരണത്തിലെ കോഡ് സ്കാൻ ചെയ്തുകൊണ്ടോ എൻഡ്-ടു-എൻഡ് എൻക്രിപ്ഷൻ നേരിട്ട് പരിശോധിച്ചുറപ്പിക്കുക."
+  "icu:SafetyNumberViewer__KeyTransparency__popup--ok__body-2": {
+    "messageformat": "ഫോൺ നമ്പർ വഴി നിങ്ങൾ ബന്ധപ്പെട്ടിരിക്കുന്ന ആളുകളുമായുള്ള കണക്ഷൻ സുരക്ഷിതമാണോ എന്ന് കീ സുതാര്യതാ എന്ന പ്രക്രിയ ഉപയോഗിച്ച് Signal-ന് ഓട്ടോമാറ്റിക്കായി സ്ഥിരീകരിക്കാൻ കഴിയും. അധിക സുരക്ഷയ്ക്കായി, മുമ്പത്തെ സ്ക്രീനിലെ നമ്പറുകൾ താരതമ്യം ചെയ്തുകൊണ്ടോ അവരുടെ ഉപകരണത്തിലെ കോഡ് സ്കാൻ ചെയ്തുകൊണ്ടോ എൻഡ്-ടു-എൻഡ് എൻക്രിപ്ഷൻ നേരിട്ട് പരിശോധിച്ചുറപ്പിക്കുക."
   },
-  "icu:SafetyNumberViewer__KeyTransparency__popup--fail__title": {
-    "messageformat": "ഈ ചാറ്റിന് ഇനി സ്വയമേവയുള്ള പരിശോധിച്ചുറപ്പിക്കല്‍ ലഭ്യമല്ല"
+  "icu:SafetyNumberViewer__KeyTransparency__popup--fail__title-2": {
+    "messageformat": "ഈ ചാറ്റിന് സ്വയമേവയുള്ള പരിശോധിച്ചുറപ്പിക്കല്‍ ലഭ്യമല്ല"
   },
-  "icu:SafetyNumberViewer__KeyTransparency__popup--fail__body": {
-    "messageformat": "ഈ ചാറ്റിനുള്ള എൻക്രിപ്ഷൻ ഇനി Signal-ന് ഓട്ടോമാറ്റിക്കായി പരിശോധിച്ചുറപ്പിക്കാൻ കഴിയില്ല. ഇത് {name} അവരുടെ ഫോൺ നമ്പർ മാറ്റിയതിനാലാകാം. മുമ്പത്തെ സ്ക്രീനിലെ നമ്പറുകൾ താരതമ്യം ചെയ്തുകൊണ്ടോ അവരുടെ ഉപകരണത്തിലെ കോഡ് സ്കാൻ ചെയ്തുകൊണ്ടോ എൻഡ്-ടു-എൻഡ് എൻക്രിപ്ഷൻ നേരിട്ട് പരിശോധിച്ചുറപ്പിക്കുക."
+  "icu:SafetyNumberViewer__KeyTransparency__popup--fail__body-2": {
+    "messageformat": "ഈ ചാറ്റിനുള്ള എൻക്രിപ്ഷൻ Signal-ന് ഓട്ടോമാറ്റിക്കായി പരിശോധിച്ചുറപ്പിക്കാൻ കഴിയില്ല. {name} അവരുടെ ഫോൺ നമ്പറോ ഫോൺ നമ്പർ സ്വകാര്യതാ ക്രമീകരണങ്ങളോ മാറ്റിയതു കൊണ്ടാകാം ഇത് സംഭവിച്ചത്. മുമ്പത്തെ സ്ക്രീനിലെ നമ്പറുകൾ താരതമ്യം ചെയ്തുകൊണ്ടോ അവരുടെ ഉപകരണത്തിലെ കോഡ് സ്കാൻ ചെയ്തുകൊണ്ടോ എൻഡ്-ടു-എൻഡ് എൻക്രിപ്ഷൻ നേരിട്ട് പരിശോധിച്ചുറപ്പിക്കുക."
   },
   "icu:SafetyNumberViewer__KeyTransparency__popup--unavailable__body": {
     "messageformat": "ഒരു ഫോൺ നമ്പർ വഴി നിങ്ങൾ ഒരാളുമായി ബന്ധപ്പെട്ടിരിക്കുന്ന ചാറ്റുകളിലെ എൻക്രിപ്ഷൻ മാത്രമേ Signal-ന് ഓട്ടോമാറ്റിക്കായി പരിശോധിച്ചുറപ്പിക്കാൻ കഴിയൂ. ഒരു ഉപയോക്തൃനാമം അല്ലെങ്കിൽ പൊതുവായ ഒരു ഗ്രൂപ്പ് ഉപയോഗിച്ചാണ് ചാറ്റ് ആരംഭിച്ചതെങ്കിൽ, മുമ്പത്തെ സ്ക്രീനിലെ നമ്പറുകൾ താരതമ്യം ചെയ്തുകൊണ്ടോ അവരുടെ ഉപകരണത്തിലെ കോഡ് സ്കാൻ ചെയ്തുകൊണ്ടോ എൻഡ്-ടു-എൻഡ് എൻക്രിപ്ഷൻ പരിശോധിച്ചുറപ്പിക്കുക."
@@ -638,9 +641,6 @@
   "icu:KeyTransparencyErrorDialog__Submit": {
     "messageformat": "സമർപ്പിക്കുക"
   },
-  "icu:KeyTransparencyErrorDialog__Submitting": {
-    "messageformat": "സമർപ്പിക്കുന്നു..."
-  },
   "icu:KeyTransparencyOnboardingDialog__Title": {
     "messageformat": "Signal-ന് ഇപ്പോൾ എൻക്രിപ്ഷൻ സ്വയമേവ പരിശോധിച്ചുറപ്പിക്കാന്‍ കഴിയും"
   },
@@ -652,9 +652,6 @@
   },
   "icu:KeyTransparencyOnboardingDialog__LearnMore": {
     "messageformat": "കൂടുതൽ അറിയുക"
-  },
-  "icu:KeyTransparencyOnboardingDialog__CloseButton__AccessibilityLabel": {
-    "messageformat": "അടയ്ക്കുക"
   },
   "icu:verified": {
     "messageformat": "പരിശോധിച്ചു"
@@ -706,9 +703,6 @@
   },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "ലോഗ് സമർപ്പിക്കുക"
-  },
-  "icu:Toast--FailedToSendWithEndorsements": {
-    "messageformat": "Failed to send message with endorsements"
   },
   "icu:Toast--SQLError": {
     "messageformat": "ഡാറ്റാബേസ് പിശക്: നിങ്ങളുടെ ലോഗുകൾ പങ്കിടൂ."
@@ -1286,9 +1280,6 @@
   "icu:PinMessageDialog__Title": {
     "messageformat": "ഇനിപ്പറയുന്നത്ര സമയം സന്ദേശം പിൻ ചെയ്യുക..."
   },
-  "icu:PinMessageDialog__Close": {
-    "messageformat": "അടയ്ക്കുക"
-  },
   "icu:PinMessageDialog__Option--TIME_24_HOURS": {
     "messageformat": "24 മണിക്കൂർ"
   },
@@ -1312,9 +1303,6 @@
   },
   "icu:PinMessageDialog--HasMaxPinnedMessages__Description": {
     "messageformat": "ഈ സന്ദേശം പിൻ ചെയ്യുന്നത് ഏറ്റവും പഴയതിന് പകരമായി മാറും."
-  },
-  "icu:PinMessageDialog--HasMaxPinnedMessages__Cancel": {
-    "messageformat": "റദ്ദാക്കുക"
   },
   "icu:PinMessageDialog--HasMaxPinnedMessages__Continue": {
     "messageformat": "തുടരുക"
@@ -1402,9 +1390,6 @@
   },
   "icu:PinnedMessagesPanel__UnpinAllMessages__ConfirmDialog__Description": {
     "messageformat": "ഈ ചാറ്റിലെ അംഗങ്ങൾക്കായി സന്ദേശങ്ങൾ അൺപിൻ ചെയ്യപ്പെടും."
-  },
-  "icu:PinnedMessagesPanel__UnpinAllMessages__ConfirmDialog__Cancel": {
-    "messageformat": "റദ്ദാക്കുക"
   },
   "icu:PinnedMessagesPanel__UnpinAllMessages__ConfirmDialog__Unpin": {
     "messageformat": "അൺപിൻ ചെയ്യുക"
@@ -1592,6 +1577,15 @@
   "icu:Install__support-link": {
     "messageformat": "സഹായം ആവശ്യമുണ്ടോ?"
   },
+  "icu:Install__confirm-data-deletion__title": {
+    "messageformat": "എല്ലാ ഡാറ്റയും ഇല്ലാതാക്കണോ?"
+  },
+  "icu:Install__confirm-data-deletion__body": {
+    "messageformat": "നിങ്ങൾ മറ്റൊരു Signal അക്കൗണ്ട് ഈ ഡെസ്ക്ടോപ്പിലേക്ക് ലിങ്ക് ചെയ്യാൻ ശ്രമിക്കുകയാണ്. നിങ്ങൾ തുടരുകയാണെങ്കിൽ നിലവിൽ Signal ഡെസ്ക്ടോപ്പിലുള്ള എല്ലാ ഡാറ്റയും ഇല്ലാതാക്കപ്പെടും."
+  },
+  "icu:Install__confirm-data-deletion__continue": {
+    "messageformat": "തുടരുക"
+  },
   "icu:Preferences--header": {
     "messageformat": "ക്രമീകരണങ്ങൾ"
   },
@@ -1642,9 +1636,6 @@
   },
   "icu:Preferences__ChatsPage__DeleteChatFolderDialog__DeleteButton": {
     "messageformat": "ഇല്ലാതാക്കൂ"
-  },
-  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__CancelButton": {
-    "messageformat": "റദ്ദാക്കുക"
   },
   "icu:Preferences__ChatFoldersPage__Title": {
     "messageformat": "ചാറ്റ് ഫോൾഡറുകൾ"
@@ -1768,9 +1759,6 @@
   },
   "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__DeleteButton": {
     "messageformat": "ഇല്ലാതാക്കുക"
-  },
-  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__CancelButton": {
-    "messageformat": "റദ്ദാക്കുക"
   },
   "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__Title": {
     "messageformat": "മാറ്റങ്ങൾ സംരക്ഷിക്കണോ?"
@@ -1956,25 +1944,25 @@
     "messageformat": "കൂടുതൽ ഓപ്‌ഷനുകൾ"
   },
   "icu:CallingParticipantMenu__MuteAudio": {
-    "messageformat": "Mute audio"
+    "messageformat": "ഓഡിയോ മ്യൂട്ട് ചെയ്യുക"
   },
   "icu:CallingParticipantMenu__UnmuteAudio": {
-    "messageformat": "Unmute audio"
+    "messageformat": "ഓഡിയോ അൺമ്യൂട്ട് ചെയ്യുക"
   },
   "icu:CallingParticipantMenu__ViewProfile": {
-    "messageformat": "View profile"
+    "messageformat": "പ്രൊഫൈൽ കാണുക"
   },
   "icu:CallingParticipantMenu__GoToChat": {
-    "messageformat": "Go to chat"
+    "messageformat": "ചാറ്റിലേക്ക് പോകുക"
   },
   "icu:CallingParticipantMenu__RemoveFromCall": {
-    "messageformat": "Remove from call"
+    "messageformat": "കോളിൽ നിന്ന് നീക്കം ചെയ്യുക"
   },
   "icu:CallingParticipantListItem__ContextMenuButton": {
-    "messageformat": "More actions"
+    "messageformat": "കൂടുതൽ പ്രവർത്തനങ്ങൾ"
   },
   "icu:CallingParticipantListItem__Presenting": {
-    "messageformat": "Presenting"
+    "messageformat": "അവതരിപ്പിക്കുന്നു"
   },
   "icu:CallingPendingParticipants__ApproveUser": {
     "messageformat": "ചേരാനുള്ള അഭ്യർത്ഥന അംഗീകരിക്കുക"
@@ -2014,9 +2002,6 @@
   },
   "icu:CallingRaisedHandsList__Title": {
     "messageformat": "{count, plural, one {{count,number} ഉയർത്തിയ കൈ} other {{count,number} ഉയർത്തിയ കൈകൾ}}"
-  },
-  "icu:CallingRaisedHandsList__TitleHint": {
-    "messageformat": "(ആദ്യം മുതൽ അവസാനം വരെ)"
   },
   "icu:CallingReactions--me": {
     "messageformat": "നിങ്ങൾ"
@@ -2204,26 +2189,23 @@
   "icu:deleteAllDataBody": {
     "messageformat": "Signal Desktop-ന്റെ ഈ പതിപ്പിൽ നിന്ന് എല്ലാ ഡാറ്റയും സന്ദേശങ്ങളും ഇല്ലാതാക്കണോ? നിങ്ങളുടെ ഫോണിലെയോ മറ്റ് ലിങ്ക് ചെയ്‌തിരിക്കുന്ന ഉപകരണങ്ങളിലെയോ നിങ്ങളുടെ Signal അക്കൗണ്ടും ഡാറ്റയും ഇല്ലാതാക്കില്ല."
   },
-  "icu:deleteAccountProgress": {
-    "messageformat": "Deleting account and all data…"
-  },
   "icu:deleteAllDataProgress": {
     "messageformat": "എല്ലാ ഡാറ്റയും വിച്ഛേദിക്കുകയും ഇല്ലാതാക്കുകയും ചെയ്യുന്നു…"
   },
   "icu:deleteAccountHeader": {
-    "messageformat": "Delete account"
+    "messageformat": "അക്കൗണ്ട് ഇല്ലാതാക്കൂ"
   },
   "icu:deleteAccountExplanation": {
-    "messageformat": "This will delete your account info, profile, and all of your messages. You will also be removed from all Signal groups."
+    "messageformat": "ഇത് നിങ്ങളുടെ അക്കൗണ്ട് വിവരങ്ങളും പ്രൊഫൈലും എല്ലാ സന്ദേശങ്ങളും ഇല്ലാതാക്കും. നിങ്ങളെ എല്ലാ Signal ഗ്രൂപ്പുകളിൽ നിന്നും നീക്കുകയും ചെയ്യും."
   },
   "icu:deleteAccountButton": {
-    "messageformat": "Delete account"
+    "messageformat": "അക്കൗണ്ട് ഇല്ലാതാക്കൂ"
   },
   "icu:deleteAccountDialogHeader": {
-    "messageformat": "Delete Account?"
+    "messageformat": "അക്കൗണ്ട് ഇല്ലാതാക്കണോ?"
   },
   "icu:deleteAccountDialogBody": {
-    "messageformat": "This will delete your account info, profile, and all of your messages. You will also be removed from all Signal groups. The app will close after this process is complete."
+    "messageformat": "ഇത് നിങ്ങളുടെ അക്കൗണ്ട് വിവരങ്ങളും പ്രൊഫൈലും എല്ലാ സന്ദേശങ്ങളും ഇല്ലാതാക്കും. നിങ്ങളെ എല്ലാ Signal ഗ്രൂപ്പുകളിൽ നിന്നും നീക്കുകയും ചെയ്യും. ഈ പ്രോസസ് പൂർത്തിയായതിന് ശേഷം ആപ്പ് അടയ്ക്കും."
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Signal Desktop-ന്റെ ഒരു മുൻ ഇൻസ്റ്റലേഷനിൽ നിന്ന് കാലഹരണപ്പെട്ട ഡാറ്റ നിങ്ങളുടെ പക്കലുണ്ട്. നിങ്ങൾ തുടരാൻ തീരുമാനിക്കുകയാണെങ്കിൽ, അത് ഇല്ലാതാക്കപ്പെടും കൂടാതെ നിങ്ങൾ ആദ്യം മുതൽ ആരംഭിക്കും."
@@ -2302,9 +2284,6 @@
   },
   "icu:syncNow": {
     "messageformat": "ഇപ്പോൾ ഇറക്കുമതി ചെയ്യുക"
-  },
-  "icu:syncing": {
-    "messageformat": "ഇമ്പോർട്ട് ചെയ്യുന്നു..."
   },
   "icu:syncFailed": {
     "messageformat": "ഇറക്കുമതി പരാജയപ്പെട്ടു. നിങ്ങളുടെ കമ്പ്യൂട്ടറും ഫോണും ഇന്റർനെറ്റുമായി ബന്ധിപ്പിച്ചിട്ടുണ്ടെന്ന് ഉറപ്പാക്കുക."
@@ -2571,10 +2550,10 @@
     "messageformat": "ലിങ്കുചെയ്തിട്ടില്ല"
   },
   "icu:unregisteredWarning": {
-    "messageformat": "Click to re-register and continue messaging. Signal Desktop is unregistered likely because you registered your phone number with Signal on a different device."
+    "messageformat": "വീണ്ടും രജിസ്റ്റർ ചെയ്ത് സന്ദേശങ്ങൾ അയക്കുന്നത് തുടരാൻ ഇവിടെ ക്ലിക്ക് ചെയ്യുക. നിങ്ങളുടെ ഫോൺ നമ്പർ മറ്റൊരു ഉപകരണത്തിൽ Signal-മായി രജിസ്റ്റർ ചെയ്തതുകൊണ്ടാകാം Signal ഡെസ്ക്ടോപ്പ് അൺരജിസ്റ്റർ ആയത്."
   },
   "icu:unregistered": {
-    "messageformat": "No longer registered"
+    "messageformat": "ഇപ്പോൾ രജിസ്റ്റർ ചെയ്ത നിലയിലല്ല"
   },
   "icu:autoUpdateNewVersionTitle": {
     "messageformat": "അപ്‌ഡേറ്റ് ലഭ്യമാണ്"
@@ -2836,6 +2815,24 @@
   },
   "icu:stickers--StickerPreview--Error": {
     "messageformat": "സ്റ്റിക്കർ പായ്ക്ക് തുറക്കുന്നതിൽ പിശക്. നിങ്ങളുടെ ഇന്റർനെറ്റ് കണക്ഷൻ പരിശോധിക്കുക, വീണ്ടും ശ്രമിക്കുക."
+  },
+  "icu:stickers--StickerPreview--Install": {
+    "messageformat": "Add Stickers"
+  },
+  "icu:stickers--StickerPreview--Remove": {
+    "messageformat": "Remove"
+  },
+  "icu:stickers--StickerPreview--Link": {
+    "messageformat": "Link"
+  },
+  "icu:stickers--StickerPreview--LinkCopied": {
+    "messageformat": "Link copied"
+  },
+  "icu:stickers--StickerPreview--StickerCount": {
+    "messageformat": "{count, plural, one {{count,number} sticker} other {{count,number} stickers}}"
+  },
+  "icu:stickers--StickerPreview--StickerNoEmojiAriaLabel": {
+    "messageformat": "Sticker without an emoji"
   },
   "icu:FunPicker__Tab--Emojis": {
     "messageformat": "ഇമോജി"
@@ -3305,6 +3302,9 @@
   "icu:Keyboard--toggle-preview": {
     "messageformat": "വികസിപ്പിച്ച പ്രിവ്യൂ ഓണും ഓഫും ആക്കുക"
   },
+  "icu:Keyboard--toggle-raise-hand": {
+    "messageformat": "കൈ ഉയർത്തുകയോ താഴ്ത്തുകയോ ചെയ്യുക (ഗ്രൂപ്പ് കോളുകളിൽ മാത്രം)"
+  },
   "icu:Keyboard--accept-video-call": {
     "messageformat": "വീഡിയോ കോൾ സ്വീകരിക്കുക (വീഡിയോ കോളുകൾ മാത്രം)"
   },
@@ -3362,50 +3362,38 @@
   "icu:ReactionsViewer--all": {
     "messageformat": "എല്ലാം"
   },
-  "icu:SafetyTipsModal__Title": {
+  "icu:SafetyTipsModal__Title-v2": {
     "messageformat": "സുരക്ഷാ നുറുങ്ങുകൾ"
   },
-  "icu:SafetyTipsModal__Title-v2": {
-    "messageformat": "Safety tips"
-  },
   "icu:SafetyTipsModal__TipTitle--SignalChat": {
-    "messageformat": "Don’t respond to chats from Signal"
+    "messageformat": "Signal-ൽ നിന്നുള്ള ചാറ്റുകളോട് പ്രതികരിക്കരുത്"
   },
   "icu:SafetyTipsModal__TipDescription--SignalChat": {
-    "messageformat": "Signal will never message you for your registration code, PIN, or recovery key. Never respond to a chat pretending to be Signal."
+    "messageformat": "നിങ്ങളുടെ രജിസ്ട്രേഷൻ കോഡ്, PIN, അല്ലെങ്കിൽ വീണ്ടെടുക്കൽ കീ എന്നിവയ്ക്കായി Signal ഒരിക്കലും നിങ്ങൾക്ക് സന്ദേശം അയയ്ക്കില്ല. Signal ആണെന്ന് നടിച്ച് വരുന്ന ചാറ്റുകളോട് ഒരിക്കലും പ്രതികരിക്കരുത്."
   },
   "icu:SafetyTipsModal__TipTitle--NamesAndPhotos": {
-    "messageformat": "Review names and photos"
+    "messageformat": "പേരുകളും ഫോട്ടോകളും അവലോകനം ചെയ്യുക"
   },
   "icu:SafetyTipsModal__TipDescription--NamesAndPhotos": {
-    "messageformat": "Look out for the “Name not verified” notice. Everyone sets their own profile name in Signal."
+    "messageformat": "“പേര് സ്ഥിരീകരിച്ചിട്ടില്ല” എന്ന അറിയിപ്പ് ശ്രദ്ധിക്കുക. Signal-ൽ ഓരോരുത്തരും അവരവരുടെ പ്രൊഫൈൽ നാമം സ്വയം സജ്ജീകരിക്കുന്നതാണ്."
   },
   "icu:SafetyTipsModal__TipTitle--Scams": {
-    "messageformat": "Look out for scams"
+    "messageformat": "തട്ടിപ്പുകളെക്കുറിച്ച് ജാഗ്രത പാലിക്കുക"
   },
   "icu:SafetyTipsModal__TipDescription--Scams": {
-    "messageformat": "Avoid vague messages that try to get you to reply. Be aware of financial tips and suspicious web links."
-  },
-  "icu:SafetyTipsModal__Description": {
-    "messageformat": "നിങ്ങൾക്ക് പരിചയമില്ലാത്ത ആളുകളിൽ നിന്നുള്ള സന്ദേശ അഭ്യർത്ഥനകൾ സ്വീകരിക്കുമ്പോൾ ശ്രദ്ധിക്കുക. ഇവ ശ്രദ്ധിക്കുക:"
+    "messageformat": "മറുപടി നൽകാൻ പ്രേരിപ്പിക്കുന്ന അവ്യക്തമായ സന്ദേശങ്ങൾ ഒഴിവാക്കുക. സാമ്പത്തിക ഉപദേശങ്ങളെയും സംശയാസ്പദമായ വെബ് ലിങ്കുകളെയും കുറിച്ച് ബോധവാന്മാരായിരിക്കുക."
   },
   "icu:SafetyTipsModal__TipTitle--DontRespond": {
-    "messageformat": "Don’t respond to chats from Signal"
+    "messageformat": "Signal-ൽ നിന്നുള്ള ചാറ്റുകളോട് പ്രതികരിക്കരുത്"
   },
   "icu:SafetyTipsModal__TipDescription--DontRespond": {
-    "messageformat": "Signal will never message you for your registration code, PIN, or recover key. Don't reply to chats pretending to be Signal or Signal Support. Bad actors set up fake names to try to take over your account."
+    "messageformat": "നിങ്ങളുടെ രജിസ്ട്രേഷൻ കോഡ്, PIN, വീണ്ടെടുക്കൽ കീ എന്നിവയ്ക്കായി Signal ഒരിക്കലും നിങ്ങൾക്ക് സന്ദേശം അയയ്ക്കില്ല. Signal അല്ലെങ്കിൽ Signal പിന്തുണ ആണെന്ന് നടിച്ച് വരുന്ന ചാറ്റുകൾക്ക് മറുപടി നൽകരുത്. നിങ്ങളുടെ അക്കൗണ്ട് കൈക്കലാക്കാൻ തട്ടിപ്പുകാർ വ്യാജ പേരുകൾ നിർമ്മിക്കാറുണ്ട്."
   },
   "icu:SafetyTipsModal__TipTitle--ReviewNames": {
-    "messageformat": "Review names and photos"
+    "messageformat": "പേരുകളും ഫോട്ടോകളും അവലോകനം ചെയ്യുക"
   },
   "icu:SafetyTipsModal__TipDescription--ReviewNames": {
-    "messageformat": "Look out for the “Name not verified” notice. Everyone sets their own profile name and photo in Signal. If you’re unsure who a new request is from it’s safer to ignore it."
-  },
-  "icu:SafetyTipsModal__TipTitle--Fake": {
-    "messageformat": "വ്യാജ പേരുകളും അക്കൗണ്ടുകളും"
-  },
-  "icu:SafetyTipsModal__TipDescription--Fake": {
-    "messageformat": "നിങ്ങളുടെ രജിസ്ട്രേഷൻ കോഡിനോ PIN നമ്പറിനോ വേണ്ടി Signal ഒരിക്കലും നിങ്ങളെ ബന്ധപ്പെടില്ല. മറ്റുള്ളവരായി ആൾമാറാട്ടം നടത്തുന്ന അഭ്യർത്ഥനകളെക്കുറിച്ച് ജാഗ്രത പാലിക്കുക. പ്രൊഫൈൽ നാമങ്ങൾ അവരുടെ അക്കൗണ്ട് ഉടമയാണ് തിരഞ്ഞെടുക്കുന്നത്, അവ പരിശോധിച്ചുറപ്പിച്ചിട്ടില്ല."
+    "messageformat": "“പേര് സ്ഥിരീകരിച്ചിട്ടില്ല” എന്ന അറിയിപ്പ് ശ്രദ്ധിക്കുക. Signal-ൽ ഓരോരുത്തരും അവരവരുടെ പ്രൊഫൈൽ നാമവും ഫോട്ടോയും സ്വയം സജ്ജീകരിക്കുന്നതാണ്. ഒരു പുതിയ അഭ്യർത്ഥന ആരിൽ നിന്നാണെന്ന് നിങ്ങൾക്ക് ഉറപ്പില്ലെങ്കിൽ, അത് അവഗണിക്കുന്നതാണ് സുരക്ഷിതം."
   },
   "icu:SafetyTipsModal__TipTitle--Crypto": {
     "messageformat": "ക്രിപ്റ്റോ അല്ലെങ്കിൽ പണം തട്ടിപ്പുകൾ"
@@ -3419,38 +3407,20 @@
   "icu:SafetyTipsModal__TipDescription--Vague": {
     "messageformat": "നിങ്ങളുടെ ശ്രദ്ധ ആകർഷിക്കാൻ \"ഹായ്\" പോലുള്ള ലളിതമായ സന്ദേശം അയച്ചാണ് സ്‌പാമർമാർ പലപ്പോഴും ചാറ്റ് ആരംഭിക്കുന്നത്. നിങ്ങൾ പ്രതികരിച്ചാൽ അവർ നിങ്ങൾക്ക് കൂടുതൽ സന്ദേശങ്ങളയച്ച് ഇടപഴകാൻ പ്രേരിപ്പിക്കും."
   },
-  "icu:SafetyTipsModal__TipTitle--Links": {
-    "messageformat": "ലിങ്കുകളുള്ള സന്ദേശങ്ങൾ"
-  },
   "icu:SafetyTipsModal__TipDescription--Links": {
     "messageformat": "നിങ്ങൾക്ക് പരിചയമില്ലാത്ത ആളുകളിൽ നിന്ന്, വെബ്‌സൈറ്റുകളിലേക്കുള്ള ലിങ്കുകളുള്ള സന്ദേശങ്ങൾ ലഭിച്ചാൽ അത് ശ്രദ്ധയോടെ കൈകാര്യം ചെയ്യുക. നിങ്ങൾക്ക് വിശ്വാസമില്ലാത്ത ആളുകൾ അയയ്ക്കുന്ന ലിങ്കുകൾ ഒരിക്കലും സന്ദർശിക്കരുത്."
   },
   "icu:SafetyTipsModal__TipTitle--Links-v2": {
-    "messageformat": "Messages with web links"
+    "messageformat": "വെബ് ലിങ്കുകളുള്ള സന്ദേശങ്ങൾ"
   },
   "icu:SafetyTipsModal__TipTitle--Business": {
     "messageformat": "വ്യാജ ബിസിനസുകളും സ്ഥാപനങ്ങളും"
   },
-  "icu:SafetyTipsModal__TipTitle--Business-v2": {
-    "messageformat": "Fake businesses"
-  },
   "icu:SafetyTipsModal__TipDescription--Business": {
     "messageformat": "നിങ്ങളെ ബന്ധപ്പെടുന്ന ബിസിനസ്സുകളെയോ സർക്കാർ ഏജൻസികളെയോ ശ്രദ്ധയോടെ കൈകാര്യം ചെയ്യുക. ടാക്സ് ഏജൻസികൾ, കൊറിയറുകൾ എന്നിവയും മറ്റും ഉൾപ്പെടുന്ന സന്ദേശങ്ങൾ സ്പാം ആകാം."
   },
-  "icu:SafetyTipsModal__DotLabel": {
-    "messageformat": "പേജ് {page,number} -ലേക്ക് പോകുക"
-  },
-  "icu:SafetyTipsModal__Button--Previous": {
-    "messageformat": "മുമ്പത്തെ നുറുങ്ങ്"
-  },
-  "icu:SafetyTipsModal__Button--Next": {
-    "messageformat": "അടുത്ത നുറുങ്ങ്"
-  },
-  "icu:SafetyTipsModal__Button--Done": {
-    "messageformat": "ചെയ്‌തു"
-  },
   "icu:SafetyTipsModal__Button--ViewMore": {
-    "messageformat": "View more"
+    "messageformat": "കൂടുതൽ കാണു"
   },
   "icu:MessageRequests--message-direct": {
     "messageformat": "{name} നിങ്ങൾക്ക് സന്ദേശം നൽകുകയും നിങ്ങളുടെ പേരും ഫോട്ടോയും അവരുമായി പങ്കിടുകയും ചെയ്യട്ടെ? നിങ്ങൾ സ്വീകരിക്കുന്നതുവരെ അവരുടെ സന്ദേശങ്ങള്‍ നിങ്ങൾ കണ്ടിട്ടുണ്ടെന്ന് അവർക്കറിയില്ല."
@@ -3548,17 +3518,11 @@
   "icu:MessageRequests--accept": {
     "messageformat": "സ്വീകരിക്കുക"
   },
-  "icu:MessageRequests--accept-confirm-title": {
+  "icu:MessageRequests--accept-confirm-title-v2": {
     "messageformat": "അഭ്യർത്ഥന സ്വീകരിക്കണോ?"
   },
-  "icu:MessageRequests--accept-confirm-body": {
-    "messageformat": "അഭ്യർത്ഥനകൾ ശ്രദ്ധാപൂർവ്വം അവലോകനം ചെയ്യുക. പ്രൊഫൈൽ നാമങ്ങൾ അവരുടെ അക്കൗണ്ട് ഉടമയാണ് തിരഞ്ഞെടുക്കുന്നത്, അവ പരിശോധിച്ചുറപ്പിച്ചിട്ടില്ല."
-  },
-  "icu:MessageRequests--accept-confirm-title-v2": {
-    "messageformat": "Accept request?"
-  },
   "icu:MessageRequests--accept-confirm-body-v2": {
-    "messageformat": "Only accept requests from people you trust. <bold>Signal will never</bold> message you for a registration code, PIN, or recovery key."
+    "messageformat": "നിങ്ങൾ വിശ്വസിക്കുന്നവരിൽ നിന്നുള്ള അഭ്യർത്ഥനകൾ മാത്രം സ്വീകരിക്കുക. രജിസ്ട്രേഷൻ കോഡ്, PIN, അല്ലെങ്കിൽ വീണ്ടെടുക്കൽ കീ എന്നിവയ്ക്കായി <bold>Signal ഒരിക്കലും</bold> നിങ്ങൾക്ക് സന്ദേശം അയയ്ക്കില്ല."
   },
   "icu:MessageRequests--continue": {
     "messageformat": "തുടരുക"
@@ -3614,17 +3578,14 @@
   "icu:ConversationHero--signal-official-chat": {
     "messageformat": "ഇതാണ്, ഔദ്യോഗികവും Signal-ൽ നിന്ന് മാത്രമുള്ളതുമായ ഒരൊറ്റ ചാറ്റ്"
   },
-  "icu:ConversationHero--signal-official-account": {
-    "messageformat": "ഔദ്യോഗിക അക്കൗണ്ട്"
-  },
   "icu:ConversationHero--signal-official-chat-title": {
-    "messageformat": "Official chat"
+    "messageformat": "ഔദ്യോഗിക ചാറ്റ്"
   },
   "icu:ConversationHero--signal-official-account--description": {
     "messageformat": "Signal-ൽ നിന്നുള്ള ഏക ഔദ്യോഗിക ചാറ്റ്. വാർത്തകളും റിലീസ് നോട്ടുകളും വഴി അപ്-ടു-ഡേറ്റ് ആയിരിക്കുക."
   },
   "icu:Timeline--signal-official-chat--chip": {
-    "messageformat": "The only official chat from Signal."
+    "messageformat": "Signal-ൽ നിന്നുള്ള ഏക ഔദ്യോഗിക ചാറ്റ്."
   },
   "icu:ConversationHero--release-notes": {
     "messageformat": "വാർത്തകളും റിലീസ് നോട്ടുകളും വഴി അപ്-ടു-ഡേറ്റ് ആയിരിക്കുക."
@@ -3896,9 +3857,6 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "ഒരു വിൻഡോ"
   },
-  "icu:calling__ParticipantInfoButton": {
-    "messageformat": "ഈ കോൺടാക്റ്റിനെ കുറിച്ചുള്ള കൂടുതൽ വിവരങ്ങൾ"
-  },
   "icu:CallingAdhocCallInfo__CopyLink": {
     "messageformat": "കോൾ ലിങ്ക് പകർത്തുക"
   },
@@ -3925,9 +3883,6 @@
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
     "messageformat": "ഒരു കോളിൽ ചേരുന്നതിന് മുമ്പ് നിങ്ങൾക്ക് ഫോൺ കോൺടാക്‌റ്റുകളുടെ പേരുകൾ, നിങ്ങളോടൊപ്പം ഒരു ഗ്രൂപ്പിലുള്ള ആളുകൾ അല്ലെങ്കിൽ നിങ്ങൾ 1:1 ചാറ്റ് ചെയ്‌ത ആളുകൾ എന്നിവരെ മാത്രമേ കാണാനാകൂ. നിങ്ങൾ കോളിൽ ചേർന്നുകഴിഞ്ഞാൽ എല്ലാ പേരുകളും ഫോട്ടോകളും കാണും."
-  },
-  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
-    "messageformat": "മനസ്സിലായി"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "വീഡിയോ"
@@ -4610,9 +4565,6 @@
   "icu:close": {
     "messageformat": "അടയ്ക്കുക"
   },
-  "icu:clear": {
-    "messageformat": "Clear"
-  },
   "icu:previous": {
     "messageformat": "മുൻപത്തെ"
   },
@@ -4623,40 +4575,22 @@
     "messageformat": "ഇതിന് കുറച്ച് മിനിറ്റുകൾ എടുത്തേക്കാം"
   },
   "icu:DeletingAccount__LeavingGroups__Title": {
-    "messageformat": "Leaving groups..."
+    "messageformat": "ഗ്രൂപ്പുകളിൽ നിന്ന് പുറത്തുകടക്കുന്നു..."
   },
   "icu:DeletingAccount__LeavingGroups__Detail": {
-    "messageformat": "Depending on the number of groups you’re in, this might take a few minutes"
+    "messageformat": "നിങ്ങൾ ഉൾപ്പെടുന്ന ഗ്രൂപ്പുകളുടെ എണ്ണം അനുസരിച്ച്, ഇതിന് കുറച്ച് സമയമെടുത്തേക്കാം"
   },
   "icu:DeletingAccount__DeletingData__Title": {
-    "messageformat": "Deleting account and all data..."
+    "messageformat": "അക്കൗണ്ടും എല്ലാ ഡാറ്റയും ഇല്ലാതാക്കുന്നു..."
   },
   "icu:DeletingAccount__DeletingData__Detail": {
-    "messageformat": "Deleting user data and resetting the app"
+    "messageformat": "ഉപയോക്തൃ ഡാറ്റ ഇല്ലാതാക്കുകയും ആപ്പ് പുനഃസജ്ജമാക്കുകയും ചെയ്യുന്നു"
   },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Signal-ന് സംഭാവന ചെയ്യുക"
   },
-  "icu:BadgeSustainerInstructions__header": {
-    "messageformat": "Signal-ന് സംഭാവന ചെയ്യുക"
-  },
-  "icu:BadgeSustainerInstructions__subheader": {
-    "messageformat": "നിങ്ങളെ പോലുള്ള ആളുകളാണ് Signal-ന്റെ പിൻബലം. സംഭാവന നല്‍കി ഒരു ബാഡ്‌ജ് നേടുക."
-  },
-  "icu:BadgeSustainerInstructions__instructions__1": {
-    "messageformat": "നിങ്ങളുടെ ഫോണിൽ Signal തുറക്കുക"
-  },
-  "icu:BadgeSustainerInstructions__instructions__2": {
-    "messageformat": "ക്രമീകരണങ്ങൾ തുറക്കുന്നതിന് മുകളിൽ ഇടതുവശത്തുള്ള നിങ്ങളുടെ പ്രൊഫൈൽ ഫോട്ടോയിൽ ടാപ്പ് ചെയ്യുക"
-  },
-  "icu:BadgeSustainerInstructions__instructions__3": {
-    "messageformat": "\"Signal-ന് സംഭാവന ചെയ്യുക\" എന്നതിൽ ടാപ്പ് ചെയ്‌ത് സബ്സ്ക്രൈബ് ചെയ്യുക"
-  },
-  "icu:ProfileMovedModal__title": {
-    "messageformat": "നിങ്ങളുടെ പ്രൊഫൈൽ നീക്കി"
-  },
-  "icu:ProfileMovedModal__description": {
-    "messageformat": "നിങ്ങളുടെ പ്രൊഫൈൽ കാണാനും എഡിറ്റ് ചെയ്യാനും ക്രമീകരണങ്ങൾ ടാബ് തുറക്കുക."
+  "icu:BadgeDialog__name-supports-signal": {
+    "messageformat": "{name} Signal-നെ പിന്തുണയ്‌ക്കുന്നു"
   },
   "icu:BackupImportScreen__title": {
     "messageformat": "സന്ദേശങ്ങൾ സമന്വയിപ്പിക്കുന്നു"
@@ -4747,9 +4681,6 @@
   },
   "icu:BackupMediaDownloadCancelConfirmation__description": {
     "messageformat": "നിങ്ങളുടെ മീഡിയ സമന്വയിപ്പിക്കൽ പൂർത്തിയാക്കിയിട്ടില്ല. റദ്ദാക്കാൻ തിരഞ്ഞെടുക്കുകയാണെങ്കിൽ, ഈ ഉപകരണം വീണ്ടും ലിങ്ക് ചെയ്‌ത് നിങ്ങൾക്ക് വീണ്ടും സമന്വയിപ്പിക്കാൻ കഴിയും. <learnMoreLink>കൂടുതലറിയുക</learnMoreLink>."
-  },
-  "icu:BackupMediaDownloadCancelConfirmation__button-continue": {
-    "messageformat": "സമന്വയിപ്പിക്കൽ തുടരുക"
   },
   "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
     "messageformat": "സമന്വയിപ്പിക്കൽ റദ്ദാക്കുക"
@@ -4927,9 +4858,6 @@
   },
   "icu:ConversationDetails--member-label--no-members": {
     "messageformat": "മറ്റ് അംഗങ്ങൾക്ക് ആർക്കും ലേബലുകൾ ഇല്ല"
-  },
-  "icu:ConversationDetails--member-label--saving": {
-    "messageformat": "മാറ്റങ്ങൾ സംരക്ഷിക്കുന്നു..."
   },
   "icu:ConversationDetails--member-label--error-title": {
     "messageformat": "മെമ്പര്‍ ലേബൽ സംരക്ഷിക്കാൻ കഴിയില്ല"
@@ -5298,9 +5226,6 @@
   "icu:DeleteAttachmentModal__Body": {
     "messageformat": "ഇത് ഇനത്തെ ശാശ്വതമായി ഇല്ലാതാക്കും. ഈ ഇനവുമായി ബന്ധപ്പെട്ട ഏതൊരു സന്ദേശ വാചകവും ഇല്ലാതാക്കപ്പെടും."
   },
-  "icu:DeleteAttachmentModal__Close": {
-    "messageformat": "അടയ്ക്കുക"
-  },
   "icu:DeleteAttachmentModal__Delete": {
     "messageformat": "ഇല്ലാതാക്കുക"
   },
@@ -5410,7 +5335,7 @@
     "messageformat": "Signal കോളിൽ ചേരാൻ ഈ ലിങ്ക് ഉപയോഗിക്കുക: {url}"
   },
   "icu:MessageRequestWarning__review-carefully": {
-    "messageformat": "Review requests carefully"
+    "messageformat": "അഭ്യർത്ഥനകൾ ശ്രദ്ധാപൂർവ്വം അവലോകനം ചെയ്യുക"
   },
   "icu:MessageRequestWarning__safety-tips-v2": {
     "messageformat": "സുരക്ഷാ നുറുങ്ങുകൾ"
@@ -6061,9 +5986,6 @@
   "icu:PlaintextExport--Confirmation--ContinueButton": {
     "messageformat": "തുടരുക"
   },
-  "icu:PlaintextExport--Confirmation--WaitingLabel": {
-    "messageformat": "ഇൻപുട്ടിനായി കാത്തിരിക്കുന്നു"
-  },
   "icu:PlaintextExport--OSPrompt--Mac": {
     "messageformat": "നിങ്ങളുടെ ചാറ്റ് ചരിത്രം എക്സ്പോർട്ട് ചെയ്യുക"
   },
@@ -6382,26 +6304,23 @@
   "icu:Preferences--blocked": {
     "messageformat": "ബ്ലോക്ക് ചെയ്തു"
   },
-  "icu:Preferences--blocked-count": {
-    "messageformat": "{num, plural, one {ഒരു കോൺടാക്റ്റ്} other {{num,number} കോൺടാക്റ്റുകൾ}}"
-  },
   "icu:Preferences--blocked-count-both-new": {
-    "messageformat": "{num, plural, =0 { No users or groups } one {{num,number} user or group} other {{num,number} users or groups}}"
+    "messageformat": "{num, plural, =0 { ഉപയോക്താക്കളോ ഗ്രൂപ്പുകളോ ഇല്ല } one {{num,number} ഉപയോക്താവ് അല്ലെങ്കിൽ ഗ്രൂപ്പ്} other {{num,number} ഉപയോക്താക്കൾ അല്ലെങ്കിൽ ഗ്രൂപ്പുകൾ}}"
   },
   "icu:Preferences--blocked-count-contacts-new": {
-    "messageformat": "{num, plural, =0 { No users } one {{num,number} user} other {{num,number} users}}"
+    "messageformat": "{num, plural, =0 { ഉപയോക്താക്കൾ ആരുമില്ല } one {{num,number} ഉപയോക്താവ്} other {{num,number} ഉപയോക്താക്കൾ}}"
   },
   "icu:Preferences--blocked-count-groups-new": {
-    "messageformat": "{num, plural, =0 { No groups } one {{num,number} group} other {{num,number} groups}}"
+    "messageformat": "{num, plural, =0 { ഗ്രൂപ്പുകളൊന്നുമില്ല } one {{num,number} ഗ്രൂപ്പ്} other {{num,number} ഗ്രൂപ്പുകൾ}}"
   },
   "icu:Preferences--blocked-users--description": {
-    "messageformat": "Blocked users will not be able to call you or send you messages"
+    "messageformat": "ബ്ലോക്ക് ചെയ്ത ഉപയോക്താക്കൾക്ക് നിങ്ങളെ വിളിക്കാനോ നിങ്ങൾക്ക് സന്ദേശങ്ങള്‍ അയയ്ക്കാനോ കഴിയില്ല"
   },
   "icu:Preferences--blocked-users": {
-    "messageformat": "Blocked Users"
+    "messageformat": "ബ്ലോക്ക് ചെയ്ത ഉപയോക്താക്കൾ"
   },
   "icu:Preferences--blocked-groups": {
-    "messageformat": "Blocked Groups"
+    "messageformat": "ബ്ലോക്ക് ചെയ്ത ഗ്രൂപ്പുകൾ"
   },
   "icu:Preferences--signal-backups": {
     "messageformat": "Signal സുരക്ഷിത ബാക്കപ്പുകൾ"
@@ -6974,7 +6893,7 @@
     "messageformat": "സന്ദേശ അഭ്യർത്ഥന നിങ്ങൾ സ്വീകരിച്ചു"
   },
   "icu:MessageRequestResponseNotification__Message--Accepted-Contact-Title": {
-    "messageformat": "You accepted {userProfileName}'s message request"
+    "messageformat": "{userProfileName}-ന്റെ സന്ദേശ അഭ്യർത്ഥന നിങ്ങൾ സ്വീകരിച്ചു"
   },
   "icu:MessageRequestResponseNotification__Message--Reported": {
     "messageformat": "സ്പാം റിപ്പോർട്ട് ചെയ്തു"
@@ -6991,11 +6910,8 @@
   "icu:MessageRequestResponseNotification__Message--Unblocked--Group": {
     "messageformat": "നിങ്ങൾ ഗ്രൂപ്പിനെ അൺബ്ലോക്ക് ചെയ്തു"
   },
-  "icu:MessageRequestResponseNotification__Button--Options": {
-    "messageformat": "ഓപ്ഷനുകൾ"
-  },
   "icu:MessageRequestResponseNotification__Button--block-or-report": {
-    "messageformat": "Block or Report..."
+    "messageformat": "ബ്ലോക്ക് / റിപ്പോർട്ട് ചെയ്യുക..."
   },
   "icu:MessageRequestResponseNotification__Button--LearnMore": {
     "messageformat": "കൂടുതലറിയുക"
@@ -7580,9 +7496,6 @@
   "icu:DraftGifMessageSendModal__SendButtonLabel": {
     "messageformat": "അയയ്‌ക്കുക"
   },
-  "icu:DraftGifMessageSendModal__CancelButtonLabel": {
-    "messageformat": "റദ്ദാക്കുക"
-  },
   "icu:EditHistoryMessagesModal__title": {
     "messageformat": "എഡിറ്റ് ചെയ്യൽ ചരിത്രം"
   },
@@ -7750,9 +7663,6 @@
   },
   "icu:CallLinkDetails__DeleteLinkModal__Body": {
     "messageformat": "ഈ ലിങ്ക് ഉള്ള ആർക്കും ഇനി അത് പ്രവർത്തിക്കില്ല."
-  },
-  "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
-    "messageformat": "റദ്ദാക്കുക"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
     "messageformat": "ഇല്ലാതാക്കൂ"
@@ -8147,12 +8057,6 @@
   "icu:Donations__badge-modal--help-text": {
     "messageformat": "നിങ്ങളുടെ മൊബൈൽ ഉപകരണത്തിൽ ക്രമീകരണങ്ങൾ → Signal-ലേക്ക് സംഭാവന ചെയ്യുക → ബാഡ്ജുകൾ എന്നതിന് കീഴിൽ ഇത് ക്രമീകരിക്കാം"
   },
-  "icu:CallQualitySurvey__CloseButton__AccessibilityLabel": {
-    "messageformat": "അടയ്ക്കുക"
-  },
-  "icu:CallQualitySurvey__BackButton__AccessibilityLabel": {
-    "messageformat": "തിരികെ പോകുക"
-  },
   "icu:CallQualitySurvey__HowWasYourCall__PageTitle": {
     "messageformat": "നിങ്ങളുടെ കോൾ എങ്ങനെയുണ്ടായിരുന്നു?"
   },
@@ -8240,9 +8144,6 @@
   "icu:CallQualitySurvey__ConfirmSubmission__SubmitButton": {
     "messageformat": "സമർപ്പിക്കുക"
   },
-  "icu:CallQualitySurvey__ConfirmSubmission__Submitting": {
-    "messageformat": "സർവേ സമർപ്പിക്കുന്നു..."
-  },
   "icu:CallQualitySurvey__SubmissionFailed": {
     "messageformat": "സർവേ സമർപ്പിക്കുന്നതിൽ പരാജയപ്പെട്ടു"
   },
@@ -8256,10 +8157,40 @@
     "messageformat": "മെഗാഫോണുമായി സംവദിക്കാൻ സൈഡ്‌ബാർ വികസിപ്പിക്കുക"
   },
   "icu:Carousel--Role": {
-    "messageformat": "Carousel"
+    "messageformat": "കറൗസൽ"
   },
   "icu:Carousel__Slide--Role": {
-    "messageformat": "Slide"
+    "messageformat": "സ്ലൈഡ്"
+  },
+  "icu:MaybeTransferModal__title": {
+    "messageformat": "നിങ്ങളുടെ ഫോണിലെ സന്ദേശങ്ങളുടെ ചരിത്രം ഈ ഡെസ്ക്ടോപ്പിലേക്ക് കൈമാറ്റം ചെയ്യണമെന്നുണ്ടോ?"
+  },
+  "icu:MaybeTransferModal__description": {
+    "messageformat": "നിങ്ങൾ ഈ ഡെസ്ക്ടോപ്പ് വീണ്ടും ലിങ്ക് ചെയ്യുമ്പോൾ നിങ്ങളുടെ ഫോണിലെ സന്ദേശങ്ങളുടെ ചരിത്രം ഈ ഉപകരണത്തിലേക്ക് കൈമാറ്റം ചെയ്യാം."
+  },
+  "icu:MaybeTransferModal__learnMore": {
+    "messageformat": "കൂടുതൽ അറിയുക"
+  },
+  "icu:MaybeTransferModal__replaceHistory": {
+    "messageformat": "ഇത് ഈ ഡെസ്ക്ടോപ്പിലെ സന്ദേശങ്ങളുടെ ചരിത്രത്തിന് <bold>പകരമായി</bold> മാറും."
+  },
+  "icu:MaybeTransferModal__scanQrCode": {
+    "messageformat": "ഒരു QR കോഡ് സ്കാൻ ചെയ്തുകൊണ്ട് നിങ്ങൾ വീണ്ടും ലിങ്ക് ചെയ്യേണ്ടതുണ്ട്."
+  },
+  "icu:MaybeTransferModal__media": {
+    "messageformat": "നിങ്ങൾ പണം നൽകിയുള്ള Signal സുരക്ഷിത ബാക്കപ്പുകൾ ഉപയോഗിക്കുന്നുണ്ടെങ്കിൽ നിങ്ങളുടെ എല്ലാ മീഡിയയും കൈമാറ്റം ചെയ്യപ്പെടും. അല്ലെങ്കിൽ നിങ്ങളുടെ കഴിഞ്ഞ 45 ദിവസത്തെ മീഡിയ ഉൾപ്പെടുത്തും."
+  },
+  "icu:MaybeTransferModal__transfer": {
+    "messageformat": "കൈമാറുക"
+  },
+  "icu:MaybeTransferModal__dontTransfer": {
+    "messageformat": "കൈമാറരുത്"
+  },
+  "icu:DeleteDataAndRelinkConfirmationDialog__title": {
+    "messageformat": "എല്ലാ ഡാറ്റയും ഇല്ലാതാക്കണോ?"
+  },
+  "icu:DeleteDataAndRelinkConfirmationDialog__body": {
+    "messageformat": "Signal ഡെസ്ക്ടോപ്പിലെ നിലവിലുള്ള എല്ലാ ഡാറ്റയും ഇല്ലാതാക്കപ്പെടും. തുടർന്ന് നിങ്ങൾക്ക് ഒരു QR കോഡ് സ്കാൻ ചെയ്യാനും നിങ്ങളുടെ ഫോണിൽ നിന്ന് സന്ദേശങ്ങളുടെ ചരിത്രം കൈമാറ്റം ചെയ്യാനും കഴിയും."
   },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "Signal സുഗമമായി പ്രവർത്തിപ്പിക്കുന്നതിന് ആവശ്യമായ ഏതാനും ചെറിയ മാറ്റങ്ങളും ബഗ് ഫിക്‌സുകളും ഈ പതിപ്പിൽ അടങ്ങിയിട്ടുണ്ട്.",
@@ -8289,7 +8220,7 @@
     "messageformat": "ചെറിയ മാറ്റങ്ങളും ബഗ് പരിഹരിക്കലുകളും പ്രകടന മെച്ചപ്പെടുത്തലുകളും. Signal ഉപയോഗിക്കുന്നതിന് നന്ദി!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__8.10--0": {
-    "messageformat": "The freshly spun emoji in Unicode 17.0 have now pirouetted into place in Signal. Send a message reaction with the new Ballet Dancer emoji to perform your own digital version of a pas de chat."
+  "icu:WhatsNew__8.13--0": {
+    "messageformat": "ഗ്രൂപ്പ് കോളുകളിൽ കൈ ഉയർത്തിയവരുടെ ലിസ്റ്റിലും പുതിയ 'കൈ ഉയർത്തൽ' സൂചകങ്ങൾ ഇപ്പോൾ കാണാം. നിങ്ങൾ സംസാരിച്ചു കഴിഞ്ഞതിനു ശേഷം അടുത്തത് ആർക്കാണ് അവസരം നൽകേണ്ടതെന്ന് മനസ്സിലാക്കാൻ സഹായിക്കുന്ന ഒരു സംവിധാനമാണിത്."
   }
 }

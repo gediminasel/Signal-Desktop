@@ -1,4 +1,19 @@
 {
+  "icu:AxoAlertDialog.Cancel": {
+    "messageformat": "Annulla"
+  },
+  "icu:AxoButton.Pending": {
+    "messageformat": "In attesa"
+  },
+  "icu:AxoDialog.Back": {
+    "messageformat": "Indietro"
+  },
+  "icu:AxoDialog.Close": {
+    "messageformat": "Chiudi"
+  },
+  "icu:AxoTextField.Clear": {
+    "messageformat": "Elimina"
+  },
   "icu:AddUserToAnotherGroupModal__title": {
     "messageformat": "Aggiungi a un gruppo"
   },
@@ -356,9 +371,6 @@
   "icu:NavTabs__ItemLabel--Settings": {
     "messageformat": "Impostazioni"
   },
-  "icu:NavTabs__ItemLabel--Profile": {
-    "messageformat": "Profilo"
-  },
   "icu:NavSidebar__BackButtonLabel": {
     "messageformat": "Indietro"
   },
@@ -439,15 +451,6 @@
   },
   "icu:pinnedConversationsFull": {
     "messageformat": "Puoi fissare un massimo di 4 chat"
-  },
-  "icu:loadingMessages--other": {
-    "messageformat": "{daysAgo, plural, one {Caricamento dei messaggi di 1 giorno fa…} other {Caricamento dei messaggi di {daysAgo,number} giorni fa…}}"
-  },
-  "icu:loadingMessages--yesterday": {
-    "messageformat": "Caricamento dei messaggi di ieri…"
-  },
-  "icu:loadingMessages--today": {
-    "messageformat": "Caricamento dei messaggi di oggi…"
   },
   "icu:view": {
     "messageformat": "Mostra"
@@ -602,14 +605,14 @@
   "icu:SafetyNumberViewer__KeyTransparency__popup--ok__title": {
     "messageformat": "Crittografia verificata in automatico per questa chat "
   },
-  "icu:SafetyNumberViewer__KeyTransparency__popup--ok__body": {
-    "messageformat": "Per i contatti con cui hai iniziato una chat usando il loro numero di telefono, Signal può confermare automaticamente se la connessione è sicura tramite un processo chiamato \"key transparency\". Per maggiore sicurezza, puoi verificare il livello di crittografia manualmente: confronta i numeri sulla schermata precedente o scansiona il codice sul dispositivo dell'altra persona."
+  "icu:SafetyNumberViewer__KeyTransparency__popup--ok__body-2": {
+    "messageformat": "Per le chat avviate tramite numero di telefono, Signal verifica automaticamente la sicurezza della connessione tramite il sistema \"key transparency\". Per maggiore sicurezza, puoi verificare il livello di crittografia manualmente: confronta i numeri sulla schermata precedente o scansiona il codice sul dispositivo dell'altra persona."
   },
-  "icu:SafetyNumberViewer__KeyTransparency__popup--fail__title": {
-    "messageformat": "La verifica automatica non è più disponibile per questa chat"
+  "icu:SafetyNumberViewer__KeyTransparency__popup--fail__title-2": {
+    "messageformat": "La verifica automatica non è disponibile per questa chat"
   },
-  "icu:SafetyNumberViewer__KeyTransparency__popup--fail__body": {
-    "messageformat": "Signal non può più verificare in automatico il livello di crittografia per questa chat. Molto probabilmente perché {name} ha cambiato il suo numero di telefono. Completa la verifica della crittografia manualmente: confronta i numeri sulla schermata precedente o scansiona il codice sul dispositivo dell'altra persona."
+  "icu:SafetyNumberViewer__KeyTransparency__popup--fail__body-2": {
+    "messageformat": "Signal non può verificare automaticamente la crittografia di questa chat. Ciò è dovuto, molto probabilmente, al fatto che {name} ha modificato il proprio numero di telefono o le relative impostazioni di privacy. Completa la verifica della crittografia manualmente: confronta i numeri sulla schermata precedente o scansiona il codice sul dispositivo dell'altra persona."
   },
   "icu:SafetyNumberViewer__KeyTransparency__popup--unavailable__body": {
     "messageformat": "Signal può verificare automaticamente il livello di crittografia delle chat in cui hai contattato l'altra persona usando il suo numero di telefono. Se hai iniziato la chat tramite un nome utente oppure un gruppo in comune, ti consigliamo di verificare la crittografia end-to-end confrontando i numeri presenti sulla schermata precedente oppure scansionando il codice sul dispositivo dell'altra persona."
@@ -638,9 +641,6 @@
   "icu:KeyTransparencyErrorDialog__Submit": {
     "messageformat": "Invia"
   },
-  "icu:KeyTransparencyErrorDialog__Submitting": {
-    "messageformat": "Invio in corso…"
-  },
   "icu:KeyTransparencyOnboardingDialog__Title": {
     "messageformat": "Signal ora può verificare automaticamente la crittografia delle chiavi"
   },
@@ -652,9 +652,6 @@
   },
   "icu:KeyTransparencyOnboardingDialog__LearnMore": {
     "messageformat": "Scopri di più"
-  },
-  "icu:KeyTransparencyOnboardingDialog__CloseButton__AccessibilityLabel": {
-    "messageformat": "Chiudi"
   },
   "icu:verified": {
     "messageformat": "Verificato"
@@ -706,9 +703,6 @@
   },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "Invia log"
-  },
-  "icu:Toast--FailedToSendWithEndorsements": {
-    "messageformat": "Failed to send message with endorsements"
   },
   "icu:Toast--SQLError": {
     "messageformat": "Errore del database: condividi con noi i tuoi log dell'errore."
@@ -1286,9 +1280,6 @@
   "icu:PinMessageDialog__Title": {
     "messageformat": "Metti in evidenza il messaggio per…"
   },
-  "icu:PinMessageDialog__Close": {
-    "messageformat": "Chiudi"
-  },
   "icu:PinMessageDialog__Option--TIME_24_HOURS": {
     "messageformat": "24 ore"
   },
@@ -1312,9 +1303,6 @@
   },
   "icu:PinMessageDialog--HasMaxPinnedMessages__Description": {
     "messageformat": "Se metti in evidenza questo messaggio, verrà sostituito a quello più vecchio."
-  },
-  "icu:PinMessageDialog--HasMaxPinnedMessages__Cancel": {
-    "messageformat": "Annulla"
   },
   "icu:PinMessageDialog--HasMaxPinnedMessages__Continue": {
     "messageformat": "Continua"
@@ -1402,9 +1390,6 @@
   },
   "icu:PinnedMessagesPanel__UnpinAllMessages__ConfirmDialog__Description": {
     "messageformat": "I messaggi non appariranno più in evidenza per i membri di questa chat."
-  },
-  "icu:PinnedMessagesPanel__UnpinAllMessages__ConfirmDialog__Cancel": {
-    "messageformat": "Annulla"
   },
   "icu:PinnedMessagesPanel__UnpinAllMessages__ConfirmDialog__Unpin": {
     "messageformat": "Togli da in evidenza"
@@ -1592,6 +1577,15 @@
   "icu:Install__support-link": {
     "messageformat": "Hai bisogno di aiuto?"
   },
+  "icu:Install__confirm-data-deletion__title": {
+    "messageformat": "Vuoi eliminare tutti i dati?"
+  },
+  "icu:Install__confirm-data-deletion__body": {
+    "messageformat": "Stai cercando di collegare un altro account Signal a questo desktop. Se procedi, tutti i dati attualmente presenti su Signal Desktop verranno eliminati."
+  },
+  "icu:Install__confirm-data-deletion__continue": {
+    "messageformat": "Continua"
+  },
   "icu:Preferences--header": {
     "messageformat": "Impostazioni"
   },
@@ -1642,9 +1636,6 @@
   },
   "icu:Preferences__ChatsPage__DeleteChatFolderDialog__DeleteButton": {
     "messageformat": "Elimina"
-  },
-  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__CancelButton": {
-    "messageformat": "Annulla"
   },
   "icu:Preferences__ChatFoldersPage__Title": {
     "messageformat": "Cartelle delle chat"
@@ -1768,9 +1759,6 @@
   },
   "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__DeleteButton": {
     "messageformat": "Elimina"
-  },
-  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__CancelButton": {
-    "messageformat": "Annulla"
   },
   "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__Title": {
     "messageformat": "Salvare modifiche?"
@@ -1956,25 +1944,25 @@
     "messageformat": "Più opzioni"
   },
   "icu:CallingParticipantMenu__MuteAudio": {
-    "messageformat": "Mute audio"
+    "messageformat": "Silenzia l'audio"
   },
   "icu:CallingParticipantMenu__UnmuteAudio": {
-    "messageformat": "Unmute audio"
+    "messageformat": "Riattiva l'audio"
   },
   "icu:CallingParticipantMenu__ViewProfile": {
-    "messageformat": "View profile"
+    "messageformat": "Vedi il profilo"
   },
   "icu:CallingParticipantMenu__GoToChat": {
-    "messageformat": "Go to chat"
+    "messageformat": "Vai alla chat"
   },
   "icu:CallingParticipantMenu__RemoveFromCall": {
-    "messageformat": "Remove from call"
+    "messageformat": "Rimuovi dalla chiamata"
   },
   "icu:CallingParticipantListItem__ContextMenuButton": {
-    "messageformat": "More actions"
+    "messageformat": "Più azioni"
   },
   "icu:CallingParticipantListItem__Presenting": {
-    "messageformat": "Presenting"
+    "messageformat": "Sta presentando"
   },
   "icu:CallingPendingParticipants__ApproveUser": {
     "messageformat": "Approva la richiesta"
@@ -2014,9 +2002,6 @@
   },
   "icu:CallingRaisedHandsList__Title": {
     "messageformat": "{count, plural, one {{count,number} ha alzato la mano} other {{count,number} hanno alzato la mano}}"
-  },
-  "icu:CallingRaisedHandsList__TitleHint": {
-    "messageformat": "(dal primo all'ultimo)"
   },
   "icu:CallingReactions--me": {
     "messageformat": "Tu"
@@ -2204,26 +2189,23 @@
   "icu:deleteAllDataBody": {
     "messageformat": "Vuoi eliminare tutti i dati e i messaggi da questa versione di Signal Desktop? Il tuo account Signal e i relativi dati sul tuo telefono (o altri dispositivi collegati) non verranno eliminati."
   },
-  "icu:deleteAccountProgress": {
-    "messageformat": "Deleting account and all data…"
-  },
   "icu:deleteAllDataProgress": {
     "messageformat": "Disconnessione e cancellazione di tutti i dati…"
   },
   "icu:deleteAccountHeader": {
-    "messageformat": "Delete account"
+    "messageformat": "Elimina account"
   },
   "icu:deleteAccountExplanation": {
-    "messageformat": "This will delete your account info, profile, and all of your messages. You will also be removed from all Signal groups."
+    "messageformat": "Così facendo, eliminerai le informazioni legate al tuo account, il profilo e tutti i tuoi messaggi. Inoltre, uscirai da tutte le chat di gruppo di Signal."
   },
   "icu:deleteAccountButton": {
-    "messageformat": "Delete account"
+    "messageformat": "Elimina account"
   },
   "icu:deleteAccountDialogHeader": {
-    "messageformat": "Delete Account?"
+    "messageformat": "Eliminare l'account?"
   },
   "icu:deleteAccountDialogBody": {
-    "messageformat": "This will delete your account info, profile, and all of your messages. You will also be removed from all Signal groups. The app will close after this process is complete."
+    "messageformat": "Così facendo, eliminerai le informazioni legate al tuo account, il profilo e tutti i tuoi messaggi. Inoltre, uscirai da tutte le chat di gruppo di Signal. L'app si chiuderà da sola dopo la fine dell'operazione."
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Hai dati obsoleti da un'installazione precedente di Signal Desktop. Se scegli di continuare, verranno eliminati e inizierai da zero."
@@ -2302,9 +2284,6 @@
   },
   "icu:syncNow": {
     "messageformat": "Importa ora"
-  },
-  "icu:syncing": {
-    "messageformat": "Importazione in corso…"
   },
   "icu:syncFailed": {
     "messageformat": "Importazione non riuscita. Assicurati che il tuo computer e il tuo telefono siano connessi a Internet."
@@ -2571,10 +2550,10 @@
     "messageformat": "Scollegato"
   },
   "icu:unregisteredWarning": {
-    "messageformat": "Click to re-register and continue messaging. Signal Desktop is unregistered likely because you registered your phone number with Signal on a different device."
+    "messageformat": "Clicca qui per registrarti di nuovo e continuare a mandare messaggi. Signal Desktop non è più registrato perché probabilmente hai registrato il tuo numero di telefono usato su Signal con un dispositivo diverso."
   },
   "icu:unregistered": {
-    "messageformat": "No longer registered"
+    "messageformat": "Non più registrato"
   },
   "icu:autoUpdateNewVersionTitle": {
     "messageformat": "Aggiornamento disponibile"
@@ -2836,6 +2815,24 @@
   },
   "icu:stickers--StickerPreview--Error": {
     "messageformat": "Errore di apertura del pacchetto adesivi. Controlla la connessione a Internet e riprova."
+  },
+  "icu:stickers--StickerPreview--Install": {
+    "messageformat": "Add Stickers"
+  },
+  "icu:stickers--StickerPreview--Remove": {
+    "messageformat": "Remove"
+  },
+  "icu:stickers--StickerPreview--Link": {
+    "messageformat": "Link"
+  },
+  "icu:stickers--StickerPreview--LinkCopied": {
+    "messageformat": "Link copied"
+  },
+  "icu:stickers--StickerPreview--StickerCount": {
+    "messageformat": "{count, plural, one {{count,number} sticker} other {{count,number} stickers}}"
+  },
+  "icu:stickers--StickerPreview--StickerNoEmojiAriaLabel": {
+    "messageformat": "Sticker without an emoji"
   },
   "icu:FunPicker__Tab--Emojis": {
     "messageformat": "Emoji"
@@ -3305,6 +3302,9 @@
   "icu:Keyboard--toggle-preview": {
     "messageformat": "Attiva e disattiva l'espansione dell'anteprima"
   },
+  "icu:Keyboard--toggle-raise-hand": {
+    "messageformat": "Alza o abbassa la mano (solo nelle chiamate di gruppo)"
+  },
   "icu:Keyboard--accept-video-call": {
     "messageformat": "Rispondi alla chiamata anche con video (solo videochiamate)"
   },
@@ -3362,50 +3362,38 @@
   "icu:ReactionsViewer--all": {
     "messageformat": "Tutte"
   },
-  "icu:SafetyTipsModal__Title": {
+  "icu:SafetyTipsModal__Title-v2": {
     "messageformat": "Consigli sulla sicurezza"
   },
-  "icu:SafetyTipsModal__Title-v2": {
-    "messageformat": "Safety tips"
-  },
   "icu:SafetyTipsModal__TipTitle--SignalChat": {
-    "messageformat": "Don’t respond to chats from Signal"
+    "messageformat": "Non rispondere ai messaggi ricevuti in chat da Signal"
   },
   "icu:SafetyTipsModal__TipDescription--SignalChat": {
-    "messageformat": "Signal will never message you for your registration code, PIN, or recovery key. Never respond to a chat pretending to be Signal."
+    "messageformat": "Signal non ti invierà mai dei messaggi per chiederti il codice di registrazione, il PIN o la chiave di ripristino. Non rispondere mai a una chat che cerca di impersonare il team di Signal."
   },
   "icu:SafetyTipsModal__TipTitle--NamesAndPhotos": {
-    "messageformat": "Review names and photos"
+    "messageformat": "Controlla i nomi e le foto"
   },
   "icu:SafetyTipsModal__TipDescription--NamesAndPhotos": {
-    "messageformat": "Look out for the “Name not verified” notice. Everyone sets their own profile name in Signal."
+    "messageformat": "Fai attenzione all'avviso \"Nome non verificato\". Chiunque può impostare il proprio nome profilo su Signal."
   },
   "icu:SafetyTipsModal__TipTitle--Scams": {
-    "messageformat": "Look out for scams"
+    "messageformat": "Fai attenzione alle truffe"
   },
   "icu:SafetyTipsModal__TipDescription--Scams": {
-    "messageformat": "Avoid vague messages that try to get you to reply. Be aware of financial tips and suspicious web links."
-  },
-  "icu:SafetyTipsModal__Description": {
-    "messageformat": "Pensaci sempre due volte prima di accettare richieste di chat da persone che non conosci. Fai particolare attenzione a quanto segue:"
+    "messageformat": "Non fidarti di messaggi generici che cercano di spingerti a rispondere subito. Fai anche attenzione a chi dispensa consigli finanziari e chi condivide link sospetti."
   },
   "icu:SafetyTipsModal__TipTitle--DontRespond": {
-    "messageformat": "Don’t respond to chats from Signal"
+    "messageformat": "Non rispondere ai messaggi ricevuti in chat da Signal"
   },
   "icu:SafetyTipsModal__TipDescription--DontRespond": {
-    "messageformat": "Signal will never message you for your registration code, PIN, or recover key. Don't reply to chats pretending to be Signal or Signal Support. Bad actors set up fake names to try to take over your account."
+    "messageformat": "Signal non ti invierà mai dei messaggi per chiederti il codice di registrazione, il PIN o la chiave di ripristino. Non rispondere mai a una chat che cerca di impersonare l'assistenza Signal. I malintenzionati usano nomi inventati che sembrano credibili per prendere controllo del tuo account e dei tuoi dati."
   },
   "icu:SafetyTipsModal__TipTitle--ReviewNames": {
-    "messageformat": "Review names and photos"
+    "messageformat": "Controlla i nomi e le foto"
   },
   "icu:SafetyTipsModal__TipDescription--ReviewNames": {
-    "messageformat": "Look out for the “Name not verified” notice. Everyone sets their own profile name and photo in Signal. If you’re unsure who a new request is from it’s safer to ignore it."
-  },
-  "icu:SafetyTipsModal__TipTitle--Fake": {
-    "messageformat": "Nomi e account falsi"
-  },
-  "icu:SafetyTipsModal__TipDescription--Fake": {
-    "messageformat": "Signal non ti contatterà mai per chiederti il tuo codice di registrazione o PIN. Fai attenzione quando ti contattano persone che potrebbero impersonare terze parti (ad esempio noi di Signal). I nomi dei profili sono scelti da chi crea l'account e non sono verificati da noi."
+    "messageformat": "Fai attenzione all'avviso \"Nome non verificato\". Chiunque può impostare il proprio nome e foto profilo su Signal. Se non hai la certezza di sapere l'identità di chi ti sta contattando, meglio ignorare i messaggi."
   },
   "icu:SafetyTipsModal__TipTitle--Crypto": {
     "messageformat": "Criptovalute e truffe economiche"
@@ -3419,38 +3407,20 @@
   "icu:SafetyTipsModal__TipDescription--Vague": {
     "messageformat": "Le persone che inviano spam spesso e volentieri iniziano le chat con un semplice \"ciao\" o messaggi molto generici. Se rispondi, attirerai la loro attenzione e cercheranno di truffarti in qualche modo."
   },
-  "icu:SafetyTipsModal__TipTitle--Links": {
-    "messageformat": "Messaggi con link"
-  },
   "icu:SafetyTipsModal__TipDescription--Links": {
     "messageformat": "Se ricevi un messaggio contenente un link a un sito da una persona che non conosci, probabilmente si tratta di spam. O peggio, di un tentativo di phishing: non aprire mai link del genere."
   },
   "icu:SafetyTipsModal__TipTitle--Links-v2": {
-    "messageformat": "Messages with web links"
+    "messageformat": "Messaggi con link a siti web"
   },
   "icu:SafetyTipsModal__TipTitle--Business": {
     "messageformat": "Aziende ed enti governativi finti"
   },
-  "icu:SafetyTipsModal__TipTitle--Business-v2": {
-    "messageformat": "Fake businesses"
-  },
   "icu:SafetyTipsModal__TipDescription--Business": {
     "messageformat": "Fai attenzione quando ricevi messaggi da qualche azienda o ente del governo. Se si parla di tasse, pensioni, pacchi in arrivo, messaggi dalle Poste, dal tuo fornitore di energia e acqua, potrebbe trattarsi di spam."
   },
-  "icu:SafetyTipsModal__DotLabel": {
-    "messageformat": "Vai alla pagina {page,number}"
-  },
-  "icu:SafetyTipsModal__Button--Previous": {
-    "messageformat": "Consiglio precedente"
-  },
-  "icu:SafetyTipsModal__Button--Next": {
-    "messageformat": "Consiglio successivo"
-  },
-  "icu:SafetyTipsModal__Button--Done": {
-    "messageformat": "Fatto"
-  },
   "icu:SafetyTipsModal__Button--ViewMore": {
-    "messageformat": "View more"
+    "messageformat": "Visualizza altro"
   },
   "icu:MessageRequests--message-direct": {
     "messageformat": "Permettere a {name} di inviarti messaggi e condividere il tuo nome e la tua foto con questa persona? Non saprà che hai visto i suoi messaggi finché non accetti."
@@ -3548,17 +3518,11 @@
   "icu:MessageRequests--accept": {
     "messageformat": "Accetta"
   },
-  "icu:MessageRequests--accept-confirm-title": {
+  "icu:MessageRequests--accept-confirm-title-v2": {
     "messageformat": "Accettare la richiesta?"
   },
-  "icu:MessageRequests--accept-confirm-body": {
-    "messageformat": "Controlla attentamente le richieste. I nomi dei profili sono scelti da chi crea l'account e non sono verificati da noi."
-  },
-  "icu:MessageRequests--accept-confirm-title-v2": {
-    "messageformat": "Accept request?"
-  },
   "icu:MessageRequests--accept-confirm-body-v2": {
-    "messageformat": "Only accept requests from people you trust. <bold>Signal will never</bold> message you for a registration code, PIN, or recovery key."
+    "messageformat": "Accetta richieste solo dalle persone di cui ti fidi. <bold>Signal non ti invierà mai</bold> dei messaggi per chiederti il codice di registrazione, il PIN o la chiave di ripristino."
   },
   "icu:MessageRequests--continue": {
     "messageformat": "Continua"
@@ -3614,17 +3578,14 @@
   "icu:ConversationHero--signal-official-chat": {
     "messageformat": "Questa è l'unica chat ufficiale con Signal"
   },
-  "icu:ConversationHero--signal-official-account": {
-    "messageformat": "Account ufficiale"
-  },
   "icu:ConversationHero--signal-official-chat-title": {
-    "messageformat": "Official chat"
+    "messageformat": "Chat ufficiale"
   },
   "icu:ConversationHero--signal-official-account--description": {
     "messageformat": "L'unica, vera, chat ufficiale di Signal. Non perderti neanche una novità o le note degli aggiornamenti."
   },
   "icu:Timeline--signal-official-chat--chip": {
-    "messageformat": "The only official chat from Signal."
+    "messageformat": "L'unica, vera, chat ufficiale di Signal."
   },
   "icu:ConversationHero--release-notes": {
     "messageformat": "Non perderti neanche una novità o le note degli aggiornamenti."
@@ -3896,9 +3857,6 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "Una finestra"
   },
-  "icu:calling__ParticipantInfoButton": {
-    "messageformat": "Maggiori informazioni su questo contatto"
-  },
   "icu:CallingAdhocCallInfo__CopyLink": {
     "messageformat": "Copia link chiamata"
   },
@@ -3925,9 +3883,6 @@
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
     "messageformat": "Prima di unirti a una chiamata puoi vedere solo i nomi dei contatti della tua rubrica, delle persone con cui condividi un gruppo o con cui hai già una chat. Vedrai tutti i nomi e le foto profilo dopo aver partecipato alla chiamata."
-  },
-  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
-    "messageformat": "Capito"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -4610,9 +4565,6 @@
   "icu:close": {
     "messageformat": "Chiudi"
   },
-  "icu:clear": {
-    "messageformat": "Clear"
-  },
   "icu:previous": {
     "messageformat": "precedente"
   },
@@ -4623,40 +4575,22 @@
     "messageformat": "Ci vuole qualche minuto"
   },
   "icu:DeletingAccount__LeavingGroups__Title": {
-    "messageformat": "Leaving groups..."
+    "messageformat": "Abbandono dei gruppi in corso…"
   },
   "icu:DeletingAccount__LeavingGroups__Detail": {
-    "messageformat": "Depending on the number of groups you’re in, this might take a few minutes"
+    "messageformat": "A seconda del numero di gruppi di cui fai parte, questo processo potrebbe richiedere alcuni minuti"
   },
   "icu:DeletingAccount__DeletingData__Title": {
-    "messageformat": "Deleting account and all data..."
+    "messageformat": "Eliminazione dell'account e di tutti i dati…"
   },
   "icu:DeletingAccount__DeletingData__Detail": {
-    "messageformat": "Deleting user data and resetting the app"
+    "messageformat": "Eliminazione dati dell'utente e reimpostazione dell'app"
   },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Dona a Signal"
   },
-  "icu:BadgeSustainerInstructions__header": {
-    "messageformat": "Dona a Signal"
-  },
-  "icu:BadgeSustainerInstructions__subheader": {
-    "messageformat": "Signal è sostenuto da persone come te. Contribuisci e ricevi un badge."
-  },
-  "icu:BadgeSustainerInstructions__instructions__1": {
-    "messageformat": "Apri Signal sul tuo telefono"
-  },
-  "icu:BadgeSustainerInstructions__instructions__2": {
-    "messageformat": "Clicca sull'immagine del tuo profilo in alto a sinistra per aprire le Impostazioni"
-  },
-  "icu:BadgeSustainerInstructions__instructions__3": {
-    "messageformat": "Tocca su \"Dona a Signal\" per diventare un supporter di Signal"
-  },
-  "icu:ProfileMovedModal__title": {
-    "messageformat": "Il tuo profilo ora è da questa parte"
-  },
-  "icu:ProfileMovedModal__description": {
-    "messageformat": "Apri la schermata delle Impostazioni per vedere e modificare il tuo profilo."
+  "icu:BadgeDialog__name-supports-signal": {
+    "messageformat": "{name} supporta Signal"
   },
   "icu:BackupImportScreen__title": {
     "messageformat": "Sincronizzazione messaggi"
@@ -4747,9 +4681,6 @@
   },
   "icu:BackupMediaDownloadCancelConfirmation__description": {
     "messageformat": "La sincronizzazione dei media non è stata completata. Se la annulli, potrai sincronizzarli di nuovo ricollegando questo dispositivo. <learnMoreLink>Scopri di più</learnMoreLink>."
-  },
-  "icu:BackupMediaDownloadCancelConfirmation__button-continue": {
-    "messageformat": "Prosegui"
   },
   "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
     "messageformat": "Annulla sincronizzazione"
@@ -4927,9 +4858,6 @@
   },
   "icu:ConversationDetails--member-label--no-members": {
     "messageformat": "Nessun altro utente ha dei ruoli"
-  },
-  "icu:ConversationDetails--member-label--saving": {
-    "messageformat": "Salvataggio in corso…"
   },
   "icu:ConversationDetails--member-label--error-title": {
     "messageformat": "Impossibile salvare il ruolo dell'utente"
@@ -5298,9 +5226,6 @@
   "icu:DeleteAttachmentModal__Body": {
     "messageformat": "Quest'azione eliminerà definitivamente questo elemento. Verrà eliminato anche ogni messaggio di testo associato a questo elemento."
   },
-  "icu:DeleteAttachmentModal__Close": {
-    "messageformat": "Chiudi"
-  },
   "icu:DeleteAttachmentModal__Delete": {
     "messageformat": "Elimina"
   },
@@ -5410,7 +5335,7 @@
     "messageformat": "Usa questo link per unirti a una chiamata di Signal: {url}"
   },
   "icu:MessageRequestWarning__review-carefully": {
-    "messageformat": "Review requests carefully"
+    "messageformat": "Controlla attentamente le richieste"
   },
   "icu:MessageRequestWarning__safety-tips-v2": {
     "messageformat": "Consigli sulla sicurezza"
@@ -6061,9 +5986,6 @@
   "icu:PlaintextExport--Confirmation--ContinueButton": {
     "messageformat": "Continua"
   },
-  "icu:PlaintextExport--Confirmation--WaitingLabel": {
-    "messageformat": "In attesa di un input"
-  },
   "icu:PlaintextExport--OSPrompt--Mac": {
     "messageformat": "Esporta la tua cronologia chat"
   },
@@ -6382,26 +6304,23 @@
   "icu:Preferences--blocked": {
     "messageformat": "Bloccati"
   },
-  "icu:Preferences--blocked-count": {
-    "messageformat": "{num, plural, one {{num,number} contatto} other {{num,number} contatti}}"
-  },
   "icu:Preferences--blocked-count-both-new": {
-    "messageformat": "{num, plural, =0 { No users or groups } one {{num,number} user or group} other {{num,number} users or groups}}"
+    "messageformat": "{num, plural, =0 { Nessun utente o gruppo } one {{num,number} utente o gruppo} other {{num,number} utenti o gruppi}}"
   },
   "icu:Preferences--blocked-count-contacts-new": {
-    "messageformat": "{num, plural, =0 { No users } one {{num,number} user} other {{num,number} users}}"
+    "messageformat": "{num, plural, =0 { Nessun utente } one {{num,number} utente} other {{num,number} utenti}}"
   },
   "icu:Preferences--blocked-count-groups-new": {
-    "messageformat": "{num, plural, =0 { No groups } one {{num,number} group} other {{num,number} groups}}"
+    "messageformat": "{num, plural, =0 { Nessun gruppo } one {{num,number} gruppo} other {{num,number} gruppi}}"
   },
   "icu:Preferences--blocked-users--description": {
-    "messageformat": "Blocked users will not be able to call you or send you messages"
+    "messageformat": "Gli utenti bloccati non potranno chiamarti né inviarti messaggi"
   },
   "icu:Preferences--blocked-users": {
-    "messageformat": "Blocked Users"
+    "messageformat": "Utenti bloccati"
   },
   "icu:Preferences--blocked-groups": {
-    "messageformat": "Blocked Groups"
+    "messageformat": "Gruppi bloccati"
   },
   "icu:Preferences--signal-backups": {
     "messageformat": "Backup sicuri di Signal"
@@ -6974,7 +6893,7 @@
     "messageformat": "Hai accettato la richiesta di chat"
   },
   "icu:MessageRequestResponseNotification__Message--Accepted-Contact-Title": {
-    "messageformat": "You accepted {userProfileName}'s message request"
+    "messageformat": "Hai accettato la richiesta di messaggio di {userProfileName}"
   },
   "icu:MessageRequestResponseNotification__Message--Reported": {
     "messageformat": "Segnalato come spam"
@@ -6991,11 +6910,8 @@
   "icu:MessageRequestResponseNotification__Message--Unblocked--Group": {
     "messageformat": "Hai sbloccato il gruppo"
   },
-  "icu:MessageRequestResponseNotification__Button--Options": {
-    "messageformat": "Opzioni"
-  },
   "icu:MessageRequestResponseNotification__Button--block-or-report": {
-    "messageformat": "Block or Report..."
+    "messageformat": "Blocca o segnala…"
   },
   "icu:MessageRequestResponseNotification__Button--LearnMore": {
     "messageformat": "Scopri di più"
@@ -7580,9 +7496,6 @@
   "icu:DraftGifMessageSendModal__SendButtonLabel": {
     "messageformat": "Invia"
   },
-  "icu:DraftGifMessageSendModal__CancelButtonLabel": {
-    "messageformat": "Annulla"
-  },
   "icu:EditHistoryMessagesModal__title": {
     "messageformat": "Cronologia delle modifiche"
   },
@@ -7750,9 +7663,6 @@
   },
   "icu:CallLinkDetails__DeleteLinkModal__Body": {
     "messageformat": "Questo link non sarà più valido per chi l'ha già ricevuto."
-  },
-  "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
-    "messageformat": "Annulla"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
     "messageformat": "Elimina"
@@ -8147,12 +8057,6 @@
   "icu:Donations__badge-modal--help-text": {
     "messageformat": "Puoi modificare questa opzione dal tuo dispositivo mobile dalle Impostazioni → Dona a Signal → Badge"
   },
-  "icu:CallQualitySurvey__CloseButton__AccessibilityLabel": {
-    "messageformat": "Chiudi"
-  },
-  "icu:CallQualitySurvey__BackButton__AccessibilityLabel": {
-    "messageformat": "Indietro"
-  },
   "icu:CallQualitySurvey__HowWasYourCall__PageTitle": {
     "messageformat": "Com'è andata la tua chiamata?"
   },
@@ -8240,9 +8144,6 @@
   "icu:CallQualitySurvey__ConfirmSubmission__SubmitButton": {
     "messageformat": "Invia"
   },
-  "icu:CallQualitySurvey__ConfirmSubmission__Submitting": {
-    "messageformat": "Invio del sondaggio…"
-  },
   "icu:CallQualitySurvey__SubmissionFailed": {
     "messageformat": "Impossibile inviare il sondaggio"
   },
@@ -8256,10 +8157,40 @@
     "messageformat": "Espandi la barra laterale per interagire con il megafono."
   },
   "icu:Carousel--Role": {
-    "messageformat": "Carousel"
+    "messageformat": "Carosello"
   },
   "icu:Carousel__Slide--Role": {
-    "messageformat": "Slide"
+    "messageformat": "Per scorrere"
+  },
+  "icu:MaybeTransferModal__title": {
+    "messageformat": "Vuoi trasferire la cronologia dei messaggi dal telefono a questo computer?"
+  },
+  "icu:MaybeTransferModal__description": {
+    "messageformat": "Quando ricolleghi questo computer, potrai trasferire la cronologia dei messaggi del tuo telefono qui."
+  },
+  "icu:MaybeTransferModal__learnMore": {
+    "messageformat": "Scopri di più"
+  },
+  "icu:MaybeTransferModal__replaceHistory": {
+    "messageformat": "L'operazione <bold>sostituirà</bold> la cronologia dei messaggi su questo desktop."
+  },
+  "icu:MaybeTransferModal__scanQrCode": {
+    "messageformat": "Dovrai ricollegarti scansionando un codice QR."
+  },
+  "icu:MaybeTransferModal__media": {
+    "messageformat": "Se hai acquistato i Backup sicuri di Signal, tutti i tuoi file multimediali verranno trasferiti. In caso contrario, verranno inclusi solo quelli degli ultimi 45 giorni."
+  },
+  "icu:MaybeTransferModal__transfer": {
+    "messageformat": "Trasferisci"
+  },
+  "icu:MaybeTransferModal__dontTransfer": {
+    "messageformat": "Non trasferire"
+  },
+  "icu:DeleteDataAndRelinkConfirmationDialog__title": {
+    "messageformat": "Vuoi eliminare tutti i dati?"
+  },
+  "icu:DeleteDataAndRelinkConfirmationDialog__body": {
+    "messageformat": "Tutti i dati su Signal Desktop verranno eliminati. In seguito, potrai scansionare il codice QR per trasferire la cronologia dei messaggi dal tuo telefono."
   },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "Questa versione contiene una serie di piccole modifiche e correzioni di bug per far funzionare Signal senza problemi.",
@@ -8289,7 +8220,7 @@
     "messageformat": "Altre piccole modifiche e correzioni di bug per far funzionare l'app senza problemi. Grazie per usare Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__8.10--0": {
-    "messageformat": "The freshly spun emoji in Unicode 17.0 have now pirouetted into place in Signal. Send a message reaction with the new Ballet Dancer emoji to perform your own digital version of a pas de chat."
+  "icu:WhatsNew__8.13--0": {
+    "messageformat": "I nuovi indicatori per le mani alzate in chiamata vengono ora mostrati anche nell'apposito elenco durante le chiamate di gruppo. Così, se ci sono tante mani alzate in sequenza, potrete anche fare la ola come allo stadio."
   }
 }

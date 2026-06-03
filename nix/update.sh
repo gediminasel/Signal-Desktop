@@ -28,9 +28,7 @@ sed -E -i "s/(nodejs_)../\1$nodeVersion/" $SCRIPT_DIR/package.nix
 sed -E -i "s/(electron_)../\1$electronVersion/" $SCRIPT_DIR/package.nix
 sed -E -i "s/(SOURCE_DATE_EPOCH = )[0-9]+/\1$releaseEpoch/" $SCRIPT_DIR/package.nix
 
-sed -E -i "s/(withAppleEmojis \? )false/\1true/" $SCRIPT_DIR/package.nix
 # nix-update signal-desktop --subpackage sticker-creator --version="$latestVersion"
-sed -E -i "s/(withAppleEmojis \? )true/\1false/" $SCRIPT_DIR/package.nix
 
 update_nix_version() {
   local file="$1"

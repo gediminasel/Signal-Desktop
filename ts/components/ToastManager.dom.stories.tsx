@@ -109,6 +109,8 @@ function getToast(toastType: ToastType): AnyToast {
       return { toastType: ToastType.CopiedBackupKey };
     case ToastType.CopiedCallLink:
       return { toastType: ToastType.CopiedCallLink };
+    case ToastType.CopiedStickerPackLink:
+      return { toastType: ToastType.CopiedStickerPackLink };
     case ToastType.CopiedUsername:
       return { toastType: ToastType.CopiedUsername };
     case ToastType.CopiedUsernameLink:
@@ -159,8 +161,6 @@ function getToast(toastType: ToastType): AnyToast {
       return { toastType: ToastType.FailedToFetchPhoneNumber };
     case ToastType.FailedToFetchUsername:
       return { toastType: ToastType.FailedToFetchUsername };
-    case ToastType.FailedToSendWithEndorsements:
-      return { toastType: ToastType.FailedToSendWithEndorsements };
     case ToastType.FailedToImportBackup:
       return { toastType: ToastType.FailedToImportBackup };
     case ToastType.FileSaved:
@@ -224,6 +224,13 @@ function getToast(toastType: ToastType): AnyToast {
       };
     case ToastType.ReceiptSaveFailed:
       return { toastType: ToastType.ReceiptSaveFailed };
+    case ToastType.RemoteConfigChanged:
+      return {
+        toastType: ToastType.RemoteConfigChanged,
+        changes: [
+          { name: 'desktop.example.value', from: '1.0.0', to: '2.0.0' },
+        ],
+      };
     case ToastType.ReportedSpam:
       return { toastType: ToastType.ReportedSpam };
     case ToastType.ReportedSpamAndBlocked:

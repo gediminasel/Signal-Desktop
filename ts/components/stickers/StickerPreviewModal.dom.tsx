@@ -2,84 +2,168 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { memo, useState, useEffect, useCallback } from 'react';
-import lodash from 'lodash';
-import classNames from 'classnames';
 import type { LocalizerType } from '../../types/Util.std.ts';
 import type { StickerPackType } from '../../state/ducks/stickers.preload.ts';
-import { Spinner } from '../Spinner.dom.tsx';
-import { useRestoreFocus } from '../../hooks/useRestoreFocus.dom.ts';
-import { Modal } from '../Modal.dom.tsx';
-import { Button, ButtonVariant } from '../Button.dom.tsx';
+import type { ShowToastAction } from '../../state/ducks/toast.preload.ts';
 import { UserText } from '../UserText.dom.tsx';
 import { AxoConfirmDialog } from '../../axo/AxoConfirmDialog.dom.tsx';
+import { AxoDialog } from '../../axo/AxoDialog.dom.tsx';
+import { tw } from '../../axo/tw.dom.tsx';
+import { AxoStackedButton } from '../../axo/AxoStackedButton.dom.tsx';
+import { SpinnerV2 } from '../SpinnerV2.dom.tsx';
+import { OfficialChatInlineBadge } from '../conversation/OfficialChatInlineBadge.dom.tsx';
+import { artAddStickersRoute } from '../../util/signalRoutes.std.ts';
+import { drop } from '../../util/drop.std.ts';
+import { ToastType } from '../../types/Toast.dom.tsx';
+import { fromBase64PackKeyToHex } from '../../util/Stickers.std.ts';
 
-const { isNumber, range } = lodash;
-
-export type OwnProps = {
-  readonly onClose?: () => unknown;
-  readonly closeStickerPackPreview: () => unknown;
-  readonly downloadStickerPack: (
+export type Props = Readonly<{
+  onClose?: () => void;
+  closeStickerPackPreview: () => void;
+  downloadStickerPack: (
     packId: string,
     packKey: string,
     options: { finalStatus?: 'installed' | 'downloaded'; actionSource: 'ui' }
-  ) => unknown;
-  readonly installStickerPack: (
+  ) => void;
+  installStickerPack: (
     packId: string,
     packKey: string,
     options: { actionSource: 'ui' }
-  ) => unknown;
-  readonly uninstallStickerPack: (
+  ) => void;
+  uninstallStickerPack: (
     packId: string,
     packKey: string,
     options: { actionSource: 'ui' }
-  ) => unknown;
-  readonly pack?: StickerPackType;
-  readonly i18n: LocalizerType;
-};
+  ) => void;
+  showToast: ShowToastAction;
+  pack?: StickerPackType;
+  i18n: LocalizerType;
+}>;
 
-export type Props = OwnProps;
-
-function renderBody({ pack, i18n }: Pick<Props, 'i18n' | 'pack'>) {
-  if (!pack) {
+function renderBody({
+  pack,
+  i18n,
+  handleCopyLink,
+  handleStartUninstall,
+}: Pick<Props, 'i18n' | 'pack'> & {
+  handleCopyLink: () => void;
+  handleStartUninstall: () => void;
+}) {
+  if (pack == null) {
     return null;
   }
 
-  if (pack && pack.status === 'error') {
+  if (pack.status === 'error') {
     return (
-      <div className="module-sticker-manager__preview-modal__error">
+      <div
+        className={tw('px-12 py-6 text-center text-color-label-destructive')}
+      >
         {i18n('icu:stickers--StickerPreview--Error')}
       </div>
     );
   }
 
-  if (pack.stickerCount === 0 || !isNumber(pack.stickerCount)) {
-    return <Spinner svgSize="normal" />;
+  if (pack.stickerCount === 0) {
+    return (
+      <div className={tw('flex justify-center py-6')}>
+        <SpinnerV2
+          variant="no-background-light"
+          size={56}
+          strokeWidth={2}
+          value="indeterminate"
+        />
+      </div>
+    );
   }
 
+  const placeholders = pack.stickerCount - pack.stickers.length;
+
   return (
-    <div className="module-sticker-manager__preview-modal__sticker-grid">
-      {pack.stickers.map(({ id, url }) => (
-        <div
-          key={id}
-          className="module-sticker-manager__preview-modal__sticker-grid__cell"
-        >
-          <img
-            className="module-sticker-manager__preview-modal__sticker-grid__cell__image"
-            src={url}
-            alt={pack.title}
-          />
-        </div>
-      ))}
-      {range(pack.stickerCount - pack.stickers.length).map(i => (
-        <div
-          key={`placeholder-${i}`}
-          className={classNames(
-            'module-sticker-manager__preview-modal__sticker-grid__cell',
-            'module-sticker-manager__preview-modal__sticker-grid__cell--placeholder'
+    <div className={tw('justify-items-center')}>
+      {pack.cover && (
+        <img
+          className={tw(
+            'mb-4 aspect-square max-h-20 w-full max-w-20 object-contain'
           )}
+          src={pack.cover.url}
+          alt={pack.title}
         />
-      ))}
+      )}
+      <h2 className={tw('mb-2 type-title-medium')}>
+        <UserText text={pack.title} />
+        {pack.isBlessed && (
+          <span className={tw('ms-1.5')}>
+            <OfficialChatInlineBadge />
+          </span>
+        )}
+      </h2>
+      <div
+        className={tw(
+          'mb-3 justify-items-center type-body-medium text-label-secondary'
+        )}
+      >
+        <div>{pack.author}</div>
+        <div>
+          {i18n('icu:stickers--StickerPreview--StickerCount', {
+            count: pack.stickerCount,
+          })}
+        </div>
+      </div>
+      <AxoStackedButton.Row spacing="md">
+        <AxoStackedButton.Root
+          symbol="link"
+          label={i18n('icu:stickers--StickerPreview--Link')}
+          onClick={handleCopyLink}
+        />
+        {pack.status === 'installed' && (
+          <AxoStackedButton.Root
+            symbol="minus-circle"
+            label={i18n('icu:stickers--StickerPreview--Remove')}
+            onClick={handleStartUninstall}
+          />
+        )}
+      </AxoStackedButton.Row>
+      <div
+        className={tw(
+          'mt-4 grid w-max grid-cols-5 items-center justify-center gap-2.5'
+        )}
+      >
+        {pack.stickers.map(({ emoji, id, url }) => (
+          <img
+            key={id}
+            className={tw(
+              'aspect-square max-h-18 w-full max-w-18 object-contain'
+            )}
+            src={url}
+            alt={
+              emoji ??
+              i18n('icu:stickers--StickerPreview--StickerNoEmojiAriaLabel')
+            }
+          />
+        ))}
+        {Array.from({ length: placeholders }, (_, index) => {
+          return (
+            <div
+              key={index}
+              className={tw(
+                'aspect-square max-h-18 w-full max-w-18 rounded-md bg-fill-secondary'
+              )}
+            />
+          );
+        })}
+      </div>
     </div>
+  );
+}
+
+function isInstallFooterVisible(
+  pack: StickerPackType | undefined
+): pack is StickerPackType {
+  return Boolean(
+    pack &&
+    pack.status != null &&
+    pack.status !== 'error' &&
+    pack.status !== 'installed'
   );
 }
 
@@ -90,12 +174,10 @@ export const StickerPreviewModal = memo(function StickerPreviewModalInner({
   installStickerPack,
   onClose,
   pack,
+  showToast,
   uninstallStickerPack,
 }: Props) {
   const [confirmingUninstall, setConfirmingUninstall] = useState(false);
-
-  // Restore focus on teardown
-  const [focusRef] = useRestoreFocus();
 
   useEffect(() => {
     if (pack && pack.status === 'known') {
@@ -132,31 +214,24 @@ export const StickerPreviewModal = memo(function StickerPreviewModalInner({
     onClose?.();
   }, [closeStickerPackPreview, onClose, pack]);
 
-  const isInstalled = Boolean(pack && pack.status === 'installed');
-  const handleToggleInstall = useCallback(() => {
+  const handleInstall = useCallback(() => {
     if (!pack) {
       return;
     }
-    if (isInstalled) {
-      setConfirmingUninstall(true);
-    } else if (pack.status === 'ephemeral') {
+
+    if (pack.status === 'ephemeral') {
       downloadStickerPack(pack.id, pack.key, {
         finalStatus: 'installed',
         actionSource: 'ui',
       });
-      handleClose();
     } else {
       installStickerPack(pack.id, pack.key, { actionSource: 'ui' });
-      handleClose();
     }
-  }, [
-    downloadStickerPack,
-    installStickerPack,
-    isInstalled,
-    handleClose,
-    pack,
-    setConfirmingUninstall,
-  ]);
+  }, [downloadStickerPack, installStickerPack, pack]);
+
+  const handleStartUninstall = useCallback(() => {
+    setConfirmingUninstall(true);
+  }, []);
 
   const handleUninstall = useCallback(() => {
     if (!pack) {
@@ -164,46 +239,50 @@ export const StickerPreviewModal = memo(function StickerPreviewModalInner({
     }
     uninstallStickerPack(pack.id, pack.key, { actionSource: 'ui' });
     setConfirmingUninstall(false);
-    // closeStickerPackPreview is called by <ConfirmationDialog />'s onClose
   }, [uninstallStickerPack, setConfirmingUninstall, pack]);
 
-  const buttonLabel = isInstalled
-    ? i18n('icu:stickers--StickerManager--Uninstall')
-    : i18n('icu:stickers--StickerManager--Install');
+  const handleCopyLink = useCallback(() => {
+    if (!pack) {
+      return;
+    }
 
-  const modalFooter =
-    pack && pack.status != null && pack.status !== 'error' ? (
-      <div className="module-sticker-manager__preview-modal__footer">
-        <div className="module-sticker-manager__preview-modal__footer--info">
-          <h3 className="module-sticker-manager__preview-modal__footer--title">
-            <UserText text={pack.title} />
-            {pack.isBlessed ? (
-              <span className="module-sticker-manager__preview-modal__footer--blessed-icon" />
-            ) : null}
-          </h3>
-          <h4 className="module-sticker-manager__preview-modal__footer--author">
-            {pack.author}
-          </h4>
-        </div>
-        <div className="module-sticker-manager__preview-modal__footer--install">
-          {pack.status === 'pending' ? (
-            <Spinner svgSize="small" size="14px" />
-          ) : (
-            <Button
-              aria-label={buttonLabel}
-              ref={focusRef}
-              onClick={handleToggleInstall}
-              variant={ButtonVariant.Primary}
-            >
-              {buttonLabel}
-            </Button>
-          )}
-        </div>
-      </div>
-    ) : undefined;
+    const link = artAddStickersRoute
+      .toWebUrl({
+        packId: pack.id,
+        packKey: fromBase64PackKeyToHex(pack.key),
+      })
+      .toString();
+    drop(window.navigator.clipboard.writeText(link));
+    showToast({ toastType: ToastType.CopiedStickerPackLink });
+  }, [pack, showToast]);
 
   return (
     <>
+      <AxoDialog.Root open onOpenChange={handleClose}>
+        <AxoDialog.Content size="md" escape="cancel-is-noop">
+          <AxoDialog.Header>
+            <AxoDialog.Title screenReaderOnly>
+              {i18n('icu:stickers--StickerPreview--Title')}
+            </AxoDialog.Title>
+            <AxoDialog.Close />
+          </AxoDialog.Header>
+          <AxoDialog.Body>
+            {renderBody({ pack, i18n, handleCopyLink, handleStartUninstall })}
+          </AxoDialog.Body>
+          <AxoDialog.Footer>
+            {isInstallFooterVisible(pack) && (
+              <AxoDialog.Action
+                variant="primary"
+                onClick={handleInstall}
+                pending={pack.status === 'pending'}
+              >
+                {i18n('icu:stickers--StickerPreview--Install')}
+              </AxoDialog.Action>
+            )}
+          </AxoDialog.Footer>
+        </AxoDialog.Content>
+      </AxoDialog.Root>
+
       <AxoConfirmDialog.Root
         open={confirmingUninstall}
         onOpenChange={setConfirmingUninstall}
@@ -219,17 +298,6 @@ export const StickerPreviewModal = memo(function StickerPreviewModalInner({
           {i18n('icu:stickers--StickerManager--Uninstall')}
         </AxoConfirmDialog.Action>
       </AxoConfirmDialog.Root>
-      <Modal
-        hasXButton
-        i18n={i18n}
-        modalFooter={modalFooter}
-        modalName="StickerPreviewModal"
-        moduleClassName="module-sticker-manager__preview-modal__modal"
-        onClose={handleClose}
-        title={i18n('icu:stickers--StickerPreview--Title')}
-      >
-        {renderBody({ pack, i18n })}
-      </Modal>
     </>
   );
 });

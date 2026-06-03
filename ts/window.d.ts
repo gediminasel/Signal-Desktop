@@ -251,7 +251,7 @@ declare global {
 
   // oxlint-disable-next-line typescript/consistent-type-definitions
   interface StringSplitSplitter<T> {
-    [Symbol.split](string: string, limit?: number): T;
+    [Symbol.split]: (string: string, limit?: number) => T;
   }
 
   // oxlint-disable-next-line typescript/consistent-type-definitions

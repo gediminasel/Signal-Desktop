@@ -104,7 +104,7 @@ async function fetchWithRedirects(
     }
     urlsSeen.add(nextHrefToLoad);
 
-    // oxlint-disable-next-line typescript-eslint(no-misused-spread)
+    // oxlint-disable-next-line typescript/no-misused-spread
     const headers = options.headers ? { ...options.headers } : {};
     if (
       goLinkAddress &&

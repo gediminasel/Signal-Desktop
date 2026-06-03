@@ -538,6 +538,14 @@ export namespace Emoji {
     });
   }
 
+  export function replaceEmojiWithOneSpace(input: string): string {
+    if (isEmptyString(input)) {
+      return input; // fast path
+    }
+    const emojiRegex = getEmojiRegex();
+    return input.replaceAll(emojiRegex, ' ');
+  }
+
   /**
    * Emoji.stripEmojiFromText()
    * --------------------------
@@ -612,7 +620,8 @@ export namespace Emoji {
 
     let cursor = 0;
 
-    // oxlint-disable-next-line typescript/no-unnecessary-qualifier allow this call to be spied on
+    // Allow this call to be spied on
+    // oxlint-disable-next-line typescript/no-unnecessary-qualifier
     for (const match of Emoji.getMatches(input)) {
       const { offset, emoji } = match;
 
@@ -647,7 +656,8 @@ export namespace Emoji {
 
     let count = 0;
 
-    // oxlint-disable-next-line typescript/no-unnecessary-qualifier allow this call to be spied on
+    // Allow this call to be spied on
+    // oxlint-disable-next-line typescript/no-unnecessary-qualifier
     for (const segment of Emoji.getSegments(input)) {
       if (segment.kind === 'text') {
         return 0; // found other text
@@ -786,17 +796,20 @@ export namespace Emoji {
       const { item, matches } = result;
       const { parent } = item;
 
-      const match = matches?.[0]?.value ?? item.completion;
+      const match = matches?.[0]?.value;
 
       let score: number;
-      if (match.startsWith(query)) {
-        // Exact prefix matches in [0,1] range
-        score = 1 - query.length / match.length;
+      if (item.completion.startsWith(query)) {
+        // Primary completion prefix matches in [0,1] range
+        score = 1 - query.length / item.completion.length;
+      } else if (match != null && match.startsWith(query)) {
+        // Alt prefix matches in [1,2] range
+        score = 2 - query.length / match.length;
       } else {
         const queryScore = result.score ?? 0;
         const rankScore = item.rank / fuses.size;
-        // Other matches in [1,] range ordered by score and rank
-        score = 1 + queryScore + rankScore;
+        // Other matches in [2,] range ordered by score and rank
+        score = 2 + queryScore + rankScore;
       }
 
       return { parent, score };

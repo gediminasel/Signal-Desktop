@@ -535,8 +535,6 @@ function MessageMenu({
   onReact,
   renderMessageContextMenu,
 }: MessageMenuProps) {
-  // This a menu meant for mouse use only
-
   return (
     <div
       className={classNames(
@@ -556,8 +554,8 @@ function MessageMenu({
                   : undefined;
 
                 return (
-                  // This a menu meant for mouse use only
-                  // oxlint-disable-next-line jsx-a11y/click-events-have-key-events
+                  // FIXME: Menus should be keyboard accessible
+                  // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus
                   <div
                     ref={maybePopperRef}
                     onClick={(event: MouseEvent) => {
@@ -580,8 +578,8 @@ function MessageMenu({
           )}
 
           {onDownload && (
-            // This a menu meant for mouse use only
-            // oxlint-disable-next-line jsx-a11y/click-events-have-key-events
+            // FIXME: Menus should be keyboard accessible
+            // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus
             <div
               onClick={onDownload}
               role="button"
@@ -598,8 +596,8 @@ function MessageMenu({
           )}
 
           {onReplyToMessage && (
-            // This a menu meant for mouse use only
-            // oxlint-disable-next-line jsx-a11y/click-events-have-key-events
+            // FIXME: Menus should be keyboard accessible
+            // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus
             <div
               onClick={(event: MouseEvent) => {
                 event.stopPropagation();
@@ -607,7 +605,6 @@ function MessageMenu({
 
                 onReplyToMessage();
               }}
-              // This a menu meant for mouse use only
               role="button"
               aria-label={i18n('icu:replyToMessage')}
               className={classNames(

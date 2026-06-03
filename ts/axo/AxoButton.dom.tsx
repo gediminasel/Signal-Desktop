@@ -68,7 +68,8 @@ export namespace AxoButton {
   const baseStyles = tw(
     'relative inline-flex max-w-full items-center-safe justify-center-safe rounded-full select-none',
     'outline-none keyboard-mode:focus:outline-focus-ring',
-    'forced-colors:border'
+    'forced-colors:border',
+    'forced-colors:aria-disabled:text-[GrayText]'
   );
 
   const baseSubtleVariant = tw(
@@ -263,6 +264,10 @@ export namespace AxoButton {
      */
     disabled?: boolean | null;
     /**
+     * When `true`, takes initial focus when rendered.
+     */
+    autoFocus?: boolean | null;
+    /**
      * Called when the button is clicked.
      * Not called when `pending` or `disabled`.
      */
@@ -302,7 +307,7 @@ export namespace AxoButton {
     const {
       variant,
       size,
-      width,
+      width = 'fit',
       symbol,
       arrow,
       pending,
@@ -310,6 +315,7 @@ export namespace AxoButton {
       pressed,
       expanded,
       controls,
+      autoFocus,
       onClick,
       children,
       ...rest
@@ -338,11 +344,12 @@ export namespace AxoButton {
         aria-expanded={expanded ?? undefined}
         aria-pressed={pressed ?? undefined}
         aria-controls={controls ?? undefined}
+        autoFocus={autoFocus ?? undefined}
         onClick={handleClick}
         className={tw(
           VariantStyles.get(variant),
           SizeStyles.get(size),
-          WidthStyles.get(width ?? 'fit')
+          WidthStyles.get(width)
         )}
         {...rest}
       >

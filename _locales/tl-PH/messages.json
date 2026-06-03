@@ -1,4 +1,19 @@
 {
+  "icu:AxoAlertDialog.Cancel": {
+    "messageformat": "I-cancel"
+  },
+  "icu:AxoButton.Pending": {
+    "messageformat": "Pending"
+  },
+  "icu:AxoDialog.Back": {
+    "messageformat": "Bumalik"
+  },
+  "icu:AxoDialog.Close": {
+    "messageformat": "Isara"
+  },
+  "icu:AxoTextField.Clear": {
+    "messageformat": "Burahin"
+  },
   "icu:AddUserToAnotherGroupModal__title": {
     "messageformat": "I-add sa isang group"
   },
@@ -356,9 +371,6 @@
   "icu:NavTabs__ItemLabel--Settings": {
     "messageformat": "Settings"
   },
-  "icu:NavTabs__ItemLabel--Profile": {
-    "messageformat": "Profile"
-  },
   "icu:NavSidebar__BackButtonLabel": {
     "messageformat": "Bumalik"
   },
@@ -439,15 +451,6 @@
   },
   "icu:pinnedConversationsFull": {
     "messageformat": "Hanggang 4 chats ang pwede mong i-pin"
-  },
-  "icu:loadingMessages--other": {
-    "messageformat": "{daysAgo, plural, one {Naglo-load ang messages na mula noong nakalipas na 1 araw…} other {Naglo-load ang messages na mula noong nakalipas na {daysAgo,number}…}}"
-  },
-  "icu:loadingMessages--yesterday": {
-    "messageformat": "Naglo-load ang messages na mula kahapon…"
-  },
-  "icu:loadingMessages--today": {
-    "messageformat": "Naglo-load ang messages na mula kanina…"
   },
   "icu:view": {
     "messageformat": "Tingnan"
@@ -602,14 +605,14 @@
   "icu:SafetyNumberViewer__KeyTransparency__popup--ok__title": {
     "messageformat": "Ang encryption ay auto-verified para sa chat na ito "
   },
-  "icu:SafetyNumberViewer__KeyTransparency__popup--ok__body": {
-    "messageformat": "Para sa contacts na naka-connect sa 'yo via phone number, automatic na makukumpirma ng Signal kung ang connection ay secure sa pamamagitan ng prosesong key transparency. Para sa karagdagang security, i-verify ang end-to-end encryption manually sa pamamagitan ng pagkumpara ng numbers sa previous screen o sa pag-scan ng code sa kanilang device."
+  "icu:SafetyNumberViewer__KeyTransparency__popup--ok__body-2": {
+    "messageformat": "Para sa mga taong naka-connect mo via phone number, automatic na makukumpirma ng Signal kung ang connection ay secure sa pamamagitan ng prosesong tinatawag na key transparency. Para sa karagdagang security, i-verify ang end-to-end encryption manually sa pamamagitan ng pagkumpara ng numbers sa previous screen o sa pag-scan ng code sa kanilang device."
   },
-  "icu:SafetyNumberViewer__KeyTransparency__popup--fail__title": {
-    "messageformat": "Ang auto-verification ay hindi na available para sa chat na ito"
+  "icu:SafetyNumberViewer__KeyTransparency__popup--fail__title-2": {
+    "messageformat": "Ang auto-verification ay hindi available para sa chat na ito"
   },
-  "icu:SafetyNumberViewer__KeyTransparency__popup--fail__body": {
-    "messageformat": "Hindi na automatic na mave-verify ng Signal ang encryption para sa chat na ito. Maaaring ito ay dahil sa pagpalit ni {name} ng kanyang phone number. I-verify ang end-to-end encryption manually sa pamamagitan ng pagkumpara ng numbers sa previous screen o sa pag-scan ng code sa kanilang device."
+  "icu:SafetyNumberViewer__KeyTransparency__popup--fail__body-2": {
+    "messageformat": "Hindi na automatic na mave-verify ng Signal ang encryption para sa chat na ito. Ito ay maaaring dahil binago ni {name} ang kanyang phone number o dahil sa kanyang phone number privacy settings. I-verify ang end-to-end encryption manually sa pamamagitan ng pagkumpara ng numbers sa previous screen o sa pag-scan ng code sa kanilang device."
   },
   "icu:SafetyNumberViewer__KeyTransparency__popup--unavailable__body": {
     "messageformat": "Kaya lamang i-verify automatically ng Signal ang encryption sa chats kapag connected ka sa isang tao gamit ang kanilang phone number. Kung ang chat ay nagsimula sa isang username o sa isang group in common, i-verify ang end-to-end encryption sa pamamagitan ng pagkumpara ng numbers sa previous screen o sa pag-scan ng code sa kanilang device."
@@ -638,9 +641,6 @@
   "icu:KeyTransparencyErrorDialog__Submit": {
     "messageformat": "Isumite"
   },
-  "icu:KeyTransparencyErrorDialog__Submitting": {
-    "messageformat": "Sina-submit..."
-  },
   "icu:KeyTransparencyOnboardingDialog__Title": {
     "messageformat": "Kaya nang i-auto verify ng Signal ang key encryption"
   },
@@ -652,9 +652,6 @@
   },
   "icu:KeyTransparencyOnboardingDialog__LearnMore": {
     "messageformat": "Matuto pa"
-  },
-  "icu:KeyTransparencyOnboardingDialog__CloseButton__AccessibilityLabel": {
-    "messageformat": "Isara"
   },
   "icu:verified": {
     "messageformat": "Beripikado"
@@ -706,9 +703,6 @@
   },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "Submit log"
-  },
-  "icu:Toast--FailedToSendWithEndorsements": {
-    "messageformat": "Failed to send message with endorsements"
   },
   "icu:Toast--SQLError": {
     "messageformat": "Database error: paki share ng logs mo."
@@ -1286,9 +1280,6 @@
   "icu:PinMessageDialog__Title": {
     "messageformat": "I-pin ang message sa loob ng..."
   },
-  "icu:PinMessageDialog__Close": {
-    "messageformat": "Isara"
-  },
   "icu:PinMessageDialog__Option--TIME_24_HOURS": {
     "messageformat": "24 oras"
   },
@@ -1312,9 +1303,6 @@
   },
   "icu:PinMessageDialog--HasMaxPinnedMessages__Description": {
     "messageformat": "Ang pag-pin ng message na ito ay papalitan ang pinakalumang naka-pin."
-  },
-  "icu:PinMessageDialog--HasMaxPinnedMessages__Cancel": {
-    "messageformat": "I-cancel"
   },
   "icu:PinMessageDialog--HasMaxPinnedMessages__Continue": {
     "messageformat": "Magpatuloy"
@@ -1402,9 +1390,6 @@
   },
   "icu:PinnedMessagesPanel__UnpinAllMessages__ConfirmDialog__Description": {
     "messageformat": "Tatanggalin ang mga naka-pin na message para sa members ng chat na ito."
-  },
-  "icu:PinnedMessagesPanel__UnpinAllMessages__ConfirmDialog__Cancel": {
-    "messageformat": "I-cancel"
   },
   "icu:PinnedMessagesPanel__UnpinAllMessages__ConfirmDialog__Unpin": {
     "messageformat": "I-unpin"
@@ -1592,6 +1577,15 @@
   "icu:Install__support-link": {
     "messageformat": "Kailangan mo ba ng tulong?"
   },
+  "icu:Install__confirm-data-deletion__title": {
+    "messageformat": "Gusto mo bang i-burahin ang lahat ng data?"
+  },
+  "icu:Install__confirm-data-deletion__body": {
+    "messageformat": "Sinusubukan mong mag-link ng ibang Signal account sa desktop na ito. Kung magpapatuloy ka, mabubura ang lahat ng data na kasalukuyang nasa Signal Desktop."
+  },
+  "icu:Install__confirm-data-deletion__continue": {
+    "messageformat": "Magpatuloy"
+  },
   "icu:Preferences--header": {
     "messageformat": "Settings"
   },
@@ -1642,9 +1636,6 @@
   },
   "icu:Preferences__ChatsPage__DeleteChatFolderDialog__DeleteButton": {
     "messageformat": "Burahin"
-  },
-  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__CancelButton": {
-    "messageformat": "I-cancel"
   },
   "icu:Preferences__ChatFoldersPage__Title": {
     "messageformat": "Chat folders"
@@ -1769,9 +1760,6 @@
   "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__DeleteButton": {
     "messageformat": "Burahin"
   },
-  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__CancelButton": {
-    "messageformat": "I-cancel"
-  },
   "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__Title": {
     "messageformat": "I-save ang changes?"
   },
@@ -1791,10 +1779,10 @@
     "messageformat": "I-cancel"
   },
   "icu:Preferences__PrivacyPage__ShowStatusIcon__Label": {
-    "messageformat": "Show status icon"
+    "messageformat": "Ipakita ang status icon"
   },
   "icu:Preferences__PrivacyPage__ShowStatusIcon__Description": {
-    "messageformat": "Magpakita ng icon sa message details when they were delivered gamit ang sealed sender."
+    "messageformat": "Magpakita ng icon sa message details kapag na-deliver ito gamit ang sealed sender."
   },
   "icu:Preferences__PrivacyPage__KeyTransparency__Label": {
     "messageformat": "Automatic Key Verification"
@@ -1956,25 +1944,25 @@
     "messageformat": "Karagdagang options"
   },
   "icu:CallingParticipantMenu__MuteAudio": {
-    "messageformat": "Mute audio"
+    "messageformat": "I-mute ang audio"
   },
   "icu:CallingParticipantMenu__UnmuteAudio": {
-    "messageformat": "Unmute audio"
+    "messageformat": "I-unmute ang audio"
   },
   "icu:CallingParticipantMenu__ViewProfile": {
-    "messageformat": "View profile"
+    "messageformat": "Tignan ang profile"
   },
   "icu:CallingParticipantMenu__GoToChat": {
-    "messageformat": "Go to chat"
+    "messageformat": "Pumunta sa chat"
   },
   "icu:CallingParticipantMenu__RemoveFromCall": {
-    "messageformat": "Remove from call"
+    "messageformat": "Tanggalin sa tawag"
   },
   "icu:CallingParticipantListItem__ContextMenuButton": {
-    "messageformat": "More actions"
+    "messageformat": "Iba pang actions"
   },
   "icu:CallingParticipantListItem__Presenting": {
-    "messageformat": "Presenting"
+    "messageformat": "Nagpre-present"
   },
   "icu:CallingPendingParticipants__ApproveUser": {
     "messageformat": "I-approve ang request na sumali"
@@ -2014,9 +2002,6 @@
   },
   "icu:CallingRaisedHandsList__Title": {
     "messageformat": "{count, plural, one {{count,number} ang nagtaas ng kamay} other {{count,number} ang nagtaas ng kamay}}"
-  },
-  "icu:CallingRaisedHandsList__TitleHint": {
-    "messageformat": "(first to last)"
   },
   "icu:CallingReactions--me": {
     "messageformat": "Ikaw"
@@ -2204,26 +2189,23 @@
   "icu:deleteAllDataBody": {
     "messageformat": "Gusto mo bang burahin ang lahat ng data at messages mula sa version na ito ng Signal Desktop? Hindi mabubura ang iyong Signal account at data nito sa phone mo o ibang linked devices."
   },
-  "icu:deleteAccountProgress": {
-    "messageformat": "Deleting account and all data…"
-  },
   "icu:deleteAllDataProgress": {
     "messageformat": "Dini-disconnect at binubura ang lahat ng data…"
   },
   "icu:deleteAccountHeader": {
-    "messageformat": "Delete account"
+    "messageformat": "Burahin ang account"
   },
   "icu:deleteAccountExplanation": {
-    "messageformat": "This will delete your account info, profile, and all of your messages. You will also be removed from all Signal groups."
+    "messageformat": "Buburahin nito ang iyong account info, profile, at lahat ng messages mo. Tatanggalin ka rin mula sa lahat ng Signal groups."
   },
   "icu:deleteAccountButton": {
-    "messageformat": "Delete account"
+    "messageformat": "Burahin ang account"
   },
   "icu:deleteAccountDialogHeader": {
-    "messageformat": "Delete Account?"
+    "messageformat": "Burahin ang Account?"
   },
   "icu:deleteAccountDialogBody": {
-    "messageformat": "This will delete your account info, profile, and all of your messages. You will also be removed from all Signal groups. The app will close after this process is complete."
+    "messageformat": "Buburahin nito ang iyong account info, profile, at lahat ng messages mo. Tatanggalin ka rin mula sa lahat ng Signal groups. Magsasara ang app kapag natapos na ang prosesong ito."
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Mayroon kang lumang data mula sa lumang installation ng Signal Desktop. Mabubura ito kapag nagpatuloy ka at magsisimula ka ulit sa simula."
@@ -2302,9 +2284,6 @@
   },
   "icu:syncNow": {
     "messageformat": "Import now"
-  },
-  "icu:syncing": {
-    "messageformat": "Nagi-import…"
   },
   "icu:syncFailed": {
     "messageformat": "Nabigo ang pag-import. Siguraduhing nakakonekta sa internet ang iyong computer at cellphone."
@@ -2571,10 +2550,10 @@
     "messageformat": "Unlinked"
   },
   "icu:unregisteredWarning": {
-    "messageformat": "Click to re-register and continue messaging. Signal Desktop is unregistered likely because you registered your phone number with Signal on a different device."
+    "messageformat": "I-click para mag-register ulit at ituloy ang pag-message. Maaaring na-unregister ang Signal dahil ang iyong registered phone number sa Signal ay nasa ibang device."
   },
   "icu:unregistered": {
-    "messageformat": "No longer registered"
+    "messageformat": "Hindi na registered"
   },
   "icu:autoUpdateNewVersionTitle": {
     "messageformat": "May Available na Update"
@@ -2836,6 +2815,24 @@
   },
   "icu:stickers--StickerPreview--Error": {
     "messageformat": "Error opening sticker pack. I-check ang iyong internet connection at subukan ulit."
+  },
+  "icu:stickers--StickerPreview--Install": {
+    "messageformat": "Add Stickers"
+  },
+  "icu:stickers--StickerPreview--Remove": {
+    "messageformat": "Remove"
+  },
+  "icu:stickers--StickerPreview--Link": {
+    "messageformat": "Link"
+  },
+  "icu:stickers--StickerPreview--LinkCopied": {
+    "messageformat": "Link copied"
+  },
+  "icu:stickers--StickerPreview--StickerCount": {
+    "messageformat": "{count, plural, one {{count,number} sticker} other {{count,number} stickers}}"
+  },
+  "icu:stickers--StickerPreview--StickerNoEmojiAriaLabel": {
+    "messageformat": "Sticker without an emoji"
   },
   "icu:FunPicker__Tab--Emojis": {
     "messageformat": "Emoji"
@@ -3305,6 +3302,9 @@
   "icu:Keyboard--toggle-preview": {
     "messageformat": "I-on o i-off ang expanded preview"
   },
+  "icu:Keyboard--toggle-raise-hand": {
+    "messageformat": "Itaas o ibaba ang kamay mo (para sa group calls lamang)"
+  },
   "icu:Keyboard--accept-video-call": {
     "messageformat": "Sagutin ang tawag na may video (video call lang)"
   },
@@ -3362,50 +3362,38 @@
   "icu:ReactionsViewer--all": {
     "messageformat": "Lahat"
   },
-  "icu:SafetyTipsModal__Title": {
+  "icu:SafetyTipsModal__Title-v2": {
     "messageformat": "Tips Para Sa Kaligtasan"
   },
-  "icu:SafetyTipsModal__Title-v2": {
-    "messageformat": "Safety tips"
-  },
   "icu:SafetyTipsModal__TipTitle--SignalChat": {
-    "messageformat": "Don’t respond to chats from Signal"
+    "messageformat": "Huwag sagutin ang chats mula sa Signal"
   },
   "icu:SafetyTipsModal__TipDescription--SignalChat": {
-    "messageformat": "Signal will never message you for your registration code, PIN, or recovery key. Never respond to a chat pretending to be Signal."
+    "messageformat": "Ang Signal ay hindi kailanman magme-message tungkol sa registration code, PIN, o recovery key mo. Huwag mag-reply sa chats na nagpapanggap na Signal."
   },
   "icu:SafetyTipsModal__TipTitle--NamesAndPhotos": {
-    "messageformat": "Review names and photos"
+    "messageformat": "I-review ang names at photos"
   },
   "icu:SafetyTipsModal__TipDescription--NamesAndPhotos": {
-    "messageformat": "Look out for the “Name not verified” notice. Everyone sets their own profile name in Signal."
+    "messageformat": "Hanapin ang \"Hindi verified ang pangalan\" na notice. Ang bawat user ang bahalang gumawa ng sarili nilang profile name dito sa Signal."
   },
   "icu:SafetyTipsModal__TipTitle--Scams": {
-    "messageformat": "Look out for scams"
+    "messageformat": "Mag-ingat sa mga scam"
   },
   "icu:SafetyTipsModal__TipDescription--Scams": {
-    "messageformat": "Avoid vague messages that try to get you to reply. Be aware of financial tips and suspicious web links."
-  },
-  "icu:SafetyTipsModal__Description": {
-    "messageformat": "Mag-ingat sa pagtanggap ng mga message request mula sa mga taong hindi mo kilala. Mag-ingat sa:"
+    "messageformat": "Iwasan ang kahina-hinalang messages na sinusubukan kang mag-reply. Mag-ingat sa financial tips at delikadong web links."
   },
   "icu:SafetyTipsModal__TipTitle--DontRespond": {
-    "messageformat": "Don’t respond to chats from Signal"
+    "messageformat": "Huwag sagutin ang chats mula sa Signal"
   },
   "icu:SafetyTipsModal__TipDescription--DontRespond": {
-    "messageformat": "Signal will never message you for your registration code, PIN, or recover key. Don't reply to chats pretending to be Signal or Signal Support. Bad actors set up fake names to try to take over your account."
+    "messageformat": "Hindi magme-message kailanman ang Signal tungkol sa registration code, PIN, o recover key mo. Huwag mag-reply sa chats na nagpapanggap na Signal o Signal Support. Ang mga ito'y gumagawa ng pekeng chats para subukang i-take over ang account mo."
   },
   "icu:SafetyTipsModal__TipTitle--ReviewNames": {
-    "messageformat": "Review names and photos"
+    "messageformat": "I-review ang names at photos"
   },
   "icu:SafetyTipsModal__TipDescription--ReviewNames": {
-    "messageformat": "Look out for the “Name not verified” notice. Everyone sets their own profile name and photo in Signal. If you’re unsure who a new request is from it’s safer to ignore it."
-  },
-  "icu:SafetyTipsModal__TipTitle--Fake": {
-    "messageformat": "Pekeng pangalan at accounts"
-  },
-  "icu:SafetyTipsModal__TipDescription--Fake": {
-    "messageformat": "Hindi kailanman makikipag-ugnayan sa 'yo ang Signal para hingin ang registration code o PIN mo. Mag-ingat sa requests na nagpapanggap bilang ibang tao. Ang profile names ay pinili ng may-ari ng account at hindi verified."
+    "messageformat": "Hanapin ang \"Hindi verified ang pangalan\" na notice. Ang lahat ay naglalagay ng sarili nilang profile name at photo sa Signal. Kung hindi ka sigurado kung kanino galing ang bagong request, mas maiging balewalain mo ito."
   },
   "icu:SafetyTipsModal__TipTitle--Crypto": {
     "messageformat": "Mga scam kaugnay ng crypto o pera"
@@ -3419,38 +3407,20 @@
   "icu:SafetyTipsModal__TipDescription--Vague": {
     "messageformat": "Ang mga spammer ay madalas na nag-uumpisa sa isang simpleng mensahe tulad ng \"Hi\" para maakit ka. Kapag sumagot ka, maaari ka nilang kausapin pa."
   },
-  "icu:SafetyTipsModal__TipTitle--Links": {
-    "messageformat": "Mga mensahe na may mga link"
-  },
   "icu:SafetyTipsModal__TipDescription--Links": {
     "messageformat": "Mag-ingat sa mga mensahe mula sa mga taong hindi mo kilala na may mga link papunta sa ibang website. Huwag na huwag i-click ang anumang link mula sa taong hindi mo pinagkakatiwalaan."
   },
   "icu:SafetyTipsModal__TipTitle--Links-v2": {
-    "messageformat": "Messages with web links"
+    "messageformat": "Messages na may kasamang web links"
   },
   "icu:SafetyTipsModal__TipTitle--Business": {
     "messageformat": "Mga pekeng negosyo at institusyon"
   },
-  "icu:SafetyTipsModal__TipTitle--Business-v2": {
-    "messageformat": "Fake businesses"
-  },
   "icu:SafetyTipsModal__TipDescription--Business": {
     "messageformat": "Mag-ingat sa mga negosyo o ahensya ng gobyerno na nakikipag-ugnayan sa iyo. Maaaring spam ang mga mensaheng may kaugnayan sa mga ahensya ng buwis, courier, at iba pa."
   },
-  "icu:SafetyTipsModal__DotLabel": {
-    "messageformat": "Pumunta sa page {page,number}"
-  },
-  "icu:SafetyTipsModal__Button--Previous": {
-    "messageformat": "Bumalik sa nakaraang tip"
-  },
-  "icu:SafetyTipsModal__Button--Next": {
-    "messageformat": "Pumunta sa kasunod na tip"
-  },
-  "icu:SafetyTipsModal__Button--Done": {
-    "messageformat": "Tapos na"
-  },
   "icu:SafetyTipsModal__Button--ViewMore": {
-    "messageformat": "View more"
+    "messageformat": "Tignan ang iba pa"
   },
   "icu:MessageRequests--message-direct": {
     "messageformat": "Hayaang mag-message si {name} sa'yo at i-share sa kanya ang pangalan at photo mo? Hindi niya malalaman na nakita mo ang kanyang message hanggang sa i-accept mo ito."
@@ -3548,17 +3518,11 @@
   "icu:MessageRequests--accept": {
     "messageformat": "Tanggapin"
   },
-  "icu:MessageRequests--accept-confirm-title": {
+  "icu:MessageRequests--accept-confirm-title-v2": {
     "messageformat": "Tanggapin ang request?"
   },
-  "icu:MessageRequests--accept-confirm-body": {
-    "messageformat": "Suriin nang maigi ang requests. Ang profile names ay pinili ng may-ari ng account at hindi verified."
-  },
-  "icu:MessageRequests--accept-confirm-title-v2": {
-    "messageformat": "Accept request?"
-  },
   "icu:MessageRequests--accept-confirm-body-v2": {
-    "messageformat": "Only accept requests from people you trust. <bold>Signal will never</bold> message you for a registration code, PIN, or recovery key."
+    "messageformat": "Tanggapin lang ang requests mula sa mga taong pinagkakatiwalaan mo. <bold>Ang Signal ay hindi kailanman</bold> magme-message sa'yo tungkol sa registration code, PIN, o recovery key mo."
   },
   "icu:MessageRequests--continue": {
     "messageformat": "Magpatuloy"
@@ -3614,9 +3578,6 @@
   "icu:ConversationHero--signal-official-chat": {
     "messageformat": "Ito ang opisyal at natatanging chat mula sa Signal"
   },
-  "icu:ConversationHero--signal-official-account": {
-    "messageformat": "Official account"
-  },
   "icu:ConversationHero--signal-official-chat-title": {
     "messageformat": "Official chat"
   },
@@ -3624,7 +3585,7 @@
     "messageformat": "Ito ang opisyal at natatanging chat mula sa Signal. Maging updated sa mga balita at release notes."
   },
   "icu:Timeline--signal-official-chat--chip": {
-    "messageformat": "The only official chat from Signal."
+    "messageformat": "Ito ang opisyal at natatanging chat mula sa Signal."
   },
   "icu:ConversationHero--release-notes": {
     "messageformat": "Maging updated sa mga balita at release notes."
@@ -3896,9 +3857,6 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "A window"
   },
-  "icu:calling__ParticipantInfoButton": {
-    "messageformat": "Karagdagang info tungkol sa contact na ito"
-  },
   "icu:CallingAdhocCallInfo__CopyLink": {
     "messageformat": "Kopyahin ang call link"
   },
@@ -3925,9 +3883,6 @@
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
     "messageformat": "Bago ka sumali ng call, makikita mo lang ang mga pangalan ng phone contacts mo, mga taong kasama mo sa isang group, o mga taong naka-chat mo na nang 1:1. Makikita mo na ng pangalan at photos ng lahat kapag sumali ka na sa call."
-  },
-  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
-    "messageformat": "OK"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -4610,9 +4565,6 @@
   "icu:close": {
     "messageformat": "Isara"
   },
-  "icu:clear": {
-    "messageformat": "Clear"
-  },
   "icu:previous": {
     "messageformat": "Previous"
   },
@@ -4623,40 +4575,22 @@
     "messageformat": "Maaari itong tumagal nang ilang minuto"
   },
   "icu:DeletingAccount__LeavingGroups__Title": {
-    "messageformat": "Leaving groups..."
+    "messageformat": "Inaalis ka sa groups..."
   },
   "icu:DeletingAccount__LeavingGroups__Detail": {
-    "messageformat": "Depending on the number of groups you’re in, this might take a few minutes"
+    "messageformat": "Maaari itong umabot ng ilang minuto depende sa dami ng groups na sinalihan mo"
   },
   "icu:DeletingAccount__DeletingData__Title": {
-    "messageformat": "Deleting account and all data..."
+    "messageformat": "Binubura ang account at lahat ng data ..."
   },
   "icu:DeletingAccount__DeletingData__Detail": {
-    "messageformat": "Deleting user data and resetting the app"
+    "messageformat": "Binubura ang user data at nire-reset ang app"
   },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Mag-donate sa Signal"
   },
-  "icu:BadgeSustainerInstructions__header": {
-    "messageformat": "Mag-donate sa Signal"
-  },
-  "icu:BadgeSustainerInstructions__subheader": {
-    "messageformat": "Signal is powered by people like you. Mag-contribute para maka-receive ng badge."
-  },
-  "icu:BadgeSustainerInstructions__instructions__1": {
-    "messageformat": "I-open ang Signal sa iyong phone"
-  },
-  "icu:BadgeSustainerInstructions__instructions__2": {
-    "messageformat": "I-tap ang iyong profile photo sa top left para mabuksan ang Settings"
-  },
-  "icu:BadgeSustainerInstructions__instructions__3": {
-    "messageformat": "I-tap ang \"Donate to Signal\" at mag-subscribe"
-  },
-  "icu:ProfileMovedModal__title": {
-    "messageformat": "Inilipat ang profile mo"
-  },
-  "icu:ProfileMovedModal__description": {
-    "messageformat": "Buksan ang Settings tab para tignan at i-edit ang profile mo."
+  "icu:BadgeDialog__name-supports-signal": {
+    "messageformat": "Sinusuportahan ni {name} ang Signal"
   },
   "icu:BackupImportScreen__title": {
     "messageformat": "Sini-sync ang messages"
@@ -4747,9 +4681,6 @@
   },
   "icu:BackupMediaDownloadCancelConfirmation__description": {
     "messageformat": "Hindi natapos ang pag-sync ng media mo. Kung pipiliin mong mag-cancel, maaari kang mag-sync ulit sa pamamagitan ng pag-relink ng device na ito. <learnMoreLink>Matuto pa</learnMoreLink>."
-  },
-  "icu:BackupMediaDownloadCancelConfirmation__button-continue": {
-    "messageformat": "Ipagpatuloy ang pag-sync"
   },
   "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
     "messageformat": "I-cancel ang pag-sync"
@@ -4927,9 +4858,6 @@
   },
   "icu:ConversationDetails--member-label--no-members": {
     "messageformat": "Walang ibang members ang mayroong labels"
-  },
-  "icu:ConversationDetails--member-label--saving": {
-    "messageformat": "Saving changes..."
   },
   "icu:ConversationDetails--member-label--error-title": {
     "messageformat": "Hindi ma-save ang member label"
@@ -5298,9 +5226,6 @@
   "icu:DeleteAttachmentModal__Body": {
     "messageformat": "Permanenteng mabubura ang item. Anumang text na kasama ng item ay mabubura rin."
   },
-  "icu:DeleteAttachmentModal__Close": {
-    "messageformat": "Isara"
-  },
   "icu:DeleteAttachmentModal__Delete": {
     "messageformat": "Burahin"
   },
@@ -5410,7 +5335,7 @@
     "messageformat": "Gamitin ang link na ito para sumali sa Signal call: {url}"
   },
   "icu:MessageRequestWarning__review-carefully": {
-    "messageformat": "Review requests carefully"
+    "messageformat": "I-review ang requests nang maigi"
   },
   "icu:MessageRequestWarning__safety-tips-v2": {
     "messageformat": "Tips Para Sa Kaligtasan"
@@ -6014,10 +5939,10 @@
     "messageformat": "Mag-generate ng link previews"
   },
   "icu:Preferences__link-previews--new-description": {
-    "messageformat": "I-retrieve ang link previews directly from websites for messages you send."
+    "messageformat": "Direktang kuhanin sa websites ang link previews para sa pinadala mong messages."
   },
   "icu:Preferences__address-book-photos--title": {
-    "messageformat": "Use address book photos"
+    "messageformat": "Gamitin ang address book photos"
   },
   "icu:Preferences__address-book-photos--description": {
     "messageformat": "I-display ang contact photos mula sa address book mo kung available."
@@ -6060,9 +5985,6 @@
   },
   "icu:PlaintextExport--Confirmation--ContinueButton": {
     "messageformat": "Magpatuloy"
-  },
-  "icu:PlaintextExport--Confirmation--WaitingLabel": {
-    "messageformat": "Naghihintay ng input"
   },
   "icu:PlaintextExport--OSPrompt--Mac": {
     "messageformat": "i-export ang chat history mo"
@@ -6382,20 +6304,17 @@
   "icu:Preferences--blocked": {
     "messageformat": "Naka-block"
   },
-  "icu:Preferences--blocked-count": {
-    "messageformat": "{num, plural, one {{num,number} contact} other {{num,number} contacts}}"
-  },
   "icu:Preferences--blocked-count-both-new": {
-    "messageformat": "{num, plural, =0 { No users or groups } one {{num,number} user or group} other {{num,number} users or groups}}"
+    "messageformat": "{num, plural, =0 { Walang users o groups } one {{num,number} user o group} other {{num,number} users o groups}}"
   },
   "icu:Preferences--blocked-count-contacts-new": {
-    "messageformat": "{num, plural, =0 { No users } one {{num,number} user} other {{num,number} users}}"
+    "messageformat": "{num, plural, =0 { Walang users } one {{num,number} user} other {{num,number} users}}"
   },
   "icu:Preferences--blocked-count-groups-new": {
-    "messageformat": "{num, plural, =0 { No groups } one {{num,number} group} other {{num,number} groups}}"
+    "messageformat": "{num, plural, =0 { Walang groups } one {{num,number} group} other {{num,number} groups}}"
   },
   "icu:Preferences--blocked-users--description": {
-    "messageformat": "Blocked users will not be able to call you or send you messages"
+    "messageformat": "Hindi makakatawag o makakapag-send sa 'yo ng messages ang blocked users."
   },
   "icu:Preferences--blocked-users": {
     "messageformat": "Blocked Users"
@@ -6644,13 +6563,13 @@
     "messageformat": "Read receipts"
   },
   "icu:Preferences--read-receipts--description": {
-    "messageformat": "Kapag naka-disable, hindi mo makikita ang read receipts mula sa iba."
+    "messageformat": "Kapag naka-disable ito, hindi mo makikita ang read receipts mula sa iba."
   },
   "icu:Preferences--typing-indicators": {
     "messageformat": "Typing indicators"
   },
   "icu:Preferences--typing-indicators--description": {
-    "messageformat": "Kapag naka-disable, hindi mo makikita ang typing indicators mula sa iba."
+    "messageformat": "Kapag naka-disable ito, hindi mo makikita ang typing indicators mula sa iba."
   },
   "icu:Preferences--updates": {
     "messageformat": "Updates"
@@ -6974,7 +6893,7 @@
     "messageformat": "Tinanggap mo ang message request"
   },
   "icu:MessageRequestResponseNotification__Message--Accepted-Contact-Title": {
-    "messageformat": "You accepted {userProfileName}'s message request"
+    "messageformat": "Tinanggap mo ang message request ni {userProfileName}"
   },
   "icu:MessageRequestResponseNotification__Message--Reported": {
     "messageformat": "Iniulat bilang spam"
@@ -6991,11 +6910,8 @@
   "icu:MessageRequestResponseNotification__Message--Unblocked--Group": {
     "messageformat": "Inunblock mo ang group"
   },
-  "icu:MessageRequestResponseNotification__Button--Options": {
-    "messageformat": "Options"
-  },
   "icu:MessageRequestResponseNotification__Button--block-or-report": {
-    "messageformat": "Block or Report..."
+    "messageformat": "I-block o I-report..."
   },
   "icu:MessageRequestResponseNotification__Button--LearnMore": {
     "messageformat": "Matuto pa"
@@ -7169,7 +7085,7 @@
     "messageformat": "View Receipts"
   },
   "icu:StoriesSettings__view-receipts--new-description": {
-    "messageformat": "Makita at i-share kapag na-view ang stories mo. Kung naka-disable ito, hindi mo makikita kung sinong nag-view ng story mo."
+    "messageformat": "Makita at i-share kapag na-view ang stories mo. Kapag naka-disable ito, hindi mo makikita kung sinong nag-view ng story mo."
   },
   "icu:GroupStorySettingsModal__members_title": {
     "messageformat": "Sinong pwedeng makakita ng story na ito"
@@ -7580,9 +7496,6 @@
   "icu:DraftGifMessageSendModal__SendButtonLabel": {
     "messageformat": "I-send"
   },
-  "icu:DraftGifMessageSendModal__CancelButtonLabel": {
-    "messageformat": "I-cancel"
-  },
   "icu:EditHistoryMessagesModal__title": {
     "messageformat": "History ng edits"
   },
@@ -7750,9 +7663,6 @@
   },
   "icu:CallLinkDetails__DeleteLinkModal__Body": {
     "messageformat": "Hindi na gagana ang link na ito para sa mga taong may kopya nito."
-  },
-  "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
-    "messageformat": "I-cancel"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
     "messageformat": "Burahin"
@@ -8147,12 +8057,6 @@
   "icu:Donations__badge-modal--help-text": {
     "messageformat": "Maaari mo itong ayusin sa iyong mobile device sa Settings → Mag-donate sa Signal → Badges"
   },
-  "icu:CallQualitySurvey__CloseButton__AccessibilityLabel": {
-    "messageformat": "Isara"
-  },
-  "icu:CallQualitySurvey__BackButton__AccessibilityLabel": {
-    "messageformat": "Bumalik"
-  },
   "icu:CallQualitySurvey__HowWasYourCall__PageTitle": {
     "messageformat": "Kumusta ang tawag mo?"
   },
@@ -8240,9 +8144,6 @@
   "icu:CallQualitySurvey__ConfirmSubmission__SubmitButton": {
     "messageformat": "Isumite"
   },
-  "icu:CallQualitySurvey__ConfirmSubmission__Submitting": {
-    "messageformat": "Sinu-submit ang survey..."
-  },
   "icu:CallQualitySurvey__SubmissionFailed": {
     "messageformat": "Hindi na-submit ang survey"
   },
@@ -8260,6 +8161,36 @@
   },
   "icu:Carousel__Slide--Role": {
     "messageformat": "Slide"
+  },
+  "icu:MaybeTransferModal__title": {
+    "messageformat": "Gusto mo bang ilipat ang message history ng phone mo sa desktop na ito?"
+  },
+  "icu:MaybeTransferModal__description": {
+    "messageformat": "Kapag ini-link mo ulit ang desktop na ito, maaari mong i-transfer ang message history ng phone mo sa device na ito."
+  },
+  "icu:MaybeTransferModal__learnMore": {
+    "messageformat": "Matuto pa"
+  },
+  "icu:MaybeTransferModal__replaceHistory": {
+    "messageformat": "<bold>Papalitan</bold> nito ang message history sa desktop mo."
+  },
+  "icu:MaybeTransferModal__scanQrCode": {
+    "messageformat": "Kailangan mong mag-link ulit sa pamamagitan ng pag-scan ng QR code."
+  },
+  "icu:MaybeTransferModal__media": {
+    "messageformat": "Kung may paid Signal Secure Backups ka, malilipat lahat ng media mo. Kung hindi, ang media mo lang nitong nakaraang 45 araw ang isasama."
+  },
+  "icu:MaybeTransferModal__transfer": {
+    "messageformat": "Mag-transfer"
+  },
+  "icu:MaybeTransferModal__dontTransfer": {
+    "messageformat": "'Wag ilipat"
+  },
+  "icu:DeleteDataAndRelinkConfirmationDialog__title": {
+    "messageformat": "Gusto mo bang i-burahin ang lahat ng data?"
+  },
+  "icu:DeleteDataAndRelinkConfirmationDialog__body": {
+    "messageformat": "Mabubura ang lahat ng data na kasalukuyang nasa Signal Desktop. Maaari kang mag-scan ng QR code at mag-transfer ng message history mo mula sa phone mo."
   },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "Ang version na ito'y may small tweaks at bug fixes to keep Signal running smoothly.",
@@ -8289,7 +8220,7 @@
     "messageformat": "Dagdag na maliliit na pag-aayos, pag-alis ng bugs, at pagpapaganda ng takbo ng app. Maraming salamat sa paggamit ng Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__8.10--0": {
-    "messageformat": "The freshly spun emoji in Unicode 17.0 have now pirouetted into place in Signal. Send a message reaction with the new Ballet Dancer emoji to perform your own digital version of a pas de chat."
+  "icu:WhatsNew__8.13--0": {
+    "messageformat": "In-update naming ang design ng listahan ng mga nakataas na kamay sa group calls."
   }
 }

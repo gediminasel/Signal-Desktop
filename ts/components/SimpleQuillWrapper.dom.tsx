@@ -11,11 +11,12 @@ export type Props = {
   defaultValue: Delta | undefined;
   formats: Array<string>;
   modules: Record<string, unknown>;
-  onChange?(): void;
+  onChange?: () => void;
   placeholder: string;
   readOnly: boolean | undefined;
 };
 
+// oxlint-disable-next-line react/prefer-function-component
 export class SimpleQuillWrapper extends Component<Props> {
   quill: Quill | undefined;
   quillElement = createRef<HTMLDivElement>();

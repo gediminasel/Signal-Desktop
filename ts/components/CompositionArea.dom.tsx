@@ -66,7 +66,6 @@ import {
 import { MediaEditor } from './MediaEditor.dom.tsx';
 import { isImageTypeSupported } from '../util/GoogleChrome.std.ts';
 import * as KeyboardLayout from '../services/keyboardLayout.dom.ts';
-import { usePrevious } from '../hooks/usePrevious.std.ts';
 import { PanelType } from '../types/Panels.std.ts';
 import type { SmartCompositionRecordingDraftProps } from '../state/smart/CompositionRecordingDraft.preload.tsx';
 import { useEscapeHandling } from '../hooks/useEscapeHandling.dom.ts';
@@ -145,8 +144,8 @@ export type OwnProps = Readonly<{
   left: boolean | null;
   linkPreviewLoading: boolean;
   linkPreviewResult: LinkPreviewForUIType | null;
-  onClearAttachments(conversationId: string): unknown;
-  onCloseLinkPreview(conversationId: string): unknown;
+  onClearAttachments: (conversationId: string) => unknown;
+  onCloseLinkPreview: (conversationId: string) => unknown;
   platform: string;
   showToast: ShowToastAction;
   processAttachments: (options: {
@@ -154,12 +153,12 @@ export type OwnProps = Readonly<{
     files: ReadonlyArray<File>;
     flags: number | null;
   }) => unknown;
-  setMediaQualitySetting(conversationId: string, isHQ: boolean): unknown;
-  sendStickerMessage(
+  setMediaQualitySetting: (conversationId: string, isHQ: boolean) => unknown;
+  sendStickerMessage: (
     id: string,
     opts: { packId: string; stickerId: number }
-  ): unknown;
-  sendEditedMessage(
+  ) => unknown;
+  sendEditedMessage: (
     conversationId: string,
     options: {
       bodyRanges?: DraftBodyRanges;
@@ -168,8 +167,8 @@ export type OwnProps = Readonly<{
       quoteSentAt?: number;
       targetMessageId: string;
     }
-  ): unknown;
-  sendMultiMediaMessage(
+  ) => unknown;
+  sendMultiMediaMessage: (
     conversationId: string,
     options: {
       draftAttachments?: ReadonlyArray<AttachmentDraftType>;
@@ -179,8 +178,8 @@ export type OwnProps = Readonly<{
       timestamp?: number;
       voiceNoteAttachment?: InMemoryAttachmentDraftType;
     }
-  ): unknown;
-  sendPoll(conversationId: string, poll: PollCreateType): unknown;
+  ) => unknown;
+  sendPoll: (conversationId: string, poll: PollCreateType) => unknown;
   quotedMessageId: string | null;
   quotedMessageProps: null | ReadonlyDeep<
     Omit<
@@ -197,17 +196,17 @@ export type OwnProps = Readonly<{
   ) => unknown;
   scrollToMessage: (conversationId: string, messageId: string) => unknown;
   setComposerFocus: (conversationId: string) => unknown;
-  setMessageToEdit(conversationId: string, messageId: string): unknown;
-  setQuoteByMessageId(
+  setMessageToEdit: (conversationId: string, messageId: string) => unknown;
+  setQuoteByMessageId: (
     conversationId: string,
     messageId: string | undefined
-  ): unknown;
+  ) => unknown;
   isViewOnce: boolean;
-  setViewOnce(options: {
+  setViewOnce: (options: {
     conversationId: string;
     value: boolean;
     toastNotify: boolean;
-  }): unknown;
+  }) => unknown;
   shouldSendHighQualityAttachments: boolean;
   showConversation: ShowConversationType;
   warmupRecording: () => void;
@@ -527,81 +526,96 @@ export const CompositionArea = memo(function CompositionArea({
   });
 
   // Focus input on first mount
-  const previousFocusCounter = usePrevious<number | undefined>(
-    focusCounter,
-    focusCounter
-  );
   useEffect(() => {
     if (inputApiRef.current) {
       inputApiRef.current.focus();
     }
   }, []);
-  // Focus input whenever explicitly requested
-  useEffect(() => {
-    if (focusCounter !== previousFocusCounter && inputApiRef.current) {
-      inputApiRef.current.focus();
-    }
-  }, [inputApiRef, focusCounter, previousFocusCounter]);
 
-  const previousSendCounter = usePrevious(sendCounter, sendCounter);
-  const previousConversationId = usePrevious(conversationId, conversationId);
+  // Focus input whenever explicitly requested
+  const inputFocusedRef = useRef({ focusCounter });
+  useEffect(() => {
+    if (
+      inputApiRef.current &&
+      inputFocusedRef.current.focusCounter !== focusCounter
+    ) {
+      inputApiRef.current.focus();
+      inputFocusedRef.current = { focusCounter };
+    }
+  }, [inputApiRef, focusCounter]);
+
+  const inputResetRef = useRef({ sendCounter, conversationId });
   useEffect(() => {
     if (!inputApiRef.current) {
       return;
     }
-    if (conversationId !== previousConversationId) {
-      return;
-    }
 
-    if (previousSendCounter !== sendCounter) {
+    if (
+      inputResetRef.current.sendCounter !== sendCounter ||
+      inputResetRef.current.conversationId !== conversationId
+    ) {
       inputApiRef.current.reset();
+      inputResetRef.current = {
+        sendCounter,
+        conversationId,
+      };
     }
-  }, [
-    conversationId,
-    previousConversationId,
-    previousSendCounter,
-    sendCounter,
-  ]);
+  }, [conversationId, sendCounter]);
 
   // We want to reset the state of Quill only if:
   //
   // - Our other device edits the message (edit history length would change)
   // - User begins editing another message.
-  const editHistoryLength = draftEditMessage?.editHistoryLength;
-  const hasEditHistoryChanged =
-    usePrevious(editHistoryLength, editHistoryLength) !== editHistoryLength;
-  const hasEditedMessageChanged =
-    usePrevious(editedMessageId, editedMessageId) !== editedMessageId;
-
-  const hasEditDraftChanged = hasEditHistoryChanged || hasEditedMessageChanged;
-  useEffect(() => {
-    if (!hasEditDraftChanged) {
-      return;
-    }
-
-    inputApiRef.current?.setContents(
-      draftEditMessageBody ?? '',
-      draftBodyRanges ?? undefined,
-      true
-    );
-  }, [draftBodyRanges, draftEditMessageBody, hasEditDraftChanged]);
+  const editDraftContentsSetRef = useRef<{
+    targetMessageId: string;
+    editHistoryLength: number;
+  }>(null);
 
   useEffect(() => {
-    if (conversationId === previousConversationId) {
+    if (!inputApiRef.current) {
       return;
     }
 
-    if (!draftText) {
-      inputApiRef.current?.setContents('');
+    if (
+      editDraftContentsSetRef.current?.targetMessageId !==
+        draftEditMessage?.targetMessageId ||
+      editDraftContentsSetRef.current?.editHistoryLength !==
+        draftEditMessage?.editHistoryLength
+    ) {
+      inputApiRef.current.setContents(
+        draftEditMessageBody ?? '',
+        draftBodyRanges ?? undefined,
+        true
+      );
+      editDraftContentsSetRef.current = draftEditMessage
+        ? {
+            targetMessageId: draftEditMessage.targetMessageId,
+            editHistoryLength: draftEditMessage.editHistoryLength,
+          }
+        : null;
+    }
+  }, [draftBodyRanges, draftEditMessageBody, draftEditMessage]);
+
+  const setDraftTextRef = useRef<{ conversationId: string }>(null);
+  useEffect(() => {
+    if (setDraftTextRef.current?.conversationId === conversationId) {
       return;
     }
+    try {
+      if (!draftText) {
+        inputApiRef.current?.setContents('');
+        return;
+      }
 
-    inputApiRef.current?.setContents(
-      draftText,
-      draftBodyRanges ?? undefined,
-      true
-    );
-  }, [conversationId, draftBodyRanges, draftText, previousConversationId]);
+      inputApiRef.current?.setContents(
+        draftText,
+        draftBodyRanges ?? undefined,
+        true
+      );
+    } finally {
+      setDraftTextRef.current = { conversationId };
+    }
+  }, [conversationId, draftBodyRanges, draftText]);
 
   const handleToggleLarge = useCallback(() => {
     setLarge(l => !l);
@@ -609,6 +623,7 @@ export const CompositionArea = memo(function CompositionArea({
 
   const shouldShowMicrophone =
     !large &&
+    draftEditMessage == null &&
     !hasDraft({
       draft: draftText,
       draftAttachments,
@@ -870,11 +885,12 @@ export const CompositionArea = memo(function CompositionArea({
       <div className="CompositionArea__placeholder" />
       <div className="CompositionArea__button-cell">
         <div className={actionSlotClassName}>
-          <button
-            type="button"
-            className="CompositionArea__send-button"
+          <AxoIconButton.Root
+            symbol="send-fill"
+            variant="primary"
+            size="md"
+            label={i18n('icu:sendMessageToContact')}
             onClick={handleForceSend}
-            aria-label={i18n('icu:sendMessageToContact')}
           />
         </div>
       </div>
@@ -1294,11 +1310,12 @@ export const CompositionArea = memo(function CompositionArea({
         {isViewOnceActive && (
           <div className="CompositionArea__button-cell">
             <div className={actionSlotClassName}>
-              <button
-                type="button"
-                className="CompositionArea__send-button"
+              <AxoIconButton.Root
+                size="md"
+                variant="primary"
+                symbol="send-fill"
+                label={i18n('icu:sendMessageToContact')}
                 onClick={handleForceSend}
-                aria-label={i18n('icu:sendMessageToContact')}
               />
             </div>
           </div>

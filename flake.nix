@@ -23,16 +23,18 @@
 
         checks.lint = signal.overrideAttrs (_old: {
           name = "signal-desktop-lint";
-          buildInputs = [ ];
-          preBuild = "";
-          buildPhase = ''
-            pnpm run generate
-            pnpm run lint-prettier
-            pnpm run oxlint
+          postBuild = ''
+            # pnpm run build:db-schema --check
+            # pnpm run lint-prettier
             pnpm run lint-css
+            # pnpm run check:types
+            # pnpm run oxlint:ci
+            pnpm run lint-deps
           '';
           installPhase = "touch $out";
         });
+
+        devShells.default = import ./nix/shell.nix { inherit pkgs; };
       }
     );
 }

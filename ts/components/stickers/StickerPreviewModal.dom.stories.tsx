@@ -17,6 +17,7 @@ import type {
   StickerType,
 } from '../../state/ducks/stickers.preload.ts';
 import { Emoji } from '../../axo/emoji.std.ts';
+import { STICKER_PACK_DEFAULTS } from '../../sql/Interface.std.ts';
 
 const { i18n } = window.SignalContext;
 
@@ -45,94 +46,97 @@ const tallSticker: StickerType = {
   packId: 'tall',
 };
 
-export function Full(): JSX.Element {
-  const title = 'Foo';
-  const author = 'Foo McBarrington';
+const pack: StickerPackType = {
+  id: 'foo',
+  key: 'foo',
+  lastUsed: Date.now(),
+  cover: abeSticker,
+  title: 'Foo',
+  isBlessed: false,
+  author: 'Foo McBarrington',
+  status: 'downloaded' as const,
+  stickerCount: 101,
+  stickers: [
+    wideSticker,
+    tallSticker,
+    ...Array(101)
+      .fill(0)
+      .map((_n, id) => ({ ...abeSticker, id })),
+  ],
+};
 
-  const pack: StickerPackType = {
-    id: 'foo',
-    key: 'foo',
-    lastUsed: Date.now(),
-    cover: abeSticker,
-    title,
-    isBlessed: true,
-    author,
-    status: 'downloaded' as const,
-    stickerCount: 101,
-    stickers: [
-      wideSticker,
-      tallSticker,
-      ...Array(101)
-        .fill(0)
-        .map((_n, id) => ({ ...abeSticker, id })),
-    ],
-  };
+const createProps = (overrideProps: Partial<Props> = {}): Props => ({
+  closeStickerPackPreview: action('closeStickerPackPreview'),
+  downloadStickerPack: action('downloadStickerPack'),
+  i18n,
+  installStickerPack: action('installStickerPack'),
+  showToast: action('showToast'),
+  uninstallStickerPack: action('uninstallStickerPack'),
+  pack: overrideProps.pack ?? pack,
+});
 
-  return (
-    <StickerPreviewModal
-      closeStickerPackPreview={action('closeStickerPackPreview')}
-      onClose={action('onClose')}
-      installStickerPack={action('installStickerPack')}
-      uninstallStickerPack={action('uninstallStickerPack')}
-      downloadStickerPack={action('downloadStickerPack')}
-      i18n={i18n}
-      pack={pack}
-    />
-  );
+export function Pack(): JSX.Element {
+  const props = createProps();
+  return <StickerPreviewModal {...props} />;
 }
 
-export function JustFourStickers(): JSX.Element {
-  const title = 'Foo';
-  const author = 'Foo McBarrington';
-
-  const pack = {
-    id: 'foo',
-    key: 'foo',
-    lastUsed: Date.now(),
-    cover: abeSticker,
-    title,
+export function OfficialPack(): JSX.Element {
+  const blessedPack = {
+    ...pack,
     isBlessed: true,
-    author,
-    status: 'downloaded' as const,
-    stickerCount: 101,
+  };
+  const props = createProps({ pack: blessedPack });
+  return <StickerPreviewModal {...props} />;
+}
+
+export function SmallPack(): JSX.Element {
+  const smallPack = {
+    ...pack,
+    stickerCount: 4,
     stickers: [abeSticker, abeSticker, abeSticker, abeSticker],
   };
+  const props = createProps({ pack: smallPack });
+  return <StickerPreviewModal {...props} />;
+}
 
-  return (
-    <StickerPreviewModal
-      closeStickerPackPreview={action('closeStickerPackPreview')}
-      installStickerPack={action('installStickerPack')}
-      uninstallStickerPack={action('uninstallStickerPack')}
-      downloadStickerPack={action('downloadStickerPack')}
-      i18n={i18n}
-      pack={pack}
-    />
-  );
+export function PackInstalled(): JSX.Element {
+  const installedPack = {
+    ...pack,
+    status: 'installed' as const,
+  };
+  const props = createProps({ pack: installedPack });
+  return <StickerPreviewModal {...props} />;
+}
+
+export function PackInstallPending(): JSX.Element {
+  const pendingPack = {
+    ...pack,
+    status: 'pending' as const,
+  };
+  const props = createProps({ pack: pendingPack });
+  return <StickerPreviewModal {...props} />;
 }
 
 export function InitialDownload(): JSX.Element {
-  return (
-    <StickerPreviewModal
-      closeStickerPackPreview={action('closeStickerPackPreview')}
-      installStickerPack={action('installStickerPack')}
-      uninstallStickerPack={action('uninstallStickerPack')}
-      downloadStickerPack={action('downloadStickerPack')}
-      i18n={i18n}
-      //  oxlint-disable-next-line typescript/no-explicit-any
-      pack={{} as any}
-    />
-  );
+  const installingPack = {
+    ...STICKER_PACK_DEFAULTS,
+    isBlessed: false,
+    stickers: [],
+  };
+  const props = createProps({ pack: installingPack });
+  return <StickerPreviewModal {...props} />;
 }
 
 export function PackDeleted(): JSX.Element {
-  return (
-    <StickerPreviewModal
-      closeStickerPackPreview={action('closeStickerPackPreview')}
-      installStickerPack={action('installStickerPack')}
-      uninstallStickerPack={action('uninstallStickerPack')}
-      downloadStickerPack={action('downloadStickerPack')}
-      i18n={i18n}
-      pack={undefined}
-    />
-  );
+  const props = createProps();
+  return <StickerPreviewModal {...props} pack={undefined} />;
+}
+
+export function PackError(): JSX.Element {
+  const errorPack = {
+    ...pack,
+    status: 'error' as const,
+  };
+  const props = createProps({ pack: errorPack });
+  return <StickerPreviewModal {...props} />;
 }

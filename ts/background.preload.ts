@@ -98,7 +98,6 @@ import {
   setIsInitialContactSync,
 } from './services/contactSync.preload.ts';
 import { startTimeTravelDetector } from './util/startTimeTravelDetector.std.ts';
-import { shouldRespondWithProfileKey } from './util/shouldRespondWithProfileKey.dom.ts';
 import { LatestQueue } from './util/LatestQueue.std.ts';
 import { parseIntOrThrow } from './util/parseIntOrThrow.std.ts';
 import { getProfile } from './util/getProfile.preload.ts';
@@ -124,6 +123,7 @@ import type {
   SentEventData,
   StickerPackEvent,
   TypingEvent,
+  UsernameChangeSyncEvent,
   ViewEvent,
   ViewOnceOpenSyncEvent,
   ViewSyncEvent,
@@ -157,7 +157,7 @@ import {
 import { accountManager } from './textsecure/AccountManager.preload.ts';
 import * as KeyChangeListener from './textsecure/KeyChangeListener.dom.ts';
 import { UpdateKeysListener } from './textsecure/UpdateKeysListener.preload.ts';
-import { isGroup } from './util/whatTypeOfConversation.dom.ts';
+import { isGroup, isMe } from './util/whatTypeOfConversation.dom.ts';
 import { BackOff, FIBONACCI_TIMEOUTS } from './util/BackOff.std.ts';
 import { createApp as createAppRoot } from './state/roots/createApp.preload.tsx';
 import { AppViewType } from './types/app.std.ts';
@@ -295,6 +295,7 @@ import { MessageCache } from './services/MessageCache.preload.ts';
 import { saveAndNotify } from './messages/saveAndNotify.preload.ts';
 import { getBackupKeyHash } from './services/backups/crypto.preload.ts';
 import { Emoji } from './axo/emoji.std.ts';
+import { isTrustedContact } from './util/isConversationAccepted.preload.ts';
 
 const { isNumber, throttle } = lodash;
 
@@ -744,6 +745,10 @@ async function startApp(): Promise<void> {
       'deviceNameChangeSync',
       queuedEventListener(onDeviceNameChangeSync)
     );
+    messageReceiver.addEventListener(
+      'usernameChangeSync',
+      queuedEventListener(onUsernameChangeSync)
+    );
 
     if (!itemStorage.get('defaultConversationColor')) {
       drop(
@@ -1001,13 +1006,6 @@ async function startApp(): Promise<void> {
 
       if (window.isBeforeVersion(lastVersion, 'v7.56.0-beta.1')) {
         await itemStorage.remove('backupMediaDownloadIdle');
-      }
-
-      if (
-        window.isBeforeVersion(lastVersion, 'v7.57.0') &&
-        itemStorage.get('needProfileMovedModal') === undefined
-      ) {
-        await itemStorage.put('needProfileMovedModal', true);
       }
 
       if (window.isBeforeVersion(lastVersion, 'v7.75.0-beta.1')) {
@@ -1291,7 +1289,7 @@ async function startApp(): Promise<void> {
         enqueueReconnectToWebSocket();
       }
 
-      drop(keyTransparency.onKnownIdentifierChange());
+      drop(keyTransparency.onKnownIdentifierChange('e164'));
     });
 
     window.Whisper.events.on('setMenuOptions', (options: MenuOptionsType) => {
@@ -1800,6 +1798,8 @@ async function startApp(): Promise<void> {
 
         try {
           log.info(`${logId}: waiting for postRegistrationSyncs`);
+          // FIXME
+          // oxlint-disable-next-line typescript/await-thenable
           await Promise.all(syncsToAwaitBeforeShowingInbox);
           await itemStorage.put('postRegistrationSyncsStatus', 'complete');
           log.info(`${logId}: postRegistrationSyncs complete`);
@@ -1960,6 +1960,7 @@ async function startApp(): Promise<void> {
       await doRegisterCapabilities({
         attachmentBackfill: true,
         spqr: true,
+        usernameChangeSyncMessage: true,
       });
     } catch (error) {
       log.error(
@@ -2401,12 +2402,13 @@ async function startApp(): Promise<void> {
     processBatch(batch) {
       const deduped = new Set(batch);
       deduped.forEach(async sender => {
-        if (!shouldRespondWithProfileKey(sender)) {
+        if (isMe(sender.attributes) || sender.isBlocked()) {
           return;
         }
-        sender.enableProfileSharing({
-          reason: 'shouldRespondWithProfileKey',
-        });
+
+        if (!isTrustedContact(sender.attributes)) {
+          return;
+        }
 
         drop(
           sender.queueJob('sendProfileKeyUpdate', () =>
@@ -4046,6 +4048,10 @@ async function startApp(): Promise<void> {
     const { confirm } = ev;
     await AttachmentDownloadManager.handleBackfillResponse(ev);
     confirm();
+  }
+  async function onUsernameChangeSync(ev: UsernameChangeSyncEvent) {
+    await keyTransparency.onKnownIdentifierChange('username');
+    ev.confirm();
   }
 }
 

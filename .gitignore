@@ -53,3 +53,5 @@ ts/protobuf/*.d.ts
 # Nix
 .direnv/
 .envrc
+_locales/keys.json
+_locales/*/values.json

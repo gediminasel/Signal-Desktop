@@ -208,7 +208,6 @@ export type StorageAccessType = {
   };
   serverAlerts: ServerAlertsType;
   needOrphanedAttachmentCheck: boolean;
-  needProfileMovedModal: boolean;
   notificationProfileOverride: NotificationProfileOverride | undefined;
   notificationProfileOverrideFromPrimary:
     | NotificationProfileOverride
@@ -216,6 +215,7 @@ export type StorageAccessType = {
   notificationProfileSyncDisabled: boolean;
   observedCapabilities: {
     attachmentBackfill?: true;
+    usernameChangeSyncMessage?: true;
 
     // Note: Upon capability deprecation - change the value type to `never` and
     // remove it in `ts/background.ts`
@@ -275,6 +275,12 @@ export type StorageAccessType = {
   avatarsHaveBeenMigrated: boolean;
 
   blockedMessageMigrationVersion: number | undefined;
+
+  // From AccountRecord.payments
+  payments: {
+    enabled: boolean | null;
+    entropy: Uint8Array<ArrayBuffer> | null;
+  } | null;
 
   // Key Transparency
   lastDistinguishedTreeHead: Uint8Array<ArrayBuffer>;
@@ -423,7 +429,6 @@ export const STORAGE_KEYS_TO_PRESERVE_WHEN_PRIMARY = [
   'usernameCorrupted',
   'usernameLinkCorrupted',
   'usernameLink',
-  'needProfileMovedModal',
   'notificationProfileOverride',
   'notificationProfileOverrideFromPrimary',
   'notificationProfileSyncDisabled',
@@ -544,6 +549,7 @@ const STORAGE_KEYS_TO_REMOVE_AFTER_UNLINK = [
   'sfuUrl',
   'svrPin',
   'backupKeyViewed',
+  'payments',
 ] as const satisfies ReadonlyArray<keyof StorageAccessType>;
 
 // Ensure every storage key is explicitly marked to be preserved or removed on unlink.

@@ -21,7 +21,6 @@ import {
   hasNotResolved,
   getImageDimensionsForTimeline,
   defaultBlurHash,
-  isDownloadable,
 } from '../../util/Attachment.std.ts';
 import * as Errors from '../../types/errors.std.ts';
 import { createLogger } from '../../logging/log.std.ts';
@@ -46,11 +45,11 @@ export type Props = {
   readonly i18n: LocalizerType;
   readonly theme?: ThemeType;
 
-  onError(): void;
+  onError: () => void;
   showMediaNoLongerAvailableToast?: () => void;
-  showVisualAttachment(): void;
-  startDownload(): void;
-  cancelDownload(): void;
+  showVisualAttachment: () => void;
+  startDownload: () => void;
+  cancelDownload: () => void;
 };
 
 type MediaEvent = SyntheticEvent<HTMLVideoElement>;
@@ -198,7 +197,7 @@ export function GIF(props: Props): JSX.Element {
 
   const isPending = Boolean(attachment.pending);
   const isNotResolved = hasNotResolved(attachment) && !isPending;
-  const isMediaDownloadable = isDownloadable(attachment);
+  const isMediaDownloadable = !attachment.isPermanentlyUndownloadable;
 
   let gif: JSX.Element | undefined;
   if (isNotResolved || isPending || !isMediaDownloadable) {
@@ -212,6 +211,8 @@ export function GIF(props: Props): JSX.Element {
     );
   } else {
     gif = (
+      // FIXME
+      // oxlint-disable-next-line jsx-a11y/control-has-associated-label
       <video
         ref={videoRef}
         onTimeUpdate={onTimeUpdate}

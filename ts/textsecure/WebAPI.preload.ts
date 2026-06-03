@@ -398,9 +398,10 @@ async function getFetchOptions<Type extends ResponseType, OutputShape>(
     method: options.type,
     body,
     headers: {
-      'User-Agent': options.socketManager
-        ? undefined
-        : getUserAgent(options.version),
+      // libsignal-net adds the user-agent header for us
+      ...(options.socketManager
+        ? null
+        : { 'User-Agent': getUserAgent(options.version) }),
       'X-Signal-Agent': 'OWD',
       ...options.headers,
     } as FetchHeaderListType,
@@ -2837,7 +2838,8 @@ async function _withNewCredentials<
 
   const result = await callback();
 
-  // oxlint-disable-next-line typescript/no-useless-default-assignment FIXME
+  // FIXME
+  // oxlint-disable-next-line typescript/no-useless-default-assignment
   const { uuid: aci = newUsername, deviceId = 1 } = result;
 
   // Set final REST credentials to let `registerKeys` succeed.
@@ -2875,6 +2877,7 @@ export async function createAccount({
   const capabilities: CapabilitiesUploadType = {
     attachmentBackfill: true,
     spqr: true,
+    usernameChangeSyncMessage: true,
   };
 
   // Desktop doesn't support recovery but we need to provide a recovery password.
@@ -2940,6 +2943,7 @@ export async function linkDevice({
   const capabilities: CapabilitiesUploadType = {
     attachmentBackfill: true,
     spqr: true,
+    usernameChangeSyncMessage: true,
   };
 
   const jsonData = {
@@ -3160,7 +3164,7 @@ export async function getEphemeralBackupStream({
   return _getAttachment({
     cdnNumber: cdn,
     cdnPath: `/attachments/${encodeURIComponent(key)}`,
-    redactor: _createRedactor(key),
+    redactor: _createRedactor(encodeURIComponent(key)),
     options: {
       downloadOffset,
       onProgress,
@@ -3217,7 +3221,8 @@ export function createFetchForAttachmentUpload({
       ...init,
       headers: {
         ...fetchOptions.headers,
-        // oxlint-disable-next-line typescript/no-misused-spread FIXME
+        // FIXME
+        // oxlint-disable-next-line typescript/no-misused-spread
         ...init.headers,
       },
     });
@@ -3896,9 +3901,9 @@ export async function getAttachment({
   };
 }): Promise<Readable> {
   return _getAttachment({
-    cdnPath: `/attachments/${cdnKey}`,
+    cdnPath: `/attachments/${encodeURIComponent(cdnKey)}`,
     cdnNumber: cdnNumber ?? 0,
-    redactor: _createRedactor(cdnKey),
+    redactor: _createRedactor(encodeURIComponent(cdnKey)),
     options,
   });
 }
@@ -4431,14 +4436,14 @@ export async function uploadGroupAvatar(
 export async function getGroupAvatar(
   key: string
 ): Promise<Uint8Array<ArrayBuffer>> {
-  return _outerAjax(`${cdnUrlObject['0']}/${key}`, {
+  return _outerAjax(`${cdnUrlObject['0']}/${encodeURIComponent(key)}`, {
     certificateAuthority,
     proxyUrl,
     responseType: 'bytes',
     timeout: 0,
     type: 'GET',
     version,
-    redactUrl: _createRedactor(key),
+    redactUrl: _createRedactor(encodeURIComponent(key)),
   });
 }
 

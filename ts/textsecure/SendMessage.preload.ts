@@ -765,8 +765,7 @@ export class MessageSender {
       serviceId,
       'private'
     );
-    this.pendingMessages[id] =
-      this.pendingMessages[id] || new PQueue({ concurrency: 1 });
+    this.pendingMessages[id] ??= new PQueue({ concurrency: 1 });
 
     const queue = this.pendingMessages[id];
 
@@ -1949,6 +1948,33 @@ export class MessageSender {
         })
       ),
       type: 'deleteForMeSync',
+      urgent: false,
+    };
+  }
+
+  static getUsernameChangeSyncMessage(): SingleProtoJobData {
+    const myAci = itemStorage.user.getCheckedAci();
+
+    const syncMessage = this.padSyncMessage({
+      content: {
+        usernameChange: {},
+      },
+    });
+
+    return {
+      contentHint: ContentHint.Resendable,
+      serviceId: myAci,
+      isSyncMessage: true,
+      protoBase64: Bytes.toBase64(
+        Proto.Content.encode({
+          content: {
+            syncMessage,
+          },
+          pniSignatureMessage: null,
+          senderKeyDistributionMessage: null,
+        })
+      ),
+      type: 'usernameChangeSync',
       urgent: false,
     };
   }

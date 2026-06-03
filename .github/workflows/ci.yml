@@ -42,13 +42,6 @@ jobs:
     #     path: ${{ env.SCCACHE_PATH }}
     #     key: sccache-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'patches/**') }}
 
-    - name: Restore cached tsconfig.tsbuildinfo
-      uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-      id: cache-lint
-      with:
-        path: tsconfig.tsbuildinfo
-        key: lint-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'patches/**', 'tsconfig.json') }}
-
     - name: Install Desktop node_modules
       run: pnpm install
       env:
@@ -64,11 +57,14 @@ jobs:
       run: pnpm install
       working-directory: sticker-creator
 
+    - name: Install libpulse0
+      run: sudo apt-get install -y libpulse0 || (sudo apt-get update && sudo apt-get install -y libpulse0)
     - run: pnpm run generate
+    - run: pnpm run build:db-schema --check
     - run: pnpm run lint-prettier
     - run: pnpm run lint-css
     - run: pnpm run check:types
-    - run: pnpm run oxlint --format=github
+    - run: pnpm run oxlint:ci
     - run: pnpm run lint-deps
     - run: pnpm run lint-license-comments
     - run: pnpm run lint-intl
@@ -81,17 +77,10 @@ jobs:
 
     - run: git diff --exit-code
 
-    - name: Update cached tsconfig.tsbuildinfo
-      uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-      if: github.ref == 'refs/heads/main'
-      with:
-        path: tsconfig.tsbuildinfo
-        key: ${{ steps.cache-lint.outputs.cache-primary-key }}
-
   macos:
     name: MacOS
     needs: lint
-    runs-on: macos-latest
+    runs-on: macos-26-arm64
     if: github.ref == 'refs/heads/main'
     timeout-minutes: 30
 
@@ -244,7 +233,7 @@ jobs:
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       with:
         repository: 'signalapp/Signal-Message-Backup-Tests'
-        ref: '33b3d0cd4367a898f5f8b4a2c57ee12ba7ec38ea'
+        ref: 'a0f900243210efbedc72f0907c5d2f140385daa4'
         path: 'backup-integration-tests'
 
     - run: xvfb-run --auto-servernum pnpm run test-electron

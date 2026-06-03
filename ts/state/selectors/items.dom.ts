@@ -32,12 +32,6 @@ export const getAreWeASubscriber = createSelector(
     Boolean(areWeASubscriber)
 );
 
-export const getProfileMovedModalNeeded = createSelector(
-  getItems,
-  ({ needProfileMovedModal }: Readonly<ItemsStateType>): boolean =>
-    Boolean(needProfileMovedModal)
-);
-
 export const getPinnedConversationIds = createSelector(
   getItems,
   (state: ItemsStateType): Array<string> =>
@@ -271,6 +265,11 @@ export const getBackupMediaDownloadProgress = createSelector(
 export const getBackupKey = createSelector(
   getItems,
   (state: ItemsStateType) => state.accountEntropyPool
+);
+
+export const getHasMediaBackups = createSelector(
+  getItems,
+  (state: ItemsStateType): boolean => state.backupTier === BackupLevel.Paid
 );
 
 export const getServerAlerts = createSelector(

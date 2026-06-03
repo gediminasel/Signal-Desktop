@@ -22,15 +22,10 @@ export function AtMention({
   onClick: () => void;
   onKeyUp: KeyboardEventHandler;
 }): JSX.Element {
-  const firstNameMentions =
-    window.localStorage && localStorage.getItem('firstNameMentions') === 'true';
-
-  const displayName = firstNameMentions ? name.split(' ')[0] : name;
-
   const textElement = (
     <>
       @
-      <Emojify isInvisible={isInvisible} text={displayName} />
+      <Emojify isInvisible={isInvisible} text={name} />
     </>
   );
   const formattedTextElement = isStrikethrough ? (
@@ -48,7 +43,6 @@ export function AtMention({
         )}
         data-id={id}
         data-title={name}
-        title={firstNameMentions ? name : undefined}
       >
         <bdi>{formattedTextElement}</bdi>
       </span>
@@ -67,7 +61,6 @@ export function AtMention({
       role="link"
       data-id={id}
       data-title={name}
-      title={firstNameMentions ? name : undefined}
     >
       <bdi>{formattedTextElement}</bdi>
     </span>

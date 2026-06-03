@@ -19,7 +19,6 @@ import {
   getImageDimensionsForTimeline,
   getThumbnailUrl,
   getUrl,
-  isDownloadable,
   isIncremental,
   isVideoAttachment,
 } from '../../util/Attachment.std.ts';
@@ -178,8 +177,8 @@ export function ImageGrid({
     return null;
   }
 
-  const downloadableAttachments = attachments.filter(attachment =>
-    isDownloadable(attachment)
+  const downloadableAttachments = attachments.filter(
+    attachment => !attachment.isPermanentlyUndownloadable
   );
 
   const detailPill = (
@@ -607,8 +606,8 @@ function renderDownloadPill({
     return null;
   }
 
-  const noneDownloadable = !attachments.some(attachment =>
-    isDownloadable(attachment)
+  const noneDownloadable = attachments.every(
+    attachment => attachment.isPermanentlyUndownloadable
   );
   if (noneDownloadable) {
     return null;
@@ -617,17 +616,19 @@ function renderDownloadPill({
   return (
     <button
       type="button"
-      className="module-image-grid__download-pill"
+      className="module-image-grid__download-overlay"
       aria-label={i18n('icu:startDownload')}
       onClick={startDownloadClick}
       onKeyDown={startDownloadKeyDown}
     >
-      <div className="module-image-grid__download_pill__icon-wrapper">
-        <div className="module-image-grid__download_pill__download-icon" />
-      </div>
-      <div className="module-image-grid__download_pill__text-wrapper">
-        {i18n('icu:downloadNItems', { count: attachments.length })}
-      </div>
+      <span className="module-image-grid__download-pill">
+        <span className="module-image-grid__download_pill__icon-wrapper">
+          <span className="module-image-grid__download_pill__download-icon" />
+        </span>
+        <span className="module-image-grid__download_pill__text-wrapper">
+          {i18n('icu:downloadNItems', { count: attachments.length })}
+        </span>
+      </span>
     </button>
   );
 }

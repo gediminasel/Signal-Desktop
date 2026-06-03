@@ -68,6 +68,7 @@ const ScalarKeys = [
   'desktop.mediaQuality.levels',
   'desktop.messageCleanup',
   'desktop.recentGifs.allowLegacyTenorCdnUrls',
+  'desktop.requirePqRatio',
   'desktop.retryRespondMaxAge',
   'desktop.senderKey.retry',
   'desktop.senderKeyMaxAge',
@@ -102,6 +103,8 @@ const KnownDesktopLibsignalNetKeys = [
   'desktop.libsignalNet.grpc.AccountsAnonymousLookupUsernameLink.2.beta',
   'desktop.libsignalNet.grpc.AttachmentsGetUploadForm',
   'desktop.libsignalNet.grpc.AttachmentsGetUploadForm.beta',
+  'desktop.libsignalNet.grpc.BackupsAnonymousGetUploadForm',
+  'desktop.libsignalNet.grpc.BackupsAnonymousGetUploadForm.beta',
   'desktop.libsignalNet.grpc.MessagesAnonymousSendMultiRecipientMessage.2',
   'desktop.libsignalNet.grpc.MessagesAnonymousSendMultiRecipientMessage.2.beta',
   'desktop.libsignalNet.grpc.MessagesAnonymousSendSingleRecipientMessage',
@@ -217,6 +220,11 @@ export const _refreshRemoteConfig = async ({
   }
 
   const changedKeys = new Set<string>();
+  const changeDescriptions: Array<{
+    name: string;
+    from: string;
+    to: string;
+  }> = [];
 
   const oldConfig = config;
   let semverError = false;
@@ -263,6 +271,11 @@ export const _refreshRemoteConfig = async ({
 
       if (hasChanged) {
         changedKeys.add(name);
+        changeDescriptions.push({
+          name,
+          from: previousValue ?? '[undefined]',
+          to: configValue.value ?? '[undefined]',
+        });
       }
 
       // Return new configuration object
@@ -278,6 +291,13 @@ export const _refreshRemoteConfig = async ({
     log.info(
       `Remote Config: Flags ${[...changedKeys].join(', ')} have changed`
     );
+
+    if (isEnabled('desktop.loggingErrorToasts')) {
+      window.reduxActions.toast.showToast({
+        toastType: ToastType.RemoteConfigChanged,
+        changes: changeDescriptions,
+      });
+    }
 
     // If enablement changes at all, notify listeners
     for (const { keys, callback } of listeners) {

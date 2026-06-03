@@ -257,6 +257,7 @@ import {
 } from '../selectors/nav.std.ts';
 import { computeGroupNameHash } from '../../util/Conversation.preload.ts';
 import type { Emoji } from '../../axo/emoji.std.ts';
+import { isSignalConversation } from '../../util/isSignalConversation.dom.ts';
 
 const { chunk, difference, fromPairs, omit, orderBy, pick, values, without } =
   lodash;
@@ -1255,7 +1256,7 @@ export const actions = {
   setIsNearBottom,
   setMessageLoadingState,
   setMessageToEdit,
-  setMuteExpiration,
+  setMuteDuration,
   setChatFolderMuteExpiration,
   setPinned,
   setPreJoinConversation,
@@ -1777,7 +1778,7 @@ function setDontNotifyForMentionsIfMuted(
 
 function setChatFolderMuteExpiration(
   chatFolderId: ChatFolderId,
-  muteExpiresAt: number
+  muteDuration: number
 ): ThunkAction<void, RootStateType, unknown, NoopActionType> {
   return async (dispatch, getState) => {
     const chatFolderConversations = _getAllConversationsInChatFolder(
@@ -1786,27 +1787,29 @@ function setChatFolderMuteExpiration(
     );
 
     for (const conversation of chatFolderConversations) {
-      dispatch(setMuteExpiration(conversation.id, muteExpiresAt));
+      dispatch(setMuteDuration(conversation.id, muteDuration));
     }
   };
 }
 
-function setMuteExpiration(
+function setMuteDuration(
   conversationId: string,
-  muteExpiresAt = 0
+  muteDuration = 0
 ): NoopActionType {
   const conversation = window.ConversationController.get(conversationId);
   if (!conversation) {
-    throw new Error('setMuteExpiration: No conversation found');
+    throw new Error('setMuteDuration: No conversation found');
   }
 
-  conversation.setMuteExpiration(
-    muteExpiresAt >= Number.MAX_SAFE_INTEGER
-      ? muteExpiresAt
-      : Date.now() + muteExpiresAt
-  );
+  if (muteDuration === 0) {
+    conversation.setMuteExpiration(0);
+  } else {
+    conversation.setMuteExpiration(
+      Math.min(Date.now() + muteDuration, Number.MAX_SAFE_INTEGER)
+    );
+  }
 
-  return noopAction('setMuteExpiration');
+  return noopAction('setMuteDuration');
 }
 
 function setPinned(
@@ -3759,6 +3762,11 @@ async function syncMessageRequestResponse(
     { shouldSave }
   );
 
+  // Signal conversation block status is synced via storage service's AccountRecord
+  if (isSignalConversation(conversation)) {
+    return;
+  }
+
   const groupId = conversation.getGroupIdBuffer();
 
   if (!window.ConversationController.doWeHaveOtherDevices()) {
@@ -4933,6 +4941,8 @@ function onConversationOpened(
             ? Promise.resolve()
             : conversation.loadNewestMessages(undefined, undefined),
           conversation.updateLastMessage(),
+          // FIXME
+          // oxlint-disable-next-line typescript/await-thenable
           conversation.throttledUpdateUnread(),
         ])
       );

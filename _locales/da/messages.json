@@ -1,4 +1,19 @@
 {
+  "icu:AxoAlertDialog.Cancel": {
+    "messageformat": "Annullér"
+  },
+  "icu:AxoButton.Pending": {
+    "messageformat": "Afventer"
+  },
+  "icu:AxoDialog.Back": {
+    "messageformat": "Tilbage"
+  },
+  "icu:AxoDialog.Close": {
+    "messageformat": "Luk"
+  },
+  "icu:AxoTextField.Clear": {
+    "messageformat": "Fjern"
+  },
   "icu:AddUserToAnotherGroupModal__title": {
     "messageformat": "Tilføj til en gruppe"
   },
@@ -356,9 +371,6 @@
   "icu:NavTabs__ItemLabel--Settings": {
     "messageformat": "Indstillinger"
   },
-  "icu:NavTabs__ItemLabel--Profile": {
-    "messageformat": "Profil"
-  },
   "icu:NavSidebar__BackButtonLabel": {
     "messageformat": "Tilbage"
   },
@@ -439,15 +451,6 @@
   },
   "icu:pinnedConversationsFull": {
     "messageformat": "Du kan kun fastgøre op til 4 chats"
-  },
-  "icu:loadingMessages--other": {
-    "messageformat": "{daysAgo, plural, one {Indlæser meddelelser fra 1 dag siden...} other {Indlæser meddelelser fra {daysAgo,number} dage siden...}}"
-  },
-  "icu:loadingMessages--yesterday": {
-    "messageformat": "Indlæser meddelelser fra i går..."
-  },
-  "icu:loadingMessages--today": {
-    "messageformat": "Indlæser meddelelser fra i dag..."
   },
   "icu:view": {
     "messageformat": "Vis"
@@ -602,14 +605,14 @@
   "icu:SafetyNumberViewer__KeyTransparency__popup--ok__title": {
     "messageformat": "Kryptering blev automatisk verificeret i denne chat "
   },
-  "icu:SafetyNumberViewer__KeyTransparency__popup--ok__body": {
-    "messageformat": "For kontakter, som du er forbundet med via telefonnummer, kan Signal automatisk bekræfte, om forbindelsen er sikker, ved hjælp af en proces kaldet nøgletransparens. For øget sikkerhed skal du verificere end-to-end-kryptering manuelt ved at sammenligne tallene på den forrige skærm eller scanne koden på vedkommendes enhed."
+  "icu:SafetyNumberViewer__KeyTransparency__popup--ok__body-2": {
+    "messageformat": "For kontakter, du er forbundet til via telefonnummer, kan Signal automatisk bekræfte, om forbindelsen er sikker, ved hjælp af en proces kaldet nøgletransparens. For øget sikkerhed skal du verificere end-to-end-kryptering manuelt ved at sammenligne tallene på den forrige skærm eller scanne koden på vedkommendes enhed."
   },
-  "icu:SafetyNumberViewer__KeyTransparency__popup--fail__title": {
-    "messageformat": "Automatisk verifikation er ikke længere tilgængelig for denne chat"
+  "icu:SafetyNumberViewer__KeyTransparency__popup--fail__title-2": {
+    "messageformat": "Automatisk verifikation er ikke tilgængelig for denne chat"
   },
-  "icu:SafetyNumberViewer__KeyTransparency__popup--fail__body": {
-    "messageformat": "Signal kan ikke længere automatisk verificere krypteringen for denne chat. Dette skyldes sandsynligvis, at {name} har ændret sit telefonnummer. Verificér end-to-end-kryptering manuelt ved at sammenligne tallene på den forrige skærm eller ved at scanne koden på deres enhed."
+  "icu:SafetyNumberViewer__KeyTransparency__popup--fail__body-2": {
+    "messageformat": "Signal kan ikke længere automatisk verificere krypteringen for denne chat. Dette kan skyldes, at {name} har ændret sit telefonnummer eller sin privatlivsbeskyttelse for telefonnummeret. Verificér end-to-end-kryptering manuelt ved at sammenligne tallene på den forrige skærm eller ved at scanne koden på deres enhed."
   },
   "icu:SafetyNumberViewer__KeyTransparency__popup--unavailable__body": {
     "messageformat": "Signal kan kun automatisk verificere krypteringen i chats, hvor du er forbundet med nogen via et telefonnummer. Hvis chatten blev startet med et brugernavn eller en fælles gruppe, skal du verificere end-to-end-krypteringen ved at sammenligne tallene på den forrige skærm eller scanne koden på deres enhed."
@@ -638,9 +641,6 @@
   "icu:KeyTransparencyErrorDialog__Submit": {
     "messageformat": "Indsend"
   },
-  "icu:KeyTransparencyErrorDialog__Submitting": {
-    "messageformat": "Indsender..."
-  },
   "icu:KeyTransparencyOnboardingDialog__Title": {
     "messageformat": "Signal kan nu automatisk verificere sikkerhedsnøglekrypteringen"
   },
@@ -652,9 +652,6 @@
   },
   "icu:KeyTransparencyOnboardingDialog__LearnMore": {
     "messageformat": "Læs mere"
-  },
-  "icu:KeyTransparencyOnboardingDialog__CloseButton__AccessibilityLabel": {
-    "messageformat": "Luk"
   },
   "icu:verified": {
     "messageformat": "Verificeret"
@@ -706,9 +703,6 @@
   },
   "icu:Toast__ActionLabel--SubmitLog": {
     "messageformat": "Indsend log"
-  },
-  "icu:Toast--FailedToSendWithEndorsements": {
-    "messageformat": "Failed to send message with endorsements"
   },
   "icu:Toast--SQLError": {
     "messageformat": "Databasefejl: Del dine logfiler."
@@ -1286,9 +1280,6 @@
   "icu:PinMessageDialog__Title": {
     "messageformat": "Fastgør besked i..."
   },
-  "icu:PinMessageDialog__Close": {
-    "messageformat": "Luk"
-  },
   "icu:PinMessageDialog__Option--TIME_24_HOURS": {
     "messageformat": "24 timer"
   },
@@ -1312,9 +1303,6 @@
   },
   "icu:PinMessageDialog--HasMaxPinnedMessages__Description": {
     "messageformat": "Hvis du fastgør denne besked, erstattes den ældste."
-  },
-  "icu:PinMessageDialog--HasMaxPinnedMessages__Cancel": {
-    "messageformat": "Annullér"
   },
   "icu:PinMessageDialog--HasMaxPinnedMessages__Continue": {
     "messageformat": "Fortsæt"
@@ -1402,9 +1390,6 @@
   },
   "icu:PinnedMessagesPanel__UnpinAllMessages__ConfirmDialog__Description": {
     "messageformat": "Fastgjorte beskeder frigøres for medlemmer af denne chat."
-  },
-  "icu:PinnedMessagesPanel__UnpinAllMessages__ConfirmDialog__Cancel": {
-    "messageformat": "Annullér"
   },
   "icu:PinnedMessagesPanel__UnpinAllMessages__ConfirmDialog__Unpin": {
     "messageformat": "Frigør"
@@ -1592,6 +1577,15 @@
   "icu:Install__support-link": {
     "messageformat": "Brug for hjælp?"
   },
+  "icu:Install__confirm-data-deletion__title": {
+    "messageformat": "Slet alle data?"
+  },
+  "icu:Install__confirm-data-deletion__body": {
+    "messageformat": "Du forsøger at tilknytte en anden Signal-konto til denne computer. Hvis du fortsætter, vil alle data på Signal Desktop blive slettet."
+  },
+  "icu:Install__confirm-data-deletion__continue": {
+    "messageformat": "Fortsæt"
+  },
   "icu:Preferences--header": {
     "messageformat": "Indstillinger"
   },
@@ -1642,9 +1636,6 @@
   },
   "icu:Preferences__ChatsPage__DeleteChatFolderDialog__DeleteButton": {
     "messageformat": "Slet"
-  },
-  "icu:Preferences__ChatsPage__DeleteChatFolderDialog__CancelButton": {
-    "messageformat": "Annullér"
   },
   "icu:Preferences__ChatFoldersPage__Title": {
     "messageformat": "Chatmapper"
@@ -1768,9 +1759,6 @@
   },
   "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__DeleteButton": {
     "messageformat": "Slet"
-  },
-  "icu:Preferences__EditChatFolderPage__DeleteChatFolderDialog__CancelButton": {
-    "messageformat": "Annullér"
   },
   "icu:Preferences__EditChatFolderPage__SaveChangesFolderDialog__Title": {
     "messageformat": "Vil du gemme ændringerne?"
@@ -1956,25 +1944,25 @@
     "messageformat": "Flere muligheder"
   },
   "icu:CallingParticipantMenu__MuteAudio": {
-    "messageformat": "Mute audio"
+    "messageformat": "Slå lyd fra"
   },
   "icu:CallingParticipantMenu__UnmuteAudio": {
-    "messageformat": "Unmute audio"
+    "messageformat": "Slå lyden til"
   },
   "icu:CallingParticipantMenu__ViewProfile": {
-    "messageformat": "View profile"
+    "messageformat": "Se profil"
   },
   "icu:CallingParticipantMenu__GoToChat": {
-    "messageformat": "Go to chat"
+    "messageformat": "Gå til chat"
   },
   "icu:CallingParticipantMenu__RemoveFromCall": {
-    "messageformat": "Remove from call"
+    "messageformat": "Fjernet fra opkald"
   },
   "icu:CallingParticipantListItem__ContextMenuButton": {
-    "messageformat": "More actions"
+    "messageformat": "Flere handlinger"
   },
   "icu:CallingParticipantListItem__Presenting": {
-    "messageformat": "Presenting"
+    "messageformat": "Præsenterer"
   },
   "icu:CallingPendingParticipants__ApproveUser": {
     "messageformat": "Godkend anmodning om at deltage"
@@ -2014,9 +2002,6 @@
   },
   "icu:CallingRaisedHandsList__Title": {
     "messageformat": "{count, plural, one {{count,number} hånd oppe} other {{count,number} hænder oppe}}"
-  },
-  "icu:CallingRaisedHandsList__TitleHint": {
-    "messageformat": "(første til sidste)"
   },
   "icu:CallingReactions--me": {
     "messageformat": "Dig"
@@ -2204,26 +2189,23 @@
   "icu:deleteAllDataBody": {
     "messageformat": "Slette alle data og beskeder fra denne version af Signal Desktop? Din Signal-konto og data på din telefon eller andre forbundne enheder vil ikke blive slettet."
   },
-  "icu:deleteAccountProgress": {
-    "messageformat": "Deleting account and all data…"
-  },
   "icu:deleteAllDataProgress": {
     "messageformat": "Afbryder og sletter alle data…"
   },
   "icu:deleteAccountHeader": {
-    "messageformat": "Delete account"
+    "messageformat": "Slet konto"
   },
   "icu:deleteAccountExplanation": {
-    "messageformat": "This will delete your account info, profile, and all of your messages. You will also be removed from all Signal groups."
+    "messageformat": "Dette vil slette din kontooplysning, profil og alle dine beskeder. Du vil også blive fjernet fra alle Signal-grupper."
   },
   "icu:deleteAccountButton": {
-    "messageformat": "Delete account"
+    "messageformat": "Slet konto"
   },
   "icu:deleteAccountDialogHeader": {
-    "messageformat": "Delete Account?"
+    "messageformat": "Vil du slette kontoen?"
   },
   "icu:deleteAccountDialogBody": {
-    "messageformat": "This will delete your account info, profile, and all of your messages. You will also be removed from all Signal groups. The app will close after this process is complete."
+    "messageformat": "Dette vil slette din kontooplysning, profil og alle dine beskeder. Du vil også blive fjernet fra alle Signal-grupper. Appen lukkes, når denne proces er afsluttet."
   },
   "icu:deleteOldIndexedDBData": {
     "messageformat": "Du har forældede data fra en forudgående installation af Signal Desktop. Hvis du vælger at fortsætte vil den blive slettet, og du vil starte fra forfra"
@@ -2302,9 +2284,6 @@
   },
   "icu:syncNow": {
     "messageformat": "Importér nu"
-  },
-  "icu:syncing": {
-    "messageformat": "Importerer…"
   },
   "icu:syncFailed": {
     "messageformat": "Importering mislykkedes. Sørg for, at din computer og din telefon er forbundet til internettet."
@@ -2571,10 +2550,10 @@
     "messageformat": "Frakoblet"
   },
   "icu:unregisteredWarning": {
-    "messageformat": "Click to re-register and continue messaging. Signal Desktop is unregistered likely because you registered your phone number with Signal on a different device."
+    "messageformat": "Tryk for at registrere igen og fortsætte med at sende beskeder. Signal Desktop er ikke længere registreret, sandsynligvis fordi du har registreret dit telefonnummer med Signal på en anden enhed."
   },
   "icu:unregistered": {
-    "messageformat": "No longer registered"
+    "messageformat": "Ikke længere registreret"
   },
   "icu:autoUpdateNewVersionTitle": {
     "messageformat": "Opdatering tilgængelig"
@@ -2836,6 +2815,24 @@
   },
   "icu:stickers--StickerPreview--Error": {
     "messageformat": "Fejl ved åbning af klistermærkepakke. Kontroller din internetforbindelse, og prøv igen."
+  },
+  "icu:stickers--StickerPreview--Install": {
+    "messageformat": "Add Stickers"
+  },
+  "icu:stickers--StickerPreview--Remove": {
+    "messageformat": "Remove"
+  },
+  "icu:stickers--StickerPreview--Link": {
+    "messageformat": "Link"
+  },
+  "icu:stickers--StickerPreview--LinkCopied": {
+    "messageformat": "Link copied"
+  },
+  "icu:stickers--StickerPreview--StickerCount": {
+    "messageformat": "{count, plural, one {{count,number} sticker} other {{count,number} stickers}}"
+  },
+  "icu:stickers--StickerPreview--StickerNoEmojiAriaLabel": {
+    "messageformat": "Sticker without an emoji"
   },
   "icu:FunPicker__Tab--Emojis": {
     "messageformat": "Smiley"
@@ -3305,6 +3302,9 @@
   "icu:Keyboard--toggle-preview": {
     "messageformat": "Slå udvidet forhåndsvisning til og fra"
   },
+  "icu:Keyboard--toggle-raise-hand": {
+    "messageformat": "Ræk hånden op eller sænk den (kun i gruppeopkald)"
+  },
   "icu:Keyboard--accept-video-call": {
     "messageformat": "Besvar opkald med video (kun videoopkald)"
   },
@@ -3362,50 +3362,38 @@
   "icu:ReactionsViewer--all": {
     "messageformat": "Alle"
   },
-  "icu:SafetyTipsModal__Title": {
+  "icu:SafetyTipsModal__Title-v2": {
     "messageformat": "Sikkerhedstips"
   },
-  "icu:SafetyTipsModal__Title-v2": {
-    "messageformat": "Safety tips"
-  },
   "icu:SafetyTipsModal__TipTitle--SignalChat": {
-    "messageformat": "Don’t respond to chats from Signal"
+    "messageformat": "Svar ikke på chats fra Signal"
   },
   "icu:SafetyTipsModal__TipDescription--SignalChat": {
-    "messageformat": "Signal will never message you for your registration code, PIN, or recovery key. Never respond to a chat pretending to be Signal."
+    "messageformat": "Signal kontakter dig aldrig for at bede om din registreringskode, pinkode eller gendannelsesnøgle. Svar aldrig på en chat, der udgiver sig for at være fra Signal."
   },
   "icu:SafetyTipsModal__TipTitle--NamesAndPhotos": {
-    "messageformat": "Review names and photos"
+    "messageformat": "Tjek navne og billeder"
   },
   "icu:SafetyTipsModal__TipDescription--NamesAndPhotos": {
-    "messageformat": "Look out for the “Name not verified” notice. Everyone sets their own profile name in Signal."
+    "messageformat": "Vær opmærksom på meddelelsen \"Navn ikke verificeret\". Alle vælger deres eget profilnavn og billede i Signal."
   },
   "icu:SafetyTipsModal__TipTitle--Scams": {
-    "messageformat": "Look out for scams"
+    "messageformat": "Vær opmærksom på svindel"
   },
   "icu:SafetyTipsModal__TipDescription--Scams": {
-    "messageformat": "Avoid vague messages that try to get you to reply. Be aware of financial tips and suspicious web links."
-  },
-  "icu:SafetyTipsModal__Description": {
-    "messageformat": "Vær forsigtig med at acceptere beskedanmodninger fra folk, du ikke kender. Pas på:"
+    "messageformat": "Undgå uklare beskeder, der forsøger at få dig til at svare. Vær opmærksom på økonomiske tips og mistænkelige weblinks."
   },
   "icu:SafetyTipsModal__TipTitle--DontRespond": {
-    "messageformat": "Don’t respond to chats from Signal"
+    "messageformat": "Svar ikke på chats fra Signal"
   },
   "icu:SafetyTipsModal__TipDescription--DontRespond": {
-    "messageformat": "Signal will never message you for your registration code, PIN, or recover key. Don't reply to chats pretending to be Signal or Signal Support. Bad actors set up fake names to try to take over your account."
+    "messageformat": "Signal vil aldrig kontakte dig for at få din registreringskode, pinkode eller gendannelsesnøgle. Svar ikke på beskeder, der udgiver sig for at være Signal eller Signal Support. Svindlere opretter falske chats for at forsøge at overtage din konto."
   },
   "icu:SafetyTipsModal__TipTitle--ReviewNames": {
-    "messageformat": "Review names and photos"
+    "messageformat": "Tjek navne og billeder"
   },
   "icu:SafetyTipsModal__TipDescription--ReviewNames": {
-    "messageformat": "Look out for the “Name not verified” notice. Everyone sets their own profile name and photo in Signal. If you’re unsure who a new request is from it’s safer to ignore it."
-  },
-  "icu:SafetyTipsModal__TipTitle--Fake": {
-    "messageformat": "Falske navne og kontoer"
-  },
-  "icu:SafetyTipsModal__TipDescription--Fake": {
-    "messageformat": "Signal kontakter dig aldrig for at bede om din registreringskode eller pinkode. Tag dig i agt for anmodninger fra folk, der udgiver sig for at være nogen, de ikke er. Profilnavne vælges af kontoens indehaver og verificeres ikke."
+    "messageformat": "Vær opmærksom på meddelelsen \"Navn ikke verificeret\". Alle vælger deres eget profilnavn og billede i Signal. Hvis du er i tvivl om, hvem en ny anmodning er fra, er det sikrest at ignorere den."
   },
   "icu:SafetyTipsModal__TipTitle--Crypto": {
     "messageformat": "Krypto- eller pengesvindel"
@@ -3419,38 +3407,20 @@
   "icu:SafetyTipsModal__TipDescription--Vague": {
     "messageformat": "Spammere starter ofte med en simpel besked som \"Hej\" for at lokke dig ind. Hvis du svarer, engagerer de dig måske yderligere."
   },
-  "icu:SafetyTipsModal__TipTitle--Links": {
-    "messageformat": "Beskeder med links"
-  },
   "icu:SafetyTipsModal__TipDescription--Links": {
     "messageformat": "Vær forsigtig med beskeder fra folk, du ikke kender, der indeholder links til hjemmesider. Besøg aldrig links fra folk, du ikke stoler på."
   },
   "icu:SafetyTipsModal__TipTitle--Links-v2": {
-    "messageformat": "Messages with web links"
+    "messageformat": "Beskeder med weblinks"
   },
   "icu:SafetyTipsModal__TipTitle--Business": {
     "messageformat": "Falske virksomheder og institutioner"
   },
-  "icu:SafetyTipsModal__TipTitle--Business-v2": {
-    "messageformat": "Fake businesses"
-  },
   "icu:SafetyTipsModal__TipDescription--Business": {
     "messageformat": "Forhold dig skeptisk, når du bliver kontaktet af virksomheder eller offentlige myndigheder. Beskeder vedrørende skattebureauer, fragtvirksomheder osv. kan være spam."
   },
-  "icu:SafetyTipsModal__DotLabel": {
-    "messageformat": "Gå til side {page,number}"
-  },
-  "icu:SafetyTipsModal__Button--Previous": {
-    "messageformat": "Forrige tip"
-  },
-  "icu:SafetyTipsModal__Button--Next": {
-    "messageformat": "Næste tip"
-  },
-  "icu:SafetyTipsModal__Button--Done": {
-    "messageformat": "Udført"
-  },
   "icu:SafetyTipsModal__Button--ViewMore": {
-    "messageformat": "View more"
+    "messageformat": "Vis mere"
   },
   "icu:MessageRequests--message-direct": {
     "messageformat": "Lad {name} sende dig beskeder og del dit navn og foto med vedkommende? De ved ikke at du har set deres beskeder, før du accepterer."
@@ -3548,17 +3518,11 @@
   "icu:MessageRequests--accept": {
     "messageformat": "Godkend"
   },
-  "icu:MessageRequests--accept-confirm-title": {
+  "icu:MessageRequests--accept-confirm-title-v2": {
     "messageformat": "Vil du acceptere anmodningen?"
   },
-  "icu:MessageRequests--accept-confirm-body": {
-    "messageformat": "Gennemgå anmodninger omhyggeligt. Profilnavne vælges af kontoens indehaver og verificeres ikke."
-  },
-  "icu:MessageRequests--accept-confirm-title-v2": {
-    "messageformat": "Accept request?"
-  },
   "icu:MessageRequests--accept-confirm-body-v2": {
-    "messageformat": "Only accept requests from people you trust. <bold>Signal will never</bold> message you for a registration code, PIN, or recovery key."
+    "messageformat": "Acceptér kun anmodninger fra personer, du har tillid til. <bold>Signal kontakter dig aldrig</bold> for at bede om din registreringskode, pinkode eller gendannelsesnøgle."
   },
   "icu:MessageRequests--continue": {
     "messageformat": "Fortsæt"
@@ -3614,17 +3578,14 @@
   "icu:ConversationHero--signal-official-chat": {
     "messageformat": "Dette er den officielle og eneste Signal-chat"
   },
-  "icu:ConversationHero--signal-official-account": {
-    "messageformat": "Officiel konto"
-  },
   "icu:ConversationHero--signal-official-chat-title": {
-    "messageformat": "Official chat"
+    "messageformat": "Den officielle chat"
   },
   "icu:ConversationHero--signal-official-account--description": {
     "messageformat": "Den eneste officielle Signal-chat. Få alle nyheder og udgivelsesbemærkninger."
   },
   "icu:Timeline--signal-official-chat--chip": {
-    "messageformat": "The only official chat from Signal."
+    "messageformat": "Den eneste officielle Signal-chat."
   },
   "icu:ConversationHero--release-notes": {
     "messageformat": "Få alle nyheder og udgivelsesbemærkninger."
@@ -3896,9 +3857,6 @@
   "icu:calling__SelectPresentingSourcesModal--window": {
     "messageformat": "Et vindue"
   },
-  "icu:calling__ParticipantInfoButton": {
-    "messageformat": "Flere oplysninger om denne kontakt"
-  },
   "icu:CallingAdhocCallInfo__CopyLink": {
     "messageformat": "Kopiér opkaldslink"
   },
@@ -3925,9 +3883,6 @@
   },
   "icu:CallingAdhocCallInfo__UnknownContactInfoDialogBody": {
     "messageformat": "Før du deltager i et opkald, kan du kun se navnene på telefonkontakter, personer, du er i en gruppe med eller personer, du har skrevet med individuelt. Du kan se alle navne og billeder, når du deltager i opkaldet."
-  },
-  "icu:CallingAdhocCallInfo__UnknownContactInfoDialogOk": {
-    "messageformat": "Forstået"
   },
   "icu:callingDeviceSelection__label--video": {
     "messageformat": "Video"
@@ -4610,9 +4565,6 @@
   "icu:close": {
     "messageformat": "Luk"
   },
-  "icu:clear": {
-    "messageformat": "Clear"
-  },
   "icu:previous": {
     "messageformat": "forrige"
   },
@@ -4623,40 +4575,22 @@
     "messageformat": "Det kan tage et par minutter"
   },
   "icu:DeletingAccount__LeavingGroups__Title": {
-    "messageformat": "Leaving groups..."
+    "messageformat": "Forlader grupper..."
   },
   "icu:DeletingAccount__LeavingGroups__Detail": {
-    "messageformat": "Depending on the number of groups you’re in, this might take a few minutes"
+    "messageformat": "Afhængigt af antallet af grupper, du er med i, kan dette tage et par minutter"
   },
   "icu:DeletingAccount__DeletingData__Title": {
-    "messageformat": "Deleting account and all data..."
+    "messageformat": "Sletter konto og alle data..."
   },
   "icu:DeletingAccount__DeletingData__Detail": {
-    "messageformat": "Deleting user data and resetting the app"
+    "messageformat": "Sletter brugerdata og nulstiller appen"
   },
   "icu:BadgeDialog__become-a-sustainer-button": {
     "messageformat": "Donér til Signal"
   },
-  "icu:BadgeSustainerInstructions__header": {
-    "messageformat": "Donér til Signal"
-  },
-  "icu:BadgeSustainerInstructions__subheader": {
-    "messageformat": "Signal er drevet af personer som dig. Bidrag og få et emblem."
-  },
-  "icu:BadgeSustainerInstructions__instructions__1": {
-    "messageformat": "Åbn Signal på din telefon"
-  },
-  "icu:BadgeSustainerInstructions__instructions__2": {
-    "messageformat": "Tryk på dit profilbillede øverst til venstre for at åbne Indstillinger"
-  },
-  "icu:BadgeSustainerInstructions__instructions__3": {
-    "messageformat": "Tryk på \"Donér til Signal\", og abonnér"
-  },
-  "icu:ProfileMovedModal__title": {
-    "messageformat": "Din profil er blevet flyttet"
-  },
-  "icu:ProfileMovedModal__description": {
-    "messageformat": "Åbn Indstillinger for at tilgå og redigere din profil."
+  "icu:BadgeDialog__name-supports-signal": {
+    "messageformat": "{name} understøtter Signal"
   },
   "icu:BackupImportScreen__title": {
     "messageformat": "Synkroniserer beskeder"
@@ -4747,9 +4681,6 @@
   },
   "icu:BackupMediaDownloadCancelConfirmation__description": {
     "messageformat": "Dine medier er ikke blevet synkroniseret. Hvis du vælger at annullere, kan du synkronisere igen ved at forbinde denne enhed igen. <learnMoreLink>Få mere at vide.</learnMoreLink>"
-  },
-  "icu:BackupMediaDownloadCancelConfirmation__button-continue": {
-    "messageformat": "Fortsæt synkronisering"
   },
   "icu:BackupMediaDownloadCancelConfirmation__button-confirm-cancel": {
     "messageformat": "Annuller synkronisering"
@@ -4927,9 +4858,6 @@
   },
   "icu:ConversationDetails--member-label--no-members": {
     "messageformat": "Ingen andre medlemmer har titler"
-  },
-  "icu:ConversationDetails--member-label--saving": {
-    "messageformat": "Gemmer ændringer..."
   },
   "icu:ConversationDetails--member-label--error-title": {
     "messageformat": "Medlemstitel kan ikke gemmes"
@@ -5298,9 +5226,6 @@
   "icu:DeleteAttachmentModal__Body": {
     "messageformat": "Dette sletter emnet permanent. Alle beskedtekster, der er knyttet til disse filer, vil også blive slettet."
   },
-  "icu:DeleteAttachmentModal__Close": {
-    "messageformat": "Luk"
-  },
   "icu:DeleteAttachmentModal__Delete": {
     "messageformat": "Slet"
   },
@@ -5410,7 +5335,7 @@
     "messageformat": "Brug dette link til at deltage i et Signal-opkald: {url}"
   },
   "icu:MessageRequestWarning__review-carefully": {
-    "messageformat": "Review requests carefully"
+    "messageformat": "Gennemgå anmodninger omhyggeligt"
   },
   "icu:MessageRequestWarning__safety-tips-v2": {
     "messageformat": "Sikkerhedstips"
@@ -6061,9 +5986,6 @@
   "icu:PlaintextExport--Confirmation--ContinueButton": {
     "messageformat": "Fortsæt"
   },
-  "icu:PlaintextExport--Confirmation--WaitingLabel": {
-    "messageformat": "Venter på input"
-  },
   "icu:PlaintextExport--OSPrompt--Mac": {
     "messageformat": "eksportér din chathistorik"
   },
@@ -6382,26 +6304,23 @@
   "icu:Preferences--blocked": {
     "messageformat": "Blokeret"
   },
-  "icu:Preferences--blocked-count": {
-    "messageformat": "{num, plural, one {{num,number} kontakt} other {{num,number} kontakter}}"
-  },
   "icu:Preferences--blocked-count-both-new": {
-    "messageformat": "{num, plural, =0 { No users or groups } one {{num,number} user or group} other {{num,number} users or groups}}"
+    "messageformat": "{num, plural, =0 { Ingen brugere eller grupper } one {{num,number} bruger eller gruppe} other {{num,number} brugere eller grupper}}"
   },
   "icu:Preferences--blocked-count-contacts-new": {
-    "messageformat": "{num, plural, =0 { No users } one {{num,number} user} other {{num,number} users}}"
+    "messageformat": "{num, plural, =0 { Ingen brugere } one {{num,number} bruger} other {{num,number} brugere}}"
   },
   "icu:Preferences--blocked-count-groups-new": {
-    "messageformat": "{num, plural, =0 { No groups } one {{num,number} group} other {{num,number} groups}}"
+    "messageformat": "{num, plural, =0 { Ingen grupper } one {{num,number} gruppe} other {{num,number} grupper}}"
   },
   "icu:Preferences--blocked-users--description": {
-    "messageformat": "Blocked users will not be able to call you or send you messages"
+    "messageformat": "Blokerede brugere vil ikke kunne ringe eller sende beskeder til dig"
   },
   "icu:Preferences--blocked-users": {
-    "messageformat": "Blocked Users"
+    "messageformat": "Blokerede brugere"
   },
   "icu:Preferences--blocked-groups": {
-    "messageformat": "Blocked Groups"
+    "messageformat": "Blokerede grupper"
   },
   "icu:Preferences--signal-backups": {
     "messageformat": "Sikre Signal-sikkerhedskopier"
@@ -6974,7 +6893,7 @@
     "messageformat": "Du accepterede beskedanmodningen"
   },
   "icu:MessageRequestResponseNotification__Message--Accepted-Contact-Title": {
-    "messageformat": "You accepted {userProfileName}'s message request"
+    "messageformat": "Du har accepteret beskedanmodningen fra {userProfileName}"
   },
   "icu:MessageRequestResponseNotification__Message--Reported": {
     "messageformat": "Rapporteret som spam"
@@ -6991,11 +6910,8 @@
   "icu:MessageRequestResponseNotification__Message--Unblocked--Group": {
     "messageformat": "Du har fjernet blokeringen af gruppen"
   },
-  "icu:MessageRequestResponseNotification__Button--Options": {
-    "messageformat": "Valgmuligheder"
-  },
   "icu:MessageRequestResponseNotification__Button--block-or-report": {
-    "messageformat": "Block or Report..."
+    "messageformat": "Blokér eller rapportér..."
   },
   "icu:MessageRequestResponseNotification__Button--LearnMore": {
     "messageformat": "Lær mere"
@@ -7580,9 +7496,6 @@
   "icu:DraftGifMessageSendModal__SendButtonLabel": {
     "messageformat": "Send"
   },
-  "icu:DraftGifMessageSendModal__CancelButtonLabel": {
-    "messageformat": "Annullér"
-  },
   "icu:EditHistoryMessagesModal__title": {
     "messageformat": "Redigeringshistorik"
   },
@@ -7750,9 +7663,6 @@
   },
   "icu:CallLinkDetails__DeleteLinkModal__Body": {
     "messageformat": "Dette link vil ikke længere fungere for dem, der har det."
-  },
-  "icu:CallLinkDetails__DeleteLinkModal__Cancel": {
-    "messageformat": "Annullér"
   },
   "icu:CallLinkDetails__DeleteLinkModal__Delete": {
     "messageformat": "Slet"
@@ -8147,12 +8057,6 @@
   "icu:Donations__badge-modal--help-text": {
     "messageformat": "Du kan ændre dette på din mobilenhed under Indstillinger → Donér til Signal → Badges"
   },
-  "icu:CallQualitySurvey__CloseButton__AccessibilityLabel": {
-    "messageformat": "Luk"
-  },
-  "icu:CallQualitySurvey__BackButton__AccessibilityLabel": {
-    "messageformat": "Tilbage"
-  },
   "icu:CallQualitySurvey__HowWasYourCall__PageTitle": {
     "messageformat": "Hvordan var dit opkald?"
   },
@@ -8240,9 +8144,6 @@
   "icu:CallQualitySurvey__ConfirmSubmission__SubmitButton": {
     "messageformat": "Indsend"
   },
-  "icu:CallQualitySurvey__ConfirmSubmission__Submitting": {
-    "messageformat": "Indsender undersøgelse…"
-  },
   "icu:CallQualitySurvey__SubmissionFailed": {
     "messageformat": "Kunne ikke indsende undersøgelsen"
   },
@@ -8256,10 +8157,40 @@
     "messageformat": "Udvid sidebjælken for at bruge megafonen"
   },
   "icu:Carousel--Role": {
-    "messageformat": "Carousel"
+    "messageformat": "Karrusel"
   },
   "icu:Carousel__Slide--Role": {
-    "messageformat": "Slide"
+    "messageformat": "Slider"
+  },
+  "icu:MaybeTransferModal__title": {
+    "messageformat": "Vil du overføre din telefons beskedhistorik til denne computer?"
+  },
+  "icu:MaybeTransferModal__description": {
+    "messageformat": "Når du forbinder til denne computer igen, kan du overføre din telefons beskedhistorik til denne enhed."
+  },
+  "icu:MaybeTransferModal__learnMore": {
+    "messageformat": "Læs mere"
+  },
+  "icu:MaybeTransferModal__replaceHistory": {
+    "messageformat": "Dette vil <bold>erstatte</bold> beskedhistorikken på denne computer."
+  },
+  "icu:MaybeTransferModal__scanQrCode": {
+    "messageformat": "Du skal tilknytte igen ved at scanne en QR-kode."
+  },
+  "icu:MaybeTransferModal__media": {
+    "messageformat": "Hvis du har betalt for Sikre sikkerhedskopier, vil alt dit medieindhold blive overført. Ellers vil de seneste 45 dages medier blive inkluderet."
+  },
+  "icu:MaybeTransferModal__transfer": {
+    "messageformat": "Overfør"
+  },
+  "icu:MaybeTransferModal__dontTransfer": {
+    "messageformat": "Overfør ikke"
+  },
+  "icu:DeleteDataAndRelinkConfirmationDialog__title": {
+    "messageformat": "Slet alle data?"
+  },
+  "icu:DeleteDataAndRelinkConfirmationDialog__body": {
+    "messageformat": "Alle nuværende data på Signal Desktop vil blive slettet. Derefter kan du scanne en QR-kode og overføre din beskedhistorik fra din telefon."
   },
   "icu:WhatsNew__bugfixes": {
     "messageformat": "Denne version indeholder en række småjusteringer og fejlrettelser som sikrer, at Signal kører problemfrit.",
@@ -8289,7 +8220,7 @@
     "messageformat": "Små tweaks, rettelser og forbedringer af appens præstation. Tak fordi du bruger Signal!",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__8.10--0": {
-    "messageformat": "The freshly spun emoji in Unicode 17.0 have now pirouetted into place in Signal. Send a message reaction with the new Ballet Dancer emoji to perform your own digital version of a pas de chat."
+  "icu:WhatsNew__8.13--0": {
+    "messageformat": "De nye indikatorer for oprakte hænder vises nu også i listen over oprakte hænder under gruppeopkald. Det er et sekundært overblik over, hvem du skal give ordet til, når du er færdig med at tale."
   }
 }

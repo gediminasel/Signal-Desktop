@@ -15,11 +15,12 @@ const unixTimestamp = parseInt(
 );
 const buildCreation = unixTimestamp * 1000;
 
-const isNotUpdatable = !parseVersion(packageJson.version).isUpdatable;
+const version = parseVersion(packageJson.version);
+const isNotUpdatable = !version.isUpdatable;
 
 // NB: Build expirations are also determined via users' auto-update settings; see
 // getExpirationTimestamp
-const validDuration = isNotUpdatable ? DAY * 30 : DAY * 90;
+const validDuration = isNotUpdatable && version.channel !== 'lel' ? DAY * 30 : DAY * 90;
 const buildExpiration = buildCreation + validDuration;
 
 const localProductionPath = join(
