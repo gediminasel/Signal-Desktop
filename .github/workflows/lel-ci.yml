@@ -3,6 +3,8 @@
 
 name: lel-CI
 on:
+  push:
+    branches: [main]
   release:
     types: [published]
 
