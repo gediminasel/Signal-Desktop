@@ -8,6 +8,9 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: read
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -128,6 +131,9 @@ jobs:
     #   env:
     #     ARTIFACTS_DIR: artifacts/linux
 
+    - name: Set Linux build target architecture
+      run: pnpm run prepare-linux-build deb x64
+
     - name: Build with packaging .deb file
       run: pnpm run build:release --publish=never
       env:
@@ -168,7 +174,6 @@ jobs:
     needs: lint
     runs-on: windows-latest
     timeout-minutes: 30
-
     steps:
     - run: systeminfo
     - uses: actions/checkout@v6

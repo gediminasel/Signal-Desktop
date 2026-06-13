@@ -3758,6 +3758,14 @@
     "messageformat": "Sticker without an emoji",
     "description": "Accessibility label for sticker without an assigned emoji in the sticker pack preview modal."
   },
+  "icu:stickers--StickerPackLinkPreviewDescription": {
+    "messageformat": "Sticker Pack by {author}",
+    "description": "Description for a sticker pack preview in the chat, when someone sends a link to a sticker pack. Shown next to the title of the sticker pack."
+  },
+  "icu:stickers--ViewPack": {
+    "messageformat": "View Pack",
+    "description": "Action button for a sticker pack preview in the chat, when someone sends a link to a sticker pack. When clicked it opens the sticker preview dialog."
+  },
   "icu:FunPicker__Tab--Emojis": {
     "messageformat": "Emoji",
     "description": "FunPicker > Tabs > Emojis Tab > Label (emoji plural)"
@@ -8530,11 +8538,51 @@
   },
   "icu:Preferences--local-backups-record-recovery-key": {
     "messageformat": "Record your recovery key",
+    "description": "(Deleted 2026/06/10) Title for viewing the recovery (backup) key for local message backups."
+  },
+  "icu:Preferences--local-backups-recovery-key--title": {
+    "messageformat": "Your recovery key",
     "description": "Title for viewing the recovery (backup) key for local message backups."
   },
   "icu:Preferences--local-backups-record-backup-key-description": {
     "messageformat": "This key is required to recover your account and data. Store this key somewhere safe. If you lose it, you won’t be able to recover your account. <learnMoreLink>Learn more.</learnMoreLink>",
+    "description": "(Deleted 2026/06/10) Description for viewing the recovery (backup) key for local message backups."
+  },
+  "icu:Preferences--local-backups-recovery-key--description": {
+    "messageformat": "This key is required to recover your account and data. Store it somewhere safe and never share it with anyone. Signal will never message you for your recovery key. <learnMoreLink>Learn more.</learnMoreLink>",
     "description": "Description for viewing the recovery (backup) key for local message backups."
+  },
+  "icu:Preferences__recovery-key__do-not-share-title": {
+    "messageformat": "Do not share recovery key",
+    "description": "Title of the dialog warning the user not to share their recovery key, shown after copying the recovery key."
+  },
+  "icu:Preferences__recovery-key__do-not-share-description": {
+    "messageformat": "<strong>Signal will never message you</strong> for your recovery key. Never respond to a chat pretending to be Signal. Store your recovery key somewhere safe and never share it with anyone. <learnMoreLink>Learn more.</learnMoreLink>",
+    "description": "Body of the dialog warning the user not to share their recovery key, shown after copying the recovery key."
+  },
+  "icu:Preferences__recovery-key__do-not-share-confirm": {
+    "messageformat": "Got it",
+    "description": "Button to dismiss the dialog warning the user not to share their recovery key."
+  },
+  "icu:CompositionInput__recovery-key-paste__share-key": {
+    "messageformat": "Share key",
+    "description": "Button on the dialog warning the user not to paste their recovery key into a chat. Pressing it proceeds to a second confirmation."
+  },
+  "icu:CompositionInput__recovery-key-paste__do-not-share-key": {
+    "messageformat": "Do not share key",
+    "description": "Button on the dialog warning the user not to paste their recovery key into a chat. Pressing it cancels the paste."
+  },
+  "icu:CompositionInput__recovery-key-paste__confirm-description": {
+    "messageformat": "Do not share your recovery key with anyone. This will let them take over your account. <strong>Signal will never message you</strong> for your recovery key. Never respond to a chat pretending to be Signal.",
+    "description": "Body of the second confirmation dialog shown before allowing the user to paste their recovery key into a chat."
+  },
+  "icu:CompositionInput__recovery-key-paste__confirm-dont-share": {
+    "messageformat": "Don't share",
+    "description": "Button to cancel pasting the recovery key into a chat on the second confirmation dialog."
+  },
+  "icu:CompositionInput__recovery-key-paste__confirm-paste": {
+    "messageformat": "Paste key",
+    "description": "Button to confirm pasting the recovery key into a chat on the second confirmation dialog."
   },
   "icu:Preferences--local-backups-confirm-recovery-key": {
     "messageformat": "Confirm your recovery key",
@@ -8619,6 +8667,10 @@
   "icu:Preferences__local-backups-auth-error--unauthorized": {
     "messageformat": "This action could not be completed because system authentication failed. Please try again or open the Signal app on your mobile device and go to Backup Settings to view your recovery key.",
     "description": "Error shown in local backups settings when system authentication fails while trying to view the recovery key."
+  },
+  "icu:Preferences__local-backups-auth-error--unknown-error": {
+    "messageformat": "An error occurred while requesting system authentication for this action.",
+    "description": "Error shown in local backups settings when system authentication fails for an unknown reason."
   },
   "icu:Preferences__view-key": {
     "messageformat": "View key",
@@ -10929,8 +10981,12 @@
     "description": "Release notes for releases that only include bug fixes",
     "ignoreUnused": true
   },
-  "icu:WhatsNew__8.13--0": {
-    "messageformat": "The new raised-hand indicators are now also displayed in the list of raised hands during group calls. It's a second-hand place to figure out who you should hand it over to when you're done speaking.",
-    "description": "(Deleted 2026/06/03) Release notes for 8.13"
+  "icu:WhatsNew__8.15--0": {
+    "messageformat": "\"This extra E is vexing me,\" said the cries and pleas of the people displeased that their favorite file extension was four letters instead of three. We're happy to appease (the change was a breeze) and now you will see that the default filename when saving a JPEG will end as it should in dot jpg.",
+    "description": "Release notes for 8.15"
+  },
+  "icu:WhatsNew__8.15--1": {
+    "messageformat": "If you want to embrace your inner goth, we also added support for the dark icon style in macOS.",
+    "description": "Release notes for 8.15"
   }
 }
